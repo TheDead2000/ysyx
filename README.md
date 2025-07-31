@@ -9,8 +9,8 @@ bash init.sh subproject-name
 [lecture note]: https://ysyx.oscc.cc/docs/
 
 pa3 finish  
-![alt text](<屏幕截图 2025-07-31 192527.png>)
+![alt text](<2.png>)
 
 
 riscv32e-npc finsih  //to do add csr
-![alt text](image.png)
+![alt text](1.png)
