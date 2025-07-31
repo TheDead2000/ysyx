@@ -7,3 +7,10 @@ bash init.sh subproject-name
 进行初始化, 具体请参考[实验讲义][lecture note].
 
 [lecture note]: https://ysyx.oscc.cc/docs/
+
+pa3 finish  
+![alt text](<屏幕截图 2025-07-31 192527.png>)
+
+
+riscv32e-npc finsih  //to do add csr
+![alt text](image.png)
