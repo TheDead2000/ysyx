@@ -1,5 +1,9 @@
 `include "sysconfig.v"
 
+function automatic logic match(input [31:0] inst, input [31:0] mask, input [31:0] value);
+  match = ((inst & mask) == value);
+endfunction
+
 module idu (
         /* from if/id */
     input [`INST_LEN-1:0] inst_addr_i,
@@ -39,11 +43,67 @@ module idu (
     output [`TRAP_BUS] trap_bus_o
 
 );
+// 指令掩码与模板
+localparam [31:0] MASK_OPCODE = 32'b0000000_00000_00000_000_00000_1111111;
+localparam [31:0] MASK_FUNC3  = 32'b0000000_00000_00000_111_00000_1111111;
+localparam [31:0] MASK_FUNC7  = 32'b1111111_00000_00000_111_00000_1111111;
+localparam [31:0] MASK_ALL    = 32'hFFFFFFFF;
+
+// 指令模板
+localparam [31:0] LUI_VAL    = 32'b0000000_00000_00000_000_00000_0110111;
+localparam [31:0] AUIPC_VAL  = 32'b0000000_00000_00000_000_00000_0010111;
+
+localparam [31:0] JAL_VAL    = 32'b0000000_00000_00000_000_00000_1101111;
+localparam [31:0] JALR_VAL   = 32'b0000000_00000_00000_000_00000_1100111;
+
+localparam [31:0] BEQ_VAL    = 32'b0000000_00000_00000_000_00000_1100011;
+localparam [31:0] BNE_VAL    = 32'b0000000_00000_00000_001_00000_1100011;
+localparam [31:0] BLT_VAL    = 32'b0000000_00000_00000_100_00000_1100011;
+localparam [31:0] BGE_VAL    = 32'b0000000_00000_00000_101_00000_1100011;
+localparam [31:0] BLTU_VAL   = 32'b0000000_00000_00000_110_00000_1100011;
+localparam [31:0] BGEU_VAL   = 32'b0000000_00000_00000_111_00000_1100011;
+
+localparam [31:0] LB_VAL     = 32'b0000000_00000_00000_000_00000_0000011;
+localparam [31:0] LH_VAL     = 32'b0000000_00000_00000_001_00000_0000011;
+localparam [31:0] LW_VAL     = 32'b0000000_00000_00000_010_00000_0000011;
+localparam [31:0] LBU_VAL    = 32'b0000000_00000_00000_100_00000_0000011;
+localparam [31:0] LHU_VAL    = 32'b0000000_00000_00000_101_00000_0000011;
+localparam [31:0] SB_VAL     = 32'b0000000_00000_00000_000_00000_0100011;
+localparam [31:0] SH_VAL     = 32'b0000000_00000_00000_001_00000_0100011;
+localparam [31:0] SW_VAL     = 32'b0000000_00000_00000_010_00000_0100011;
+
+localparam [31:0] ADDI_VAL   = 32'b0000000_00000_00000_000_00000_0010011;
+localparam [31:0] SLTI_VAL   = 32'b0000000_00000_00000_010_00000_0010011;
+localparam [31:0] SLTIU_VAL  = 32'b0000000_00000_00000_011_00000_0010011;
+localparam [31:0] XORI_VAL   = 32'b0000000_00000_00000_100_00000_0010011;
+localparam [31:0] ORI_VAL    = 32'b0000000_00000_00000_110_00000_0010011;
+localparam [31:0] ANDI_VAL   = 32'b0000000_00000_00000_111_00000_0010011;
+localparam [31:0] SLLI_VAL   = 32'b0000000_00000_00000_001_00000_0010011;
+localparam [31:0] SRLI_VAL   = 32'b0000000_00000_00000_101_00000_0010011;
+localparam [31:0] SRAI_VAL   = 32'b0100000_00000_00000_101_00000_0010011;
+
+localparam [31:0] ADD_VAL    = 32'b0000000_00000_00000_000_00000_0110011;
+localparam [31:0] SUB_VAL    = 32'b0100000_00000_00000_000_00000_0110011;
+localparam [31:0] SLL_VAL    = 32'b0000000_00000_00000_001_00000_0110011;
+localparam [31:0] SLT_VAL    = 32'b0000000_00000_00000_010_00000_0110011;
+localparam [31:0] SLTU_VAL   = 32'b0000000_00000_00000_011_00000_0110011;
+localparam [31:0] XOR_VAL    = 32'b0000000_00000_00000_100_00000_0110011;
+localparam [31:0] SRL_VAL    = 32'b0000000_00000_00000_101_00000_0110011;
+localparam [31:0] SRA_VAL    = 32'b0100000_00000_00000_101_00000_0110011;
+localparam [31:0] OR_VAL     = 32'b0000000_00000_00000_110_00000_0110011;
+localparam [31:0] AND_VAL    = 32'b0000000_00000_00000_111_00000_0110011;
+
+localparam [31:0] ECALL_VAL  = 32'h00000073;
+localparam [31:0] EBREAK_VAL = 32'h00100073;
+localparam [31:0] MRET_VAL   = 32'h30200073;
+
   assign inst_addr_o = inst_addr_i;
   assign inst_data_o = inst_data_i;
 
   wire [`INST_LEN-1:0] _inst = inst_data_i;
 
+  
+  wire [6:0] _opcode = _inst[6:0];
   wire [4:0] _rd = _inst[11:7];
   wire [2:0] _func3 = _inst[14:12];
   wire [4:0] _rs1 = _inst[19:15];
@@ -61,106 +121,68 @@ module idu (
   };
   // wire [`IMM_LEN-1:0] _immCSR = {27'b0, _inst[19:15]};
   
-  wire [6:0] _opcode = _inst[6:0];
-
-  //1:0
-  wire _opcode_1_0_11 = (_opcode[1:0] == 2'b11);
-    /* 4:2 */
-  wire _opcode_4_2_000 = (_opcode[4:2] == 3'b000);
-  wire _opcode_4_2_001 = (_opcode[4:2] == 3'b001);
-  wire _opcode_4_2_010 = (_opcode[4:2] == 3'b010);
-  wire _opcode_4_2_011 = (_opcode[4:2] == 3'b011);
-  wire _opcode_4_2_100 = (_opcode[4:2] == 3'b100);
-  wire _opcode_4_2_101 = (_opcode[4:2] == 3'b101);
-  wire _opcode_4_2_110 = (_opcode[4:2] == 3'b110);
-  wire _opcode_4_2_111 = (_opcode[4:2] == 3'b111);
-
-  //6:5
-  wire _opcode_6_5_00 = (_opcode[6:5] == 2'b00);
-  wire _opcode_6_5_01 = (_opcode[6:5] == 2'b01);
-  wire _opcode_6_5_10 = (_opcode[6:5] == 2'b10);
-  wire _opcode_6_5_11 = (_opcode[6:5] == 2'b11);
-
-  wire _func3_000 = (_func3 == 3'b000);
-  wire _func3_001 = (_func3 == 3'b001);
-  wire _func3_010 = (_func3 == 3'b010);
-  wire _func3_011 = (_func3 == 3'b011);
-  wire _func3_100 = (_func3 == 3'b100);
-  wire _func3_101 = (_func3 == 3'b101);
-  wire _func3_110 = (_func3 == 3'b110);
-  wire _func3_111 = (_func3 == 3'b111);
-
-  wire _func7_0000000 = (_func7 == 7'b0000000);
-  wire _func7_0100000 = (_func7 == 7'b0100000);
-
-  wire _type_lui = _opcode_6_5_01 & _opcode_4_2_101 & _opcode_1_0_11;
-  wire _type_auipc = _opcode_6_5_00 & _opcode_4_2_101 & _opcode_1_0_11;
-  
-  wire _type_jal = _opcode_6_5_11 & _opcode_4_2_011 & _opcode_1_0_11;
-  wire _type_jalr = _opcode_6_5_11 & _opcode_4_2_001 & _opcode_1_0_11;
-
-  wire _type_branch = _opcode_6_5_11 & _opcode_4_2_000 & _opcode_1_0_11;
-  wire _type_load = _opcode_6_5_00 & _opcode_4_2_000 & _opcode_1_0_11;
-  wire _type_store = _opcode_6_5_01 & _opcode_4_2_000 & _opcode_1_0_11;
-  wire _type_Imm_add = _opcode_6_5_00 & _opcode_4_2_100 & _opcode_1_0_11;
-  wire _type_Reg_add = _opcode_6_5_01 & _opcode_4_2_100 & _opcode_1_0_11;
-  wire _type_system =  _opcode_6_5_11 & _opcode_4_2_100 & _opcode_1_0_11;
-  wire _type_csr = _opcode_6_5_11 & _opcode_4_2_100 & _opcode_1_0_11;
-
-  wire _inst_lui = _type_lui;
-  wire _inst_auipc = _type_auipc;
-
-  wire _inst_jal = _type_jal;
-  wire _inst_jalr = _type_jalr;
-  
-  //branch
-  wire _inst_beq = _type_branch & _func3_000;
-  wire _inst_bne = _type_branch & _func3_001;
-  wire _inst_blt = _type_branch & _func3_100;
-  wire _inst_bge = _type_branch & _func3_101;
-  wire _inst_bltu = _type_branch & _func3_110;
-  wire _inst_bgeu = _type_branch & _func3_111;
- 
-  //load 
-  wire _inst_lb = _type_load & _func3_000;
-  wire _inst_lh = _type_load & _func3_001;
-  wire _inst_lw = _type_load & _func3_010;
-  wire _inst_lbu = _type_load & _func3_100;
-  wire _inst_lhu = _type_load & _func3_101;
-
-  //store
-  wire _inst_sb = _type_store &_func3_000;
-  wire _inst_sh = _type_store &_func3_001;
-  wire _inst_sw = _type_store &_func3_010;
-
-  //imm add
-  wire _inst_addi = _type_Imm_add & _func3_000;
-  wire _inst_slti = _type_Imm_add & _func3_010;
-  wire _inst_sltiu = _type_Imm_add & _func3_011;
-  wire _inst_xori = _type_Imm_add & _func3_100;
-  wire _inst_ori = _type_Imm_add & _func3_110;
-  wire _inst_andi = _type_Imm_add & _func3_111;
-  wire _inst_slli = _type_Imm_add & _func3_001 & _func7_0000000;
-  wire _inst_srli = _type_Imm_add & _func3_101 & _func7_0000000;
-  wire _inst_srai = _type_Imm_add & _func3_101 & _func7_0100000;
-
-  //Reg add
-  wire _inst_add = _type_Reg_add & _func3_000 & _func7_0000000;
-  wire _inst_sub = _type_Reg_add & _func3_000 & _func7_0100000;
-  wire _inst_sll = _type_Reg_add & _func3_001 & _func7_0000000;
-  wire _inst_slt = _type_Reg_add & _func3_010 & _func7_0000000;
-  wire _inst_sltu = _type_Reg_add & _func3_011 & _func7_0000000;
-  wire _inst_xor = _type_Reg_add & _func3_100 & _func7_0000000;
-  wire _inst_srl = _type_Reg_add & _func3_101 & _func7_0000000;
 
 
-  wire _inst_sra = _type_Reg_add & _func3_101 & _func7_0100000;
-  wire _inst_or = _type_Reg_add & _func3_110 & _func7_0000000;
-  wire _inst_and = _type_Reg_add & _func3_111 & _func7_0000000;
+wire _inst_lui    = match(_inst, MASK_OPCODE, LUI_VAL);
+wire _inst_auipc  = match(_inst, MASK_OPCODE, AUIPC_VAL);
+wire _inst_jal    = match(_inst, MASK_OPCODE, JAL_VAL);
+wire _inst_jalr   = match(_inst, MASK_FUNC3,  JALR_VAL);
 
-  wire _inst_ecall = _type_system & _func3_000 & (_inst[31:20] == 12'b0000_0000_0000);
-  wire _inst_ebreak = _type_system & _func3_000 & (_inst[31:20] == 12'b0000_0000_0001);
-  wire _inst_mret = _type_system & _func3_000 & (_inst[31:20] == 12'b0011_0000_0010);
+wire _inst_beq    = match(_inst, MASK_FUNC3,  BEQ_VAL);
+wire _inst_bne    = match(_inst, MASK_FUNC3,  BNE_VAL);
+wire _inst_blt    = match(_inst, MASK_FUNC3,  BLT_VAL);
+wire _inst_bge    = match(_inst, MASK_FUNC3,  BGE_VAL);
+wire _inst_bltu   = match(_inst, MASK_FUNC3,  BLTU_VAL);
+wire _inst_bgeu   = match(_inst, MASK_FUNC3,  BGEU_VAL);
+
+wire _inst_lb     = match(_inst, MASK_FUNC3,  LB_VAL);
+wire _inst_lh     = match(_inst, MASK_FUNC3,  LH_VAL);
+wire _inst_lw     = match(_inst, MASK_FUNC3,  LW_VAL);
+wire _inst_lbu    = match(_inst, MASK_FUNC3,  LBU_VAL);
+wire _inst_lhu    = match(_inst, MASK_FUNC3,  LHU_VAL);
+
+wire _inst_sb     = match(_inst, MASK_FUNC3,  SB_VAL);
+wire _inst_sh     = match(_inst, MASK_FUNC3,  SH_VAL);
+wire _inst_sw     = match(_inst, MASK_FUNC3,  SW_VAL);
+
+wire _inst_addi   = match(_inst, MASK_FUNC3,  ADDI_VAL);
+wire _inst_slti   = match(_inst, MASK_FUNC3,  SLTI_VAL);
+wire _inst_sltiu  = match(_inst, MASK_FUNC3,  SLTIU_VAL);
+wire _inst_xori   = match(_inst, MASK_FUNC3,  XORI_VAL);
+wire _inst_ori    = match(_inst, MASK_FUNC3,  ORI_VAL);
+wire _inst_andi   = match(_inst, MASK_FUNC3,  ANDI_VAL);
+
+wire _inst_slli   = match(_inst, MASK_FUNC7,  SLLI_VAL);
+wire _inst_srli   = match(_inst, MASK_FUNC7,  SRLI_VAL);
+wire _inst_srai   = match(_inst, MASK_FUNC7,  SRAI_VAL);
+
+wire _inst_add    = match(_inst, MASK_FUNC7,  ADD_VAL);
+wire _inst_sub    = match(_inst, MASK_FUNC7,  SUB_VAL);
+wire _inst_sll    = match(_inst, MASK_FUNC7,  SLL_VAL);
+wire _inst_slt    = match(_inst, MASK_FUNC7,  SLT_VAL);
+wire _inst_sltu   = match(_inst, MASK_FUNC7,  SLTU_VAL);
+wire _inst_xor    = match(_inst, MASK_FUNC7,  XOR_VAL);
+wire _inst_srl    = match(_inst, MASK_FUNC7,  SRL_VAL);
+wire _inst_sra    = match(_inst, MASK_FUNC7,  SRA_VAL);
+wire _inst_or     = match(_inst, MASK_FUNC7,  OR_VAL);
+wire _inst_and    = match(_inst, MASK_FUNC7,  AND_VAL);
+
+wire _inst_ecall  = match(_inst, MASK_ALL,    ECALL_VAL);
+wire _inst_ebreak = match(_inst, MASK_ALL,    EBREAK_VAL);
+wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
+
+   wire _type_lui = _inst_lui;
+   wire _type_auipc = _inst_auipc;
+   wire _type_jal = _inst_jal;
+   wire _type_jalr = _inst_jalr;
+   wire _type_branch = _inst_beq | _inst_bne | _inst_blt | _inst_bge | _inst_bltu | _inst_bgeu;
+   wire _type_load = _inst_lb | _inst_lh | _inst_lw | _inst_lbu | _inst_lhu;
+   wire _type_store = _inst_sb | _inst_sh | _inst_sw;
+   wire _type_Imm_add = _inst_addi | _inst_slti | _inst_sltiu | _inst_xori | 
+                        _inst_ori | _inst_andi | _inst_slli | _inst_srli | _inst_srai;
+   wire _type_Reg_add = _inst_add | _inst_sub | _inst_sll | _inst_slt | _inst_sltu |
+                        _inst_xor | _inst_srl | _inst_sra | _inst_or | _inst_and;
+  wire _type_system = _inst_ecall | _inst_ebreak | _inst_mret;
   
 
   wire _R_type = _type_Reg_add;

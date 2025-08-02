@@ -8,6 +8,8 @@ bash init.sh subproject-name
 
 [lecture note]: https://ysyx.oscc.cc/docs/
 
+verilog riscv32e
+
 pa3 finish  
 ![alt text](<2.png>)
 

@@ -4,6 +4,7 @@
 #include "Vtop__Syms.h"
 #include "Vtop.h"
 #include "Vtop___024root.h"
+#include "Vtop___024unit.h"
 
 // FUNCTIONS
 Vtop__Syms::~Vtop__Syms()

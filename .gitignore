@@ -14,3 +14,4 @@
 !abstract-machine/*
 !nanos-lite-kernel/*
 build/
+npc/obj_dir

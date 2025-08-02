@@ -50,8 +50,8 @@ int main(int argc, char* argv[]) {
   int retCode;
 
 #ifdef TOP_TRACE
-  mysim_p->u_difftest.init(ref_so_file, mysim_p->mem->getImgSize(), 0);
-  c.executeCommand("sdb on difftest");
+  // mysim_p->u_difftest.init(ref_so_file, mysim_p->mem->getImgSize(), 0);
+  // c.executeCommand("sdb on difftest");
 #endif
 
 #ifdef AUTO_RUN

@@ -53,7 +53,6 @@ module top (
 
       .inst_addr_if_id_o (inst_addr_if_id),
       .inst_data_if_id_o (inst_data_if_id),
-
       .trap_bus_if_id_o (trap_bus_if_id)
     );
 
@@ -78,6 +77,8 @@ module top (
   wire                           load_use_valid;
   /* TARP 总线 */
   wire [             `TRAP_BUS]  trap_bus_id;
+
+
 
   idu idu (
       /* from if/id */

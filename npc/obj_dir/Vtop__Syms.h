@@ -15,6 +15,7 @@
 
 // INCLUDE MODULE CLASSES
 #include "Vtop___024root.h"
+#include "Vtop___024unit.h"
 
 // DPI TYPES for DPI Export callbacks (Internal use)
 
