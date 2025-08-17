@@ -21,7 +21,20 @@ module memory (
     output [             `INST_LEN-1:0] mem_data_o,       //同时送回 id 阶段（bypass）       
     output [    `REG_ADDRWIDTH-1:0] rd_idx_o,
     /* TARP 总线 */
-    output [`TRAP_BUS] trap_bus_o
+    output [`TRAP_BUS] trap_bus_o,
+
+    /* dcache 接口 */
+    output [`XLEN-1:0] mem_addr_o,  // 地址
+    output mem_addr_valid_o,  // 地址是否有效
+    output [3:0] mem_mask_o,  // 数据掩码,读取多少位
+    output mem_write_valid_o,  // 1'b1,表示写;1'b0 表示读 
+    output [3:0] mem_size_o,  // 数据宽度 4、2、1 byte
+    input mem_data_ready_i,  // 读/写 数据是否准备好
+    input [`XLEN-1:0] mem_rdata_i,  // 返回到读取的数据
+    output [`XLEN-1:0] mem_wdata_o,  // 写入的数据
+    /* stall req */
+    output ram_stall_valid_mem_o // mem 阶段访存暂停
+
 );
 
   assign inst_addr_o = inst_addr_i;
@@ -47,75 +60,107 @@ module memory (
   wire _ls16byte = _memop_lh | _memop_lhu | _memop_sh;
   wire _ls32byte = _memop_lw | _memop_sw ;
 
-  /* 是否进行符号扩展 */
-  wire _unsigned = _memop_lhu | _memop_lbu ;
-  wire _signed = _memop_lh | _memop_lb | _memop_lw ;
-
 
   /* 输出使能端口 */
-  wire _load_valid = _unsigned | _signed;
+  wire ls_signed = _memop_lh | _memop_lb | _memop_lw;
   // assign load_valid_o = _load_valid;
 
   /* 从内存中读取的数据 */
-  reg [`INST_LEN-1:0] _mem_read;
+  wire [`XLEN-1:0]  mem_rdata;
+  wire [`XLEN-1:0] mem_rdata_ext;
+  lsu_ext lsu_ext_load (
+      /* from ex/mem */
+      .ext_data_i (mem_rdata),
+      .ls_signed_i(ls_signed),
+      // signed:1,unsigned:0
+      .ls_size_i  (ls_size),
+      // [4,2,1]
+      .ext_data_o (mem_rdata_ext)
+  );
 
-  /* 符号扩展后的结果 TODO:改成并行编码*/
-  wire [     `INST_LEN-1:0] _mem__signed_out = (_ls8byte)?{{`XLEN-8{_mem_read[7]}},_mem_read[7:0]}:
-                                   (_ls16byte)?{{`XLEN-16{_mem_read[15]}},_mem_read[15:0]}:
-                                   _mem_read;
-  /* 不进行符号扩展的结果 TODO:改成并行编码 */
-  wire [     `INST_LEN-1:0] _mem__unsigned_out = (_ls8byte)?{{`XLEN-8{1'b0}},_mem_read[7:0]}:
-                                   (_ls16byte)?{{`XLEN-16{1'b0}},_mem_read[15:0]}:
-                                   _mem_read;
-  /* 读取数据：选择最终结果 */
-  wire [`INST_LEN-1:0] _mem_out = (_signed) ? _mem__signed_out: 
-                               (_unsigned)? _mem__unsigned_out:
-                               `XLEN'b0;
-assign mem_data_o = (_load_valid) ? _mem_out : exc_alu_data_i;
+  wire [`INST_LEN-1:0] _mem_write;
 
-  // assign wb_data_o = (load_valid_i) ? mem_data_i : exc_alu_data_i;
-
-
-  /* 写入数据 */
-  wire [`INST_LEN-1:0] _mem_write = (_ls8byte) ? {24'b0, rs2_data_i[7:0]} :
-                                (_ls16byte) ? {16'b0, rs2_data_i[15:0]}:
-                                (_ls32byte) ? {rs2_data_i[31:0]}:
-                                 rs2_data_i;
+  lsu_ext lsu_ext_store (
+      /* from ex/mem */
+      .ext_data_i (rs2_data_i),
+      .ls_signed_i(1'b0),  // 不进行符号扩展
+      // signed:1,unsigned:0
+      .ls_size_i  (ls_size),
+      // [8,4,2,1]
+      .ext_data_o (_mem_write)
+  );
 
   /* 写数据 mask 选择,_mask:初步选择 _wmask:最终选择 */
-  wire [7:0] _mask = ({8{_ls8byte}}&8'b0000_0001) |
-                     ({8{_ls16byte}}&8'b0000_0011) |
-                     ({8{_ls32byte}}&8'b0000_1111);
 
-  wire [7:0] _wmask = (_isstore) ? _mask : 8'b0000_0000;
-  wire [7:0] _rmask = (_isload) ? _mask : 8'b0000_0000;
+
+  wire ls1byte = _memop_lb | _memop_lbu | _memop_sb;
+  wire ls2byte = _memop_lh | _memop_lhu | _memop_sh;
+  wire ls4byte = _memop_lw | _memop_sw;
+
+  wire [3:0]ls_size = {1'b0,ls4byte, ls2byte, ls1byte};
+
+  wire [3:0] _mask = ({4{ls_size[0]}} & 4'b0001)   // 1字节操作
+                   | ({4{ls_size[1]}} & 4'b0011)   // 2字节操作（半字）
+                   | ({4{ls_size[2]}} & 4'b1111);  // 4字节操作（字）
+
+  wire [1:0] addr_last2 = _addr[1:0];  // 只需低 2 位
+  wire [3:0] rmask = _mask;
+  wire [3:0] wmask = _mask << addr_last2;  // 4 位掩码移位
 
   /* 地址 */
   wire [`INST_LEN-1:0] _addr = (_memop_none) ? `PC_RESET_ADDR : exc_alu_data_i;
   wire [`INST_LEN-1:0] _raddr = _addr;
   wire [`INST_LEN-1:0] _waddr = _addr;
 
-  /***************************内存读写**************************/
-  import "DPI-C" function void pmem_read(
-    input int pc,
-    input int raddr,
-    output int rdata,
-    input byte rmask
-  );
-  import "DPI-C" function void pmem_write(
-    input int pc,
-    input int waddr,
-    input int wdata,
-    input byte wmask
-  );
-  always @(*) begin
-    _mem_read = `XLEN'b0;
-    if (_isload) begin
-      pmem_read(inst_addr_i, _raddr, _mem_read, _rmask);
-    end else if (_isstore) begin
-      pmem_write(inst_addr_i, _waddr, _mem_write, _wmask);
-    end
-  end
+
+
+  //dcache 接口
+  wire ls_valid = _isload | _isstore;
+  assign mem_addr_o = _addr[31:0];
+  assign mem_mask_o = mem_write_valid_o ? wmask : rmask;
+  assign mem_rdata = (mem_data_ready_i) ? (mem_rdata_i) : `XLEN'b0;
+
+
+  assign mem_wdata_o = 
+    (addr_last2 == 2'b00) ? _mem_write :
+    (addr_last2 == 2'b01) ? {_mem_write[23:0], 8'b0} :
+    (addr_last2 == 2'b10) ? {_mem_write[15:0], 16'b0} :
+    {_mem_write[7:0], 24'b0};
+
+
+
+  assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
+  assign mem_write_valid_o = _isstore & mem_addr_valid_o;
+  assign mem_size_o = ls_size;
+  assign mem_data_o = 
+    ({32{_isload}} & mem_rdata_ext) |  // 使用直接返回的读数据
+    ({32{_memop_none}} & exc_alu_data_i);                   // 非访存指令传递 ALU 结果
+
+
+  /* stall_req */
+  assign ram_stall_valid_mem_o = mem_addr_valid_o ;
+
+  // /***************************内存读写**************************/
+  // import "DPI-C" function void pmem_read(
+  //   input int pc,
+  //   input int raddr,
+  //   output int rdata,
+  //   input byte rmask
+  // );
+  // import "DPI-C" function void pmem_write(
+  //   input int pc,
+  //   input int waddr,
+  //   input int wdata,
+  //   input byte wmask
+  // );
+  // always @(*) begin
+  //   _mem_read = `XLEN'b0;
+  //   if (_isload) begin
+  //     pmem_read(inst_addr_i, _raddr, _mem_read, _rmask);
+  //   end else if (_isstore) begin
+  //     pmem_write(inst_addr_i, _waddr, _mem_write, _wmask);
+  //   end
+  // end
 
 
   /* trap_bus TODO:add more*/
@@ -131,10 +176,15 @@ assign mem_data_o = (_load_valid) ? _mem_out : exc_alu_data_i;
 
 
   /************************××××××向仿真环境传递 PC *****************************/
-  import "DPI-C" function void set_nextpc(input int nextpc);
+  // import "DPI-C" function void set_nextpc(input int nextpc);
 
-  always @(posedge clk) begin
-    set_nextpc(inst_addr_i);
-  end
-
+  // always @(posedge clk) begin
+  //   set_nextpc(inst_addr_i);
+  // end
+  // import "DPI-C" function void set_mem_pc(input int mem_pc);
+  // always @(*) begin
+  //   if (ls_valid) begin
+  //     set_mem_pc(inst_addr_i);
+  //   end
+  // end
 endmodule

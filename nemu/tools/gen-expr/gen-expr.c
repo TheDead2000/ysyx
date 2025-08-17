@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < loop; i ++) 
   {
       memset(buf, '\0', sizeof(buf)); // 每次循环前清空缓冲区
-      generate_expression(buf, 3);
+      generate_expression(buf, 4);
 
       sprintf(code_buf, code_format, buf); // 使用生成的随机表达式按照之前format格式填充 code_buf 缓冲区
 

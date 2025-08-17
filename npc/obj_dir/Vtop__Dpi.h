@@ -16,18 +16,20 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/wbu.v:30:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:185:32
+    extern void bpu_count(svBit bpu_ret);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/dcache_top.v:76:32
+    extern void dcache_hit_count();
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/dcache_top.v:77:32
+    extern void dcache_unhit_count();
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/icache_top.v:61:32
+    extern void icache_hit_count(int last_pc, int now_pc);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/icache_top.v:65:32
+    extern void icache_unhit_count();
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:561:32
     extern void inst_commit(int pc, int inst, svBit commit_valid);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/ifu.v:15:30
-    extern void pmem_inst_read(int raddr, int* rdata, char rmask);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:99:32
-    extern void pmem_read(int pc, int raddr, int* rdata, char rmask);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:105:32
-    extern void pmem_write(int pc, int waddr, int wdata, char wmask);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:134:32
-    extern void set_nextpc(int nextpc);
 
 #ifdef __cplusplus
 }

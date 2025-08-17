@@ -128,7 +128,7 @@ seg_decoder u_seg_decoder7(
 
 
 
-assign ledr[7:0] = data;
+assign ledr[7:0] = count;
 
 
 
@@ -154,6 +154,7 @@ scan_to_ascii u_scan_to_ascii(
 );
 
 reg [7:0] count; // 记录按键按下松开的次数
+wire [7:0] next_count = count + 1;
 
 //获取按键数据，并将其存到缓冲区。
 //判断按下和松开，并用数码管显示
@@ -195,10 +196,9 @@ always @(posedge clk) begin
             end
 
             if(data_buf[1] == 8'hf0 && data_buf[0] != 8'hf0)begin
-                count <= count + 1;
-                $display("count: 0x%h ", (count)); 
-                seg6_data  <= {1'b0, count[3:0]};
-                seg7_data  <= {1'b0, count[7:4]};
+                count <= next_count;
+                seg6_data <= {1'b0, next_count[3:0]};
+                seg7_data <= {1'b0, next_count[7:4]};
                 //$display("count[3:0] = 0x%h, seg6 = 0x%h", count[3:0], seg6);
                 //$display("count[7:4] = 0x%h, seg7 = 0x%h", count[7:4], seg7);
             end

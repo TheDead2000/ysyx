@@ -27,7 +27,7 @@ static struct rule
   const char *regex;
   int token_type;
 } rules[] = {
-
+    //非元字符可以不加转义符，元字符需要加转义符
     /* TODO: Add more rules.
      * Pay attention to the precedence level of different rules.
      */
@@ -51,7 +51,7 @@ static struct rule
 #define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
-word_t evaluate_the_expression(int start, int end);
+int32_t evaluate_the_expression(int start, int end);
 bool check_parentheses(int a, int b);
 int find_the_main_character(int start, int end);
 
@@ -108,8 +108,8 @@ static bool make_token(char *e)
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo; // 匹配的结束偏移量
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -123,8 +123,7 @@ static bool make_token(char *e)
           {
             tokens[nr_token].type = rules[i].token_type;
           }
-          // add auto test!!!!!!!!!!!!!!!!
-
+          
           if (tokens[nr_token].type == '*' && (nr_token == 0 ||
                                                tokens[nr_token - 1].type == '+' ||
                                                tokens[nr_token - 1].type == '-' ||
@@ -158,14 +157,14 @@ static bool make_token(char *e)
       return false;
     }
   }
-  for (i = 0; i < nr_token; i++)
-  {
-    printf("token[%d] = %s, type = %d\n", i, tokens[i].str, tokens[i].type);
-  }
+  // for (i = 0; i < nr_token; i++)
+  // {
+  //   printf("token[%d] = %s, type = %d\n", i, tokens[i].str, tokens[i].type);
+  // }
   return true;
 }
 
-word_t expr(char *e, bool *success)
+int32_t expr(char *e, bool *success)
 {
   if (!make_token(e))
   {
@@ -174,12 +173,12 @@ word_t expr(char *e, bool *success)
   }
   *success = true;
 
-  word_t temp = 0;
+  int32_t temp = 0;
   temp = evaluate_the_expression(0, nr_token - 1);
   return temp;
 }
 
-word_t evaluate_the_expression(int start, int end)
+int32_t evaluate_the_expression(int start, int end)
 {
   if (start > end)
   {
@@ -207,7 +206,7 @@ word_t evaluate_the_expression(int start, int end)
       if (tokens[start].str[0] == '$')
       {
         bool reg_type;
-        word_t temp_value = isa_reg_str2val((&tokens[start].str[1]), &reg_type);
+        int32_t temp_value = isa_reg_str2val((&tokens[start].str[1]), &reg_type);
         if (reg_type == false)
         {
           printf("%s not reg!!! ", &tokens[start].str[1]);
@@ -221,7 +220,7 @@ word_t evaluate_the_expression(int start, int end)
     }
     else if (tokens[start].type == TK_POINT)
     {
-      word_t temp_t = strtoul(tokens[start].str, NULL, 16);
+      int32_t temp_t = strtoul(tokens[start].str, NULL, 16);
       return vaddr_read(temp_t, 1);
     }
   }
@@ -234,8 +233,8 @@ word_t evaluate_the_expression(int start, int end)
   {
     int op = find_the_main_character(start, end);
     // printf("start = %d and end = %d\n",start,end);printf("main is %d\n",op);
-    word_t a = evaluate_the_expression(start, op - 1);
-    word_t b = evaluate_the_expression(op + 1, end);
+    int32_t a = evaluate_the_expression(start, op - 1);
+    int32_t b = evaluate_the_expression(op + 1, end);
     // printf("start = %d and end = %d\n",start,end);
     // printf("a = %d && b = %d && type = %d\n",a,b,tokens[op].type);
     switch (tokens[op].type)

@@ -14,7 +14,7 @@
 #include "difftest.h"
 #include "itrace.h"
 #include "ringbuff.hpp"
-
+#include "simAXI4/simaxi4.h"
 
 class Simtop {
 private:
@@ -23,7 +23,8 @@ private:
     VerilatedVcdC* tfp;
     uint32_t* registerfile;
     uint32_t pc;
-
+    uint32_t clk_count = 0;
+    
     struct inst_t {
         uint32_t inst_pc;
         uint32_t inst_data;
@@ -55,11 +56,23 @@ private:
 public:
     uint32_t mem_pc; // 记录当前访存指令的 PC,用于 difftest device 的 skip 处理 
     uint32_t top_status;
+    uint32_t commit_count = 0;
+    uint32_t icache_count = 0;
+    uint32_t icache_hit_count = 0;
+    uint32_t icache_unhit_count = 0;
+
+    uint32_t dcache_count = 0;
+    uint32_t dcache_hit_count = 0;
+    uint32_t dcache_unhit_count = 0;
+
+    uint32_t bpu_count = 0;
+    uint32_t bpu_hit_count = 0;
     enum {
         TOP_STOP,
         TOP_RUNNING
     };
     SimMem* mem;
+    SimAxi4* u_axi4;
     Watchpoint u_wp;
     expr_namespace::Expr u_expr;
     Difftest u_difftest;
@@ -78,6 +91,7 @@ public:
     void GPRregsReset(void);
     void addCommitedInst(uint32_t inst_pc, uint32_t inst_data);
     void printRegisterFile();
+    void showSimPerformance();
     void scanMem(paddr_t addr, uint32_t len);
     void excute(int32_t t);
     void excute();
@@ -86,6 +100,8 @@ public:
     void sdbStatus();
     void sdbRun(void);
     bool isSdbOk(const char* sdbname);
+    void posedgeCLK();
+    void negedgeCLK();
 };
 
 #endif

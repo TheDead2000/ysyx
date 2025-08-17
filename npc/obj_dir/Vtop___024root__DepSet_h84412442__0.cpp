@@ -8,66 +8,10 @@
 #include "Vtop__Syms.h"
 #include "Vtop___024root.h"
 
-extern "C" void pmem_inst_read(int raddr, int* rdata, char rmask);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__ifu_fetch__DOT__pmem_inst_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rmask) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__ifu_fetch__DOT__pmem_inst_read_TOP\n"); );
-    // Body
-    int raddr__Vcvt;
-    for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
-    int rdata__Vcvt;
-    char rmask__Vcvt;
-    for (size_t rmask__Vidx = 0; rmask__Vidx < 1; ++rmask__Vidx) rmask__Vcvt = rmask;
-    pmem_inst_read(raddr__Vcvt, &rdata__Vcvt, rmask__Vcvt);
-    rdata = rdata__Vcvt;
-}
-
-extern "C" void pmem_read(int pc, int raddr, int* rdata, char rmask);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__pmem_read_TOP(IData/*31:0*/ pc, IData/*31:0*/ raddr, IData/*31:0*/ &rdata, CData/*7:0*/ rmask) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__pmem_read_TOP\n"); );
-    // Body
-    int pc__Vcvt;
-    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) pc__Vcvt = pc;
-    int raddr__Vcvt;
-    for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
-    int rdata__Vcvt;
-    char rmask__Vcvt;
-    for (size_t rmask__Vidx = 0; rmask__Vidx < 1; ++rmask__Vidx) rmask__Vcvt = rmask;
-    pmem_read(pc__Vcvt, raddr__Vcvt, &rdata__Vcvt, rmask__Vcvt);
-    rdata = rdata__Vcvt;
-}
-
-extern "C" void pmem_write(int pc, int waddr, int wdata, char wmask);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__pmem_write_TOP(IData/*31:0*/ pc, IData/*31:0*/ waddr, IData/*31:0*/ wdata, CData/*7:0*/ wmask) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__pmem_write_TOP\n"); );
-    // Body
-    int pc__Vcvt;
-    for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) pc__Vcvt = pc;
-    int waddr__Vcvt;
-    for (size_t waddr__Vidx = 0; waddr__Vidx < 1; ++waddr__Vidx) waddr__Vcvt = waddr;
-    int wdata__Vcvt;
-    for (size_t wdata__Vidx = 0; wdata__Vidx < 1; ++wdata__Vidx) wdata__Vcvt = wdata;
-    char wmask__Vcvt;
-    for (size_t wmask__Vidx = 0; wmask__Vidx < 1; ++wmask__Vidx) wmask__Vcvt = wmask;
-    pmem_write(pc__Vcvt, waddr__Vcvt, wdata__Vcvt, wmask__Vcvt);
-}
-
-extern "C" void set_nextpc(int nextpc);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP\n"); );
-    // Body
-    int nextpc__Vcvt;
-    for (size_t nextpc__Vidx = 0; nextpc__Vidx < 1; ++nextpc__Vidx) nextpc__Vcvt = nextpc;
-    set_nextpc(nextpc__Vcvt);
-}
-
 extern "C" void inst_commit(int pc, int inst, svBit commit_valid);
 
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__writeback__DOT__inst_commit_TOP(IData/*31:0*/ pc, IData/*31:0*/ inst, CData/*0:0*/ commit_valid) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__writeback__DOT__inst_commit_TOP\n"); );
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(IData/*31:0*/ pc, IData/*31:0*/ inst, CData/*0:0*/ commit_valid) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP\n"); );
     // Body
     int pc__Vcvt;
     for (size_t pc__Vidx = 0; pc__Vidx < 1; ++pc__Vidx) pc__Vcvt = pc;
@@ -76,6 +20,16 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__writeback__DOT__inst_c
     svBit commit_valid__Vcvt;
     for (size_t commit_valid__Vidx = 0; commit_valid__Vidx < 1; ++commit_valid__Vidx) commit_valid__Vcvt = commit_valid;
     inst_commit(pc__Vcvt, inst__Vcvt, commit_valid__Vcvt);
+}
+
+extern "C" void bpu_count(svBit bpu_ret);
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(CData/*0:0*/ bpu_ret) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP\n"); );
+    // Body
+    svBit bpu_ret__Vcvt;
+    for (size_t bpu_ret__Vidx = 0; bpu_ret__Vidx < 1; ++bpu_ret__Vidx) bpu_ret__Vcvt = bpu_ret;
+    bpu_count(bpu_ret__Vcvt);
 }
 
 extern "C" void set_gpr_ptr(const svOpenArrayHandle a);
@@ -87,6 +41,42 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__rv32_gpr_regfile__DOT_
     static const VerilatedVarProps a__Vopenprops(VLVT_UINT32, VLVD_IN, VerilatedVarProps::Packed(), 31, 0, VerilatedVarProps::Unpacked(), 1, a__Vopenprops__ulims);
     VerilatedDpiOpenVar a__Vopenarray (&a__Vopenprops, &a);
     set_gpr_ptr(&a__Vopenarray);
+}
+
+extern "C" void icache_hit_count(int last_pc, int now_pc);
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__u_icache_top__DOT__icache_hit_count_TOP(IData/*31:0*/ last_pc, IData/*31:0*/ now_pc) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__u_icache_top__DOT__icache_hit_count_TOP\n"); );
+    // Body
+    int last_pc__Vcvt;
+    for (size_t last_pc__Vidx = 0; last_pc__Vidx < 1; ++last_pc__Vidx) last_pc__Vcvt = last_pc;
+    int now_pc__Vcvt;
+    for (size_t now_pc__Vidx = 0; now_pc__Vidx < 1; ++now_pc__Vidx) now_pc__Vcvt = now_pc;
+    icache_hit_count(last_pc__Vcvt, now_pc__Vcvt);
+}
+
+extern "C" void icache_unhit_count();
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__u_icache_top__DOT__icache_unhit_count_TOP() {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__u_icache_top__DOT__icache_unhit_count_TOP\n"); );
+    // Body
+    icache_unhit_count();
+}
+
+extern "C" void dcache_hit_count();
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__u_dcache_top__DOT__dcache_hit_count_TOP() {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__u_dcache_top__DOT__dcache_hit_count_TOP\n"); );
+    // Body
+    dcache_hit_count();
+}
+
+extern "C" void dcache_unhit_count();
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__u_dcache_top__DOT__dcache_unhit_count_TOP() {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__u_dcache_top__DOT__dcache_unhit_count_TOP\n"); );
+    // Body
+    dcache_unhit_count();
 }
 
 #ifdef VL_DEBUG
@@ -117,7 +107,12 @@ void Vtop___024root___eval_triggers__act(Vtop___024root* vlSelf) {
     // Body
     vlSelf->__VactTriggered.at(0U) = ((IData)(vlSelf->clk) 
                                       & (~ (IData)(vlSelf->__Vtrigrprev__TOP__clk)));
+    vlSelf->__VactTriggered.at(1U) = (((IData)(vlSelf->clk) 
+                                       & (~ (IData)(vlSelf->__Vtrigrprev__TOP__clk))) 
+                                      | ((IData)(vlSelf->rst) 
+                                         & (~ (IData)(vlSelf->__Vtrigrprev__TOP__rst))));
     vlSelf->__Vtrigrprev__TOP__clk = vlSelf->clk;
+    vlSelf->__Vtrigrprev__TOP__rst = vlSelf->rst;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vtop___024root___dump_triggers__act(vlSelf);

@@ -14,7 +14,6 @@ static const char* regs[] = {
 
 Simtop::Simtop() {
     cout << "SimtopStart!" << endl;
-    mem = new SimMem;
     contextp = new VerilatedContext;
 
 #ifdef TOP_TRACE
@@ -24,7 +23,8 @@ Simtop::Simtop() {
 #endif
 
     top = new Vtop(contextp);  // 确保传入 contextp
-
+    mem = new SimMem;
+    u_axi4 = new SimAxi4(top);
 #ifdef TOP_TRACE
     top->trace(tfp, 0);
     tfp->open("sim.vcd");
@@ -52,8 +52,24 @@ void Simtop::reset() {
     GPRregsReset();
 }
 
+
 void Simtop::changeCLK() {
     top->clk = !top->clk;
+    top->eval();
+}
+
+
+void Simtop::posedgeCLK() {
+    top->clk = 1;
+    u_axi4->update_input(); // 上升沿采集到的是之前的值
+    top->eval();
+    u_axi4->beat();
+    u_axi4->update_output();
+
+    clk_count++; // 记录时钟数
+}
+void Simtop::negedgeCLK() {
+    top->clk = 0;
     top->eval();
 }
 
@@ -74,14 +90,14 @@ void Simtop::stepCycle(bool val) {
     if (top_status != TOP_RUNNING) {
         return;
     }
-    changeCLK(); // 上升沿
+    posedgeCLK();
     /* 上升沿和下降沿都要保存波形数据 */
 #ifdef TOP_TRACE
     if (isSdbOk("wave")) {
         this->dampWave();
     }
 #endif
-    changeCLK();// 下降沿
+    negedgeCLK();
 #ifdef TOP_TRACE
     if (isSdbOk("wave")) {
         this->dampWave();
@@ -152,6 +168,28 @@ void  Simtop::printRegisterFile() {
     cout << "\npc:" << "\t" << hex << this->pc << endl;
 }
 
+void Simtop::showSimPerformance() {
+    cout << COLOR_GREEN << "----------------------------clk&commit:-------------------------" << endl;
+    cout << COLOR_GREEN << "clk_num:" << clk_count << endl;
+    cout << COLOR_GREEN << "commit_num:" << commit_count << endl;
+    cout << COLOR_GREEN << "CPI:" << (float)((float)clk_count / (float)commit_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "----------------------------icache:-------------------------" << endl;
+    cout << COLOR_GREEN << "icache req num:" << icache_count << endl;
+    cout << COLOR_GREEN << "icache hit num:" << icache_hit_count << endl;
+    cout << COLOR_GREEN << "icache unhit num:" << icache_unhit_count << endl;
+    cout << COLOR_GREEN << "icache hit rate:" << (float)((float)icache_hit_count / (float)icache_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "----------------------------dcache:-------------------------" << endl;
+    cout << COLOR_GREEN << "dcache req num:" << dcache_count << endl;
+    cout << COLOR_GREEN << "dcache hit num:" << dcache_hit_count << endl;
+    cout << COLOR_GREEN << "dcache unhit num:" << dcache_unhit_count << endl;
+    cout << COLOR_GREEN << "dcache hit rate:" << (float)((float)dcache_hit_count / (float)dcache_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "----------------------------bpu:-------------------------" << endl;
+    cout << COLOR_GREEN << "bpu req num:" << bpu_count << endl;
+    cout << COLOR_GREEN << "bpu hit num:" << bpu_hit_count << endl;
+    cout << COLOR_GREEN << "bpu unhit num:" << bpu_count - bpu_hit_count << endl;
+    cout << COLOR_GREEN << "bpu hit rate:" << (float)((float)bpu_hit_count / (float)bpu_count)*100  << COLOR_END << endl;
+}
+
 
 /**
  * @brief HIT GOOD / BAD TRAP
@@ -179,10 +217,12 @@ bool Simtop::npcHitGood() {
  */
 void Simtop::scanMem(paddr_t addr, uint32_t len) {
 
-    /* 每次读取 4byte */
+    /* 每次读取 4byte soc-simulator 总线模型  */
+    static uint8_t rbuff[4];
     for (size_t i = 0; i < len; i++) {
-        printf("addr:0x%08lx\tData: %08lx\n", addr,
-            mem->paddr_read(addr, 4));
+        u_axi4->dram->do_read(addr - MEM_BASE, 4, rbuff);
+        printf("addr:0x%08x\tData: %08lx\n", addr,
+            *(uint32_t*)rbuff);
         addr += 4;
     }
 }
@@ -323,4 +363,5 @@ void Simtop::addCommitedInst(uint32_t inst_pc, uint32_t inst_data) {
     temp_inst.inst_data = inst_data;
     temp_inst.inst_pc = inst_pc;
     this->commited_list.inst.push_back(temp_inst);
+    commit_count++;
 }
