@@ -135,6 +135,49 @@ static int cmd_d (char *args){
     return 0;
 }
 
+static int cmd_test(char *args) {
+  FILE *fp = fopen("/home/zy/ysyx-workbench/nemu/tools/gen-expr/build/results.txt", "r");
+  if (fp == NULL) {
+    printf("File not found: results.txt\n");
+    return 0;
+  }
+  char line[1024];
+  int total = 0;
+  int correct = 0;
+  while (fgets(line, sizeof(line), fp)) {
+    // 去除换行符
+    char *pos;
+    if ((pos = strchr(line, '\n')) != NULL) {
+      *pos = '\0';
+    }
+    // 分割结果和表达式
+    char *expected_str = strtok(line, " ");
+    char *expr_str = strtok(NULL, ""); // 剩余部分
+    if (expected_str == NULL || expr_str == NULL) {
+      printf("Invalid line: %s\n", line);
+      continue;
+    }
+    // 将预期结果转换为整数
+    long expected = atol(expected_str);
+    bool success = false;
+    int32_t result = expr(expr_str, &success);
+    if (!success) {
+      printf("Expression evaluation failed: %s\n", expr_str);
+      continue;
+    }
+    if (result != expected) {
+      printf("Error: expr=\"%s\", expected=%ld, got=%u\n", expr_str, expected, result);
+    } else {
+      correct++;
+    }
+    total++;
+  }
+  fclose(fp);
+  printf("Test result: %d/%d passed\n", correct, total);
+  return 0;
+}
+
+
 static int cmd_help(char *args);
 
 static struct {
@@ -151,6 +194,7 @@ static struct {
   { "p", "expr", cmd_p},
   { "w", "cmd_w",cmd_w},
   { "d", "cmd_d",cmd_d},
+  { "test", "test expr", cmd_test },
   /* TODO: Add more commands */
 
 };

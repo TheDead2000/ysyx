@@ -39,6 +39,8 @@ VM_USER_CFLAGS = \
 	-I/home/zy/ysyx-workbench/npc/csrc \
 	-I/home/zy/ysyx-workbench/npc/csrc/devices/include \
 	-I/home/zy/ysyx-workbench/npc/csrc/ringbuff \
+	-I/home/zy/ysyx-workbench/npc/csrc/simAXI4 \
+	-I/home/zy/ysyx-workbench/npc/csrc/soc-simulator \
 	-I/usr/include/SDL2 \
 	-I/usr/lib/llvm-11/include \
 	-std=c++14 \
@@ -75,6 +77,7 @@ VM_USER_CLASSES = \
 	itrace \
 	mysdb \
 	watchpoint \
+	simaxi4 \
 	simMem \
 	simtop \
 
@@ -84,6 +87,7 @@ VM_USER_DIR = \
 	/home/zy/ysyx-workbench/npc/csrc/cppreadline \
 	/home/zy/ysyx-workbench/npc/csrc/devices \
 	/home/zy/ysyx-workbench/npc/csrc/sdb \
+	/home/zy/ysyx-workbench/npc/csrc/simAXI4 \
 
 
 ### Default rules...
@@ -124,6 +128,8 @@ itrace.o: /home/zy/ysyx-workbench/npc/csrc/sdb/itrace.cpp
 mysdb.o: /home/zy/ysyx-workbench/npc/csrc/sdb/mysdb.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 watchpoint.o: /home/zy/ysyx-workbench/npc/csrc/sdb/watchpoint.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+simaxi4.o: /home/zy/ysyx-workbench/npc/csrc/simAXI4/simaxi4.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 simMem.o: /home/zy/ysyx-workbench/npc/csrc/simMem.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<

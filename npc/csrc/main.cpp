@@ -16,8 +16,8 @@ using ret = cr::Console::ReturnCode;
 
 // const char *ref_so_file = "/home/zy/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so";
 const char *ref_so_file = "/home/zy/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so";
+// const char* img_path = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv32e-npc.bin";
 const char* img_path = "";
-
 Simtop* mysim_p;
 int main(int argc, char* argv[]) {
 
@@ -32,10 +32,12 @@ int main(int argc, char* argv[]) {
   /* 不知道为什么将 Simtop mysim 声明为全局变量会崩溃(已有思路,全局对象的特性)*/
   mysim_p = new Simtop;
   /* 加载镜像 */
-  mysim_p->mem->setImagePath(img_path);
-  mysim_p->mem->loadImage();
+  // mysim_p->mem->setImagePath(img_path);
+  // mysim_p->mem->loadImage();
   mysim_p->reset();
-
+  
+  size_t file_size = mysim_p->u_axi4->dram->load_binary(0, img_path);
+  cout << "file_size " << file_size << endl;
   /* 注册命令 */
   cr::Console c(">:");
   c.registerCommand("info", cmd_info);
@@ -50,8 +52,8 @@ int main(int argc, char* argv[]) {
   int retCode;
 
 #ifdef TOP_TRACE
-  // mysim_p->u_difftest.init(ref_so_file, mysim_p->mem->getImgSize(), 0);
-  // c.executeCommand("sdb on difftest");
+  mysim_p->u_difftest.init(ref_so_file,file_size, 0);
+  c.executeCommand("sdb on difftest");
 #endif
 
 #ifdef AUTO_RUN
@@ -68,7 +70,9 @@ int main(int argc, char* argv[]) {
 #endif
 
   mysim_p->excute(1);
+  mysim_p->showSimPerformance();
   bool hitgood = mysim_p->npcHitGood();
+
   delete mysim_p;
   c.executeCommand("exit");
   return hitgood;

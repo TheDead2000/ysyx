@@ -13,6 +13,17 @@ module id_ex (
     input      [    `REG_ADDRWIDTH-1:0] rd_idx_id_ex_i,
     input      [          `IMM_LEN-1:0] imm_data_id_ex_i,
 
+    input       bpu_taken_id_ex_i,
+    output      bpu_taken_id_ex_o,
+
+    input bpu_pdt_res_id_i,
+    input bpu_which_pdt_id_i,
+    input[`HISLEN-1:0] bpu_history_id_i,
+
+    output bpu_pdt_res_id_ex_o,
+    output bpu_which_pdt_id_ex_o,
+    output[`HISLEN-1:0] bpu_history_id_ex_o,
+
 
     input      [     `INST_LEN-1:0]rs1_data_id_ex_i,
     input      [     `INST_LEN-1:0] rs2_data_id_ex_i,
@@ -45,23 +56,82 @@ module id_ex (
     output wire [             `TRAP_BUS] trap_bus_id_ex_o
 
 );
-  //   wire reg_wen = (~stall_i[2]) | flush_valid_i;
-  //   wire _flush_valid = flush_valid_i | branch_pc_valid_i;
+    wire reg_wen = !stall_valid_i;
+  wire _flush_valid = flush_valid_i;
+  wire reg_rst = rst | _flush_valid;
 
-  //   wire _load_hazed = (stall_i[2] == `TRUE && stall_i[3] == `FALSE);
+  /* bpu_taken_if_i 寄存器 */
+  wire _bpu_taken_id_ex_d = bpu_taken_id_ex_i;
+  wire _bpu_taken_id_ex_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_bpu_taken_id_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_bpu_taken_id_ex_d),
+      .dout(_bpu_taken_id_ex_q),
+      .wen (reg_wen)
+  );
+  assign bpu_taken_id_ex_o = _bpu_taken_id_ex_q;
+/* 分支预测结果 */
+  wire _bpu_pdt_res_id_ex_d = bpu_pdt_res_id_i;
+  wire _bpu_pdt_res_id_ex_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_bpu_pdt_res_id_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_bpu_pdt_res_id_ex_d),
+      .dout(_bpu_pdt_res_id_ex_q),
+      .wen (reg_wen)
+  );
+  assign bpu_pdt_res_id_ex_o = _bpu_pdt_res_id_ex_q;
+  
+  /* 分支预测器类型 */
+  wire _bpu_which_pdt_id_ex_d = bpu_which_pdt_id_i;
+  wire _bpu_which_pdt_id_ex_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_bpu_which_pdt_id_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_bpu_which_pdt_id_ex_d),
+      .dout(_bpu_which_pdt_id_ex_q),
+      .wen (reg_wen)
+  );
+  assign bpu_which_pdt_id_ex_o = _bpu_which_pdt_id_ex_q;
+  
+  /* 历史寄存器 */
+  wire [`HISLEN-1:0] _bpu_history_id_ex_d = bpu_history_id_i;
+  wire [`HISLEN-1:0] _bpu_history_id_ex_q;
+  regTemplate #(
+      .WIDTH    (`HISLEN),
+      .RESET_VAL(`HISLEN'b0)
+  ) u_bpu_history_id_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_bpu_history_id_ex_d),
+      .dout(_bpu_history_id_ex_q),
+      .wen (reg_wen)
+  );
+  assign bpu_history_id_ex_o = _bpu_history_id_ex_q;
 
   wire reg_wen = !stall_valid_i;
   wire _flush_valid = flush_valid_i;
+  wire reg_rst = rst | _flush_valid;
 
   /* pc 寄存器 */
-  wire [`XLEN-1:0] _pc_id_ex_d = (_flush_valid) ? `XLEN'b0 : inst_addr_id_ex_i;
+  wire [`XLEN-1:0] _pc_id_ex_d = inst_addr_id_ex_i;
   reg [`XLEN-1:0] _pc_id_ex_q;
   regTemplate #(
       .WIDTH    (`XLEN),
       .RESET_VAL(`XLEN'b0)
   ) u_pc_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_pc_id_ex_d),
       .dout(_pc_id_ex_q),
       .wen (reg_wen)
@@ -69,14 +139,14 @@ module id_ex (
   assign inst_addr_id_ex_o = _pc_id_ex_q;
 
   /* inst_data 寄存器 */
-  wire [`INST_LEN-1:0] _inst_data_id_ex_d = (_flush_valid) ? `INST_NOP : inst_data_id_ex_i;
+  wire [`INST_LEN-1:0] _inst_data_id_ex_d = inst_data_id_ex_i;
   reg [`INST_LEN-1:0] _inst_data_id_ex_q;
   regTemplate #(
       .WIDTH    (`INST_LEN),
       .RESET_VAL(`INST_NOP)
   ) u_inst_data_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_inst_data_id_ex_d),
       .dout(_inst_data_id_ex_q),
       .wen (reg_wen)
@@ -85,14 +155,14 @@ module id_ex (
 
 
   /* rs1_idx 寄存器 */
-  wire [`REG_ADDRWIDTH-1:0] _rs1_idx_id_ex_d = (_flush_valid) ? `REG_ADDRWIDTH'b0 : rs1_idx_id_ex_i;
+  wire [`REG_ADDRWIDTH-1:0] _rs1_idx_id_ex_d = rs1_idx_id_ex_i;
   reg [`REG_ADDRWIDTH-1:0] _rs1_idx_id_ex_q;
   regTemplate #(
       .WIDTH    (`REG_ADDRWIDTH),
       .RESET_VAL(`REG_ADDRWIDTH'b0)
   ) u_rs1_idx_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_rs1_idx_id_ex_d),
       .dout(_rs1_idx_id_ex_q),
       .wen (reg_wen)
@@ -100,14 +170,14 @@ module id_ex (
   assign rs1_idx_id_ex_o = _rs1_idx_id_ex_q;
 
   /* rs2_idx 寄存器 */
-  wire [`REG_ADDRWIDTH-1:0] _rs2_idx_id_ex_d = (_flush_valid) ? `REG_ADDRWIDTH'b0 :rs2_idx_id_ex_i;
+  wire [`REG_ADDRWIDTH-1:0] _rs2_idx_id_ex_d = rs2_idx_id_ex_i;
   reg [`REG_ADDRWIDTH-1:0] _rs2_idx_id_ex_q;
   regTemplate #(
       .WIDTH    (`REG_ADDRWIDTH),
       .RESET_VAL(`REG_ADDRWIDTH'b0)
   ) u_rs2_idx_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_rs2_idx_id_ex_d),
       .dout(_rs2_idx_id_ex_q),
       .wen (reg_wen)
@@ -116,14 +186,14 @@ module id_ex (
 
 
   /* rd_idx 寄存器 */
-  wire [`REG_ADDRWIDTH-1:0] _rd_idx_id_ex_d = (_flush_valid) ? `REG_ADDRWIDTH'b0 : rd_idx_id_ex_i;
+  wire [`REG_ADDRWIDTH-1:0] _rd_idx_id_ex_d =  rd_idx_id_ex_i;
   reg [`REG_ADDRWIDTH-1:0] _rd_idx_id_ex_q;
   regTemplate #(
       .WIDTH    (`REG_ADDRWIDTH),
       .RESET_VAL(`REG_ADDRWIDTH'b0)
   ) u_rd_idx_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_rd_idx_id_ex_d),
       .dout(_rd_idx_id_ex_q),
       .wen (reg_wen)
@@ -132,14 +202,14 @@ module id_ex (
 
 
   /* imm_data 寄存器 */
-  wire [`XLEN-1:0] _imm_data_id_ex_d = (_flush_valid) ? `XLEN'b0 : imm_data_id_ex_i;
+  wire [`XLEN-1:0] _imm_data_id_ex_d = imm_data_id_ex_i;
   reg [`XLEN-1:0] _imm_data_id_ex_q;
   regTemplate #(
       .WIDTH    (`XLEN),
       .RESET_VAL(`XLEN'b0)
   ) u_imm_data_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_imm_data_id_ex_d),
       .dout(_imm_data_id_ex_q),
       .wen (reg_wen)
@@ -155,7 +225,7 @@ module id_ex (
 //       .RESET_VAL(`XLEN'b0)
 //   ) u_csr_imm_id_ex (
 //       .clk (clk),
-//       .rst (rst),
+//       .rst (reg_rst),
 //       .din (_csr_imm_id_ex_d),
 //       .dout(_csr_imm_id_ex_q),
 //       .wen (reg_wen)
@@ -171,7 +241,7 @@ module id_ex (
 //       .RESET_VAL(`FALSE)
 //   ) u_csr_imm_valid_id_ex (
 //       .clk (clk),
-//       .rst (rst),
+//       .rst (reg_rst),
 //       .din (_csr_imm_valid_id_ex_d),
 //       .dout(_csr_imm_valid_id_ex_q),
 //       .wen (reg_wen)
@@ -187,7 +257,7 @@ module id_ex (
 //       .RESET_VAL(`CSR_REG_ADDRWIDTH'b0)
 //   ) u_csr_idx_id_ex (
 //       .clk (clk),
-//       .rst (rst),
+//       .rst (reg_rst),
 //       .din (_csr_idx_id_ex_d),
 //       .dout(_csr_idx_id_ex_q),
 //       .wen (reg_wen)
@@ -196,14 +266,14 @@ module id_ex (
 
 
   /* rs1_data 寄存器 */
-  wire [`XLEN-1:0] _rs1_data_id_ex_d = (_flush_valid) ? `XLEN'b0 : rs1_data_id_ex_i;
+  wire [`XLEN-1:0] _rs1_data_id_ex_d = rs1_data_id_ex_i;
   reg [`XLEN-1:0] _rs1_data_id_ex_q;
   regTemplate #(
       .WIDTH    (`XLEN),
       .RESET_VAL(`XLEN'b0)
   ) u_rs1_data_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_rs1_data_id_ex_d),
       .dout(_rs1_data_id_ex_q),
       .wen (reg_wen)
@@ -212,14 +282,14 @@ module id_ex (
 
 
   /* rs2_data 寄存器 */
-  wire [`XLEN-1:0] _rs2_data_id_ex_d = (_flush_valid) ? `XLEN'b0 : rs2_data_id_ex_i;
+  wire [`XLEN-1:0] _rs2_data_id_ex_d =  rs2_data_id_ex_i;
   reg [`XLEN-1:0] _rs2_data_id_ex_q;
   regTemplate #(
       .WIDTH    (`XLEN),
       .RESET_VAL(`XLEN'b0)
   ) u_rs2_data_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_rs2_data_id_ex_d),
       .dout(_rs2_data_id_ex_q),
       .wen (reg_wen)
@@ -236,7 +306,7 @@ module id_ex (
 //       .RESET_VAL(`XLEN'b0)
 //   ) u_csr_data_id_ex (
 //       .clk (clk),
-//       .rst (rst),
+//       .rst (reg_rst),
 //       .din (_csr_data_id_ex_d),
 //       .dout(_csr_data_id_ex_q),
 //       .wen (reg_wen)
@@ -245,14 +315,14 @@ module id_ex (
 
 
   /* alu_op 寄存器 */
-  wire [`ALUOP_LEN-1:0] _alu_op_id_ex_d = (_flush_valid) ? `ALUOP_NONE : alu_op_id_ex_i;
+  wire [`ALUOP_LEN-1:0] _alu_op_id_ex_d =  alu_op_id_ex_i;
   reg [`ALUOP_LEN-1:0] _alu_op_id_ex_q;
   regTemplate #(
       .WIDTH    (`ALUOP_LEN),
       .RESET_VAL(`ALUOP_NONE)
   ) u_alu_op_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_alu_op_id_ex_d),
       .dout(_alu_op_id_ex_q),
       .wen (reg_wen)
@@ -261,14 +331,14 @@ module id_ex (
 
 
   /* mem_op 寄存器 */
-  wire [`MEMOP_LEN-1:0] _mem_op_id_ex_d = (_flush_valid) ? `MEMOP_NONE : mem_op_id_ex_i;
+  wire [`MEMOP_LEN-1:0] _mem_op_id_ex_d =  mem_op_id_ex_i;
   reg [`MEMOP_LEN-1:0] _mem_op_id_ex_q;
   regTemplate #(
       .WIDTH    (`MEMOP_LEN),
       .RESET_VAL(`MEMOP_NONE)
   ) u_mem_op_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_mem_op_id_ex_d),
       .dout(_mem_op_id_ex_q),
       .wen (reg_wen)
@@ -277,14 +347,14 @@ module id_ex (
 
 
   /* exc_op 寄存器 */
-  wire [`EXCOP_LEN-1:0] _exc_op_id_ex_d = (_flush_valid) ? `EXCOP_NONE : exc_op_id_ex_i;
+  wire [`EXCOP_LEN-1:0] _exc_op_id_ex_d =  exc_op_id_ex_i;
   reg [`EXCOP_LEN-1:0] _exc_op_id_ex_q;
   regTemplate #(
       .WIDTH    (`EXCOP_LEN),
       .RESET_VAL(`EXCOP_NONE)
   ) u_exc_op_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_exc_op_id_ex_d),
       .dout(_exc_op_id_ex_q),
       .wen (reg_wen)
@@ -293,14 +363,14 @@ module id_ex (
 
 
   /* pc_op 寄存器 */
-  wire [`PCOP_LEN-1:0] _pc_op_id_ex_d = (_flush_valid) ? `PCOP_NONE : pc_op_id_ex_i;
+  wire [`PCOP_LEN-1:0] _pc_op_id_ex_d =  pc_op_id_ex_i;
   reg [`PCOP_LEN-1:0] _pc_op_id_ex_q;
   regTemplate #(
       .WIDTH    (`PCOP_LEN),
       .RESET_VAL(`PCOP_NONE)
   ) u_pc_op_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_pc_op_id_ex_d),
       .dout(_pc_op_id_ex_q),
       .wen (reg_wen)
@@ -316,7 +386,7 @@ module id_ex (
 //       .RESET_VAL(`CSROP_NONE)
 //   ) u_csr_op_id_ex (
 //       .clk (clk),
-//       .rst (rst),
+//       .rst (reg_rst),
 //       .din (_csr_op_id_ex_d),
 //       .dout(_csr_op_id_ex_q),
 //       .wen (reg_wen)
@@ -325,14 +395,14 @@ module id_ex (
 
 
   /* trap_bus 寄存器 */
-  wire [`TRAP_LEN-1:0] _trap_bus_id_ex_d = (_flush_valid) ? `TRAP_LEN'b0 : trap_bus_id_ex_i;
+  wire [`TRAP_LEN-1:0] _trap_bus_id_ex_d = trap_bus_id_ex_i;
   reg [`TRAP_LEN-1:0] _trap_bus_id_ex_q;
   regTemplate #(
       .WIDTH    (`TRAP_LEN),
       .RESET_VAL(`TRAP_LEN'b0)
   ) u_trap_bus_id_ex (
       .clk (clk),
-      .rst (rst),
+      .rst (reg_rst),
       .din (_trap_bus_id_ex_d),
       .dout(_trap_bus_id_ex_q),
       .wen (reg_wen)

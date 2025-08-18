@@ -15,9 +15,12 @@ module clint (
     /* 输出至取指阶段 */
     output wire [`XLEN-1:0] clint_pc_o,
     output wire clint_pc_valid_o,
+
     /* ---signals to other stages of the pipeline  ----*/
     output reg[5:0]   stall_o,   // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
-    output wire [5:0] flush_o  // flush the whole pipleline, exception or interrupt happens
+    output wire [5:0] flush_o,  // flush the whole pipleline, exception or interrupt happens
+    input wire ram_stall_valid_if_i,  // if 阶段访存暂停
+    input wire ram_stall_valid_mem_i  // mem 访存暂停
 );
 
   /* --------------------- handle the stall request -------------------*/
@@ -30,14 +33,20 @@ module clint (
   localparam jump_stall = 6'b000000;
   localparam trap_flush = 6'b001110;
   localparam trap_stall = 6'b000000;
-  // localparam mutiple_alu_inst_flush = 6'b000011;
-  // localparam mutiple_alu_inst_stall = 6'b000000;
+  localparam ram_mem_flush = 6'b010000;
+  localparam ram_mem_stall = 6'b001111;
 
+
+  wire ram_stall_req = ram_stall_valid_mem_i | ram_stall_valid_if_i;
 
 always @(*) begin
     if (rst) begin
       stall_o = 6'b000000;
       flush_o = 6'b000000;
+    end 
+    else if (ram_stall_req) begin  // TODO ,if mem 访存合并
+      stall_o = ram_mem_stall;
+      flush_o = ram_mem_flush;
     end else if (_trap_valid) begin
       stall_o = trap_stall;
       flush_o = trap_flush;
@@ -57,7 +66,6 @@ always @(*) begin
   wire _trap_ecall = trap_bus_i[`TRAP_ECALL];
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
   wire _trap_mret = trap_bus_i[`TRAP_MRET];
-  wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
   wire _trap_valid = (_trap_ecall | _trap_ebreak | _trap_mret);
 
 
@@ -70,6 +78,7 @@ always @(*) begin
     /*************ebreak仿真使用**************************/
   always @(*) begin
     if (_trap_ebreak) begin
+      $display("EBREAK at PC: %h", pc_i);
       $finish;
     end
   end

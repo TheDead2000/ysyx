@@ -14,6 +14,35 @@ Vtop::Vtop(VerilatedContext* _vcontextp__, const char* _vcname__)
     , vlSymsp{new Vtop__Syms(contextp(), _vcname__, this)}
     , clk{vlSymsp->TOP.clk}
     , rst{vlSymsp->TOP.rst}
+    , io_master_awready{vlSymsp->TOP.io_master_awready}
+    , io_master_awvalid{vlSymsp->TOP.io_master_awvalid}
+    , io_master_awid{vlSymsp->TOP.io_master_awid}
+    , io_master_awlen{vlSymsp->TOP.io_master_awlen}
+    , io_master_awsize{vlSymsp->TOP.io_master_awsize}
+    , io_master_awburst{vlSymsp->TOP.io_master_awburst}
+    , io_master_wready{vlSymsp->TOP.io_master_wready}
+    , io_master_wvalid{vlSymsp->TOP.io_master_wvalid}
+    , io_master_wstrb{vlSymsp->TOP.io_master_wstrb}
+    , io_master_wlast{vlSymsp->TOP.io_master_wlast}
+    , io_master_bready{vlSymsp->TOP.io_master_bready}
+    , io_master_bvalid{vlSymsp->TOP.io_master_bvalid}
+    , io_master_bresp{vlSymsp->TOP.io_master_bresp}
+    , io_master_bid{vlSymsp->TOP.io_master_bid}
+    , io_master_arready{vlSymsp->TOP.io_master_arready}
+    , io_master_arvalid{vlSymsp->TOP.io_master_arvalid}
+    , io_master_arid{vlSymsp->TOP.io_master_arid}
+    , io_master_arlen{vlSymsp->TOP.io_master_arlen}
+    , io_master_arsize{vlSymsp->TOP.io_master_arsize}
+    , io_master_arburst{vlSymsp->TOP.io_master_arburst}
+    , io_master_rready{vlSymsp->TOP.io_master_rready}
+    , io_master_rvalid{vlSymsp->TOP.io_master_rvalid}
+    , io_master_rresp{vlSymsp->TOP.io_master_rresp}
+    , io_master_rlast{vlSymsp->TOP.io_master_rlast}
+    , io_master_rid{vlSymsp->TOP.io_master_rid}
+    , io_master_awaddr{vlSymsp->TOP.io_master_awaddr}
+    , io_master_wdata{vlSymsp->TOP.io_master_wdata}
+    , io_master_araddr{vlSymsp->TOP.io_master_araddr}
+    , io_master_rdata{vlSymsp->TOP.io_master_rdata}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context

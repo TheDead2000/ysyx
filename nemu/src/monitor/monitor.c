@@ -42,7 +42,7 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = NULL;
+static char *img_file = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/if-else-riscv32e-npc.bin";
 static int difftest_port = 1234;
 
 static long load_img() {

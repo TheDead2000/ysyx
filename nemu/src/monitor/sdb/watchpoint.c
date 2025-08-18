@@ -17,40 +17,55 @@ void init_wp_pool() {
   head = NULL;
   free_ = wp_pool;
 }
+// head: 指向已使用的监视点链表
+// free_: 指向空闲监视点链表
 
-/* TODO: Implement the functionality of watchpoint */
-WP* new_wp(){
-    for(WP* p = free_ ; p -> next != NULL ; p = p -> next){
-        if( p -> flag == false){
-            p -> flag = true;
-            if(head == NULL){
-                head = p;
-            }
-            return p;
-        }
+//    1. 从free_链表中取出第一个节点
+//    2. 将该节点插入到head链表的头部
+
+WP* new_wp() {
+    if (free_ == NULL) {
+        printf("No available watchpoints. Maximum of %d reached.\n", NR_WP);
+        return NULL;
     }
-    printf("No unuse point.\n");
-    assert(0);
-    return NULL;
-}
-void free_wp(WP *wp){
-    if(head -> NO == wp -> NO){
-        head -> flag = false;
-        head = NULL;
-        printf("Delete watchpoint  success.\n");
-        return ;
-    }
-    for(WP* p = head ; p -> next != NULL ; p = p -> next){
-        if(p -> next -> NO  == wp -> NO)
-        {
-            p -> next = p -> next -> next;
-            p -> next -> flag = false; // 没有被使用
-            printf("free succes.\n");
-            return ;
-        }
-    }
+    
+    // 从空闲链表取一个节点
+    WP *new = free_;
+    free_ = free_->next;
+    
+    // 添加到已使用链表头部
+    new->next = head;
+    head = new;
+    new->flag = true;
+    
+    return new;
 }
 
+//    1. 从head链表中移除该节点。
+//    2. 将该节点插入free_链表的头部
+void free_wp(WP *wp) {
+    // 从已使用链表中移除
+    if (head == wp) {
+        head = head->next;
+    } else {
+        WP *prev = head;
+        while (prev != NULL && prev->next != wp) {
+            prev = prev->next;
+        }
+        if (prev == NULL) {
+            printf("Watchpoint %d not found in active list.\n", wp->NO);
+            return;
+        }
+        prev->next = wp->next;
+    }
+    
+    // 添加到空闲链表头部
+    wp->next = free_;
+    free_ = wp;
+    wp->flag = false;
+    
+    printf("Deleted watchpoint %d.\n", wp->NO);
+}
 
 void sdb_watchpoint_display(){
     bool flag = true;

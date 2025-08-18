@@ -28,6 +28,35 @@ class Vtop VL_NOT_FINAL : public VerilatedModel {
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clk,0,0);
     VL_IN8(&rst,0,0);
+    VL_IN8(&io_master_awready,0,0);
+    VL_OUT8(&io_master_awvalid,0,0);
+    VL_OUT8(&io_master_awid,3,0);
+    VL_OUT8(&io_master_awlen,7,0);
+    VL_OUT8(&io_master_awsize,2,0);
+    VL_OUT8(&io_master_awburst,1,0);
+    VL_IN8(&io_master_wready,0,0);
+    VL_OUT8(&io_master_wvalid,0,0);
+    VL_OUT8(&io_master_wstrb,3,0);
+    VL_OUT8(&io_master_wlast,0,0);
+    VL_OUT8(&io_master_bready,0,0);
+    VL_IN8(&io_master_bvalid,0,0);
+    VL_IN8(&io_master_bresp,1,0);
+    VL_IN8(&io_master_bid,3,0);
+    VL_IN8(&io_master_arready,0,0);
+    VL_OUT8(&io_master_arvalid,0,0);
+    VL_OUT8(&io_master_arid,3,0);
+    VL_OUT8(&io_master_arlen,7,0);
+    VL_OUT8(&io_master_arsize,2,0);
+    VL_OUT8(&io_master_arburst,1,0);
+    VL_OUT8(&io_master_rready,0,0);
+    VL_IN8(&io_master_rvalid,0,0);
+    VL_IN8(&io_master_rresp,1,0);
+    VL_IN8(&io_master_rlast,0,0);
+    VL_IN8(&io_master_rid,3,0);
+    VL_OUT(&io_master_awaddr,31,0);
+    VL_OUT(&io_master_wdata,31,0);
+    VL_OUT(&io_master_araddr,31,0);
+    VL_IN(&io_master_rdata,31,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
