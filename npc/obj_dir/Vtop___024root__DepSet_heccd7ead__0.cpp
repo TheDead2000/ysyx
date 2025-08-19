@@ -3297,7 +3297,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                         = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits);
                 }
             }
-            if (vlSelf->top__DOT__exu__DOT__jump_taken) {
+            if (((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                 & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                       >> 2U)))) {
                 if (((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
                      & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
                                          >> 0xfU))) 

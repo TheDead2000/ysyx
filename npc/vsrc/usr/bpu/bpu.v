@@ -182,7 +182,7 @@ end
             provider_history_reg <= provider_history_comb;
             
             // 处理RAS出栈（RET指令实际执行时）
-            if (ex_branch_taken_i) begin
+            if (ex_branch_taken_i && !ex_stall_valid_i) begin
                 // 识别RET指令: JALR且rs1=x1
                 if ((ex_inst_i[6:0] == 7'b1100111) && 
                     ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
