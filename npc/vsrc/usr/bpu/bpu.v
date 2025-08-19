@@ -153,7 +153,7 @@ module bpu (
                         (ex_inst_i[19:15] == 5'b00001)) begin
                         if (ras_sp > 0) begin
                             ras_sp <= ras_sp - 1; // 出栈
-                            $display("[RAS] POP: sp=%0d", ras_sp-1);
+                            $display("[RAS] POP: sp=%0d,pop_addr=0x%h", ras_sp-1,ras[ras_sp-1]);
                         end
                     end
                 end
@@ -240,7 +240,7 @@ module bpu (
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
-                    $display("[RAS] PREDICT: sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
+                    $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
                 else if (btb_hit) begin
                     // RAS为空时使用BTB
@@ -250,7 +250,7 @@ module bpu (
                     // RAS和BTB都未命中，使用默认PC+4
                     pdt_res = 1'b0; // 不跳转
                     pdt_pc = if_pc + 4;
-                    $display("[RAS] PREDICT: sp=0, target=0x%h", pdt_pc);
+                    $display("都未命中\n");
                 end
                 // 否则使用默认PC+4（实际不会发生）
             end
