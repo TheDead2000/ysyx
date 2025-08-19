@@ -90,7 +90,8 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
             }
             if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp];
+                    [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                               - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
@@ -3261,7 +3262,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                                   32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                       - (IData)(1U)),
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                                  [vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp]);
+                                  [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                             - (IData)(1U)))]);
                     }
                 }
             }
@@ -3952,7 +3954,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
             }
             if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp];
+                    [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                               - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 

@@ -154,7 +154,7 @@ module bpu (
                         (ex_inst_i[19:15] == 5'b00001)) begin
                         if (ras_sp > 0) begin
                             ras_sp = ras_sp - 1; // 出栈
-                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp]);
+                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp-1]);
                         end
                     end
                 end
@@ -245,7 +245,7 @@ module bpu (
                  end 
                 if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
-                    pdt_pc = ras[ras_sp];
+                    pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
                     $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
