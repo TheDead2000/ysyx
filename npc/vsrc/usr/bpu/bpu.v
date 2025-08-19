@@ -189,7 +189,7 @@ module bpu (
             if (pdt_res) begin
                 if (btb_hit) begin
                     pdt_pc = btb_target_val;
-                    $display("[BPU-PREDICT] BTB hit: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
+                    // $display("[BPU-PREDICT] BTB hit: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
                 end
                 else begin
                     if (is_jal) begin
