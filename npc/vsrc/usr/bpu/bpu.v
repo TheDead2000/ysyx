@@ -122,7 +122,7 @@ reg ras_push_last_valid; // 最近一次压栈操作是否有效
 reg [`XLEN-1:0] ras_push_last_pc; // 压栈指令的PC
 reg [RAS_PTR_WIDTH-1:0] ras_push_last_sp; // 压栈前的栈指针
 
-always @(posedge clk or posedge rst) begin
+always @(posedge clk) begin
     if (rst) begin
         ras_push_last_valid <= 0;
     end else begin
@@ -135,7 +135,7 @@ always @(posedge clk or posedge rst) begin
         
         // 当分支预测错误时恢复RAS
         if (flush_valid_i && ras_push_last_valid) begin
-            ras_sp <= ras_push_last_sp;
+            ras_sp = ras_push_last_sp;
             ras_push_last_valid <= 0;
             $display("[RAS] Recover sp=%0d due to flush", ras_push_last_sp);
         end
@@ -152,7 +152,7 @@ end
             bimodal_hits <= 0;
             t0_hits <= 0;
             t1_hits <= 0;
-            ras_sp <= 0;
+            ras_sp = 0;
             pred_ras_sp = 0;
             pred_used_ras = 0;
         end else begin
@@ -161,7 +161,7 @@ end
              if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
-                    ras_sp <= ras_sp + 1;              // 栈指针递增
+                    ras_sp = ras_sp + 1;              // 栈指针递增
                     $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
                 end
             end
@@ -179,7 +179,7 @@ end
                     if ((ex_inst_i[6:0] == 7'b1100111) && 
                         (ex_inst_i[19:15] == 5'b00001)) begin
                         if (ras_sp > 0) begin
-                            ras_sp <= ras_sp - 1; // 出栈
+                            ras_sp = ras_sp - 1; // 出栈
                             $display("[RAS] POP: sp=%0d,pop_addr=0x%h", ras_sp-1,ras[ras_sp-1]);
                         end
                     end
@@ -187,7 +187,7 @@ end
                 
                 // 预测错误时恢复RAS栈指针
                 if (!ex_pdt_true_i && pred_used_ras) begin
-                    ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
+                    ras_sp = pred_ras_sp; // 恢复预测前的栈指针
                     $display("[RAS] Restore sp=%0d", pred_ras_sp);
                 end
                 
