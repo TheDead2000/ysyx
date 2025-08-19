@@ -428,7 +428,7 @@ module bpu #(
             end
             
             // BTB更新逻辑
-            if (ex_branch_taken_i && (ex_is_branch || ex_is_jal || ex_is_jalr)) begin
+            if (ex_branch_taken_i && (ex_is_branch || ex_is_jal || ex_is_jalr) && !ex_stall_valid_i ) begin
                 btb_tag[btb_index_u] <= btb_tag_u;
                 btb_target[btb_index_u] <= ex_target_i;
                 btb_valid[btb_index_u] <= 1'b1;

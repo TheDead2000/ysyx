@@ -591,10 +591,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index_u;
                 }
             }
-            if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
-                             & (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_branch) 
-                                 | (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_jal)) 
-                                | (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_jalr))))) {
+            if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                              & (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_branch) 
+                                  | (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_jal)) 
+                                 | (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_jalr))) 
+                             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                   >> 2U))))) {
                 __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__btb_tag__v0 
                     = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag_u;
                 __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__btb_tag__v0 = 1U;
