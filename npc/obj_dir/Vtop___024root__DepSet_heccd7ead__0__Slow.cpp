@@ -1221,9 +1221,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
          | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
             | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
-        if (VL_UNLIKELY((IData)((0x8067U == (0xffff8fffU 
-                                             & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
-            if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
+        if ((IData)((0x8067U == (0xffff8fffU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
+            vlSelf->top__DOT__pdt_res = 1U;
+            if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                     [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
@@ -1231,9 +1231,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                               - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
+            } else {
+                VL_WRITEF("\351\203\275\346\234\252\345\221\275\344\270\255\n\n");
+                vlSelf->top__DOT__pdt_res = 0U;
             }
-            vlSelf->top__DOT__pdt_res = 0U;
-            VL_WRITEF("\351\203\275\346\234\252\345\221\275\344\270\255\n\n");
         } else if ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
             vlSelf->top__DOT__pdt_res = 1U;
             vlSelf->top__DOT__bpu_pc_o = ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)
