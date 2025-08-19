@@ -152,6 +152,10 @@ always @(posedge clk or posedge rst) begin
 end
 
     // 全局历史和提供者寄存器的更新
+    reg [RAS_PTR_WIDTH-1:0] next_sp;
+    reg pop_occurred;
+    reg [RAS_PTR_WIDTH-1:0] pop_index;
+
     always @(posedge clk or posedge rst) begin
         if (rst == 1) begin
             global_history <= {GLOBAL_HIST_WIDTH{1'b0}};
@@ -180,28 +184,46 @@ end
             global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
             // 记录上一次预测的提供者
             provider_history_reg <= provider_history_comb;
-            
+
+                next_sp = ras_sp; // 使用临时变量，初始化为当前栈指针
+                pop_occurred = 0;
+                pop_index = 0;
+
             // 处理RAS出栈（RET指令实际执行时）
-            if (ex_branch_taken_i && !ex_stall_valid_i) begin
-                // 识别RET指令: JALR且rs1=x1
-                if ((ex_inst_i[6:0] == 7'b1100111) && 
-                    ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
-                    if (ras_sp > 0) begin
-                        $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", ras_sp-1, ras[ras_sp-1]);
-                        ras_sp <= ras_sp - 1; // 出栈
-                    end
+           if (ex_branch_taken_i && !ex_stall_valid_i) begin
+            // 识别RET指令: JALR且rs1=x1或x5
+            if ((ex_inst_i[6:0] == 7'b1100111) && 
+                ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
+                if (next_sp > 0) begin
+                    pop_index = next_sp - 1; // pop前的栈顶索引
+                    $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
+                    next_sp = next_sp - 1; // 执行pop，栈指针减1
+                    pop_occurred = 1;
                 end
             end
+        end
             
-            // 预测错误时恢复RAS栈指针
-            if (!ex_pdt_true_i && pred_used_ras) begin
-                $display("[RAS] error!!!!!!!!!!!!!!!\n");
-                $display("[RAS] Restore sp=%0d", pred_ras_sp);
-                ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
-                $display("[RAS] Restore sp=%0d", pred_ras_sp);
+  // ID阶段压栈处理 - PUSH操作（解码时）
+        if (id_ras_push_valid_i && !ex_stall_valid_i) begin
+            if (next_sp < RAS_DEPTH) begin
+                ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
+                $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);
+                next_sp = next_sp + 1; // 执行push，栈指针加1
             end
-            
-            // 更新性能计数器
+        end
+
+        // 更新栈指针
+        ras_sp <= next_sp;
+
+        // 预测错误时恢复RAS栈指针
+        if (ex_branch_valid_i && !ex_pdt_true_i && pred_used_ras) begin
+            ras_sp <= pred_ras_sp;
+            $display("[RAS] error!!!!!!!!!!!!!!!");
+            $display("[RAS] Restore sp=%0d", pred_ras_sp);
+        end
+
+        // 其他性能计数器更新逻辑保持不变
+        if (ex_branch_valid_i) begin
             total_branches <= total_branches + 1;
             if (ex_pdt_true_i) begin
                 correct_predictions <= correct_predictions + 1;
@@ -212,18 +234,9 @@ end
                 endcase
             end
         end
-        
-        // RAS压栈操作（ID阶段检测到的CALL指令）- 后处理PUSH操作
-        if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
-            if (ras_sp < RAS_DEPTH) begin
-                ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
-                ras_sp <= ras_sp + 1;              // 栈指针递增
-                $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", ras_sp+1, id_ras_push_data_i);
-            end
-        end
+    end
         end
     end
-
     // ================== BTB索引和标签计算 ==================
     wire [7:0] btb_index = if_pc[9:2]; // 256项BTB，使用PC[9:2]作为索引
     wire [BTB_TAG_WIDTH-1:0] btb_tag_val = if_pc[31:32-BTB_TAG_WIDTH]; // 高位作为标签

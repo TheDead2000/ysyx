@@ -3281,22 +3281,30 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
                 = ((0xfffeU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
                                << 1U)) | (IData)(vlSelf->top__DOT__exu__DOT__jump_taken));
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
-                = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);
-            if (vlSelf->top__DOT__pdt_correct) {
-                __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
-                    = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions);
-                if ((0U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                    __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
-                        = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits);
-                } else if ((1U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits 
-                        = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits);
-                } else if ((2U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
-                        = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits);
+            if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
+                __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
+                    = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);
+                if (vlSelf->top__DOT__pdt_correct) {
+                    __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
+                        = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions);
+                    if ((0U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
+                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
+                            = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits);
+                    } else if ((1U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
+                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits 
+                            = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits);
+                    } else if ((2U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
+                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
+                            = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits);
+                    }
                 }
             }
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_reg 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 0U;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index = 0U;
             if (((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                  & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                        >> 2U)))) {
@@ -3305,44 +3313,46 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                                          >> 0xfU))) 
                         | (5U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
                                            >> 0xfU)))))) {
-                    if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
+                    if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)))) {
+                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
+                            = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
+                                        - (IData)(1U)));
                         VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr=0x%x\n",
-                                  32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                      - (IData)(1U)),
+                                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                                  [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                             - (IData)(1U)))]);
-                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
-                            = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                  [vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index]);
+                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 1U;
+                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
+                            = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
                                         - (IData)(1U)));
                     }
                 }
             }
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_reg 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb;
-            if (VL_UNLIKELY(((~ (IData)(vlSelf->top__DOT__pdt_correct)) 
+            if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__id_ras_push_valid) 
+                             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                   >> 2U))))) {
+                __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
+                    = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
+                __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 1U;
+                __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
+                    = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
+                VL_WRITEF("[RAS] PUSH: NOW sp=%0#, addr=0x%x\n",
+                          32,((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)),
+                          32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
+                    = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
+            }
+            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
+            if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+                              & (~ (IData)(vlSelf->top__DOT__pdt_correct))) 
                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras)))) {
-                VL_WRITEF("[RAS] error!!!!!!!!!!!!!!!\n\n[RAS] Restore sp=%0#\n",
-                          5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp);
+                VL_WRITEF("[RAS] error!!!!!!!!!!!!!!!\n");
                 __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                     = vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
                 VL_WRITEF("[RAS] Restore sp=%0#\n",
                           5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp);
             }
-        }
-        if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__id_ras_push_valid) 
-                         & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                               >> 2U))))) {
-            __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
-                = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
-            __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 1U;
-            __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
-                = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)));
-            VL_WRITEF("[RAS] PUSH: NOW sp=%0#, addr=0x%x\n",
-                      32,((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)),
-                      32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         }
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches 
