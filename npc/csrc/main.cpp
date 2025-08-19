@@ -72,7 +72,6 @@ int main(int argc, char* argv[]) {
   mysim_p->excute(1);
   mysim_p->showSimPerformance();
   bool hitgood = mysim_p->npcHitGood();
-
   delete mysim_p;
   c.executeCommand("exit");
   return hitgood;
