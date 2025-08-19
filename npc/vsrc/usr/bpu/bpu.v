@@ -160,7 +160,7 @@ end
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
                     ras_sp <= ras_sp + 1;              // 栈指针递增
-                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp-1, id_ras_push_data_i);
+                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
                 end
             end
             
@@ -178,7 +178,7 @@ end
                         ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
                         if (ras_sp > 0) begin
                             ras_sp <= ras_sp - 1; // 出栈
-                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp]);
+                            $display("[RAS] POP: before sp=%0d,pop_addr=0x%h", ras_sp,ras[ras_sp]);
                         end
                     end
                 end
