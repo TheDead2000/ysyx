@@ -16,13 +16,18 @@ module bpu (
     input wire [`HISLEN-1:0] ex_history_i,    // 扩展历史位宽
     input wire [`XLEN-1:0] ex_target_i,      // 实际目标地址
     input wire [`XLEN-1:0] ex_inst_i,        // EX阶段指令
-    
+    input wire id_ras_push_valid_i, // ID阶段检测到CALL指令
+    input wire [`XLEN-1:0] id_ras_push_data_i, // ID阶段计算
     // 输出
     output reg branch_or_not, 
     output reg [`XLEN-1:0] pdt_pc,
     output reg pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
+
+    // ================== RAS参数 ==================
+    localparam RAS_DEPTH = 8;          // RAS深度
+    localparam RAS_PTR_WIDTH = 3;       // 栈指针位宽
 
     // ================== TAGE预测器参数 ==================
     localparam GLOBAL_HIST_WIDTH = 16; // 全局历史寄存器位宽
@@ -56,9 +61,15 @@ module bpu (
     reg [`XLEN-1:0]         btb_target [0:BTB_ENTRIES-1]; // 目标地址
     reg                     btb_valid [0:BTB_ENTRIES-1]; // 有效位
     
+    // ================== RAS状态 ==================
+    reg [`XLEN-1:0]         ras [0:RAS_DEPTH-1]; // 返回地址栈
+    reg [RAS_PTR_WIDTH-1:0] ras_sp;              // 栈指针（指向下一个空位）
+    reg [RAS_PTR_WIDTH-1:0] pred_ras_sp;         // 预测时栈指针（用于恢复）
+    reg                     pred_used_ras;        // 标记预测时使用了RAS
+    
     // 提供者组件记录（用于更新）
     reg [1:0] provider_history_reg;  // 记录预测时使用的历史长度（时序逻辑）
-    wire [1:0] provider_history_comb; // 当前预测的提供者（组合逻辑）
+    reg [1:0] provider_history_comb; // 当前预测的提供者（组合逻辑）
     
     // ================== 性能计数器 ==================
     reg [31:0] total_branches = 0;
@@ -93,6 +104,14 @@ module bpu (
             btb_target[i] = {`XLEN{1'b0}};
             btb_valid[i] = 1'b0;
         end
+        
+        // 初始化RAS
+        ras_sp = 0;
+        pred_ras_sp = 0;
+        pred_used_ras = 0;
+        for (i = 0; i < RAS_DEPTH; i = i + 1) begin
+            ras[i] = 0;
+        end
     end
 /* verilator lint_off CASEINCOMPLETE */
     // 全局历史和提供者寄存器的更新
@@ -105,21 +124,55 @@ module bpu (
             bimodal_hits <= 0;
             t0_hits <= 0;
             t1_hits <= 0;
-        end else if (ex_branch_valid_i) begin
-            // 更新全局历史寄存器
-            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
-            // 记录上一次预测的提供者
-            provider_history_reg <= provider_history_comb;
+            ras_sp <= 0;
+            pred_ras_sp = 0;
+            pred_used_ras = 0;
+        end else begin
+            // RAS压栈操作（ID阶段检测到的CALL指令）
+            /* verilator lint_off WIDTHEXPAND */           
+             if (id_ras_push_valid_i) begin
+                if (ras_sp < RAS_DEPTH) begin
+                    ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
+                    ras_sp <= ras_sp + 1;              // 栈指针递增
+                    // $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
+                end
+            end
             
-            // 更新性能计数器
-            total_branches <= total_branches + 1;
-            if (ex_pdt_true_i) begin
-                correct_predictions <= correct_predictions + 1;
-                case (provider_history_comb)
-                    2'b00: bimodal_hits <= bimodal_hits + 1;
-                    2'b01: t0_hits <= t0_hits + 1;
-                    2'b10: t1_hits <= t1_hits + 1;
-                endcase
+            // EX阶段反馈更新
+            if (ex_branch_valid_i) begin
+                // 更新全局历史寄存器
+                global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
+                // 记录上一次预测的提供者
+                provider_history_reg <= provider_history_comb;
+                
+                // 处理RAS出栈（RET指令实际执行时）
+                if (ex_branch_taken_i) begin
+                    // 识别RET指令: JALR且rs1=x1
+                    if ((ex_inst_i[6:0] == 7'b1100111) && 
+                        (ex_inst_i[19:15] == 5'b00001)) begin
+                        if (ras_sp > 0) begin
+                            ras_sp <= ras_sp - 1; // 出栈
+                            // $display("[RAS] POP: sp=%0d", ras_sp-1);
+                        end
+                    end
+                end
+                
+                // 预测错误时恢复RAS栈指针
+                if (!ex_pdt_true_i && pred_used_ras) begin
+                    ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
+                    // $display("[RAS] Restore sp=%0d", pred_ras_sp);
+                end
+                
+                // 更新性能计数器
+                total_branches <= total_branches + 1;
+                if (ex_pdt_true_i) begin
+                    correct_predictions <= correct_predictions + 1;
+                    case (provider_history_comb)
+                        2'b00: bimodal_hits <= bimodal_hits + 1;
+                        2'b01: t0_hits <= t0_hits + 1;
+                        2'b10: t1_hits <= t1_hits + 1;
+                    endcase
+                end
             end
         end
     end
@@ -133,30 +186,13 @@ module bpu (
     wire [`XLEN-1:0] btb_target_val = btb_target[btb_index];
 
     // ================== 预测逻辑 (组合逻辑) ==================
-    // 简化计算：直接使用PC和历史的组合
-    wire [7:0] t0_index = if_pc[7:0] ^ global_history[7:0];
-    wire [7:0] t1_index = if_pc[7:0] ^ global_history[15:8];
-    
-    // 标签计算（10位）
-    wire [TAG_WIDTH-1:0] t0_tag_val = if_pc[17:8] ^ global_history[15:6];
-    wire [TAG_WIDTH-1:0] t1_tag_val = if_pc[17:8] ^ {{(TAG_WIDTH-8){1'b0}}, global_history[7:0]};
-    
-    // 部分标签匹配（提高匹配率）
-    wire t0_match = (t0_tag[t0_index][TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS] == 
-                    t0_tag_val[TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS]);
-    wire t1_match = (t1_tag[t1_index][TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS] == 
-                    t1_tag_val[TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS]);
-    
-    // 基础预测器索引
-    wire [8:0] bm_index = if_pc[9:1];
-    
-    // 当前预测的提供者（组合逻辑）
-    assign provider_history_comb = (t1_match) ? 2'b10 : 
-                                  (t0_match) ? 2'b01 : 2'b00;
-
+    // 指令类型解码
     wire is_branch = (if_inst[6:0] == 7'b1100011);
     wire is_jal    = (if_inst[6:0] == 7'b1101111);
-
+    wire is_jalr   = (if_inst[6:0] == 7'b1100111);
+    // RET指令识别: JALR且rs1=x1
+    wire is_ret    = is_jalr && (if_inst[19:15] == 5'b00001);
+    
     // 分支偏移计算（当BTB未命中时使用）
     wire [31:0] branch_offset = {
         {20{if_inst[31]}},  // 符号扩展
@@ -165,46 +201,84 @@ module bpu (
         if_inst[11:8],
         1'b0
     };
-    
+
+                wire [7:0] t0_index = if_pc[7:0] ^ global_history[7:0];
+                wire [7:0] t1_index = if_pc[7:0] ^ global_history[15:8];
+                
+                // 标签计算（10位）
+                wire [TAG_WIDTH-1:0] t0_tag_val = if_pc[17:8] ^ global_history[15:6];
+                wire [TAG_WIDTH-1:0] t1_tag_val = if_pc[17:8] ^ {{(TAG_WIDTH-8){1'b0}}, global_history[7:0]};
+                
+                // 部分标签匹配（提高匹配率）
+                wire t0_match = (t0_tag[t0_index][TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS] == 
+                                t0_tag_val[TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS]);
+                wire t1_match = (t1_tag[t1_index][TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS] == 
+                                t1_tag_val[TAG_WIDTH-1:TAG_WIDTH-PARTIAL_TAG_BITS]);
+                
+                // 基础预测器索引
+                wire [8:0] bm_index = if_pc[9:1];
+    /* verilator lint_off LATCH */
     always @(*) begin
         // 默认值
         branch_or_not = 1'b0;
         pdt_pc = if_pc + 4;
         pdt_res = 1'b0;
+        pred_used_ras = 0; // 默认未使用RAS
         
-        if (is_branch || is_jal) begin // Branch instruction
+        if (is_branch || is_jal || is_jalr) begin // 分支指令
             branch_or_not = 1'b1;
             
-            // TAGE优先级: T1 > T0 > Bimodal
-            
-            if (is_jal) begin
+            // 处理RET指令（优先使用RAS）
+            if (is_ret) begin
+                pdt_res = 1'b1; // RET总是跳转
+                
+                if (ras_sp > 0) begin
+                    // 使用RAS栈顶地址
+                    pdt_pc = ras[ras_sp-1];
+                    pred_used_ras = 1; // 标记使用了RAS
+                    // $display("[RAS] PREDICT: sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
+                end
+                else if (btb_hit) begin
+                    // RAS为空时使用BTB
+                    pdt_pc = btb_target_val;
+                end
+                // 否则使用默认PC+4（实际不会发生）
+            end
+            // 处理JAL指令
+            else if (is_jal) begin
                 pdt_res = 1'b1;
-            end else begin
+                if (btb_hit) begin
+                    pdt_pc = btb_target_val;
+                end else begin
+                    pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
+                end
+            end
+            // 处理分支指令
+            else begin
+
+                // 当前预测的提供者（组合逻辑）
+                assign provider_history_comb = (t1_match) ? 2'b10 : 
+                                              (t0_match) ? 2'b01 : 2'b00;
+                
+                // TAGE优先级: T1 > T0 > Bimodal
                 if (t1_match)       pdt_res = t1_counter[t1_index][1];
                 else if (t0_match)  pdt_res = t0_counter[t0_index][1];
                 else                pdt_res = bimodal_table[bm_index][1];
-            end
-            
-            // 计算目标地址（优先使用BTB）
-            if (pdt_res) begin
-                if (btb_hit) begin
-                    pdt_pc = btb_target_val;
-                    // $display("[BPU-PREDICT] BTB hit: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
-                end
-                else 
-                begin
-                    if (is_jal) begin
-                        pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
-                        // $display("[BPU-PREDICT] JAL prediction: if_pc=0x%h, target=0x%h", 
-                        //          if_pc, pdt_pc);
+                
+                // 计算目标地址（优先使用BTB）
+                if (pdt_res) begin
+                    if (btb_hit) begin
+                        pdt_pc = btb_target_val;
                     end
                     else if (is_branch) begin
                         pdt_pc = if_pc + branch_offset;
-                        // $display("[BPU-PREDICT] Branch prediction: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
                     end
                 end
             end
         end
+        
+        // 记录预测时RAS栈指针
+        pred_ras_sp = ras_sp;
     end
 
     // ================== 更新逻辑 (时序逻辑) ==================
@@ -311,33 +385,11 @@ module bpu (
     // ================== 调试输出 ==================
     always @(posedge clk) begin
         if (ex_branch_valid_i) begin
-            // 每100个分支输出一次统计信息
-            // if (total_branches % 100 == 0 && total_branches > 0) begin
-            //     $display("[BPU STAT] Branches: %0d, Accuracy: %0d%%", 
-            //              total_branches, accuracy);
-            //     $display("          Bimodal: %0d%% (%0d hits), T0: %0d%% (%0d hits), T1: %0d%% (%0d hits)",
-            //              bimodal_ratio, bimodal_hits, 
-            //              t0_ratio, t0_hits, 
-            //              t1_ratio, t1_hits);
-            //     $display("          BTB Hit Rate: %0d%% (%0d hits/%0d accesses)", 
-            //              btb_hit_rate, btb_hits, btb_hits + btb_misses);
-            // end
-            
             // 更新BTB命中率统计
             if (branch_or_not && pdt_res) begin
                 if (btb_hit) btb_hits <= btb_hits + 1;
                 else btb_misses <= btb_misses + 1;
             end
-            
-            // 每次预测错误输出详细信息
-            // if (!ex_pdt_true_i) begin
-            //     $display("[BPU ERROR] PC=%h, Pred=%b, Actual=%b, Provider=%s",
-            //              ex_pc_i, 
-            //              ex_pdt_true_i ? ex_branch_taken_i : !ex_branch_taken_i,
-            //              ex_branch_taken_i,
-            //              (provider_history_reg == 2'b10) ? "T1" : 
-            //              (provider_history_reg == 2'b01) ? "T0" : "Bimodal");
-            // end
         end
     end
 
