@@ -15,7 +15,7 @@ module bpu #(
     input wire clk,
     input wire rst,
     input wire if_stall_i,           // IF阶段暂停信号
-    input wire if_flush_i,              // IF阶段冲刷信号（新增）
+    input wire flush_i,              // IF阶段冲刷信号
     
     // IF阶段输入
     input wire [`XLEN-1:0] if_pc,
@@ -118,7 +118,6 @@ module bpu #(
     end
 
     // ================== RAS管理 ==================
-    /* verilator lint_off WIDTHTRUNC */
     always @(posedge clk) begin
         if (rst) begin
             ras_top_ex <= 0;
@@ -128,10 +127,9 @@ module bpu #(
             $display("[BPU][RAS] Reset complete");
         end 
         // 冲刷信号优先级最高
-        else if (if_flush_i) begin
-            // 冲刷恢复：清除未来栈，恢复RAS状态
+        else if (flush_i) begin
+            // 冲刷恢复：恢复RAS状态
             ras_top_ex <= ras_top_backup;
-            ras_top_if <= ras_top_backup;
             for (int i=0; i<RAS_DEPTH; i++)
                 ras[i] <= ras_backup[i];
             future_ras_valid <= 0;
@@ -141,7 +139,6 @@ module bpu #(
         else if (ex_stall_valid_i) begin
             // 暂停恢复
             ras_top_ex <= ras_top_backup;
-            ras_top_if <= ras_top_backup;
             for (int i=0; i<RAS_DEPTH; i++)
                 ras[i] <= ras_backup[i];
             future_ras_valid <= 0;
@@ -154,6 +151,7 @@ module bpu #(
                 ras_backup[i] <= ras[i];
             
             // EX阶段更新
+            /* verilator lint_off WIDTHTRUNC */
             if (ex_branch_valid_i) begin
                 if (ex_is_call) begin
                     if (ras_top_ex < RAS_DEPTH) begin
@@ -179,7 +177,7 @@ module bpu #(
                 end
             end
             
-            // IF阶段同步
+            // IF阶段同步（只在非暂停时）
             ras_top_if <= ras_top_ex;
             $display("[BPU][RAS] Sync: EX_top=%0d -> IF_top=%0d", ras_top_ex, ras_top_if);
             
@@ -194,6 +192,10 @@ module bpu #(
                 future_ras_valid <= 0;
             end
         end
+        // 处理暂停：不进行任何操作
+        else begin
+            $display("[BPU][RAS] Stall detected, no state change");
+        end
     end
 
     // ================== 全局历史记录管理 ==================
@@ -202,12 +204,13 @@ module bpu #(
             global_history <= 0;
             $display("[BPU] Global history reset");
         end
-        else if (if_flush_i) begin
+        else if (flush_i) begin
             // 冲刷时恢复历史记录
             global_history <= ex_history_i;
             $display("[BPU] Flush: global_history <= %h", ex_history_i);
         end
-        else if (ex_branch_valid_i && !ex_stall_valid_i) begin
+        // 在非暂停且EX阶段分支有效时更新历史记录
+        else if (!if_stall_i && ex_branch_valid_i && !ex_stall_valid_i) begin
             // 更新全局历史
             global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
             $display("[BPU] Global history updated: %b", 
@@ -217,13 +220,13 @@ module bpu #(
 
     // ================== 分支预测 ==================
     // BTB索引计算
-    /* verilator lint_off WIDTHEXPAND */
     wire [7:0] btb_index = if_pc[9:2];
     wire [BTB_TAG_WIDTH-1:0] btb_tag_val = if_pc[31:32-BTB_TAG_WIDTH];
     wire btb_hit = btb_valid[btb_index] && (btb_tag[btb_index] == btb_tag_val);
     wire [`XLEN-1:0] btb_target_val = btb_target[btb_index];
 
     // TAGE预测计算
+    /* verilator lint_off WIDTHEXPAND */
     wire [7:0] t0_index = if_pc[7:0] ^ global_history[7:0];
     wire [7:0] t1_index = if_pc[7:0] ^ global_history[15:8];
     wire [TAG_WIDTH-1:0] t0_tag_val = if_pc[17:8] ^ global_history[15:6];
@@ -255,7 +258,7 @@ module bpu #(
         1'b0
     };
 
-    // RET预测
+    // RET预测：使用EX阶段的栈顶
     reg [`XLEN-1:0] ras_target;
     reg use_future_ras;
     always @(*) begin
@@ -263,10 +266,11 @@ module bpu #(
         use_future_ras = 0;
         
         if (if_is_ret) begin
-            if (ras_top_if > 0) begin
-                ras_target = ras[ras_top_if-1];
-                $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h", 
-                         ras_top_if-1, ras_target);
+            // 使用EX阶段的栈顶（ras_top_ex）进行预测
+            if (ras_top_ex > 0) begin
+                ras_target = ras[ras_top_ex-1];
+                $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h (EX_top=%0d)", 
+                         ras_top_ex-1, ras_target, ras_top_ex);
             end 
             else if (future_ras_valid) begin
                 ras_target = future_ras_entry;
@@ -290,10 +294,16 @@ module bpu #(
         pdt_res = 0;
         
         // 冲刷时重置预测
-        if (if_flush_i) begin
+        if (flush_i) begin
             branch_or_not = 0;
             pdt_res = 0;
             $display("[BPU][PRED] Flush detected, resetting prediction");
+        end
+        // 暂停时不进行预测，保持输出不变
+        else if (if_stall_i) begin
+            branch_or_not = branch_or_not;
+            pdt_res = pdt_res;
+            $display("[BPU][PRED] Stall detected, prediction unchanged");
         end
         else if (if_is_branch || if_is_jal || if_is_jalr) begin
             branch_or_not = 1;
@@ -301,13 +311,13 @@ module bpu #(
             if (if_is_ret) begin
                 pdt_res = 1;
                 pdt_pc = ras_target;
-                $display("[BPU][PRED] RET predicted to %h", ras_target);
+                $display("[BPU][PRED] RET predicted to %h", pdt_pc);
             end 
             else if (if_is_jalr) begin
                 pdt_res = btb_hit;
                 if (btb_hit) begin
                     pdt_pc = btb_target_val;
-                    $display("[BPU][PRED] JALR predicted via BTB to %h", btb_target_val);
+                    $display("[BPU][PRED] JALR predicted via BTB to %h", pdt_pc);
                 end else begin
                     $display("[BPU][PRED] JALR no BTB entry @%h", if_pc);
                 end
@@ -334,13 +344,19 @@ module bpu #(
                 if (pdt_res) begin
                     if (btb_hit) begin
                         pdt_pc = btb_target_val;
-                        $display("[BPU][PRED] Branch taken via BTB to %h", btb_target_val);
+                        $display("[BPU][PRED] Branch taken via BTB to %h", pdt_pc);
                     end else begin
                         pdt_pc = if_pc + branch_offset;
                         $display("[BPU][PRED] Branch taken to %h (offset)", pdt_pc);
                     end
                 end
             end
+        end
+        else begin
+            // 非分支指令，默认不跳转
+            branch_or_not = 0;
+            pdt_res = 0;
+            $display("[BPU][PRED] Non-branch instruction, predict not taken");
         end
     end
 
@@ -351,14 +367,16 @@ module bpu #(
     always @(posedge clk) begin
         if (rst) begin
             provider_history_reg <= 0;
+            btb_hits <= 0;
+            btb_misses <= 0;
             $display("[BPU] Reset complete");
         end
-        else if (if_flush_i) begin
+        else if (flush_i) begin
             // 冲刷时不更新预测器
             $display("[BPU] Flush: skip update");
         end
-        else if (ex_branch_valid_i && !ex_stall_valid_i) begin
-            // 更新全局历史在单独的逻辑中，这里只更新预测器
+        // 在非暂停且EX阶段分支有效时更新预测器
+        else if (!if_stall_i && ex_branch_valid_i && !ex_stall_valid_i) begin
             provider_history_reg <= provider_history_comb;
             
             // TAGE更新

@@ -69,97 +69,106 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__bpu_pc_valid_o = 0U;
         vlSelf->top__DOT__pdt_res = 0U;
         VL_WRITEF("[BPU][PRED] Flush detected, resetting prediction\n");
-    } else if (((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                   | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
-        if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret)) {
-            VL_WRITEF("[BPU][PRED] RET predicted to %x\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
-            vlSelf->top__DOT__pdt_res = 1U;
-            vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
-        } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-            vlSelf->top__DOT__pdt_res = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit;
-            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
-                VL_WRITEF("[BPU][PRED] JALR predicted via BTB to %x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-            } else {
-                VL_WRITEF("[BPU][PRED] JALR no BTB entry @%x\n",
-                          32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
-            }
-        } else if (VL_UNLIKELY((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
-            vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                          + (((- (IData)(
-                                                         (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                          >> 0x1fU))) 
-                                              << 0x14U) 
-                                             | ((0xff000U 
-                                                 & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
-                                                | ((0x800U 
-                                                    & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                       >> 9U)) 
-                                                   | (0x7feU 
-                                                      & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                         >> 0x14U))))));
-            vlSelf->top__DOT__pdt_res = 1U;
-            VL_WRITEF("[BPU][PRED] JAL predicted to %x\n",
-                      32,vlSelf->top__DOT__bpu_pc_o);
-        } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match)) {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
-                                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] T1 prediction[%0#]: %b\n",
-                          8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index,
-                          1,(IData)(vlSelf->top__DOT__pdt_res));
-            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
-                                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] T0 prediction[%0#]: %b\n",
-                          8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index,
-                          1,(IData)(vlSelf->top__DOT__pdt_res));
-            } else {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
-                                                   [
-                                                   (0x1ffU 
-                                                    & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                                       >> 1U))] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] Bimodal prediction[%0#]: %b\n",
-                          9,(0x1ffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                       >> 1U)),1,(IData)(vlSelf->top__DOT__pdt_res));
-            }
-            if (vlSelf->top__DOT__pdt_res) {
+    } else if (VL_LIKELY(vlSelf->top__DOT__if_rdata_valid)) {
+        if (VL_LIKELY(((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                       | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                          | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))))) {
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
+                vlSelf->top__DOT__pdt_res = 1U;
+                VL_WRITEF("[BPU][PRED] RET predicted to %x\n",
+                          32,vlSelf->top__DOT__bpu_pc_o);
+            } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
-                    VL_WRITEF("[BPU][PRED] Branch taken via BTB to %x\n",
-                              32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-                } else {
-                    vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                                  + 
-                                                  (((- (IData)(
-                                                               (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                                >> 0x1fU))) 
-                                                    << 0xcU) 
-                                                   | ((0x800U 
-                                                       & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                          << 4U)) 
-                                                      | ((0x7e0U 
-                                                          & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                             >> 0x14U)) 
-                                                         | (0x1eU 
-                                                            & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                               >> 7U))))));
-                    VL_WRITEF("[BPU][PRED] Branch taken to %x (offset)\n",
+                    VL_WRITEF("[BPU][PRED] JALR predicted via BTB to %x\n",
                               32,vlSelf->top__DOT__bpu_pc_o);
+                } else {
+                    VL_WRITEF("[BPU][PRED] JALR no BTB entry @%x\n",
+                              32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
+                }
+                vlSelf->top__DOT__pdt_res = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit;
+            } else if (VL_UNLIKELY((0x6fU == (0x7fU 
+                                              & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
+                vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                              + (((- (IData)(
+                                                             (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                              >> 0x1fU))) 
+                                                  << 0x14U) 
+                                                 | ((0xff000U 
+                                                     & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
+                                                    | ((0x800U 
+                                                        & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                           >> 9U)) 
+                                                       | (0x7feU 
+                                                          & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                             >> 0x14U))))));
+                vlSelf->top__DOT__pdt_res = 1U;
+                VL_WRITEF("[BPU][PRED] JAL predicted to %x\n",
+                          32,vlSelf->top__DOT__bpu_pc_o);
+            } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+                if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match)) {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
+                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] T1 prediction[%0#]: %b\n",
+                              8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index,
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
+                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] T0 prediction[%0#]: %b\n",
+                              8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index,
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                } else {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
+                                                    [
+                                                    (0x1ffU 
+                                                     & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                                        >> 1U))] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] Bimodal prediction[%0#]: %b\n",
+                              9,(0x1ffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                           >> 1U)),
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                }
+                if (vlSelf->top__DOT__pdt_res) {
+                    if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                        vlSelf->top__DOT__bpu_pc_o 
+                            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
+                        VL_WRITEF("[BPU][PRED] Branch taken via BTB to %x\n",
+                                  32,vlSelf->top__DOT__bpu_pc_o);
+                    } else {
+                        vlSelf->top__DOT__bpu_pc_o 
+                            = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                               + (((- (IData)((vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                               >> 0x1fU))) 
+                                   << 0xcU) | ((0x800U 
+                                                & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                   << 4U)) 
+                                               | ((0x7e0U 
+                                                   & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                      >> 0x14U)) 
+                                                  | (0x1eU 
+                                                     & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                        >> 7U))))));
+                        VL_WRITEF("[BPU][PRED] Branch taken to %x (offset)\n",
+                                  32,vlSelf->top__DOT__bpu_pc_o);
+                    }
                 }
             }
+            vlSelf->top__DOT__bpu_pc_valid_o = 1U;
+        } else {
+            VL_WRITEF("[BPU][PRED] Non-branch instruction, predict not taken\n");
+            vlSelf->top__DOT__bpu_pc_valid_o = 0U;
+            vlSelf->top__DOT__pdt_res = 0U;
         }
-        vlSelf->top__DOT__bpu_pc_valid_o = 1U;
+    } else {
+        VL_WRITEF("[BPU][PRED] Stall detected, prediction unchanged\n");
     }
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
                                                    (1U 
@@ -656,11 +665,11 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__btb_tag__v0 = 0U;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__future_ras_committed 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_committed;
-    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
-    __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras_backup__v0 = 0U;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_if 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if;
+    __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras_backup__v0 = 0U;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
+        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0U;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v1 = 0U;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v32 = 0U;
@@ -707,7 +716,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                   16,vlSelf->top__DOT__id2ex__DOT___bpu_history_id_ex_q);
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
             = vlSelf->top__DOT__id2ex__DOT___bpu_history_id_ex_q;
-    } else if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+    } else if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__if_rdata_valid) 
+                             & (IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst)) 
                             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                                   >> 2U))))) {
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
@@ -743,9 +753,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     if (VL_UNLIKELY(vlSelf->rst)) {
         VL_WRITEF("[BPU] Reset complete\n");
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__provider_history_reg = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__btb_hits = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__btb_misses = 0U;
     } else if (VL_UNLIKELY((2U & (IData)(vlSelf->top__DOT__flush_clint)))) {
         VL_WRITEF("[BPU] Flush: skip update\n");
-    } else if (((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+    } else if ((((IData)(vlSelf->top__DOT__if_rdata_valid) 
+                 & (IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst)) 
                 & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                       >> 2U)))) {
         if (((((0x6fU == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
@@ -1630,8 +1643,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk1__DOT__i = 0x20U;
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup;
-        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_if 
-            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup;
         __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup
             [0U];
@@ -1738,8 +1749,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk2__DOT__i = 0x20U;
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup;
-        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_if 
-            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup;
         __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v32 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup
             [0U];
@@ -1839,7 +1848,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v63 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup
             [0x1fU];
-    } else if (VL_UNLIKELY(vlSelf->top__DOT__if_rdata_valid)) {
+    } else if (vlSelf->top__DOT__if_rdata_valid) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk3__DOT__i = 0x20U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
@@ -2004,6 +2013,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         } else if ((1U & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_committed)))) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid = 0U;
         }
+    } else {
+        VL_WRITEF("[BPU][RAS] Stall detected, no state change\n");
     }
     vlSelf->top__DOT__exu__DOT____Vlvbound_h62a375be__0 
         = (1U & vlSelf->top__DOT__id2ex__DOT___trap_bus_id_ex_q);
@@ -2315,8 +2326,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = ((IData)(vlSelf->io_master_rvalid) & (IData)(vlSelf->top__DOT__axi4_rw__DOT__r_ready));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_committed 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__future_ras_committed;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
-        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_if;
     if (__Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras_backup__v0) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup[0U] 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras_backup__v0;
@@ -2383,8 +2394,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup[0x1fU] 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras_backup__v31;
     }
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if 
-        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_if;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
     if (__Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras[0U] 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
@@ -4271,14 +4282,15 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target = 0U;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 0U;
     if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret) {
-        if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if)))) {
+        if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex)))) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if) 
+                [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex) 
                            - (IData)(1U)))];
-            VL_WRITEF("[BPU][PRED] RET prediction: using RAS entry[%0#] = %x\n",
-                      32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if) 
-                          - (IData)(1U)),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
+            VL_WRITEF("[BPU][PRED] RET prediction: using RAS entry[%0#] = %x (EX_top=%0#)\n",
+                      32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex) 
+                          - (IData)(1U)),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target,
+                      6,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex));
         } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid)) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_entry;
@@ -4557,97 +4569,106 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__bpu_pc_valid_o = 0U;
         vlSelf->top__DOT__pdt_res = 0U;
         VL_WRITEF("[BPU][PRED] Flush detected, resetting prediction\n");
-    } else if (((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                   | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
-        if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret)) {
-            VL_WRITEF("[BPU][PRED] RET predicted to %x\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
-            vlSelf->top__DOT__pdt_res = 1U;
-            vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
-        } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-            vlSelf->top__DOT__pdt_res = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit;
-            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
-                VL_WRITEF("[BPU][PRED] JALR predicted via BTB to %x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-            } else {
-                VL_WRITEF("[BPU][PRED] JALR no BTB entry @%x\n",
-                          32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
-            }
-        } else if (VL_UNLIKELY((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
-            vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                          + (((- (IData)(
-                                                         (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                          >> 0x1fU))) 
-                                              << 0x14U) 
-                                             | ((0xff000U 
-                                                 & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
-                                                | ((0x800U 
-                                                    & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                       >> 9U)) 
-                                                   | (0x7feU 
-                                                      & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                         >> 0x14U))))));
-            vlSelf->top__DOT__pdt_res = 1U;
-            VL_WRITEF("[BPU][PRED] JAL predicted to %x\n",
-                      32,vlSelf->top__DOT__bpu_pc_o);
-        } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match)) {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
-                                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] T1 prediction[%0#]: %b\n",
-                          8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index,
-                          1,(IData)(vlSelf->top__DOT__pdt_res));
-            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
-                                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] T0 prediction[%0#]: %b\n",
-                          8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index,
-                          1,(IData)(vlSelf->top__DOT__pdt_res));
-            } else {
-                vlSelf->top__DOT__pdt_res = (1U & (
-                                                   vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
-                                                   [
-                                                   (0x1ffU 
-                                                    & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                                       >> 1U))] 
-                                                   >> 1U));
-                VL_WRITEF("[BPU][PRED] Bimodal prediction[%0#]: %b\n",
-                          9,(0x1ffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                       >> 1U)),1,(IData)(vlSelf->top__DOT__pdt_res));
-            }
-            if (vlSelf->top__DOT__pdt_res) {
+    } else if (VL_LIKELY(vlSelf->top__DOT__if_rdata_valid)) {
+        if (VL_LIKELY(((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                       | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                          | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))))) {
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
+                vlSelf->top__DOT__pdt_res = 1U;
+                VL_WRITEF("[BPU][PRED] RET predicted to %x\n",
+                          32,vlSelf->top__DOT__bpu_pc_o);
+            } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
-                    VL_WRITEF("[BPU][PRED] Branch taken via BTB to %x\n",
-                              32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-                } else {
-                    vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                                  + 
-                                                  (((- (IData)(
-                                                               (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                                >> 0x1fU))) 
-                                                    << 0xcU) 
-                                                   | ((0x800U 
-                                                       & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                          << 4U)) 
-                                                      | ((0x7e0U 
-                                                          & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                             >> 0x14U)) 
-                                                         | (0x1eU 
-                                                            & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                               >> 7U))))));
-                    VL_WRITEF("[BPU][PRED] Branch taken to %x (offset)\n",
+                    VL_WRITEF("[BPU][PRED] JALR predicted via BTB to %x\n",
                               32,vlSelf->top__DOT__bpu_pc_o);
+                } else {
+                    VL_WRITEF("[BPU][PRED] JALR no BTB entry @%x\n",
+                              32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
+                }
+                vlSelf->top__DOT__pdt_res = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit;
+            } else if (VL_UNLIKELY((0x6fU == (0x7fU 
+                                              & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
+                vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                              + (((- (IData)(
+                                                             (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                              >> 0x1fU))) 
+                                                  << 0x14U) 
+                                                 | ((0xff000U 
+                                                     & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
+                                                    | ((0x800U 
+                                                        & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                           >> 9U)) 
+                                                       | (0x7feU 
+                                                          & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                             >> 0x14U))))));
+                vlSelf->top__DOT__pdt_res = 1U;
+                VL_WRITEF("[BPU][PRED] JAL predicted to %x\n",
+                          32,vlSelf->top__DOT__bpu_pc_o);
+            } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+                if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match)) {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
+                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] T1 prediction[%0#]: %b\n",
+                              8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index,
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
+                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] T0 prediction[%0#]: %b\n",
+                              8,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index,
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                } else {
+                    vlSelf->top__DOT__pdt_res = (1U 
+                                                 & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
+                                                    [
+                                                    (0x1ffU 
+                                                     & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                                        >> 1U))] 
+                                                    >> 1U));
+                    VL_WRITEF("[BPU][PRED] Bimodal prediction[%0#]: %b\n",
+                              9,(0x1ffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                           >> 1U)),
+                              1,(IData)(vlSelf->top__DOT__pdt_res));
+                }
+                if (vlSelf->top__DOT__pdt_res) {
+                    if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                        vlSelf->top__DOT__bpu_pc_o 
+                            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
+                        VL_WRITEF("[BPU][PRED] Branch taken via BTB to %x\n",
+                                  32,vlSelf->top__DOT__bpu_pc_o);
+                    } else {
+                        vlSelf->top__DOT__bpu_pc_o 
+                            = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                               + (((- (IData)((vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                               >> 0x1fU))) 
+                                   << 0xcU) | ((0x800U 
+                                                & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                   << 4U)) 
+                                               | ((0x7e0U 
+                                                   & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                      >> 0x14U)) 
+                                                  | (0x1eU 
+                                                     & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                        >> 7U))))));
+                        VL_WRITEF("[BPU][PRED] Branch taken to %x (offset)\n",
+                                  32,vlSelf->top__DOT__bpu_pc_o);
+                    }
                 }
             }
+            vlSelf->top__DOT__bpu_pc_valid_o = 1U;
+        } else {
+            VL_WRITEF("[BPU][PRED] Non-branch instruction, predict not taken\n");
+            vlSelf->top__DOT__bpu_pc_valid_o = 0U;
+            vlSelf->top__DOT__pdt_res = 0U;
         }
-        vlSelf->top__DOT__bpu_pc_valid_o = 1U;
+    } else {
+        VL_WRITEF("[BPU][PRED] Stall detected, prediction unchanged\n");
     }
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
                                                    (1U 
