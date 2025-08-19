@@ -161,6 +161,8 @@ module bpu (
                 
                 // 预测错误时恢复RAS栈指针
                 if (!ex_pdt_true_i && pred_used_ras) begin
+                    $display("[RAS] error!!!!!!!!!!!!!!!\n");
+                    $display("[RAS] Restore sp=%0d", pred_ras_sp);
                     ras_sp = pred_ras_sp; // 恢复预测前的栈指针
                     $display("[RAS] Restore sp=%0d", pred_ras_sp);
                 end

@@ -3270,10 +3270,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb;
             if (VL_UNLIKELY(((~ (IData)(vlSelf->top__DOT__pdt_correct)) 
                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras)))) {
-                VL_WRITEF("[RAS] Restore sp=%0#\n",
-                          5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp);
+                VL_WRITEF("[RAS] error!!!!!!!!!!!!!!!\n\n");
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                     = vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
+                VL_WRITEF("[RAS] Restore sp=%0#\n[RAS] Restore sp=%0#\n",
+                          5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp,
+                          5,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp));
             }
         }
     }
