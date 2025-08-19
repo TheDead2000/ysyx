@@ -109,11 +109,10 @@ void Simtop::stepCycle(bool val) {
      */
 
 
-    cout<<"runhere!!\n";
     while ((!commited_list.inst.empty()) && !(commited_list.inst.empty())) {
         setPC(commited_list.nextpc.front());
-        cout << "nextpc" << hex << commited_list.nextpc.front()
-            << "commitpc" << commited_list.inst.front().inst_pc << endl;
+        // cout << "nextpc" << hex << commited_list.nextpc.front()
+        //     << "commitpc" << commited_list.inst.front().inst_pc << endl;
         sdbRun();
         commited_list.inst.pop_front();
         commited_list.nextpc.pop_front();
