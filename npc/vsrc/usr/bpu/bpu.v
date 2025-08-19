@@ -129,12 +129,12 @@ module bpu #(
         // 冲刷信号优先级最高
         else if (flush_i) begin
             // 冲刷恢复：恢复RAS状态
-            ras_top_ex <= ras_top_backup;
-            for (int i=0; i<RAS_DEPTH; i++)
-                ras[i] <= ras_backup[i];
-            future_ras_valid <= 0;
-            future_ras_committed <= 0;
-            $display("[BPU][RAS] Flushed: top=%0d", ras_top_backup);
+            // ras_top_ex <= ras_top_backup;
+            // for (int i=0; i<RAS_DEPTH; i++)
+            //     ras[i] <= ras_backup[i];
+            // future_ras_valid <= 0;
+            // future_ras_committed <= 0;
+            // $display("[BPU][RAS] Flushed: top=%0d", ras_top_backup);
         end
         else if (ex_stall_valid_i) begin
             // // 暂停恢复
