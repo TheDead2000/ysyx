@@ -1307,8 +1307,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     vlSelf->top__DOT__axi4_rw__DOT__axi_rstate = __Vdly__top__DOT__axi4_rw__DOT__axi_rstate;
     vlSelf->top__DOT__axi4_rw__DOT___arb_rdata_ready_o 
         = __Vdly__top__DOT__axi4_rw__DOT___arb_rdata_ready_o;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_used_future_ras 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_used_future_ras = 0U;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_h5d1925f5__0 
         = (vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_hits 
            + vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hits);
@@ -3579,23 +3578,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                | ((IData)(vlSelf->top__DOT__idu__DOT___inst_sh) 
                                                   | (IData)(vlSelf->top__DOT__idu__DOT___inst_sw)));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target = 0U;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 0U;
     if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret) {
-        if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top)))) {
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top) 
-                           - (IData)(1U)))];
-            VL_WRITEF("BPU: Using current RAS for RET: entry[%0#] = %x\n",
-                      32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top) 
-                          - (IData)(1U)),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
-        } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid)) {
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_entry;
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 1U;
-            VL_WRITEF("BPU: Using FUTURE RAS for RET: %x\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
-        } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+        if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
             VL_WRITEF("BPU: Using BTB for RET: %x\n",
