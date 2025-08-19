@@ -147,61 +147,62 @@ end
             pred_ras_sp = 0;
             pred_used_ras = 0;
         end else begin
-              // 压栈时更新前递寄存器
+       // 压栈时更新前递寄存器
         if (id_ras_push_valid_i && !ex_stall_valid_i) begin
             ras_forward_valid <= 1;
             ras_forward_data <= id_ras_push_data_i;
         end else begin
             ras_forward_valid <= 0;
         end
-            // RAS压栈操作（ID阶段检测到的CALL指令）
-            /* verilator lint_off WIDTHEXPAND */           
-             if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
-                if (ras_sp < RAS_DEPTH) begin
-                    ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
-                    ras_sp <= ras_sp + 1;              // 栈指针递增
-                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
+        
+        // EX阶段反馈更新 - 先处理POP操作
+        /* verilator lint_off WIDTHEXPAND */
+        if (ex_branch_valid_i) begin
+            // 更新全局历史寄存器
+            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
+            // 记录上一次预测的提供者
+            provider_history_reg <= provider_history_comb;
+            
+            // 处理RAS出栈（RET指令实际执行时）
+            if (ex_branch_taken_i) begin
+                // 识别RET指令: JALR且rs1=x1
+                if ((ex_inst_i[6:0] == 7'b1100111) && 
+                    ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
+                    if (ras_sp > 0) begin
+                        $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", ras_sp-1, ras[ras_sp-1]);
+                        ras_sp <= ras_sp - 1; // 出栈
+                    end
                 end
             end
             
-            // EX阶段反馈更新
-            if (ex_branch_valid_i) begin
-                // 更新全局历史寄存器
-                global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
-                // 记录上一次预测的提供者
-                provider_history_reg <= provider_history_comb;
-                
-                // 处理RAS出栈（RET指令实际执行时）
-                if (ex_branch_taken_i) begin
-                    // 识别RET指令: JALR且rs1=x1
-                    if ((ex_inst_i[6:0] == 7'b1100111) && 
-                        ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
-                        if (ras_sp > 0) begin
-                            $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", ras_sp-1, ras[ras_sp-1]);
-                            ras_sp <= ras_sp - 1; // 出栈
-                        end
-                    end
-                end
-                
-                // 预测错误时恢复RAS栈指针
-                if (!ex_pdt_true_i && pred_used_ras) begin
-                    $display("[RAS] error!!!!!!!!!!!!!!!\n");
-                    $display("[RAS] Restore sp=%0d", pred_ras_sp);
-                    ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
-                    $display("[RAS] Restore sp=%0d", pred_ras_sp);
-                end
-                
-                // 更新性能计数器
-                total_branches <= total_branches + 1;
-                if (ex_pdt_true_i) begin
-                    correct_predictions <= correct_predictions + 1;
-                    case (provider_history_comb)
-                        2'b00: bimodal_hits <= bimodal_hits + 1;
-                        2'b01: t0_hits <= t0_hits + 1;
-                        2'b10: t1_hits <= t1_hits + 1;
-                    endcase
-                end
+            // 预测错误时恢复RAS栈指针
+            if (!ex_pdt_true_i && pred_used_ras) begin
+                $display("[RAS] error!!!!!!!!!!!!!!!\n");
+                $display("[RAS] Restore sp=%0d", pred_ras_sp);
+                ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
+                $display("[RAS] Restore sp=%0d", pred_ras_sp);
             end
+            
+            // 更新性能计数器
+            total_branches <= total_branches + 1;
+            if (ex_pdt_true_i) begin
+                correct_predictions <= correct_predictions + 1;
+                case (provider_history_comb)
+                    2'b00: bimodal_hits <= bimodal_hits + 1;
+                    2'b01: t0_hits <= t0_hits + 1;
+                    2'b10: t1_hits <= t1_hits + 1;
+                endcase
+            end
+        end
+        
+        // RAS压栈操作（ID阶段检测到的CALL指令）- 后处理PUSH操作
+        if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
+            if (ras_sp < RAS_DEPTH) begin
+                ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
+                ras_sp <= ras_sp + 1;              // 栈指针递增
+                $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
+            end
+        end
         end
     end
 
