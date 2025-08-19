@@ -71,6 +71,7 @@ void Difftest::init(const char* ref_so_file, long img_size, int port) {
  */
 Difftest::CPU_state Difftest::getDutregs() {
     CPU_state regs;
+    cout << "get dut!!!!!\n";
     for (size_t i = 0; i < 32; i++) {
         regs.gpr[i] = mysim_p->getRegVal(i);
     }
