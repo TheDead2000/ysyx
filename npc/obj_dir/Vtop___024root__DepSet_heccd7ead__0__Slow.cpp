@@ -1930,7 +1930,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 VL_WRITEF("[RAS] PREDICT (from ID): target=0x%x\n",
                           32,vlSelf->top__DOT__bpu_pc_o);
             }
-            if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
+            if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                     [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
@@ -1938,10 +1938,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                               - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
-            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
-                VL_WRITEF("[BTB] PREDICT:  btb_target_val=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
             } else {
                 VL_WRITEF("\351\203\275\346\234\252\345\221\275\344\270\255\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
