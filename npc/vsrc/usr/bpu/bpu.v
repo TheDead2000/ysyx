@@ -277,7 +277,7 @@ module bpu (
                 //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
                 // end
                 // else
-                 else begin
+                 begin
                     // RAS和BTB都未命中，使用默认PC+4
                     pdt_res = 1'b0; // 不跳转
                     $display("都未命中\n");
