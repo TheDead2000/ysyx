@@ -44,7 +44,8 @@ module idu (
     
     // ================== 新增BPU前递信号 ==================
     output wire id_ras_push_valid_o,        // ID阶段检测到CALL指令
-    output wire [`XLEN-1:0] id_ras_push_data_o  // ID阶段计算的返回地址
+    output wire [`XLEN-1:0] id_ras_push_data_o,  // ID阶段计算的返回地址
+    input wire flush_i
 
 );
 // 指令掩码与模板
@@ -367,7 +368,7 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   wire _is_call = (_type_jal) || (_type_jalr && (_rd != 5'b0));
   
   // 计算返回地址（当前PC+4）
-  assign id_ras_push_valid_o = _is_call;
+  assign id_ras_push_valid_o = _is_call && !flush_i;
   assign id_ras_push_data_o = inst_addr_i + 4;
 
 endmodule

@@ -228,7 +228,8 @@ idu idu (
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令
-    .id_ras_push_data_o(id_ras_push_data)  // ID阶段计算的返回地址
+    .id_ras_push_data_o(id_ras_push_data),  // ID阶段计算的返回地址
+    .flush_i(flush_clint[`CTRLBUS_IF_ID]) // 清空 ID 阶段指令
 
 );
 
