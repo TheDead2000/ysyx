@@ -261,27 +261,27 @@ module bpu #(
         ras_target = 0;
         use_future_ras = 0;
         
-        if (if_is_ret) begin
-            // 使用EX阶段的栈顶（ras_top_ex）进行预测
-            if (ras_top_ex > 0) begin
-                ras_target = ras[ras_top_ex-1];
-                $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h (EX_top=%0d)", 
-                         ras_top_ex-1, ras_target, ras_top_ex);
-            end 
-            else if (future_ras_valid) begin
-                ras_target = future_ras_entry;
-                use_future_ras = 1'b1;
-                $display("[BPU][PRED] RET prediction: using Future RAS = %h", ras_target);
-            end
-            else if (btb_hit) begin
-                ras_target = btb_target_val;
-                $display("[BPU][PRED] RET prediction: fallback to BTB = %h", ras_target);
-            end
-            else begin
-                $display("[BPU][PRED] WARNING: No valid RET target @%h", if_pc);
-            end
+   if (if_is_ret) begin
+        // 修复：使用IF阶段同步的栈顶(ras_top_if)
+        if (ras_top_if > 0) begin
+            ras_target = ras[ras_top_if-1];
+            $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h (IF_top=%0d)", 
+                     ras_top_if-1, ras_target, ras_top_if);
+        end 
+        else if (future_ras_valid) begin
+            ras_target = future_ras_entry;
+            use_future_ras = 1'b1;
+            $display("[BPU][PRED] RET prediction: using Future RAS = %h", ras_target);
+        end
+        else if (btb_hit) begin
+            ras_target = btb_target_val;
+            $display("[BPU][PRED] RET prediction: fallback to BTB = %h", ras_target);
+        end
+        else begin
+            $display("[BPU][PRED] WARNING: No valid RET target @%h", if_pc);
         end
     end
+end
 
     // 核心预测逻辑
     always @(*) begin
