@@ -247,7 +247,7 @@ module bpu (
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
-                    $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp, pdt_pc);
+                    $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
                 else if (btb_hit) begin
                     // RAS为空时使用BTB
