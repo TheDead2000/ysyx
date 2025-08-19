@@ -60,7 +60,7 @@ extern "C" void init_disasm(const char *triple) {
   auto target = llvm::TargetRegistry::lookupTarget(gTriple, errstr);
   if (!target) {
     llvm::errs() << "Can't find target for " << gTriple << ": " << errstr << "\n";
-    // assert(0);
+    assert(0);
   }
 
   MCTargetOptions MCOptions;
