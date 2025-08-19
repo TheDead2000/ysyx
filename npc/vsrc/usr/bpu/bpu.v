@@ -116,34 +116,6 @@ module bpu (
         end
     end
 /* verilator lint_off CASEINCOMPLETE */
-
-// ================== RAS恢复寄存器 ==================
-// reg ras_push_last_valid; // 最近一次压栈操作是否有效
-// reg [`XLEN-1:0] ras_push_last_pc; // 压栈指令的PC
-// reg [RAS_PTR_WIDTH-1:0] ras_push_last_sp; // 压栈前的栈指针
-
-// always @(posedge clk) begin
-//     if (rst) begin
-//         ras_push_last_valid <= 0;
-//     end else begin
-//         // 记录最近一次压栈操作
-//         if (id_ras_push_valid_i) begin
-//             ras_push_last_valid <= 1'b1;
-//             ras_push_last_pc <= id_ras_push_data_i; // 需要从IDU传递压栈指令的PC
-//             ras_push_last_sp <= ras_sp;
-//         end else begin
-//             ras_push_last_valid <= 1'b0; // 没有压栈操作
-//         end
-        
-//         // 当分支预测错误时恢复RAS
-//         if (flush_valid_i && ras_push_last_valid) begin
-//             ras_sp = ras_push_last_sp;
-//             ras_push_last_valid <= 0;
-//             $display("[RAS] Recover sp=%0d due to flush", ras_push_last_sp);
-//         end
-//     end
-// end
-
     // 全局历史和提供者寄存器的更新
     always @(posedge clk or posedge rst) begin
         if (rst == 1) begin
@@ -182,7 +154,7 @@ module bpu (
                         (ex_inst_i[19:15] == 5'b00001)) begin
                         if (ras_sp > 0) begin
                             ras_sp = ras_sp - 1; // 出栈
-                            $display("[RAS] POP: sp=%0d,pop_addr=0x%h", ras_sp-1,ras[ras_sp-1]);
+                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp-1]);
                         end
                     end
                 end

@@ -3256,7 +3256,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                             = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                         - (IData)(1U)));
-                        VL_WRITEF("[RAS] POP: sp=%0#,pop_addr=0x%x\n",
+                        VL_WRITEF("[RAS] POP: before sp=%0# after_sp=%0#,pop_addr=0x%x\n",
+                                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
                                   32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                       - (IData)(1U)),
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
