@@ -3130,15 +3130,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
                 = ((0xfffeU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
                                << 1U)) | (IData)(vlSelf->top__DOT__exu__DOT__jump_taken));
-            if (vlSelf->top__DOT__exu__DOT__jump_taken) {
-                if ((IData)((0x8067U == (0xf807fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)))) {
-                    if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
-                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
-                            = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                        - (IData)(1U)));
-                    }
-                }
-            }
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
                 = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);
             if (vlSelf->top__DOT__pdt_correct) {
@@ -3153,6 +3144,18 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 } else if ((2U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
                     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
                         = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits);
+                }
+            }
+            if (vlSelf->top__DOT__exu__DOT__jump_taken) {
+                if ((IData)((0x8067U == (0xf807fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)))) {
+                    if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
+                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
+                            = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                        - (IData)(1U)));
+                        VL_WRITEF("[RAS] POP: sp=%0#\n",
+                                  32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                      - (IData)(1U)));
+                    }
                 }
             }
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_reg 
