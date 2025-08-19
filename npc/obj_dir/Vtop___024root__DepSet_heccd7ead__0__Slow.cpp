@@ -2176,7 +2176,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__cycle_count = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk1__DOT__i = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk2__DOT__i = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk3__DOT__i = 0;
     vlSelf->top__DOT__if2id__DOT__reg_rst = 0;
     vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q = 0;
     vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q = 0;

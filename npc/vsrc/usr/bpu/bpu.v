@@ -137,12 +137,12 @@ module bpu #(
             $display("[BPU][RAS] Flushed: top=%0d", ras_top_backup);
         end
         else if (ex_stall_valid_i) begin
-            // 暂停恢复
-            ras_top_ex <= ras_top_backup;
-            for (int i=0; i<RAS_DEPTH; i++)
-                ras[i] <= ras_backup[i];
-            future_ras_valid <= 0;
-            $display("[BPU][RAS] Stall recovery: top=%0d", ras_top_backup);
+            // // 暂停恢复
+            // ras_top_ex <= ras_top_backup;
+            // for (int i=0; i<RAS_DEPTH; i++)
+            //     ras[i] <= ras_backup[i];
+            // future_ras_valid <= 0;
+            // $display("[BPU][RAS] Stall recovery: top=%0d", ras_top_backup);
         end
         else if (!if_stall_i) begin
             // 状态备份（用于冲刷或暂停恢复）
