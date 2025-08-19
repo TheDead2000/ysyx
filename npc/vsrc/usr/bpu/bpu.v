@@ -297,8 +297,12 @@ module bpu #(
             branch_or_not = 1'b1;
             
             if (if_is_ret) begin
-                pdt_res = 1'b1; // RET总是跳转
-                pdt_pc = ras_target;
+                if(btb_hit)begin
+                pdt_res = 1'b1;
+                pdt_pc = btb_target_val;
+                end
+                else 
+                pdt_res = 1'b0; // 无法预测RET
             end 
             else if (if_is_jalr) begin
                 pdt_res = 1'b1;

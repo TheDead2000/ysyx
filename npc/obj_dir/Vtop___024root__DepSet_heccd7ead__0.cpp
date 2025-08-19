@@ -3984,8 +3984,12 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
          | ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_jal) 
             | (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_jalr)))) {
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret) {
-            vlSelf->top__DOT__pdt_res = 1U;
-            vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
+            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                vlSelf->top__DOT__pdt_res = 1U;
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
+            } else {
+                vlSelf->top__DOT__pdt_res = 0U;
+            }
         } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_jalr) {
             vlSelf->top__DOT__pdt_res = 1U;
             if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
