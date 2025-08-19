@@ -1955,7 +1955,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                     : 
                                                    ((IData)(4U) 
                                                     + vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
-    VL_WRITEF("pc_reg: pc_temp_plus4 = %x\n",32,vlSelf->top__DOT__u_pc_reg__DOT___pc_next);
+    VL_WRITEF("pc_reg:= %x\n",32,vlSelf->top__DOT__u_pc_reg__DOT___pc_next);
     vlSelf->__Vtableidx1 = ((((5U == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
                               & ((IData)(vlSelf->top__DOT__idu__DOT___rs1_exc_bypass_valid) 
                                  | (IData)(vlSelf->top__DOT__idu__DOT___rs2_exc_bypass_valid))) 

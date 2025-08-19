@@ -3905,7 +3905,7 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                     : 
                                                    ((IData)(4U) 
                                                     + vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
-    VL_WRITEF("pc_reg: pc_temp_plus4 = %x\n",32,vlSelf->top__DOT__u_pc_reg__DOT___pc_next);
+    VL_WRITEF("pc_reg:= %x\n",32,vlSelf->top__DOT__u_pc_reg__DOT___pc_next);
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
                                                    (1U 
                                                     & (IData)(vlSelf->top__DOT__flush_clint))
