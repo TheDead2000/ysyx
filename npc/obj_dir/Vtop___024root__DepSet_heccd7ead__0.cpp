@@ -647,7 +647,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits,
                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses);
     }
-    if (VL_UNLIKELY(vlSelf->top__DOT__exu__DOT__is_branch_inst)) {
+    if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+                     & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                           >> 2U))))) {
         VL_WRITEF("BPU FEEDBACK [cycle %0#]: PC=%x, taken=%b, correct=%b, hist=%b\n",
                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__cycle_count,
                   32,vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q,

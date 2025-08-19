@@ -478,7 +478,7 @@ module bpu #(
         end
         
         // 详细分支报告
-        if (ex_branch_valid_i) begin
+        if (ex_branch_valid_i && !ex_stall_valid_i) begin
             $display("BPU FEEDBACK [cycle %0d]: PC=%h, taken=%b, correct=%b, hist=%b",
                      cycle_count, ex_pc_i, ex_branch_taken_i, ex_pdt_true_i, global_history);
         end
