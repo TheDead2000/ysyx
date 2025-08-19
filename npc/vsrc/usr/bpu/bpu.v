@@ -142,9 +142,7 @@ module bpu #(
             future_ras_valid <= 0;
             $display("BPU: RAS reset");
         end else if (flush_i | ex_stall_valid_i) begin
-            // 冲刷期间恢复未来栈状态
-            // future_ras_valid <= 0;
-            $display("BPU: Flush detected, clearing future RAS");
+
         end else begin
             // 保存ID阶段的压栈请求（在IF阶段使用）
             if (id_ras_push_valid_i) begin
