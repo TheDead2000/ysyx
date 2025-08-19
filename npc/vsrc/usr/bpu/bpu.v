@@ -264,19 +264,19 @@ module bpu #(
         
         if (if_is_ret) begin
             // 优先级1：当前RAS栈顶
-            // if (ras_top > 0) begin
-            //     ras_target = ras[ras_top-1];
-            //     $display("BPU: Using current RAS for RET: entry[%0d] = %h", 
-            //              ras_top-1, ras_target);
-            // end 
-            // // 优先级2：ID阶段即将压入的地址（解决CALL后立即RET的问题）
-            // else if (future_ras_valid) begin
-            //     ras_target = future_ras_entry;
-            //     use_future_ras = 1'b1;
-            //     $display("BPU: Using FUTURE RAS for RET: %h", ras_target);
-            // end
-            // // 优先级3：BTB预测
-            // else 
+            if (ras_top > 0) begin
+                ras_target = ras[ras_top-1];
+                $display("BPU: Using current RAS for RET: entry[%0d] = %h", 
+                         ras_top-1, ras_target);
+            end 
+            // 优先级2：ID阶段即将压入的地址（解决CALL后立即RET的问题）
+            else if (future_ras_valid) begin
+                ras_target = future_ras_entry;
+                use_future_ras = 1'b1;
+                $display("BPU: Using FUTURE RAS for RET: %h", ras_target);
+            end
+            // 优先级3：BTB预测
+            else 
             if (btb_hit) begin
                 ras_target = btb_target_val;
                 $display("BPU: Using BTB for RET: %h", ras_target);
@@ -297,12 +297,8 @@ module bpu #(
             branch_or_not = 1'b1;
             
             if (if_is_ret) begin
-                if(btb_hit)begin
-                pdt_res = 1'b1;
-                pdt_pc = btb_target_val;
-                end
-                else 
-                pdt_res = 1'b0; // 无法预测RET
+                pdt_res = 1'b1; // RET总是跳转
+                pdt_pc = ras_target;
             end 
             else if (if_is_jalr) begin
                 pdt_res = 1'b1;
