@@ -134,7 +134,7 @@ module bpu (
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
                     ras_sp <= ras_sp + 1;              // 栈指针递增
-                    // $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
+                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
                 end
             end
             
@@ -160,7 +160,7 @@ module bpu (
                 // 预测错误时恢复RAS栈指针
                 if (!ex_pdt_true_i && pred_used_ras) begin
                     ras_sp <= pred_ras_sp; // 恢复预测前的栈指针
-                    // $display("[RAS] Restore sp=%0d", pred_ras_sp);
+                    $display("[RAS] Restore sp=%0d", pred_ras_sp);
                 end
                 
                 // 更新性能计数器
