@@ -356,7 +356,7 @@ module bpu #(
             // 非分支指令，默认不跳转
             branch_or_not = 0;
             pdt_res = 0;
-            $display("[BPU][PRED] Non-branch instruction, predict not taken");
+            // $display("[BPU][PRED] Non-branch instruction, predict not taken");
         end
     end
 

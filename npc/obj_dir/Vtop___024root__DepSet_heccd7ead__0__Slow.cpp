@@ -1876,9 +1876,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__pdt_res = 0U;
         VL_WRITEF("[BPU][PRED] Flush detected, resetting prediction\n");
     } else if (VL_LIKELY(vlSelf->top__DOT__if_rdata_valid)) {
-        if (VL_LIKELY(((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                       | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                          | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))))) {
+        if (((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+             | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
             if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret)) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target;
                 vlSelf->top__DOT__pdt_res = 1U;
@@ -1969,7 +1969,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
             }
             vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         } else {
-            VL_WRITEF("[BPU][PRED] Non-branch instruction, predict not taken\n");
             vlSelf->top__DOT__bpu_pc_valid_o = 0U;
             vlSelf->top__DOT__pdt_res = 0U;
         }
