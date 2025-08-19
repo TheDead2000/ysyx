@@ -3301,8 +3301,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                 = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)));
-            VL_WRITEF("[RAS] PUSH: sp=%0#, addr=0x%x\n",
-                      5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
+            VL_WRITEF("[RAS] PUSH: NOW sp=%0#, addr=0x%x\n",
+                      32,((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)),
                       32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         }
     }
