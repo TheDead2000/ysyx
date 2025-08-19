@@ -46,6 +46,7 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__pdt_res;
         CData/*0:0*/ top__DOT__which_pdt_o;
         CData/*0:0*/ top__DOT__pdt_correct;
+        CData/*0:0*/ top__DOT__id_ras_push_valid;
         CData/*0:0*/ top__DOT__mem_addr_valid;
         CData/*3:0*/ top__DOT__mem_mask;
         CData/*0:0*/ top__DOT__mem_write_valid;
@@ -78,9 +79,9 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT___inst_jal;
         CData/*0:0*/ top__DOT__idu__DOT___inst_jalr;
         CData/*0:0*/ top__DOT__idu__DOT___inst_beq;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_bne;
     };
     struct {
+        CData/*0:0*/ top__DOT__idu__DOT___inst_bne;
         CData/*0:0*/ top__DOT__idu__DOT___inst_blt;
         CData/*0:0*/ top__DOT__idu__DOT___inst_bge;
         CData/*0:0*/ top__DOT__idu__DOT___inst_bltu;
@@ -124,7 +125,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT___U_type;
         CData/*0:0*/ top__DOT__idu__DOT___rs1_exc_bypass_valid;
         CData/*0:0*/ top__DOT__idu__DOT___rs2_exc_bypass_valid;
-        CData/*0:0*/ top__DOT__idu__DOT___is_call;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_h64445852__0;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_h64445852__1;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_h64445852__2;
