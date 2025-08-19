@@ -187,11 +187,12 @@ module bpu (
             
             // 计算目标地址（优先使用BTB）
             if (pdt_res) begin
-                if (btb_hit) begin
-                    pdt_pc = btb_target_val;
-                    // $display("[BPU-PREDICT] BTB hit: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
-                end
-                else begin
+                // if (btb_hit) begin
+                //     pdt_pc = btb_target_val;
+                //     // $display("[BPU-PREDICT] BTB hit: if_pc=0x%h, target=0x%h", if_pc, pdt_pc);
+                // end
+                // else 
+                begin
                     if (is_jal) begin
                         pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
                         // $display("[BPU-PREDICT] JAL prediction: if_pc=0x%h, target=0x%h", 
