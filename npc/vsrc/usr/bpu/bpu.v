@@ -192,7 +192,10 @@ module bpu (
     wire is_jal    = (if_inst[6:0] == 7'b1101111);
     wire is_jalr   = (if_inst[6:0] == 7'b1100111);
     // RET指令识别: JALR且rs1=x1
-    wire is_ret    = is_jalr && (if_inst[19:15] == 5'b00001);
+  wire is_ret = is_jalr && 
+                 (if_inst[11:7] == 5'b00000) &&  // rd=x0
+                 (if_inst[19:15] == 5'b00001) && // rs1=x1
+                 (if_inst[31:20] == 12'b0);      // imm=0
     
     // 分支偏移计算（当BTB未命中时使用）
     wire [31:0] branch_offset = {
@@ -237,11 +240,17 @@ module bpu (
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
-                    // $display("[RAS] PREDICT: sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
+                    $display("[RAS] PREDICT: sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
                 else if (btb_hit) begin
                     // RAS为空时使用BTB
                     pdt_pc = btb_target_val;
+                end
+                else begin
+                    // RAS和BTB都未命中，使用默认PC+4
+                    pdt_res = 1'b0; // 不跳转
+                    pdt_pc = if_pc + 4;
+                    $display("[RAS] PREDICT: sp=0, target=0x%h", pdt_pc);
                 end
                 // 否则使用默认PC+4（实际不会发生）
             end
