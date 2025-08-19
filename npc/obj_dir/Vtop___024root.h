@@ -54,8 +54,8 @@ class Vtop___024root final : public VerilatedModule {
         CData/*5:0*/ top__DOT__stall_clint;
         CData/*5:0*/ top__DOT__flush_clint;
         CData/*0:0*/ top__DOT__ram_rdata_ready_dcache;
-        CData/*2:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_sp;
-        CData/*2:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_used_ras;
         CData/*1:0*/ top__DOT__ifu__DOT__bpu__DOT__provider_history_reg;
         CData/*1:0*/ top__DOT__ifu__DOT__bpu__DOT__provider_history_comb;
@@ -458,7 +458,7 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<IData/*21:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_tag;
         VlUnpacked<IData/*31:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_target;
         VlUnpacked<CData/*0:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_valid;
-        VlUnpacked<IData/*31:0*/, 8> top__DOT__ifu__DOT__bpu__DOT__ras;
+        VlUnpacked<IData/*31:0*/, 32> top__DOT__ifu__DOT__bpu__DOT__ras;
         VlUnpacked<IData/*31:0*/, 32> top__DOT__rv32_gpr_regfile__DOT__rf;
         VlUnpacked<IData/*19:0*/, 128> top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs;
         VlUnpacked<IData/*19:0*/, 128> top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs;
