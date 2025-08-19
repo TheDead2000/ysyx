@@ -194,7 +194,7 @@ module bpu #(
         end
         // 处理暂停：不进行任何操作
         else begin
-            $display("[BPU][RAS] Stall detected, no state change");
+            // $display("[BPU][RAS] Stall detected, no state change");
         end
     end
 

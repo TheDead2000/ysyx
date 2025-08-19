@@ -1847,7 +1847,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v63 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_backup
             [0x1fU];
-    } else if (vlSelf->top__DOT__if_rdata_valid) {
+    } else if (VL_UNLIKELY(vlSelf->top__DOT__if_rdata_valid)) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__unnamedblk3__DOT__i = 0x20U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_backup 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_ex;
@@ -2012,8 +2012,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         } else if ((1U & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_committed)))) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid = 0U;
         }
-    } else {
-        VL_WRITEF("[BPU][RAS] Stall detected, no state change\n");
     }
     vlSelf->top__DOT__exu__DOT____Vlvbound_h62a375be__0 
         = (1U & vlSelf->top__DOT__id2ex__DOT___trap_bus_id_ex_q);
