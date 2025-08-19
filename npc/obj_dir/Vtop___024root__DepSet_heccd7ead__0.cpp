@@ -3262,8 +3262,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                                   32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                       - (IData)(1U)),
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                                  [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                             - (IData)(1U)))]);
+                                  [vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp]);
                     }
                 }
             }

@@ -154,7 +154,7 @@ module bpu (
                         (ex_inst_i[19:15] == 5'b00001)) begin
                         if (ras_sp > 0) begin
                             ras_sp = ras_sp - 1; // 出栈
-                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp-1]);
+                            $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp]);
                         end
                     end
                 end
