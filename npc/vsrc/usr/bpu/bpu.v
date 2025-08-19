@@ -264,18 +264,22 @@ module bpu (
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                
+                   if (id_ras_push_valid_i) begin
+                     pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
+                      pred_used_ras = 1'b0;
+                  $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
+                 end 
                 if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
                     $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
-                // else if (btb_hit) begin
-                //     // RAS为空时使用BTB
-                //     pdt_pc = btb_target_val;
-                //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
-                // end
+                else if (btb_hit) begin
+                    // RAS为空时使用BTB
+                    pdt_pc = btb_target_val;
+                    $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
+                end
                 else begin
                     // RAS和BTB都未命中，使用默认PC+4
                     pdt_res = 1'b0; // 不跳转
