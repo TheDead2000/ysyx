@@ -1444,7 +1444,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                   | ((IData)(vlSelf->top__DOT__stall_clint) 
                                      >> 2U))))) {
         VL_WRITEF("BPU: Flush detected, clearing future RAS\n");
-        vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid = 0U;
     } else {
         if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
                          | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
