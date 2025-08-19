@@ -3111,10 +3111,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0U;
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = 0U;
     } else {
-        if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
-                         | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
-                            & (0U != (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
-                                               >> 7U))))))) {
+        if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
+                          | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
+                             & (0U != (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
+                                                >> 7U))))) 
+                         & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                               >> 2U))))) {
             __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
                 = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
             __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 1U;

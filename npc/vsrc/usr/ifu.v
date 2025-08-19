@@ -71,7 +71,7 @@ module ifu (
       .id_ras_push_data_i(id_ras_push_data_i), // ID阶段计算
       // .if_stall_i(_ram_stall), // 暂停流水线时清除预测
       // .flush_i(if_flush_i), // 清空 IF 阶段指令
-      // .ex_stall_valid_i(ex_stall_valid_i), // 暂停流水线时清除预测
+      .ex_stall_valid_i(ex_stall_valid_i), // 暂停流水线时清除预测
 
       .pdt_pc  (bpu_pc_o),
       .branch_or_not(bpu_pc_valid_o),

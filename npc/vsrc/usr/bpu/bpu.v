@@ -18,6 +18,7 @@ module bpu (
     input wire [`XLEN-1:0] ex_inst_i,        // EX阶段指令
     input wire id_ras_push_valid_i, // ID阶段检测到CALL指令
     input wire [`XLEN-1:0] id_ras_push_data_i, // ID阶段计算
+    input wire ex_stall_valid_i, // 暂停流水线时不压栈
     // 输出
     output reg branch_or_not, 
     output reg [`XLEN-1:0] pdt_pc,
@@ -130,7 +131,7 @@ module bpu (
         end else begin
             // RAS压栈操作（ID阶段检测到的CALL指令）
             /* verilator lint_off WIDTHEXPAND */           
-             if (id_ras_push_valid_i) begin
+             if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
                     ras_sp <= ras_sp + 1;              // 栈指针递增

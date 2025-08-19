@@ -1045,6 +1045,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+424,"ex_inst_i", false,-1, 31,0);
     tracep->declBit(c+422,"id_ras_push_valid_i", false,-1);
     tracep->declBus(c+423,"id_ras_push_data_i", false,-1, 31,0);
+    tracep->declBit(c+22,"ex_stall_valid_i", false,-1);
     tracep->declBit(c+410,"branch_or_not", false,-1);
     tracep->declBus(c+438,"pdt_pc", false,-1, 31,0);
     tracep->declBit(c+439,"pdt_res", false,-1);
