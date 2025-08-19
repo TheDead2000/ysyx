@@ -3273,7 +3273,11 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 }
             }
             if (vlSelf->top__DOT__exu__DOT__jump_taken) {
-                if ((IData)((0x8067U == (0xf807fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)))) {
+                if (((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
+                     & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                         >> 0xfU))) 
+                        | (5U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                           >> 0xfU)))))) {
                     if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                             = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 

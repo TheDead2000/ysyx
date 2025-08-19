@@ -175,7 +175,7 @@ end
                 if (ex_branch_taken_i) begin
                     // 识别RET指令: JALR且rs1=x1
                     if ((ex_inst_i[6:0] == 7'b1100111) && 
-                        (ex_inst_i[19:15] == 5'b00001)) begin
+                        ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
                         if (ras_sp > 0) begin
                             ras_sp = ras_sp - 1; // 出栈
                             $display("[RAS] POP: before sp=%0d after_sp=%0d,pop_addr=0x%h", ras_sp,ras_sp-1,ras[ras_sp]);
