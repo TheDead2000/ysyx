@@ -131,6 +131,8 @@ always @(posedge clk) begin
             ras_push_last_valid <= 1'b1;
             ras_push_last_pc <= id_ras_push_data_i; // 需要从IDU传递压栈指令的PC
             ras_push_last_sp <= ras_sp;
+        end else begin
+            ras_push_last_valid <= 1'b0; // 没有压栈操作
         end
         
         // 当分支预测错误时恢复RAS

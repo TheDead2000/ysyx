@@ -981,6 +981,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                 = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_push_last_sp 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+        } else {
+            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_push_last_valid = 0U;
         }
         if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__flush_clint) 
                           >> 1U) & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_push_last_valid)))) {
