@@ -177,7 +177,7 @@ end
                     if ((ex_inst_i[6:0] == 7'b1100111) && 
                         ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
                         if (ras_sp > 0) begin
-                            $display("[RAS] POP: before sp=%0d, pop_addr=0x%h", ras_sp, ras[ras_sp-1]);
+                            $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", ras_sp-1, ras[ras_sp-1]);
                             ras_sp <= ras_sp - 1; // 出栈
                         end
                     end
