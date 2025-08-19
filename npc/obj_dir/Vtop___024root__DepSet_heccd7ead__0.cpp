@@ -3242,8 +3242,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                 = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)));
             VL_WRITEF("[RAS] PUSH: sp=%0#, addr=0x%x\n",
-                      5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
-                      32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
+                      32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                          - (IData)(1U)),32,((IData)(4U) 
+                                             + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         }
         if (((IData)(vlSelf->top__DOT__id_ras_push_valid) 
              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 

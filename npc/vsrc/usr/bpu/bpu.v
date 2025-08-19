@@ -160,7 +160,7 @@ end
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
                     ras_sp <= ras_sp + 1;              // 栈指针递增
-                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
+                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp-1, id_ras_push_data_i);
                 end
             end
             
