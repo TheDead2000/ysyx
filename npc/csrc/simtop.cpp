@@ -329,6 +329,7 @@ void Simtop::sdbStatus() {
 
 void Simtop::sdbRun(void) {
     if (isSdbOk("difftest")) {
+        cout<<"sdb runING!!!!\n";
         this->u_difftest.difftest_step();
     }
     if (!top->rst && isSdbOk("itrace")) {
