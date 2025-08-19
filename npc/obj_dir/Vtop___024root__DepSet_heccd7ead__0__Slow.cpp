@@ -1415,7 +1415,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target = 0U;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 0U;
     if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__if_is_ret) {
-        if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if)))) {
+        if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid)) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_entry;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 1U;
+            VL_WRITEF("[BPU][PRED] RET prediction: using Future RAS = %x\n",
+                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
+        } else if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if)))) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                 [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if) 
@@ -1424,12 +1430,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                       32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if) 
                           - (IData)(1U)),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target,
                       6,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_top_if));
-        } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_valid)) {
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__future_ras_entry;
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__use_future_ras = 1U;
-            VL_WRITEF("[BPU][PRED] RET prediction: using Future RAS = %x\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target);
         } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_target 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;

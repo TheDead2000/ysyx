@@ -263,16 +263,16 @@ module bpu #(
         
    if (if_is_ret) begin
         // 修复：使用IF阶段同步的栈顶(ras_top_if)
-        if (ras_top_if > 0) begin
-            ras_target = ras[ras_top_if-1];
-            $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h (IF_top=%0d)", 
-                     ras_top_if-1, ras_target, ras_top_if);
-        end 
-        else if (future_ras_valid) begin
+        if (future_ras_valid) begin
             ras_target = future_ras_entry;
             use_future_ras = 1'b1;
             $display("[BPU][PRED] RET prediction: using Future RAS = %h", ras_target);
         end
+        else  if (ras_top_if > 0) begin
+            ras_target = ras[ras_top_if-1];
+            $display("[BPU][PRED] RET prediction: using RAS entry[%0d] = %h (IF_top=%0d)", 
+                     ras_top_if-1, ras_target, ras_top_if);
+        end 
         else if (btb_hit) begin
             ras_target = btb_target_val;
             $display("[BPU][PRED] RET prediction: fallback to BTB = %h", ras_target);
