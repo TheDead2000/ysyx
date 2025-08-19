@@ -99,6 +99,7 @@ bool Difftest::checkregs() {
     CPU_state dutregs = getDutregs();
     CPU_state refregs = getRefregs();
     for (size_t i = 0; i < 32; i++) {
+        printf("check reg!!\n");
         if (dutregs.gpr[i] != refregs.gpr[i]) {
             cout << "reg err!!" << endl;
             cout << "----------------------------------dutregs----------------------------------" << endl;
