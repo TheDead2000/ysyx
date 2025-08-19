@@ -26,7 +26,7 @@ extern "C" {
     extern void icache_hit_count(int last_pc, int now_pc);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/icache_top.v:65:32
     extern void icache_unhit_count();
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:561:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:562:32
     extern void inst_commit(int pc, int inst, svBit commit_valid);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);

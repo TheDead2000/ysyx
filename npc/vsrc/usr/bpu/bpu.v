@@ -14,7 +14,8 @@ module bpu #(
 )(
     input wire clk,
     input wire rst,
-    input wire if_stall_i,
+    input wire if_stall_i,           // IF阶段暂停信号
+    input wire if_flush_i,              // IF阶段冲刷信号（新增）
     
     // IF阶段输入
     input wire [`XLEN-1:0] if_pc,
@@ -35,10 +36,10 @@ module bpu #(
     input wire ex_stall_valid_i,
 
     // 输出
-    output reg branch_or_not,
-    output reg [`XLEN-1:0] pdt_pc,
-    output reg pdt_res,
-    output wire [`HISLEN-1:0] history_o
+    output reg branch_or_not,        // 是否预测跳转
+    output reg [`XLEN-1:0] pdt_pc,  // 预测跳转的PC
+    output reg pdt_res,              // 预测结果（0:不跳转,1:跳转）
+    output wire [`HISLEN-1:0] history_o  // 全局历史记录
 );
     // ================== RAS双缓冲设计 ==================
     reg [`XLEN-1:0] ras [0:RAS_DEPTH-1];
@@ -126,17 +127,28 @@ module bpu #(
             future_ras_committed <= 0;
             $display("[BPU][RAS] Reset complete");
         end 
-        else if (ex_stall_valid_i) begin
-            // 冲刷恢复
+        // 冲刷信号优先级最高
+        else if (if_flush_i) begin
+            // 冲刷恢复：清除未来栈，恢复RAS状态
             ras_top_ex <= ras_top_backup;
             ras_top_if <= ras_top_backup;
             for (int i=0; i<RAS_DEPTH; i++)
                 ras[i] <= ras_backup[i];
             future_ras_valid <= 0;
-            $display("[BPU][RAS] Flush recovery: top=%0d", ras_top_backup);
+            future_ras_committed <= 0;
+            $display("[BPU][RAS] Flushed: top=%0d", ras_top_backup);
+        end
+        else if (ex_stall_valid_i) begin
+            // 暂停恢复
+            ras_top_ex <= ras_top_backup;
+            ras_top_if <= ras_top_backup;
+            for (int i=0; i<RAS_DEPTH; i++)
+                ras[i] <= ras_backup[i];
+            future_ras_valid <= 0;
+            $display("[BPU][RAS] Stall recovery: top=%0d", ras_top_backup);
         end
         else if (!if_stall_i) begin
-            // 状态备份
+            // 状态备份（用于冲刷或暂停恢复）
             ras_top_backup <= ras_top_ex;
             for (int i=0; i<RAS_DEPTH; i++)
                 ras_backup[i] <= ras[i];
@@ -181,6 +193,25 @@ module bpu #(
             end else if (!future_ras_committed) begin
                 future_ras_valid <= 0;
             end
+        end
+    end
+
+    // ================== 全局历史记录管理 ==================
+    always @(posedge clk) begin
+        if (rst) begin
+            global_history <= 0;
+            $display("[BPU] Global history reset");
+        end
+        else if (if_flush_i) begin
+            // 冲刷时恢复历史记录
+            global_history <= ex_history_i;
+            $display("[BPU] Flush: global_history <= %h", ex_history_i);
+        end
+        else if (ex_branch_valid_i && !ex_stall_valid_i) begin
+            // 更新全局历史
+            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
+            $display("[BPU] Global history updated: %b", 
+                     {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i});
         end
     end
 
@@ -258,7 +289,13 @@ module bpu #(
         pdt_pc = if_pc + 4;
         pdt_res = 0;
         
-        if (if_is_branch || if_is_jal || if_is_jalr) begin
+        // 冲刷时重置预测
+        if (if_flush_i) begin
+            branch_or_not = 0;
+            pdt_res = 0;
+            $display("[BPU][PRED] Flush detected, resetting prediction");
+        end
+        else if (if_is_branch || if_is_jal || if_is_jalr) begin
             branch_or_not = 1;
             
             if (if_is_ret) begin
@@ -313,15 +350,16 @@ module bpu #(
 
     always @(posedge clk) begin
         if (rst) begin
-            global_history <= 0;
             provider_history_reg <= 0;
-            $display("[BPU] Global history reset");
-        end 
+            $display("[BPU] Reset complete");
+        end
+        else if (if_flush_i) begin
+            // 冲刷时不更新预测器
+            $display("[BPU] Flush: skip update");
+        end
         else if (ex_branch_valid_i && !ex_stall_valid_i) begin
-            // 更新全局历史
-            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
+            // 更新全局历史在单独的逻辑中，这里只更新预测器
             provider_history_reg <= provider_history_comb;
-            $display("[BPU] Global history updated: %b", global_history);
             
             // TAGE更新
             if (!ex_pdt_true_i) begin
@@ -380,6 +418,7 @@ module bpu #(
             $display("  RAS: EX_top=%0d IF_top=%0d Future_valid=%b", 
                     ras_top_ex, ras_top_if, future_ras_valid);
             $display("  BTB: %0d/%0d (hit/miss)", btb_hits, btb_misses);
+            $display("  Global History: %b", global_history);
         end
     end
 endmodule
