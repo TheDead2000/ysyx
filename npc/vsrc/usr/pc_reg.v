@@ -45,9 +45,9 @@ module pc_reg (
     end else if (bpu_pc_valid_i) begin : bpu_pc
       _pc_next = bpu_pc_i;
     end else begin
-      //  $display("pc_reg: pc_temp_plus4 = %h", _pc_next);
       _pc_next = pc_temp_plus4;
     end
+    $display("pc_reg: pc_temp_plus4 = %h", _pc_next);
   end
 
 
