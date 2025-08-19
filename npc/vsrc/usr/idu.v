@@ -368,7 +368,7 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   wire _is_call = (_type_jal) || (_type_jalr && (_rd != 5'b0));
   
   // 计算返回地址（当前PC+4）
-  assign id_ras_push_valid_o = _is_call && !flush_i;
+  assign id_ras_push_valid_o = _is_call ;
   assign id_ras_push_data_o = inst_addr_i + 4;
 
 endmodule

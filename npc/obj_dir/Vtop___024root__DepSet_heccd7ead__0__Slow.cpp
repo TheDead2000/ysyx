@@ -1118,6 +1118,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                            >> 0xcU) 
                                           ^ ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
                                              >> 0xaU))));
+    vlSelf->top__DOT__idu__DOT___is_call = ((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
+                                            | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
+                                               & (0U 
+                                                  != 
+                                                  (0x1fU 
+                                                   & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
+                                                      >> 7U)))));
     vlSelf->top__DOT__idu__DOT___type_load = ((IData)(vlSelf->top__DOT__idu__DOT___inst_lb) 
                                               | ((IData)(vlSelf->top__DOT__idu__DOT___inst_lh) 
                                                  | ((IData)(vlSelf->top__DOT__idu__DOT___inst_lw) 
@@ -1984,15 +1991,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                        >> 1U) 
                                                       | (0x7ffffffcU 
                                                          == vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
-    vlSelf->top__DOT__id_ras_push_valid = ((~ ((IData)(vlSelf->top__DOT__flush_clint) 
-                                               >> 1U)) 
-                                           & ((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
-                                              | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
-                                                 & (0U 
-                                                    != 
-                                                    (0x1fU 
-                                                     & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
-                                                        >> 7U))))));
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
                                                    (1U 
                                                     & (IData)(vlSelf->top__DOT__flush_clint))
@@ -2123,7 +2121,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__pdt_res = 0;
     vlSelf->top__DOT__which_pdt_o = 0;
     vlSelf->top__DOT__pdt_correct = 0;
-    vlSelf->top__DOT__id_ras_push_valid = 0;
     vlSelf->top__DOT__mem_data_mem = 0;
     vlSelf->top__DOT__mem_addr_valid = 0;
     vlSelf->top__DOT__mem_mask = 0;
@@ -2267,6 +2264,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__idu__DOT___rs1_exc_bypass_valid = 0;
     vlSelf->top__DOT__idu__DOT___rs2_exc_bypass_valid = 0;
     vlSelf->top__DOT__idu__DOT___decode_trap_bus = 0;
+    vlSelf->top__DOT__idu__DOT___is_call = 0;
     vlSelf->top__DOT__idu__DOT____Vlvbound_h64445852__0 = 0;
     vlSelf->top__DOT__idu__DOT____Vlvbound_h64445852__1 = 0;
     vlSelf->top__DOT__idu__DOT____Vlvbound_h64445852__2 = 0;
