@@ -160,7 +160,7 @@ end
                 if (ras_sp < RAS_DEPTH) begin
                     ras[ras_sp] <= id_ras_push_data_i; // 压入返回地址
                     ras_sp <= ras_sp + 1;              // 栈指针递增
-                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp-1, id_ras_push_data_i);
+                    $display("[RAS] PUSH: sp=%0d, addr=0x%h", ras_sp, id_ras_push_data_i);
                 end
             end
             
@@ -177,8 +177,8 @@ end
                     if ((ex_inst_i[6:0] == 7'b1100111) && 
                         ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
                         if (ras_sp > 0) begin
+                            $display("[RAS] POP: before sp=%0d, pop_addr=0x%h", ras_sp, ras[ras_sp-1]);
                             ras_sp <= ras_sp - 1; // 出栈
-                            $display("[RAS] POP: before sp=%0d,pop_addr=0x%h", ras_sp,ras[ras_sp]);
                         end
                     end
                 end
@@ -265,10 +265,8 @@ wire is_ret = is_jalr &&
                  if (ras_forward_valid) begin
                   pdt_pc = ras_forward_data;
                   pred_used_ras = 0; // 标记未使用实际RAS
-            $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-            end 
-             else
-                   if (id_ras_push_valid_i) begin
+                $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+            end else if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
                       pred_used_ras = 1'b0;
                   $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);

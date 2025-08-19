@@ -3242,9 +3242,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                 = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)));
             VL_WRITEF("[RAS] PUSH: sp=%0#, addr=0x%x\n",
-                      32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                          - (IData)(1U)),32,((IData)(4U) 
-                                             + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
+                      5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
+                      32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         }
         if (((IData)(vlSelf->top__DOT__id_ras_push_valid) 
              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
@@ -3282,13 +3281,14 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                         | (5U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
                                            >> 0xfU)))))) {
                     if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))) {
+                        VL_WRITEF("[RAS] POP: before sp=%0#, pop_addr=0x%x\n",
+                                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
+                                  32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+                                  [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                             - (IData)(1U)))]);
                         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
                             = (0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                         - (IData)(1U)));
-                        VL_WRITEF("[RAS] POP: before sp=%0#,pop_addr=0x%x\n",
-                                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp,
-                                  32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                                  [vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp]);
                     }
                 }
             }
