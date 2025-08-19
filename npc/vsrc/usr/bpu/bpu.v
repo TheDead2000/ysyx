@@ -195,10 +195,10 @@ module bpu (
     wire is_jal    = (if_inst[6:0] == 7'b1101111);
     wire is_jalr   = (if_inst[6:0] == 7'b1100111);
     // RET指令识别: JALR且rs1=x1
-  wire is_ret = is_jalr && 
-                 (if_inst[11:7] == 5'b00000) &&  // rd=x0
-                 (if_inst[19:15] == 5'b00001) && // rs1=x1
-                 (if_inst[31:20] == 12'b0);      // imm=0
+wire is_ret = is_jalr && 
+             (if_inst[11:7] == 5'b00000) &&  // rd=x0
+             ((if_inst[19:15] == 5'b00001) || (if_inst[19:15] == 5'b00101)) && // rs1=x1(ra) or x5(t0)
+             (if_inst[31:20] == 12'b0);  
     
     // 分支偏移计算（当BTB未命中时使用）
     wire [31:0] branch_offset = {

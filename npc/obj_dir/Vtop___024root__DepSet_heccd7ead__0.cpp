@@ -79,7 +79,11 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
          | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
             | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
-        if ((IData)((0x8067U == (0xffff8fffU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
+        if ((IData)(((0x67U == (0xfff00fffU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                     & ((1U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                         >> 0xfU))) 
+                        | (5U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                           >> 0xfU))))))) {
             vlSelf->top__DOT__pdt_res = 1U;
             if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
@@ -3942,7 +3946,11 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
          | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
             | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
-        if ((IData)((0x8067U == (0xffff8fffU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)))) {
+        if ((IData)(((0x67U == (0xfff00fffU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                     & ((1U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                         >> 0xfU))) 
+                        | (5U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                           >> 0xfU))))))) {
             vlSelf->top__DOT__pdt_res = 1U;
             if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
