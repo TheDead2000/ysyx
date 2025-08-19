@@ -1875,7 +1875,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 0U;
         vlSelf->top__DOT__pdt_res = 0U;
         VL_WRITEF("[BPU][PRED] Flush detected, resetting prediction\n");
-    } else if (vlSelf->top__DOT__if_rdata_valid) {
+    } else if (VL_LIKELY(vlSelf->top__DOT__if_rdata_valid)) {
         if (((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
              | ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
                 | (0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))))) {
@@ -1972,6 +1972,8 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
             vlSelf->top__DOT__bpu_pc_valid_o = 0U;
             vlSelf->top__DOT__pdt_res = 0U;
         }
+    } else {
+        VL_WRITEF("[BPU][PRED] Stall detected, prediction unchanged\n");
     }
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
                                                    (1U 

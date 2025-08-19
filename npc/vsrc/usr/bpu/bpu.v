@@ -192,10 +192,6 @@ module bpu #(
                 future_ras_valid <= 0;
             end
         end
-        // 处理暂停：不进行任何操作
-        else begin
-            // $display("[BPU][RAS] Stall detected, no state change");
-        end
     end
 
     // ================== 全局历史记录管理 ==================
@@ -303,7 +299,7 @@ module bpu #(
         else if (if_stall_i) begin
             branch_or_not = branch_or_not;
             pdt_res = pdt_res;
-            // $display("[BPU][PRED] Stall detected, prediction unchanged");
+            $display("[BPU][PRED] Stall detected, prediction unchanged");
         end
         else if (if_is_branch || if_is_jal || if_is_jalr) begin
             branch_or_not = 1;
