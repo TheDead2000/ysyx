@@ -1067,7 +1067,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+243,"btb_misses", false,-1, 31,0);
     tracep->declBus(c+2,"i", false,-1, 31,0);
     tracep->declBus(c+244,"btb_index", false,-1, 7,0);
-    tracep->declBus(c+245,"btb_tag_val", false,-1, 13,0);
+    tracep->declBus(c+245,"btb_tag_val", false,-1, 21,0);
     tracep->declBit(c+246,"btb_hit", false,-1);
     tracep->declBus(c+247,"btb_target_val", false,-1, 31,0);
     tracep->declBus(c+405,"t0_index", false,-1, 7,0);
@@ -1086,7 +1086,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+255,"t1_tag_u", false,-1, 9,0);
     tracep->declBus(c+256,"bm_index_u", false,-1, 8,0);
     tracep->declBus(c+257,"btb_index_u", false,-1, 7,0);
-    tracep->declBus(c+258,"btb_tag_u", false,-1, 13,0);
+    tracep->declBus(c+258,"btb_tag_u", false,-1, 21,0);
     tracep->declBus(c+45,"accuracy", false,-1, 31,0);
     tracep->declBus(c+46,"bimodal_ratio", false,-1, 31,0);
     tracep->declBus(c+47,"t0_ratio", false,-1, 31,0);
@@ -2181,8 +2181,8 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+243,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses),32);
     bufp->fullCData(oldp+244,((0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                         >> 2U))),8);
-    bufp->fullSData(oldp+245,((vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                               >> 0x12U)),14);
+    bufp->fullIData(oldp+245,((vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                               >> 0xaU)),22);
     bufp->fullBit(oldp+246,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit));
     bufp->fullIData(oldp+247,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target
                               [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
@@ -2208,7 +2208,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullSData(oldp+255,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_tag_u),10);
     bufp->fullSData(oldp+256,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__bm_index_u),9);
     bufp->fullCData(oldp+257,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_index_u),8);
-    bufp->fullSData(oldp+258,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag_u),14);
+    bufp->fullIData(oldp+258,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag_u),22);
     bufp->fullIData(oldp+259,(((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
                                 ? VL_DIV_III(32, ((IData)(0x64U) 
                                                   * vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
@@ -2871,7 +2871,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+536,(0x100U),32);
     bufp->fullIData(oldp+537,(0xaU),32);
     bufp->fullIData(oldp+538,(6U),32);
-    bufp->fullIData(oldp+539,(0xeU),32);
+    bufp->fullIData(oldp+539,(0x16U),32);
     bufp->fullBit(oldp+540,(1U));
     bufp->fullIData(oldp+541,(0x80U),32);
     bufp->fullIData(oldp+542,(7U),32);

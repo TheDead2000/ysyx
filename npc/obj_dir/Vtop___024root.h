@@ -303,7 +303,6 @@ class Vtop___024root final : public VerilatedModule {
         SData/*9:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_tag_u;
         SData/*9:0*/ top__DOT__ifu__DOT__bpu__DOT__t1_tag_u;
         SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__bm_index_u;
-        SData/*13:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_tag_u;
         SData/*15:0*/ top__DOT__if2id__DOT___bpu_history_if_id_q;
         SData/*15:0*/ top__DOT__id2ex__DOT___bpu_history_id_ex_q;
         SData/*12:0*/ top__DOT__id2ex__DOT___exc_op_id_ex_q;
@@ -341,6 +340,7 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_misses;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__i;
+        IData/*21:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_tag_u;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0;
         IData/*31:0*/ top__DOT__if2id__DOT___inst_addr_if_id_q;
     };
@@ -450,7 +450,7 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<CData/*1:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t0_counter;
         VlUnpacked<SData/*9:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t1_tag;
         VlUnpacked<CData/*1:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t1_counter;
-        VlUnpacked<SData/*13:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_tag;
+        VlUnpacked<IData/*21:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_tag;
         VlUnpacked<IData/*31:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_target;
         VlUnpacked<CData/*0:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_valid;
         VlUnpacked<IData/*31:0*/, 32> top__DOT__rv32_gpr_regfile__DOT__rf;
