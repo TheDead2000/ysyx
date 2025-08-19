@@ -153,7 +153,7 @@ void Difftest::difftest_step() {
     // printf("skip_pc:%p,size:%d\n", skip_pc.front(), skip_pc.size());
     // 如果提交的指令是需要跳过的指令，以 dut 为准
     if (!skip_pc.empty() && mysim_p->commited_list.inst.front().inst_pc == skip_pc.front()) {
-        printf("is_skip_ref\n");
+        // printf("is_skip_ref\n");
         // printf("skip_pc:%p\n", (void*)skip_pc.front());
         // printf("next_pc:%p\n", (void*)dutregs.pc);
         diff_regcpy(&dutregs, DIFFTEST_TO_REF);
