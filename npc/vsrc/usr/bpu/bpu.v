@@ -116,6 +116,23 @@ module bpu (
         end
     end
 /* verilator lint_off CASEINCOMPLETE */
+
+// ================== RAS前递逻辑 ==================
+reg ras_forward_valid;
+reg [`XLEN-1:0] ras_forward_data;
+
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        ras_forward_valid <= 0;
+        ras_forward_data <= 0;
+    end else begin
+        // 捕获即将压栈的数据
+        ras_forward_valid <= id_ras_push_valid_i && !ex_stall_valid_i;
+        ras_forward_data <= id_ras_push_data_i;
+    end
+end
+
+
     // 全局历史和提供者寄存器的更新
     always @(posedge clk or posedge rst) begin
         if (rst == 1) begin
@@ -130,6 +147,13 @@ module bpu (
             pred_ras_sp = 0;
             pred_used_ras = 0;
         end else begin
+              // 压栈时更新前递寄存器
+        if (id_ras_push_valid_i && !ex_stall_valid_i) begin
+            ras_forward_valid <= 1;
+            ras_forward_data <= id_ras_push_data_i;
+        end else begin
+            ras_forward_valid <= 0;
+        end
             // RAS压栈操作（ID阶段检测到的CALL指令）
             /* verilator lint_off WIDTHEXPAND */           
              if (id_ras_push_valid_i && !ex_stall_valid_i ) begin
@@ -238,6 +262,12 @@ wire is_ret = is_jalr &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
+                 if (ras_forward_valid) begin
+                  pdt_pc = ras_forward_data;
+                  pred_used_ras = 0; // 标记未使用实际RAS
+            $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+            end 
+             else
                    if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
                       pred_used_ras = 1'b0;

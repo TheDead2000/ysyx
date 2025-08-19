@@ -85,7 +85,12 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                         | (5U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                            >> 0xfU))))))) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
+            } else if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
@@ -3204,6 +3209,13 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0U;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid 
+        = ((~ (IData)(vlSelf->rst)) & ((IData)(vlSelf->top__DOT__id_ras_push_valid) 
+                                       & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                             >> 2U))));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data 
+        = ((IData)(vlSelf->rst) ? 0U : ((IData)(4U) 
+                                        + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
     if (vlSelf->rst) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp = 0U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp = 0U;
@@ -3230,6 +3242,15 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                       32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                           - (IData)(1U)),32,((IData)(4U) 
                                              + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
+        }
+        if (((IData)(vlSelf->top__DOT__id_ras_push_valid) 
+             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                   >> 2U)))) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid = 1U;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data 
+                = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
+        } else {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid = 0U;
         }
         if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
@@ -3948,7 +3969,12 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                         | (5U == (0x1fU & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                            >> 0xfU))))))) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
+            } else if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
