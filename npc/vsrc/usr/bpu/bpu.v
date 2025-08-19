@@ -311,16 +311,16 @@ module bpu (
     always @(posedge clk) begin
         if (ex_branch_valid_i) begin
             // 每100个分支输出一次统计信息
-            if (total_branches % 100 == 0 && total_branches > 0) begin
-                $display("[BPU STAT] Branches: %0d, Accuracy: %0d%%", 
-                         total_branches, accuracy);
-                $display("          Bimodal: %0d%% (%0d hits), T0: %0d%% (%0d hits), T1: %0d%% (%0d hits)",
-                         bimodal_ratio, bimodal_hits, 
-                         t0_ratio, t0_hits, 
-                         t1_ratio, t1_hits);
-                $display("          BTB Hit Rate: %0d%% (%0d hits/%0d accesses)", 
-                         btb_hit_rate, btb_hits, btb_hits + btb_misses);
-            end
+            // if (total_branches % 100 == 0 && total_branches > 0) begin
+            //     $display("[BPU STAT] Branches: %0d, Accuracy: %0d%%", 
+            //              total_branches, accuracy);
+            //     $display("          Bimodal: %0d%% (%0d hits), T0: %0d%% (%0d hits), T1: %0d%% (%0d hits)",
+            //              bimodal_ratio, bimodal_hits, 
+            //              t0_ratio, t0_hits, 
+            //              t1_ratio, t1_hits);
+            //     $display("          BTB Hit Rate: %0d%% (%0d hits/%0d accesses)", 
+            //              btb_hit_rate, btb_hits, btb_hits + btb_misses);
+            // end
             
             // 更新BTB命中率统计
             if (branch_or_not && pdt_res) begin

@@ -104,44 +104,53 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     if (false && vlSelf) {}  // Prevent unused
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___nba_sequent__TOP__0\n"); );
+    // Init
+    IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0;
+    IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = 0;
+    IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits = 0;
+    IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches = 0;
+    IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions = 0;
     // Body
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits;
     vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history;
     if (vlSelf->rst) {
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches = 0U;
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions = 0U;
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits = 0U;
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = 0U;
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0U;
         vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history = 0U;
     } else if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
-        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
             = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);
         if (vlSelf->top__DOT__pdt_correct) {
-            vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
+            __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
                 = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions);
             if ((0U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
+                __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
                     = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits);
             }
             if ((0U != (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
                 if ((1U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits 
+                    __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits 
                         = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits);
                 }
                 if ((1U != (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
                     if ((2U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb))) {
-                        vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
+                        __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits 
                             = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits);
                     }
                 }
@@ -151,6 +160,14 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             = ((0xfffeU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
                            << 1U)) | (IData)(vlSelf->top__DOT__exu__DOT__jump_taken));
     }
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits = __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits = __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
 }
 
 void Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(IData/*31:0*/ pc, IData/*31:0*/ inst, CData/*0:0*/ commit_valid);
@@ -426,66 +443,16 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__axi4_rw__DOT__axi_rstate = vlSelf->top__DOT__axi4_rw__DOT__axi_rstate;
     __Vdly__top__DOT__axi4_rw__DOT___arb_rdata_ready_o 
         = vlSelf->top__DOT__axi4_rw__DOT___arb_rdata_ready_o;
-    if (vlSelf->rst) {
-        vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i = 0U;
-        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i)) {
-            vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs[(0x7fU 
-                                                                                & vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i)] = 0U;
-            vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i 
-                = ((IData)(1U) + vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i);
-        }
-        vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i = 0U;
-        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)) {
-            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs[(0x7fU 
-                                                                                & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)] = 0U;
-            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i 
-                = ((IData)(1U) + vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i);
-        }
-    } else if (vlSelf->top__DOT__u_dcache_top__DOT___dirty_flush) {
-        vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i = 0U;
-        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)) {
-            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs[(0x7fU 
-                                                                                & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)] 
-                = (0x7ffffU & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs
-                   [(0x7fU & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)]);
-            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i 
-                = ((IData)(1U) + vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i);
-        }
-    }
     if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
-        if (VL_UNLIKELY(((0U == VL_MODDIV_III(32, vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches, (IData)(0x64U))) 
-                         & (0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)))) {
-            VL_WRITEF("[BPU STAT] Branches: %0#, Accuracy: %0#%%\n          Bimodal: %0#%% (%0# hits), T0: %0#%% (%0# hits), T1: %0#%% (%0# hits)\n          BTB Hit Rate: %0#%% (%0# hits/%0# accesses)\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches,
-                      32,((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           ? VL_DIV_III(32, ((IData)(0x64U) 
-                                             * vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions), vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           : 0U),32,((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                                      ? VL_DIV_III(32, 
-                                                   ((IData)(0x64U) 
-                                                    * vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                                      : 0U),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits,
-                      32,((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           ? VL_DIV_III(32, ((IData)(0x64U) 
-                                             * vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           : 0U),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits,
-                      32,((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           ? VL_DIV_III(32, ((IData)(0x64U) 
-                                             * vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
-                           : 0U),32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits,
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit_rate,
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits,
-                      32,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits 
-                          + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses));
-        }
         if (((IData)(vlSelf->top__DOT__bpu_pc_valid_o) 
              & (IData)(vlSelf->top__DOT__pdt_res))) {
+            if ((1U & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)))) {
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses 
+                    = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses);
+            }
             if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits 
                     = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits);
-            } else {
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses 
-                    = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses);
             }
         }
     }
@@ -998,6 +965,15 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__io_sram4_rdata[3U] = vlSelf->top__DOT__sram__DOT__SRAM4__DOT__ram
             [(0x7fU & (vlSelf->top__DOT__pc_next >> 6U))][3U];
     }
+    if (vlSelf->rst) {
+        vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i = 0U;
+        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i)) {
+            vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs[(0x7fU 
+                                                                                & vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i)] = 0U;
+            vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i 
+                = ((IData)(1U) + vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i);
+        }
+    }
     if (__Vdlyvset__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0) {
         vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs[__Vdlyvdim0__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0] 
             = __Vdlyvval__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0;
@@ -1052,6 +1028,25 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__t0_counter__v3;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_tag[__Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__t0_tag__v0] 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__t0_tag__v0;
+    }
+    if (vlSelf->rst) {
+        vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i = 0U;
+        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)) {
+            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs[(0x7fU 
+                                                                                & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)] = 0U;
+            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i 
+                = ((IData)(1U) + vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i);
+        }
+    } else if (vlSelf->top__DOT__u_dcache_top__DOT___dirty_flush) {
+        vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i = 0U;
+        while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)) {
+            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs[(0x7fU 
+                                                                                & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)] 
+                = (0x7ffffU & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs
+                   [(0x7fU & vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i)]);
+            vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i 
+                = ((IData)(1U) + vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i);
+        }
     }
     if (__Vdlyvset__top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs__v0) {
         vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs[__Vdlyvdim0__top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs__v0] 
@@ -1718,10 +1713,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     vlSelf->io_master_rready = vlSelf->top__DOT__axi4_rw__DOT__r_ready;
     vlSelf->top__DOT__axi4_rw__DOT__axi_r_handshake 
         = ((IData)(vlSelf->io_master_rvalid) & (IData)(vlSelf->top__DOT__axi4_rw__DOT__r_ready));
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit_rate 
-        = ((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
-            ? VL_DIV_III(32, ((IData)(0x64U) * vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
-            : 0U);
     if (vlSelf->top__DOT__ex2mem__DOT__reg_rst) {
         vlSelf->top__DOT__ex2mem__DOT___pc_op_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q = 0U;
@@ -3722,14 +3713,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___nba_sequent__TOP__2\n"); );
     // Body
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches 
-        = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
-        = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
-        = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history 
         = vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
     if (vlSelf->rst) {
@@ -3880,14 +3863,14 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     // Body
     if (vlSelf->__VnbaTriggered.at(1U)) {
         Vtop___024root___nba_sequent__TOP__0(vlSelf);
+        vlSelf->__Vm_traceActivity[2U] = 1U;
     }
     if (vlSelf->__VnbaTriggered.at(0U)) {
         Vtop___024root___nba_sequent__TOP__1(vlSelf);
-        vlSelf->__Vm_traceActivity[2U] = 1U;
+        vlSelf->__Vm_traceActivity[3U] = 1U;
     }
     if (vlSelf->__VnbaTriggered.at(1U)) {
         Vtop___024root___nba_sequent__TOP__2(vlSelf);
-        vlSelf->__Vm_traceActivity[3U] = 1U;
     }
     if ((vlSelf->__VnbaTriggered.at(0U) | vlSelf->__VnbaTriggered.at(1U))) {
         Vtop___024root___nba_comb__TOP__0(vlSelf);

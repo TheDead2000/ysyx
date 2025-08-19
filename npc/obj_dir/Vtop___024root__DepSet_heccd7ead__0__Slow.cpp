@@ -234,6 +234,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         = ((IData)(vlSelf->io_master_arready) & (IData)(vlSelf->top__DOT__axi4_rw__DOT__ar_valid));
     vlSelf->top__DOT__axi4_rw__DOT__axi_r_handshake 
         = ((IData)(vlSelf->io_master_rvalid) & (IData)(vlSelf->top__DOT__axi4_rw__DOT__r_ready));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0 
+        = (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits 
+           + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses);
     vlSelf->top__DOT__u_dcache_top__DOT__ram_w_handshake 
         = ((IData)(vlSelf->top__DOT__axi4_rw__DOT___arb_wdata_ready_o) 
            & (IData)(vlSelf->top__DOT__u_dcache_top__DOT___ram_waddr_valid_dcache_o));
@@ -440,9 +443,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 = vlSelf->top__DOT__ram_rdata_icache;
         }
     }
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0 
-        = (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits 
-           + vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_misses);
     vlSelf->top__DOT__ram_rdata_dcache = ((2U == (IData)(vlSelf->top__DOT__axi_arb__DOT__arb_state))
                                            ? vlSelf->top__DOT__axi4_rw__DOT___arb_rdata_o
                                            : 0U);
@@ -880,10 +880,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__read_tag_full 
         = vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs
         [vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__A];
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit_rate 
-        = ((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
-            ? VL_DIV_III(32, ((IData)(0x64U) * vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hits), vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0)
-            : 0U);
     vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__D[0U] 
         = (((- (IData)((3U == (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)))) 
             & ((0U == (3U & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__burst_count)))
@@ -2127,7 +2123,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__bm_index_u = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_index_u = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag_u = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit_rate = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0 = 0;
     vlSelf->top__DOT__if2id__DOT__reg_rst = 0;
     vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q = 0;
@@ -2484,12 +2479,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->__Vfunc_match__40__Vfuncout = 0;
     vlSelf->__Vfunc_match__40__inst = 0;
     vlSelf->__Vtableidx1 = 0;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = 0;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits = 0;
     vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history = 0;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches = 0;
-    vlSelf->__Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions = 0;
     vlSelf->__Vtrigrprev__TOP__clk = 0;
     vlSelf->__Vtrigrprev__TOP__rst = 0;
     for (int __Vi0 = 0; __Vi0 < 5; ++__Vi0) {

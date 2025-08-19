@@ -340,12 +340,11 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_misses;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__i;
-        IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_hit_rate;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT____VdfgTmp_hb3e3931f__0;
         IData/*31:0*/ top__DOT__if2id__DOT___inst_addr_if_id_q;
+        IData/*31:0*/ top__DOT__if2id__DOT___inst_data_if_id_q;
     };
     struct {
-        IData/*31:0*/ top__DOT__if2id__DOT___inst_data_if_id_q;
         IData/*18:0*/ top__DOT__if2id__DOT___trap_bus_if_id_q;
         IData/*18:0*/ top__DOT__idu__DOT___decode_trap_bus;
         IData/*31:0*/ top__DOT__id2ex__DOT___pc_id_ex_q;
@@ -409,9 +408,9 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__9__inst;
         IData/*31:0*/ __Vfunc_match__10__inst;
         IData/*31:0*/ __Vfunc_match__11__inst;
+        IData/*31:0*/ __Vfunc_match__12__inst;
     };
     struct {
-        IData/*31:0*/ __Vfunc_match__12__inst;
         IData/*31:0*/ __Vfunc_match__13__inst;
         IData/*31:0*/ __Vfunc_match__14__inst;
         IData/*31:0*/ __Vfunc_match__15__inst;
@@ -440,11 +439,6 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__38__inst;
         IData/*31:0*/ __Vfunc_match__39__inst;
         IData/*31:0*/ __Vfunc_match__40__inst;
-        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
-        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits;
-        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
-        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
-        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
         IData/*31:0*/ __VstlIterCount;
         IData/*31:0*/ __VicoIterCount;
         IData/*31:0*/ __VactIterCount;
