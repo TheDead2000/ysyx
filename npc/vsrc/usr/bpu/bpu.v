@@ -274,11 +274,11 @@ module bpu (
                 else if (btb_hit) begin
                     // RAS为空时使用BTB
                     pdt_pc = btb_target_val;
+                    $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
                 end
                 else begin
                     // RAS和BTB都未命中，使用默认PC+4
                     pdt_res = 1'b0; // 不跳转
-                    pdt_pc = if_pc + 4;
                     $display("都未命中\n");
                 end
                 // 否则使用默认PC+4（实际不会发生）

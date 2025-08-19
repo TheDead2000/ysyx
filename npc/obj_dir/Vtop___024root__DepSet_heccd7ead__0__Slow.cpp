@@ -1231,13 +1231,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                               - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
-            } else if (VL_LIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)) {
+            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                VL_WRITEF("[BTB] PREDICT:  btb_target_val=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val);
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
             } else {
                 VL_WRITEF("\351\203\275\346\234\252\345\221\275\344\270\255\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
-                vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
-                                              + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
             }
         } else if ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
             vlSelf->top__DOT__pdt_res = 1U;
@@ -1956,7 +1956,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__u_pc_reg__DOT___pc_next = vlSelf->top__DOT__bpu_pc_o;
     } else {
         VL_WRITEF("pc_reg: pc_temp_plus4 = %x\n",32,
-                  ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current));
+                  vlSelf->top__DOT__u_pc_reg__DOT___pc_next);
         vlSelf->top__DOT__u_pc_reg__DOT___pc_next = 
             ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
     }
