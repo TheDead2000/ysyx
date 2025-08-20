@@ -156,7 +156,7 @@ end
     reg pop_occurred;
     reg [RAS_PTR_WIDTH-1:0] pop_index;
 
-    always @(posedge clk or posedge rst) 
+    always @(posedge clk or posedge rst)begin
         if (rst == 1) begin
             global_history <= {GLOBAL_HIST_WIDTH{1'b0}};
             provider_history_reg <= 2'b0;
@@ -203,7 +203,8 @@ end
                 end
             end
         end
-        
+        end
+        end
             
   // ID阶段压栈处理 - PUSH操作（解码时）
   $display("run before here11!!!!!\n");
@@ -239,7 +240,6 @@ end
             end
         end
     end
-end
 
     // ================== BTB索引和标签计算 ==================
     wire [7:0] btb_index = if_pc[9:2]; // 256项BTB，使用PC[9:2]作为索引
