@@ -28,8 +28,8 @@ module bpu (
 );
 
     // ================== RAS参数 ==================
-    localparam RAS_DEPTH = 512;          // RAS深度
-    localparam RAS_PTR_WIDTH = 9;       // 栈指针位宽
+    localparam RAS_DEPTH = 32;          // RAS深度
+    localparam RAS_PTR_WIDTH = 5;       // 栈指针位宽
 
     // ================== TAGE预测器参数 ==================
     localparam GLOBAL_HIST_WIDTH = 16; // 全局历史寄存器位宽
