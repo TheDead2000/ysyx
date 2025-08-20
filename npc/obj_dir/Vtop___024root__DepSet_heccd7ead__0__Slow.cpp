@@ -103,8 +103,8 @@ VL_ATTR_COLD void Vtop___024root___eval_initial__TOP(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp = 0U;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__i = 0U;
-    while (VL_GTS_III(32, 0x80U, vlSelf->top__DOT__ifu__DOT__bpu__DOT__i)) {
-        vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras[(0x7fU 
+    while (VL_GTS_III(32, 0x200U, vlSelf->top__DOT__ifu__DOT__bpu__DOT__i)) {
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras[(0x1ffU 
                                                    & vlSelf->top__DOT__ifu__DOT__bpu__DOT__i)] = 0U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__i = ((IData)(1U) 
                                                    + vlSelf->top__DOT__ifu__DOT__bpu__DOT__i);
@@ -1901,16 +1901,16 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(vlSelf->top__DOT__pdt_correct);
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp 
-        = (0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                    - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
-                       & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
-                          & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                 >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
+        = (0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                     - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+                        & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                           & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                  >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top 
         = ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp))
             ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-           [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
-                      - (IData)(1U)))] : 0U);
+           [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
+                       - (IData)(1U)))] : 0U);
     vlSelf->top__DOT__bpu_pc_valid_o = 0U;
     vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
     vlSelf->top__DOT__pdt_res = 0U;
@@ -1949,8 +1949,8 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                           32,vlSelf->top__DOT__bpu_pc_o);
             } else if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                    [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                               - (IData)(1U)))];
+                    [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
@@ -2205,7 +2205,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     for (int __Vi0 = 0; __Vi0 < 256; ++__Vi0) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_valid[__Vi0] = 0;
     }
-    for (int __Vi0 = 0; __Vi0 < 128; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 512; ++__Vi0) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras[__Vi0] = 0;
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp = 0;

@@ -72,16 +72,16 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(vlSelf->top__DOT__pdt_correct);
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp 
-        = (0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                    - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
-                       & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
-                          & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                 >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
+        = (0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                     - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+                        & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                           & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                  >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top 
         = ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp))
             ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-           [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
-                      - (IData)(1U)))] : 0U);
+           [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
+                       - (IData)(1U)))] : 0U);
     vlSelf->top__DOT__bpu_pc_valid_o = 0U;
     vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
     vlSelf->top__DOT__pdt_res = 0U;
@@ -120,8 +120,8 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                           32,vlSelf->top__DOT__bpu_pc_o);
             } else if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                    [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                               - (IData)(1U)))];
+                    [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
@@ -3724,9 +3724,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = 0;
     IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = 0;
-    CData/*6:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+    SData/*8:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = 0;
-    CData/*6:0*/ __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
+    SData/*8:0*/ __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
     __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0;
     IData/*31:0*/ __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
     __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0;
@@ -3817,16 +3817,16 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) {
                     if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)))) {
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
-                            = (0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
-                                        - (IData)(1U)));
+                            = (0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
+                                         - (IData)(1U)));
                         VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr=0x%x\n",
-                                  7,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
+                                  9,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index]);
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 1U;
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
-                            = (0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
-                                        - (IData)(1U)));
+                            = (0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
+                                         - (IData)(1U)));
                     }
                 }
             }
@@ -3844,7 +3844,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                   32,((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)),
                   32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
-            = (0x7fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
+            = (0x1ffU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
     }
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
     if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
@@ -4025,11 +4025,11 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         = (0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                     ^ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history)));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp 
-        = (0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                    - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
-                       & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
-                          & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                 >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
+        = (0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                     - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+                        & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                           & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                  >> 2U)) & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp)))))));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match 
         = ((0x3fU & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_tag
                      [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
@@ -4048,8 +4048,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top 
         = ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp))
             ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-           [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
-                      - (IData)(1U)))] : 0U);
+           [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
+                       - (IData)(1U)))] : 0U);
     vlSelf->top__DOT__bpu_pc_valid_o = 0U;
     vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
     vlSelf->top__DOT__pdt_res = 0U;
@@ -4088,8 +4088,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                           32,vlSelf->top__DOT__bpu_pc_o);
             } else if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                    [(0x7fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                               - (IData)(1U)))];
+                    [(0x1ffU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
                 VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
                           32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
