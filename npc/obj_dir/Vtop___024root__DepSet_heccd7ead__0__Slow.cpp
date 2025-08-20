@@ -210,6 +210,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     // Body
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret 
+        = ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
+           & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                               >> 0xfU))) | (5U == 
+                                             (0x1fU 
+                                              & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                                 >> 0xfU)))));
     vlSelf->top__DOT__u_icache_top__DOT__burst_count_plus1 
         = (0xfU & ((IData)(1U) + (IData)(vlSelf->top__DOT__u_icache_top__DOT__burst_count)));
     vlSelf->top__DOT__u_dcache_top__DOT__burst_count_plus1 
@@ -1929,11 +1936,11 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid)) {
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data;
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
-                VL_WRITEF("[RAS] USE HOLD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data);
+                VL_WRITEF("[RAS] USE HELD DATA: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data);
             } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
                 VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
                           32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
@@ -2229,15 +2236,16 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match = 0;
