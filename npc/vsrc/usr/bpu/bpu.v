@@ -149,10 +149,6 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
-// ================== RAS状态前递逻辑 ==================
-reg [`XLEN-1:0] ras_pop_data;
-reg ras_pop_valid;
-
 
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
@@ -298,13 +294,6 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
 
-                // if (ras_pop_valid) begin
-                // pdt_pc = ras_pop_data;
-                // pred_used_ras = 0;
-                //   $display("[RAS] POP FORWARD: target=0x%h", ras_pop_data);
-                // end 
-                // // 其次使用前递的PUSH数据
-                //  else 
                  if (ras_forward_valid) begin
                   pdt_pc = ras_forward_data;
                   pred_used_ras = 0; // 标记未使用实际RAS
