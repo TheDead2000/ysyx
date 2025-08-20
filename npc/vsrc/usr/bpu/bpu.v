@@ -187,7 +187,7 @@ end
                 pop_occurred = 0;
                 pop_index = 0;
             // 处理RAS出栈（RET指令实际执行时）
-           if (ex_branch_taken_i && !ex_stall_valid_i && !flush_valid_i) begin
+           if (ex_branch_taken_i && !ex_stall_valid_i) begin
             // 识别RET指令: JALR且rs1=x1或x5
             if (ex_is_ret) begin
                 if (next_sp > 0) begin
@@ -202,7 +202,7 @@ end
         end
             
   // ID阶段压栈处理 - PUSH操作（解码时）
-        if (id_ras_push_valid_i && !ex_stall_valid_i && !flush_valid_i) begin
+        if (id_ras_push_valid_i && !ex_stall_valid_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
                 $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);
