@@ -156,42 +156,24 @@ reg ras_pop_valid;
 // ================== RAS数据保持逻辑 ==================
 reg [`XLEN-1:0] ras_held_data;
 reg ras_held_valid;
-reg ras_hold_until_next_pop; // 标记保持到下一次弹出
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_held_valid <= 0;
         ras_held_data <= 0;
-        ras_hold_until_next_pop <= 0;
     end else begin
-        // 捕获新的弹出数据并设置保持标志
+        // 捕获新的弹出数据
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
             ras_held_valid <= 1;
             ras_held_data <= ras[ras_sp-1];
-            ras_hold_until_next_pop <= 1; // 保持到下一次弹出
-            $display("[RAS] HELD DATA CAPTURED: data=0x%h, hold_until_next_pop=1", ras[ras_sp-1]);
+            $display("[RAS] HELD DATA CAPTURED: data=0x%h", ras[ras_sp-1]);
         end
         
-        // 当有新的弹出操作时，更新保持的数据
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_until_next_pop) begin
-            ras_held_data <= ras[ras_sp-1];
-            $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
-        end
-        
-        // 清除保持条件：数据被使用或新的弹出操作
+        // 清除条件：数据被使用或新的弹出操作
         if ((is_ret && ras_held_valid) || 
-            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && !ras_hold_until_next_pop)) begin
+            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i)) begin
             ras_held_valid <= 0;
-            ras_hold_until_next_pop <= 0;
             $display("[RAS] HELD DATA CLEARED");
-        end
-        
-        // 当保持到下一次弹出的数据被使用后，重新评估保持策略
-        if (is_ret && ras_held_valid && ras_hold_until_next_pop) begin
-            // 数据已被使用，但保持标志仍然有效，等待下一次弹出
-            ras_held_valid <= 0; // 先清除有效标志
-            ras_hold_until_next_pop <= 1; // 保持标志仍然有效
-            $display("[RAS] HELD DATA USED, WAITING FOR NEXT POP");
         end
     end
 end

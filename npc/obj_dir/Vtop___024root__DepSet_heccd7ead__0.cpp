@@ -3698,8 +3698,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0;
     CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0;
-    CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop;
-    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 0;
     SData/*15:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history = 0;
     IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
@@ -3721,8 +3719,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     CData/*0:0*/ __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0;
     // Body
-    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
@@ -3775,14 +3771,13 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     if (vlSelf->rst) {
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data = 0U;
-        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 0U;
     } else {
         if (VL_UNLIKELY(((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
                            & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
                           & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
                          & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                                >> 2U))))) {
-            VL_WRITEF("[RAS] HELD DATA CAPTURED: data=0x%x, hold_until_next_pop=1\n",
+            VL_WRITEF("[RAS] HELD DATA CAPTURED: data=0x%x\n",
                       32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                       [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                  - (IData)(1U)))]);
@@ -3791,39 +3786,16 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                 [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                            - (IData)(1U)))];
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 1U;
-        }
-        if (VL_UNLIKELY((((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                            & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                           & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
-                          & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                >> 2U))) & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop)))) {
-            VL_WRITEF("[RAS] HELD DATA UPDATED: data=0x%x\n",
-                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                      [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                 - (IData)(1U)))]);
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data 
-                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                           - (IData)(1U)))];
         }
         if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
                           & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid)) 
-                         | (((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
-                             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                   >> 2U))) & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop)))))) {
+                         | ((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+                              & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
+                             & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
+                            & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                  >> 2U)))))) {
             VL_WRITEF("[RAS] HELD DATA CLEARED\n");
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0U;
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 0U;
-        }
-        if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
-                          & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid)) 
-                         & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop)))) {
-            VL_WRITEF("[RAS] HELD DATA USED, WAITING FOR NEXT POP\n");
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0U;
-            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 1U;
         }
     }
     if (vlSelf->rst) {
@@ -3913,8 +3885,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop 
-        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches 
