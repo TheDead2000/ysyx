@@ -1897,13 +1897,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                          == vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
     vlSelf->top__DOT__id_ras_push_valid = ((~ ((IData)(vlSelf->top__DOT__flush_clint) 
                                                >> 1U)) 
-                                           & ((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
-                                              | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
-                                                 & (0U 
-                                                    != 
-                                                    (0x1fU 
-                                                     & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
-                                                        >> 7U))))));
+                                           & (((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
+                                               | (IData)(vlSelf->top__DOT__idu__DOT___inst_jalr)) 
+                                              & (0U 
+                                                 != 
+                                                 (0x1fU 
+                                                  & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
+                                                     >> 7U)))));
     vlSelf->top__DOT__bpu_pc_valid_o = 0U;
     vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) + vlSelf->top__DOT__u_pc_reg__DOT___pc_current);
     vlSelf->top__DOT__pdt_res = 0U;

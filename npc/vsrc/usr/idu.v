@@ -365,7 +365,7 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   // ================== 新增CALL指令识别逻辑 ==================
   // 定义CALL指令：JAL或JALR且目标寄存器不为0（因为rd=0表示不保存返回地址）
   
-  wire _is_call = (_type_jal) || (_type_jalr && (_rd != 5'b0));
+  wire _is_call = (_type_jal && (_rd != 5'b0) ) || (_type_jalr && (_rd != 5'b0));
   
   // 计算返回地址（当前PC+4）
   assign id_ras_push_valid_o = _is_call && !flush_i;
