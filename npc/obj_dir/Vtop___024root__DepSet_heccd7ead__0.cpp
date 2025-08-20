@@ -81,9 +81,7 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
+            if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
                              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                                    >> 2U))))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
@@ -4037,6 +4035,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                                                                   (0x1fU 
                                                                    & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                                       >> 0xfU))))));
+    vlSelf->top__DOT__exu__DOT__is_branch_inst = ((7U 
+                                                   == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
+                                                  | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret 
         = ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
            & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
@@ -4044,9 +4045,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                                              (0x1fU 
                                               & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
                                                  >> 0xfU)))));
-    vlSelf->top__DOT__exu__DOT__is_branch_inst = ((7U 
-                                                   == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
-                                                  | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
     vlSelf->top__DOT__exu__DOT__jump_taken = (((7U 
                                                 == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
                                                & (IData)(vlSelf->top__DOT__exu__DOT___compare_out)) 
@@ -4176,9 +4174,7 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
+            if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
                              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                                    >> 2U))))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras

@@ -1936,9 +1936,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
+            if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
                              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                                    >> 2U))))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras

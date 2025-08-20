@@ -372,12 +372,12 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-                pdt_pc = ras[ras_sp-1];
-                pred_used_ras = 1;
-                $display("[RAS] COMBO POP: target=0x%h", pdt_pc);
-              end
-                else
+                if (ex_is_ret && !ex_stall_valid_i) begin
+         pdt_pc = ras[ras_sp-1];
+        pred_used_ras = 1;
+              $display("[RAS] COMBO POP: target=0x%h", pdt_pc);
+            end
+        else
                  if (ras_held_valid) begin
                 pdt_pc = ras_held_data;
                  pred_used_ras = 0;
