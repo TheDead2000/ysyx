@@ -152,28 +152,64 @@ end
 // ================== RAS状态前递逻辑 ==================
 reg [`XLEN-1:0] ras_pop_data;
 reg ras_pop_valid;
-
+// 修改RAS弹出逻辑
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        ras_pop_valid <= 0;
+        ras_pop_data <= 0;
+    end else begin
+        // 清除条件：已使用或新的弹出操作
+        if ((is_ret && ras_pop_valid) || 
+            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i)) begin
+            ras_pop_valid <= 0;
+        end
+        
+        // 捕获新的弹出操作
+        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
+            if (ras_sp > 0) begin
+                ras_pop_valid <= 1;
+                ras_pop_data <= ras[ras_sp-1];
+                $display("[RAS] POP CAPTURED: data=0x%h", ras[ras_sp-1]);
+            end
+        end
+    end
+end
 // ================== RAS数据保持逻辑 ==================
+// ================== 重新设计RAS数据保持逻辑 ==================
 reg [`XLEN-1:0] ras_held_data;
 reg ras_held_valid;
+reg ras_hold_pending; // 标记有数据需要保持
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_held_valid <= 0;
         ras_held_data <= 0;
+        ras_hold_pending <= 0;
     end else begin
         // 捕获新的弹出数据
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            ras_held_valid <= 1;
             ras_held_data <= ras[ras_sp-1];
-            $display("[RAS] HELD DATA CAPTURED: data=0x%h", ras[ras_sp-1]);
+            ras_hold_pending <= 1; // 标记有数据需要保持
+            $display("[RAS] HOLD PENDING: data=0x%h", ras[ras_sp-1]);
         end
         
-        // 清除条件：数据被使用或新的弹出操作
-        if ((pop_occurred && ras_held_valid) || 
-            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i)) begin
+        // 当IF阶段没有RET指令时，激活保持的数据
+        if (ras_hold_pending && !is_ret) begin
+            ras_held_valid <= 1;
+            ras_hold_pending <= 0;
+            $display("[RAS] HELD DATA ACTIVATED: data=0x%h", ras_held_data);
+        end
+        
+        // 清除条件：数据被使用
+        if (is_ret && ras_held_valid) begin
             ras_held_valid <= 0;
-            $display("[RAS] HELD DATA CLEARED");
+            $display("[RAS] HELD DATA CLEARED (USED)");
+        end
+        
+        // 当有新的弹出操作时，更新保持的数据
+        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_pending) begin
+            ras_held_data <= ras[ras_sp-1];
+            $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
         end
     end
 end

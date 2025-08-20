@@ -2238,6 +2238,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_data = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_pending = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index = 0;
