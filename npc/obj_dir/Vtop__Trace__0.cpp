@@ -913,8 +913,8 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
     }
     if (VL_UNLIKELY(vlSelf->__Vm_traceActivity[3U])) {
         bufp->chgSData(oldp+365,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history),16);
-        bufp->chgCData(oldp+366,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),7);
-        bufp->chgCData(oldp+367,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp),7);
+        bufp->chgSData(oldp+366,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),9);
+        bufp->chgSData(oldp+367,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp),9);
         bufp->chgCData(oldp+368,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_reg),2);
         bufp->chgIData(oldp+369,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches),32);
         bufp->chgIData(oldp+370,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions),32);
@@ -925,9 +925,9 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgIData(oldp+375,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data),32);
         bufp->chgIData(oldp+376,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data),32);
         bufp->chgBit(oldp+377,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid));
-        bufp->chgCData(oldp+378,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp),7);
+        bufp->chgSData(oldp+378,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp),9);
         bufp->chgBit(oldp+379,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred));
-        bufp->chgCData(oldp+380,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index),7);
+        bufp->chgSData(oldp+380,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index),9);
         bufp->chgIData(oldp+381,(((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
                                    ? VL_DIV_III(32, 
                                                 ((IData)(0x64U) 
