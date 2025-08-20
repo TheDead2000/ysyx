@@ -3759,7 +3759,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
                           & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) 
                          & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                               >> 2U))))) {
+                               >> 1U))))) {
             VL_WRITEF("[RAS] FORWARD USED: data=0x%x\n",
                       32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid = 0U;
@@ -3767,7 +3767,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         }
         if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__id_ras_push_valid) 
                           & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                >> 2U))) & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used))))) {
+                                >> 1U))) & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used))))) {
             VL_WRITEF("[RAS] FORWARD CAPTURED: data=0x%x\n",
                       32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid = 1U;
@@ -3833,8 +3833,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         }
     }
     if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__id_ras_push_valid) 
-                     & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                           >> 2U))))) {
+                     & (0U == (6U & (IData)(vlSelf->top__DOT__stall_clint)))))) {
         __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
             = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
         __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 1U;

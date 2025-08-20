@@ -20,6 +20,7 @@ module bpu (
     input wire [`XLEN-1:0] id_ras_push_data_i, // ID阶段计算
     input wire ex_stall_valid_i, // 暂停流水线时不压栈
     input wire flush_valid_i, // 清空 IF 阶段指令
+    input wire id_stall_i,
     // 输出
     output reg branch_or_not, 
     output reg [`XLEN-1:0] pdt_pc,
@@ -128,14 +129,14 @@ always @(posedge clk or posedge rst) begin
         ras_forward_used <= 0;
     end else begin
         // 当使用前递数据时，立即失效
-        if (is_ret && ras_forward_valid && !ex_stall_valid_i) begin
+        if (is_ret && ras_forward_valid && !id_stall_i) begin
             ras_forward_valid <= 0;
             ras_forward_used <= 1;
             $display("[RAS] FORWARD USED: data=0x%h", ras_forward_data);
         end
         
         // 捕获新的前递数据
-        if (id_ras_push_valid_i && !ex_stall_valid_i && !ras_forward_used) begin
+        if (id_ras_push_valid_i && !id_stall_i && !ras_forward_used) begin
             ras_forward_valid <= 1;
             ras_forward_data <= id_ras_push_data_i;
             ras_forward_used <= 0;
@@ -202,7 +203,7 @@ end
         end
             
   // ID阶段压栈处理 - PUSH操作（解码时）
-        if (id_ras_push_valid_i && !ex_stall_valid_i) begin
+        if (id_ras_push_valid_i && !ex_stall_valid_i && !id_stall_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
                 $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);

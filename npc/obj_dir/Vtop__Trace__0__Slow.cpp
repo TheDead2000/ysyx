@@ -1026,6 +1026,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+406,"id_ras_push_data_i", false,-1, 31,0);
     tracep->declBit(c+23,"ex_stall_valid_i", false,-1);
     tracep->declBit(c+26,"if_flush_i", false,-1);
+    tracep->declBit(c+27,"id_stall_i", false,-1);
     tracep->declBus(c+35,"bpu_pc_o", false,-1, 31,0);
     tracep->declBit(c+36,"bpu_pc_valid_o", false,-1);
     tracep->declBit(c+37,"pdt_res", false,-1);
@@ -1048,6 +1049,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+406,"id_ras_push_data_i", false,-1, 31,0);
     tracep->declBit(c+23,"ex_stall_valid_i", false,-1);
     tracep->declBit(c+26,"flush_valid_i", false,-1);
+    tracep->declBit(c+27,"id_stall_i", false,-1);
     tracep->declBit(c+36,"branch_or_not", false,-1);
     tracep->declBus(c+35,"pdt_pc", false,-1, 31,0);
     tracep->declBit(c+37,"pdt_res", false,-1);

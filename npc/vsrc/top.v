@@ -115,7 +115,7 @@ ifu ifu (
   .id_ras_push_data_i(id_ras_push_data), // ID阶段计算的返回地址
   .ex_stall_valid_i(stall_clint[`CTRLBUS_ID_EX]), // 暂停流水线时清除预测
   .if_flush_i(flush_clint[`CTRLBUS_IF_ID]), // 清空 IF 阶段指令
-
+  .id_stall_i(stall_clint[`CTRLBUS_IF_ID]),
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
