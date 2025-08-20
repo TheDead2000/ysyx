@@ -152,25 +152,40 @@ end
 // ================== RAS状态前递逻辑 ==================
 reg [`XLEN-1:0] ras_pop_data;
 reg ras_pop_valid;
-// 修改RAS弹出逻辑
+reg ras_pop_pending; // 标记有弹出操作待处理
+
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_pop_valid <= 0;
         ras_pop_data <= 0;
+        ras_pop_pending <= 0;
     end else begin
-        // 清除条件：已使用或新的弹出操作
-        if ((is_ret && ras_pop_valid) || 
-            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i)) begin
-            ras_pop_valid <= 0;
-        end
-        
         // 捕获新的弹出操作
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
             if (ras_sp > 0) begin
-                ras_pop_valid <= 1;
+                ras_pop_pending <= 1;
                 ras_pop_data <= ras[ras_sp-1];
-                $display("[RAS] POP CAPTURED: data=0x%h", ras[ras_sp-1]);
+                $display("[RAS] POP PENDING: data=0x%h", ras[ras_sp-1]);
             end
+        end
+        
+        // 当IF阶段没有RET指令时，激活前递的数据
+        if (ras_pop_pending && !is_ret) begin
+            ras_pop_valid <= 1;
+            ras_pop_pending <= 0;
+            $display("[RAS] POP ACTIVATED: data=0x%h", ras_pop_data);
+        end
+        
+        // 清除条件：数据被使用
+        if (is_ret && ras_pop_valid) begin
+            ras_pop_valid <= 0;
+            $display("[RAS] POP CLEARED (USED)");
+        end
+        
+        // 当有新的弹出操作时，更新前递的数据
+        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_pop_pending) begin
+            ras_pop_data <= ras[ras_sp-1];
+            $display("[RAS] POP UPDATED: data=0x%h", ras[ras_sp-1]);
         end
     end
 end
