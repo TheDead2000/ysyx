@@ -165,7 +165,6 @@ end
             bimodal_hits <= 0;
             t0_hits <= 0;
             t1_hits <= 0;
-            ras_sp <= 0;
             pred_ras_sp = 0;
             pred_used_ras = 0;
         end else begin
