@@ -325,6 +325,11 @@ wire is_ret = is_jalr &&
                 //     pdt_pc = btb_target_val;
                 //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
                 // end
+                else begin
+                    // RAS和BTB都未命中，使用默认PC+4
+                    pdt_res = 1'b0; // 不跳转
+                    $display("ras miss\n");
+                end
             end
             // 处理JAL指令
             else if (is_jal) begin
