@@ -120,15 +120,32 @@ module bpu (
 // ================== RAS前递逻辑 ==================
 reg ras_forward_valid;
 reg [`XLEN-1:0] ras_forward_data;
-
+reg ras_forward_used; // 前递数据已使用标志
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_forward_valid <= 0;
         ras_forward_data <= 0;
+        ras_forward_used <= 0;
     end else begin
-        // 捕获即将压栈的数据
-        ras_forward_valid <= id_ras_push_valid_i && !ex_stall_valid_i;
-        ras_forward_data <= id_ras_push_data_i;
+        // 当使用前递数据时，立即失效
+        if (is_ret && ras_forward_valid && !ex_stall_valid_i) begin
+            ras_forward_valid <= 0;
+            ras_forward_used <= 1;
+            $display("[RAS] FORWARD USED: data=0x%h", ras_forward_data);
+        end
+        
+        // 捕获新的前递数据
+        if (id_ras_push_valid_i && !ex_stall_valid_i && !ras_forward_used) begin
+            ras_forward_valid <= 1;
+            ras_forward_data <= id_ras_push_data_i;
+            ras_forward_used <= 0;
+            $display("[RAS] FORWARD CAPTURED: data=0x%h", id_ras_push_data_i);
+        end
+        
+        // 重置使用标志
+        if (!id_ras_push_valid_i && !is_ret) begin
+            ras_forward_used <= 0;
+        end
     end
 end
 
