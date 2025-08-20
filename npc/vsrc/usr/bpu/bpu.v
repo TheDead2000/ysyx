@@ -202,9 +202,11 @@ end
                     pop_occurred = 1;
                 end
             end
+        end
         
             
   // ID阶段压栈处理 - PUSH操作（解码时）
+  $display("run before here11!!!!!\n");
         if (id_ras_push_valid_i && !ex_stall_valid_i) begin
             $display("run here11!!!!!\n");
             if (next_sp < RAS_DEPTH) begin
@@ -237,8 +239,8 @@ end
             end
         end
     end
-        end
-    end
+end
+
     // ================== BTB索引和标签计算 ==================
     wire [7:0] btb_index = if_pc[9:2]; // 256项BTB，使用PC[9:2]作为索引
     wire [BTB_TAG_WIDTH-1:0] btb_tag_val = if_pc[31:32-BTB_TAG_WIDTH]; // 高位作为标签
