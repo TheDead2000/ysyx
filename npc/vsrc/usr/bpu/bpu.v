@@ -164,8 +164,8 @@ always @(posedge clk or posedge rst) begin
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
             if (ras_sp > 0) begin
                 ras_pop_pending <= 1;
-                ras_pop_data <= ras[ras_sp-1];
-                $display("[RAS] POP PENDING: data=0x%h", ras[ras_sp-1]);
+                ras_pop_data <= id_ras_push_data_i;
+                $display("[RAS] POP PENDING: data=0x%h", id_ras_push_data_i);
             end
         end
         
@@ -173,7 +173,7 @@ always @(posedge clk or posedge rst) begin
         if (ras_pop_pending && !is_ret) begin
             ras_pop_valid <= 1;
             ras_pop_pending <= 0;
-            $display("[RAS] POP ACTIVATED: data=0x%h", ras_pop_data);
+            $display("[RAS] POP ACTIVATED: data=0x%h", id_ras_push_data_i);
         end
         
         // 清除条件：数据被使用
@@ -184,8 +184,8 @@ always @(posedge clk or posedge rst) begin
         
         // 当有新的弹出操作时，更新前递的数据
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_pop_pending) begin
-            ras_pop_data <= ras[ras_sp-1];
-            $display("[RAS] POP UPDATED: data=0x%h", ras[ras_sp-1]);
+            ras_pop_data <= id_ras_push_data_i;
+            $display("[RAS] POP UPDATED: data=0x%h", id_ras_push_data_i);
         end
     end
 end
