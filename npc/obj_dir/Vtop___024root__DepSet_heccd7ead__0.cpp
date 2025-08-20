@@ -81,11 +81,16 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] USE HOLD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data);
+            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
                 VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
                           32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
             } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
                 VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
                           32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
@@ -2406,10 +2411,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = __Vdly__top__DOT__u_icache_top__DOT__burst_count;
     vlSelf->top__DOT__u_icache_top__DOT__line_tag_reg 
         = __Vdly__top__DOT__u_icache_top__DOT__line_tag_reg;
-    vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg 
-        = __Vdly__top__DOT__u_icache_top__DOT__blk_addr_reg;
     vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg 
         = __Vdly__top__DOT__u_icache_top__DOT__line_idx_reg;
+    vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg 
+        = __Vdly__top__DOT__u_icache_top__DOT__blk_addr_reg;
     vlSelf->top__DOT__u_dcache_top__DOT___ram_rlen_dcache_o 
         = __Vdly__top__DOT__u_dcache_top__DOT___ram_rlen_dcache_o;
     vlSelf->top__DOT__u_dcache_top__DOT__dcache_tag_wen 
@@ -3185,6 +3190,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_data = 0;
     CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0;
+    CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid = 0;
+    CData/*1:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count = 0;
     SData/*15:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history = 0;
     IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
@@ -3206,6 +3215,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     CData/*0:0*/ __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 0;
     // Body
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count 
+        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid 
+        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits;
@@ -3251,6 +3264,27 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         if ((1U & ((~ (IData)(vlSelf->top__DOT__id_ras_push_valid)) 
                    & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret))))) {
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0U;
+        }
+    }
+    if (vlSelf->rst) {
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid = 0U;
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data = 0U;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count = 0U;
+    } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
+        VL_WRITEF("[RAS] HOLD CAPTURED: data=0x%x, count=2\n",
+                  32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid = 1U;
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data 
+            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count = 2U;
+    } else if (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid) 
+                & (0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count)))) {
+        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count 
+            = (3U & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count) 
+                     - (IData)(1U)));
+        if (VL_UNLIKELY((1U == (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count)))) {
+            VL_WRITEF("[RAS] HOLD EXPIRED\n");
+            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid = 0U;
         }
     }
     if (vlSelf->rst) {
@@ -3344,6 +3378,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_count;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid 
+        = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions 
@@ -4029,11 +4067,16 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_valid)) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] USE HOLD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_hold_data);
+            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
                 VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
                           32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
             } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
                 VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
                           32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);

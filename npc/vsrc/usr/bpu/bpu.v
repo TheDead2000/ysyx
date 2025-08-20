@@ -153,6 +153,36 @@ end
 reg [`XLEN-1:0] ras_pop_data;
 reg ras_pop_valid;
 
+// 增加保持寄存器，存储最近一次弹出的数据
+reg [`XLEN-1:0] ras_pop_hold_data;
+reg ras_pop_hold_valid;
+reg [1:0] ras_pop_hold_count; // 计数器，控制保持周期
+
+// 保持逻辑
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        ras_pop_hold_valid <= 0;
+        ras_pop_hold_data <= 0;
+        ras_pop_hold_count <= 0;
+    end else begin
+        // 捕获新的弹出数据
+        if (ras_pop_valid) begin
+            ras_pop_hold_valid <= 1;
+            ras_pop_hold_data <= ras_pop_data;
+            ras_pop_hold_count <= 2; // 保持2个周期
+            $display("[RAS] HOLD CAPTURED: data=0x%h, count=%0d", ras_pop_data, 2);
+        end 
+        // 递减计数器，当计数为0时失效
+        else if (ras_pop_hold_valid && ras_pop_hold_count > 0) begin
+            ras_pop_hold_count <= ras_pop_hold_count - 1;
+            if (ras_pop_hold_count == 1) begin
+                ras_pop_hold_valid <= 0;
+                $display("[RAS] HOLD EXPIRED");
+            end
+        end
+    end
+end
+
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
     reg pop_occurred;
@@ -296,7 +326,12 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-              
+                if (ras_pop_hold_valid) begin
+                 pdt_pc = ras_pop_hold_data;
+                 pred_used_ras = 0;
+                $display("[RAS] USE HOLD: target=0x%h", ras_pop_hold_data);
+                end 
+                else
                 if (ras_pop_valid) begin
                 pdt_pc = ras_pop_data;
                 pred_used_ras = 0;
