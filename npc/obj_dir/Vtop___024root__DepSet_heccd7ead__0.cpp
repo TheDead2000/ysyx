@@ -81,16 +81,11 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
-                VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
-            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
-                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
             } else if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
@@ -431,10 +426,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = vlSelf->top__DOT__u_icache_top__DOT__burst_count;
     __Vdly__top__DOT__u_icache_top__DOT__line_tag_reg 
         = vlSelf->top__DOT__u_icache_top__DOT__line_tag_reg;
-    __Vdly__top__DOT__u_icache_top__DOT__line_idx_reg 
-        = vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg;
     __Vdly__top__DOT__u_icache_top__DOT__blk_addr_reg 
         = vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg;
+    __Vdly__top__DOT__u_icache_top__DOT__line_idx_reg 
+        = vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg;
     __Vdlyvset__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0 = 0U;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__bimodal_table__v0 = 0U;
     __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__bimodal_table__v1 = 0U;
@@ -4029,16 +4024,11 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
-                VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
-            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
-                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
+            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
+                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
             } else if (VL_UNLIKELY(vlSelf->top__DOT__id_ras_push_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
