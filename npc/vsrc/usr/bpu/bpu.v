@@ -149,49 +149,26 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
-// ================== RAS状态前递逻辑 ==================
-reg [`XLEN-1:0] ras_pop_data;
-reg ras_pop_valid;
-
 // ================== RAS数据保持逻辑 ==================
 reg [`XLEN-1:0] ras_held_data;
 reg ras_held_valid;
-reg ras_hold_until_next_pop; // 标记保持到下一次弹出
+reg ras_hold_pending; // 标记有数据需要保持
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_held_valid <= 0;
         ras_held_data <= 0;
-        ras_hold_until_next_pop <= 0;
     end else begin
-        // 捕获新的弹出数据并设置保持标志
+        // 实时捕获所有RET执行
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            ras_held_valid <= 1;
-            ras_held_data <= ras[ras_sp-1];
-            ras_hold_until_next_pop <= 1; // 保持到下一次弹出
-            $display("[RAS] HELD DATA CAPTURED: data=0x%h, hold_until_next_pop=1", ras[ras_sp-1]);
-        end
-        
-        // 当有新的弹出操作时，更新保持的数据
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_until_next_pop) begin
-            ras_held_data <= ras[ras_sp-1];
+            ras_held_data <= ras[ras_sp-1];  // 直接捕获最新数据
+            ras_held_valid <= 1;              // 立即激活
             $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
-        end
-        
-        // 清除保持条件：数据被使用或新的弹出操作
-        if ((is_ret && ras_held_valid) || 
-            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && !ras_hold_until_next_pop)) begin
+        end 
+        // 数据使用后清除
+        else if (is_ret && ras_held_valid) begin
             ras_held_valid <= 0;
-            ras_hold_until_next_pop <= 0;
-            $display("[RAS] HELD DATA CLEARED");
-        end
-        
-        // 当保持到下一次弹出的数据被使用后，重新评估保持策略
-        if (is_ret && ras_held_valid && ras_hold_until_next_pop) begin
-            // 数据已被使用，但保持标志仍然有效，等待下一次弹出
-            ras_held_valid <= 0; // 先清除有效标志
-            ras_hold_until_next_pop <= 1; // 保持标志仍然有效
-            $display("[RAS] HELD DATA USED, WAITING FOR NEXT POP");
+            $display("[RAS] HELD DATA CLEARED (USED)");
         end
     end
 end
@@ -226,7 +203,7 @@ end
         /* verilator lint_off WIDTHEXPAND */
         if (ex_branch_valid_i) begin
             // 更新全局历史寄存器
-            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
+             global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i}; // 使用栈指针LSB
             // 记录上一次预测的提供者
             provider_history_reg <= provider_history_comb;
                 next_sp = ras_sp; // 使用临时变量，初始化为当前栈指针
@@ -339,42 +316,34 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                 if (ras_held_valid) begin
-                pdt_pc = ras_held_data;
-                 pred_used_ras = 0;
-                $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
-                 end 
-                else
-                if (ras_pop_valid) begin
-                pdt_pc = ras_pop_data;
-                pred_used_ras = 0;
-                  $display("[RAS] POP FORWARD: target=0x%h", ras_pop_data);
+                
+                // 优先级调整：先检查ID阶段的CALL，再检查EX阶段的RET
+                if (id_ras_push_valid_i && !ex_stall_valid_i) begin
+                    pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
+                    pred_used_ras = 1'b0;
+                    $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
                 end 
-                // 其次使用前递的PUSH数据
-                 else 
-                 if (ras_forward_valid) begin
-                  pdt_pc = ras_forward_data;
-                  pred_used_ras = 0; // 标记未使用实际RAS
-                $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-            end 
-            else 
-                if (id_ras_push_valid_i) begin
-                     pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
-                      pred_used_ras = 1'b0;
-                  $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
-                 end 
-                else 
-                    if (ras_sp > 0) begin
+                else if (ras_held_valid) begin
+                    pdt_pc = ras_held_data;
+                    pred_used_ras = 0;
+                    $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
+                end 
+                else if (ras_forward_valid) begin
+                    pdt_pc = ras_forward_data;
+                    pred_used_ras = 0; // 标记未使用实际RAS
+                    $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+                end 
+                else if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
                     $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
                 end
-                // else if (btb_hit) begin
-                //     // RAS为空时使用BTB
-                //     pdt_pc = btb_target_val;
-                //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
-                // end
+                else if (btb_hit) begin
+                    // RAS为空时使用BTB
+                    pdt_pc = btb_target_val;
+                    $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
+                end
                 else begin
                     // RAS和BTB都未命中，使用默认PC+4
                     pdt_res = 1'b0; // 不跳转
