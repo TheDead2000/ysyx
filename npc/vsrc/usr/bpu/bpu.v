@@ -142,7 +142,7 @@ always @(posedge clk or posedge rst) begin
         ras_pop_data <= 0;
     end else if (ex_branch_valid_i && ex_branch_taken_i && 
                 ((ex_inst_i[6:0] == 7'b1100111) && 
-                 ((ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101)))) begin
+                 ((ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101))) && !ex_stall_valid_i ) begin
         // 捕获EX阶段的POP操作数据
         ras_pop_valid <= 1;
         ras_pop_data <= ras[ras_sp-1];
@@ -216,11 +216,11 @@ end
         ras_sp <= next_sp;
         /* verilator lint_off WIDTHTRUNC */
         // 预测错误时恢复RAS栈指针
-        if (ex_branch_valid_i && !ex_pdt_true_i && pred_used_ras) begin
-            ras_sp <= pred_ras_sp;
-            $display("[RAS] error!!!!!!!!!!!!!!!");
-            $display("[RAS] Restore sp=%0d,addr=0x%h", pred_ras_sp,ras_sp[pred_ras_sp]);
-        end
+        // if (ex_branch_valid_i && !ex_pdt_true_i && pred_used_ras) begin
+        //     ras_sp <= pred_ras_sp;
+        //     $display("[RAS] error!!!!!!!!!!!!!!!");
+        //     $display("[RAS] Restore sp=%0d,addr=0x%h", pred_ras_sp,ras_sp[pred_ras_sp]);
+        // end
 
         // 其他性能计数器更新逻辑保持不变
         if (ex_branch_valid_i) begin

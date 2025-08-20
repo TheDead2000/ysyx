@@ -3217,19 +3217,22 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid 
-        = ((~ (IData)(vlSelf->rst)) & (((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                                        & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                                       & ((0x67U == 
-                                           (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
-                                          & ((1U == 
-                                              (0x1fU 
-                                               & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                                                  >> 0xfU))) 
-                                             | (5U 
-                                                == 
-                                                (0x1fU 
-                                                 & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                                                    >> 0xfU)))))));
+        = ((~ (IData)(vlSelf->rst)) & ((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+                                         & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
+                                        & ((0x67U == 
+                                            (0x7fU 
+                                             & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
+                                           & ((1U == 
+                                               (0x1fU 
+                                                & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                                   >> 0xfU))) 
+                                              | (5U 
+                                                 == 
+                                                 (0x1fU 
+                                                  & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                                     >> 0xfU)))))) 
+                                       & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                                             >> 2U))));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid 
         = ((~ (IData)(vlSelf->rst)) & ((IData)(vlSelf->top__DOT__id_ras_push_valid) 
                                        & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
@@ -3238,15 +3241,17 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data = 0U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data = 0U;
     } else {
-        if ((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-              & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-             & ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
-                & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                                    >> 0xfU))) | (5U 
-                                                  == 
-                                                  (0x1fU 
-                                                   & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                                                      >> 0xfU))))))) {
+        if (((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
+               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
+              & ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
+                 & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                     >> 0xfU))) | (5U 
+                                                   == 
+                                                   (0x1fU 
+                                                    & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                                       >> 0xfU)))))) 
+             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                   >> 2U)))) {
             vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data 
                 = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                 [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
@@ -3326,17 +3331,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
     }
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
-    if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                      & (~ (IData)(vlSelf->top__DOT__pdt_correct))) 
-                     & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras)))) {
-        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
-            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
-        VL_WRITEF("[RAS] error!!!!!!!!!!!!!!!\n[RAS] Restore sp=%0#,addr=0x%x\n",
-                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp,
-                  1,((4U >= (7U & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp))) 
-                     & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                        >> (7U & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp)))));
-    }
     if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
             = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);
