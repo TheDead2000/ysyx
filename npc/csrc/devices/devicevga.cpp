@@ -132,7 +132,7 @@ void Devicevga::initscreen()
         SCREEN_W * 2,
         SCREEN_H * 2,
         0, &window, &renderer);
-    // SDL_SetWindowTitle(window, title);
+    SDL_SetWindowTitle(window, title);
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
 
