@@ -3787,7 +3787,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                            - (IData)(1U)))];
         }
-        if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
+        if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred) 
                           & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid)) 
                          | ((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
