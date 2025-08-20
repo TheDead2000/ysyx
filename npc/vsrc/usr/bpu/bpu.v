@@ -168,6 +168,26 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
+// 新增寄存器保持前递数据
+reg [`XLEN-1:0] ras_pop_data_reg;
+reg ras_pop_valid_reg;
+
+always @(posedge clk or posedge rst) begin
+  if (rst) begin
+    ras_pop_valid_reg <= 0;
+    ras_pop_data_reg <= 0;
+  end else begin
+    // 捕获新的POP数据
+    if (ras_pop_valid) begin
+      ras_pop_valid_reg <= 1;
+      ras_pop_data_reg <= ras_pop_data;
+    end 
+    // 使用后清除
+    else if (is_ret && ras_pop_valid_reg && !ex_stall_valid_i) begin
+      ras_pop_valid_reg <= 0;
+    end
+  end
+end
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
     reg pop_occurred;
@@ -310,7 +330,11 @@ wire is_ret = is_jalr &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                 // 优先使用前递的POP数据
+                if (ras_pop_valid_reg) begin
+                     pdt_pc = ras_pop_data_reg;
+                     pred_used_ras = 0;
+                end 
+                else
                 if (ras_pop_valid) begin
                 pdt_pc = ras_pop_data;
                 pred_used_ras = 0;

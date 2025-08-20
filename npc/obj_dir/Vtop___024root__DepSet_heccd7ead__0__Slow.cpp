@@ -1929,7 +1929,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__bpu_pc_valid_o = 1U;
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
+            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid_reg) {
+                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data_reg;
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
+            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid)) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
                 VL_WRITEF("[RAS] POP FORWARD: target=0x%x\n",
@@ -2224,6 +2227,8 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data_reg = 0;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid_reg = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index = 0;
