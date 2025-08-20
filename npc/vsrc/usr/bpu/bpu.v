@@ -203,7 +203,7 @@ end
         end
         end
             
-  // ID阶段压栈处理 - PUSH操作（解码时）
+     // ID阶段压栈处理 - PUSH操作（解码时）
         if (id_ras_push_valid_i && !ex_stall_valid_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
