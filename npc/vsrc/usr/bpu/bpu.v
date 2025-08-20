@@ -165,6 +165,7 @@ end
             bimodal_hits <= 0;
             t0_hits <= 0;
             t1_hits <= 0;
+            ras_sp <= 0;
             pred_ras_sp = 0;
             pred_used_ras = 0;
         end else begin
@@ -187,9 +188,10 @@ end
                 next_sp = ras_sp; // 使用临时变量，初始化为当前栈指针
                 pop_occurred = 0;
                 pop_index = 0;
-
+        $display("run here122!!!!!\n");
             // 处理RAS出栈（RET指令实际执行时）
-           if (ex_branch_taken_i) begin
+           if (ex_branch_taken_i && !ex_stall_valid_i) begin
+                 $display("run here333!!!!!\n");
             // 识别RET指令: JALR且rs1=x1或x5
             if ((ex_inst_i[6:0] == 7'b1100111) && 
                 ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
@@ -203,7 +205,8 @@ end
         end
             
   // ID阶段压栈处理 - PUSH操作（解码时）
-        if (id_ras_push_valid_i) begin
+        if (id_ras_push_valid_i && !ex_stall_valid_i) begin
+            $display("run here11!!!!!\n");
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
                 $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);
