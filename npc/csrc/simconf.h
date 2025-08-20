@@ -17,7 +17,7 @@
 
 // #define AUTO_RUN
 // #define TOP_TRACE
-// #define MTRACH
+#define MTRACH
 
 
 #endif
