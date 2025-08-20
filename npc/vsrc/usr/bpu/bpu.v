@@ -227,8 +227,7 @@ end
             // 处理RAS出栈（RET指令实际执行时）
            if (ex_branch_taken_i && !ex_stall_valid_i) begin
             // 识别RET指令: JALR且rs1=x1或x5
-            if ((ex_inst_i[6:0] == 7'b1100111) && 
-                ( (ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) ) begin
+            if (ex_is_ret) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
                     $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
@@ -291,7 +290,9 @@ wire is_ret = is_jalr &&
              (if_inst[11:7] == 5'b00000) &&  // rd=x0
              ((if_inst[19:15] == 5'b00001) || (if_inst[19:15] == 5'b00101)) && // rs1=x1(ra) or x5(t0)
              (if_inst[31:20] == 12'b0);  
-    
+wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) && 
+                 ((ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) );
+
     // 分支偏移计算（当BTB未命中时使用）
     wire [31:0] branch_offset = {
         {20{if_inst[31]}},  // 符号扩展
