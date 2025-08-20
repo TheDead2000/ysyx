@@ -3326,14 +3326,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             = (0x1fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
     }
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
-    if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                      & (~ (IData)(vlSelf->top__DOT__pdt_correct))) 
-                     & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras)))) {
-        __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
-            = vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
-        VL_WRITEF("[RAS] error!!!!!!!!!!!!!!!\n[RAS] Restore sp=%0#\n",
-                  5,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp);
-    }
     if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches 
             = ((IData)(1U) + vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches);

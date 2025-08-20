@@ -216,11 +216,11 @@ end
         ras_sp <= next_sp;
 
         // 预测错误时恢复RAS栈指针
-        if (ex_branch_valid_i && !ex_pdt_true_i && pred_used_ras) begin
-            ras_sp <= pred_ras_sp;
-            $display("[RAS] error!!!!!!!!!!!!!!!");
-            $display("[RAS] Restore sp=%0d", pred_ras_sp);
-        end
+        // if (ex_branch_valid_i && !ex_pdt_true_i && pred_used_ras) begin
+        //     ras_sp <= pred_ras_sp;
+        //     $display("[RAS] error!!!!!!!!!!!!!!!");
+        //     $display("[RAS] Restore sp=%0d", pred_ras_sp);
+        // end
 
         // 其他性能计数器更新逻辑保持不变
         if (ex_branch_valid_i) begin
