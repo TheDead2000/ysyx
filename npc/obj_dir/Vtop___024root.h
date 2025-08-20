@@ -55,12 +55,16 @@ class Vtop___024root final : public VerilatedModule {
         CData/*5:0*/ top__DOT__stall_clint;
         CData/*5:0*/ top__DOT__flush_clint;
         CData/*0:0*/ top__DOT__ram_rdata_ready_dcache;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_used_ras;
         CData/*1:0*/ top__DOT__ifu__DOT__bpu__DOT__provider_history_reg;
         CData/*1:0*/ top__DOT__ifu__DOT__bpu__DOT__provider_history_comb;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__next_sp;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__pop_occurred;
+        CData/*4:0*/ top__DOT__ifu__DOT__bpu__DOT__pop_index;
         CData/*0:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_hit;
         CData/*7:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_index;
         CData/*7:0*/ top__DOT__ifu__DOT__bpu__DOT__t1_index;
@@ -75,12 +79,12 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__if2id__DOT___bpu_which_pdt_if_id_q;
         CData/*0:0*/ top__DOT__idu__DOT___inst_lui;
         CData/*0:0*/ top__DOT__idu__DOT___inst_auipc;
+    };
+    struct {
         CData/*0:0*/ top__DOT__idu__DOT___inst_jal;
         CData/*0:0*/ top__DOT__idu__DOT___inst_jalr;
         CData/*0:0*/ top__DOT__idu__DOT___inst_beq;
         CData/*0:0*/ top__DOT__idu__DOT___inst_bne;
-    };
-    struct {
         CData/*0:0*/ top__DOT__idu__DOT___inst_blt;
         CData/*0:0*/ top__DOT__idu__DOT___inst_bge;
         CData/*0:0*/ top__DOT__idu__DOT___inst_bltu;
@@ -141,12 +145,12 @@ class Vtop___024root final : public VerilatedModule {
         CData/*4:0*/ top__DOT__id2ex__DOT___rs2_idx_id_ex_d;
         CData/*4:0*/ top__DOT__id2ex__DOT___rs2_idx_id_ex_q;
         CData/*4:0*/ top__DOT__id2ex__DOT___rd_idx_id_ex_q;
+    };
+    struct {
         CData/*4:0*/ top__DOT__id2ex__DOT___alu_op_id_ex_q;
         CData/*3:0*/ top__DOT__id2ex__DOT___mem_op_id_ex_q;
         CData/*3:0*/ top__DOT__id2ex__DOT___pc_op_id_ex_q;
         CData/*0:0*/ top__DOT__exu__DOT__is_branch_inst;
-    };
-    struct {
         CData/*0:0*/ top__DOT__exu__DOT__jump_taken;
         CData/*0:0*/ top__DOT__exu__DOT__bpu_pc_wrong;
         CData/*0:0*/ top__DOT__exu__DOT___rs1_rs2;
@@ -207,12 +211,12 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__dcache_write_hit_valid;
         CData/*3:0*/ top__DOT__u_dcache_top__DOT__burst_count;
         CData/*3:0*/ top__DOT__u_dcache_top__DOT__burst_count_plus1;
+    };
+    struct {
         CData/*0:0*/ top__DOT__u_dcache_top__DOT___dirty_flush;
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__ram_r_handshake;
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__ram_w_handshake;
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__dcache_wwen;
-    };
-    struct {
         CData/*6:0*/ top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__A;
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN00;
         CData/*0:0*/ top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN01;
@@ -273,12 +277,12 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vfunc_match__14__Vfuncout;
         CData/*0:0*/ __Vfunc_match__15__Vfuncout;
         CData/*0:0*/ __Vfunc_match__16__Vfuncout;
+    };
+    struct {
         CData/*0:0*/ __Vfunc_match__17__Vfuncout;
         CData/*0:0*/ __Vfunc_match__18__Vfuncout;
         CData/*0:0*/ __Vfunc_match__19__Vfuncout;
         CData/*0:0*/ __Vfunc_match__20__Vfuncout;
-    };
-    struct {
         CData/*0:0*/ __Vfunc_match__21__Vfuncout;
         CData/*0:0*/ __Vfunc_match__22__Vfuncout;
         CData/*0:0*/ __Vfunc_match__23__Vfuncout;
@@ -304,10 +308,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vtrigrprev__TOP__rst;
         CData/*0:0*/ __VactContinue;
         SData/*15:0*/ top__DOT__ifu__DOT__bpu__DOT__global_history;
-        SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__ras_sp;
-        SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp;
-        SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__next_sp;
-        SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__pop_index;
         SData/*9:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_tag_u;
         SData/*9:0*/ top__DOT__ifu__DOT__bpu__DOT__t1_tag_u;
         SData/*8:0*/ top__DOT__ifu__DOT__bpu__DOT__bm_index_u;
@@ -463,7 +463,7 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<IData/*21:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_tag;
         VlUnpacked<IData/*31:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_target;
         VlUnpacked<CData/*0:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_valid;
-        VlUnpacked<IData/*31:0*/, 512> top__DOT__ifu__DOT__bpu__DOT__ras;
+        VlUnpacked<IData/*31:0*/, 32> top__DOT__ifu__DOT__bpu__DOT__ras;
         VlUnpacked<IData/*31:0*/, 32> top__DOT__rv32_gpr_regfile__DOT__rf;
         VlUnpacked<IData/*19:0*/, 128> top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs;
         VlUnpacked<IData/*19:0*/, 128> top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__dcache_tag_regs;

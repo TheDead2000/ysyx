@@ -28,8 +28,8 @@ module bpu (
 );
 
     // ================== RAS参数 ==================
-    localparam RAS_DEPTH = 512;          // RAS深度
-    localparam RAS_PTR_WIDTH = 9;       // 栈指针位宽
+    localparam RAS_DEPTH = 32;          // RAS深度
+    localparam RAS_PTR_WIDTH = 5;       // 栈指针位宽
 
     // ================== TAGE预测器参数 ==================
     localparam GLOBAL_HIST_WIDTH = 16; // 全局历史寄存器位宽
@@ -203,7 +203,7 @@ end
         end
         end
             
-     // ID阶段压栈处理 - PUSH操作（解码时）
+  // ID阶段压栈处理 - PUSH操作（解码时）
         if (id_ras_push_valid_i && !ex_stall_valid_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
