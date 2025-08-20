@@ -280,6 +280,8 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
                 // 基础预测器索引
                 wire [8:0] bm_index = if_pc[9:1];
     /* verilator lint_off LATCH */
+     wire ras_conflict = (is_ret && ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i);
+     
     always @(*) begin
         // 默认值
         branch_or_not = 1'b0;
@@ -294,6 +296,13 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
 
+        if (ras_conflict) begin
+            // 冲突发生，保守处理：不跳转
+            pdt_res = 1'b0;
+            pdt_pc = if_pc + 4;
+            $display("[RAS] CONFLICT: IF and EX both RET, predicting not taken.");
+        end 
+            else 
                  if (ras_forward_valid) begin
                   pdt_pc = ras_forward_data;
                   pred_used_ras = 0; // 标记未使用实际RAS
