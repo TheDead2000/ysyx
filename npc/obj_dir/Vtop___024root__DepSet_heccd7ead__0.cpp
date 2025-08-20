@@ -3807,13 +3807,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                            - (IData)(1U)))];
         }
-        if (VL_UNLIKELY((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
-                          & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid)) 
-                         | (((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-                               & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)) 
-                              & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret)) 
-                             & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                                   >> 2U))) & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop)))))) {
+        if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred)) {
             VL_WRITEF("[RAS] HELD DATA CLEARED\n");
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid = 0U;
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_hold_until_next_pop = 0U;

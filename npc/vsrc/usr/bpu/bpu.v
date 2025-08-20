@@ -179,8 +179,7 @@ always @(posedge clk or posedge rst) begin
         end
         
         // 清除保持条件：数据被使用或新的弹出操作
-        if ((is_ret && ras_held_valid) || 
-            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && !ras_hold_until_next_pop)) begin
+        if (pop_occurred) begin
             ras_held_valid <= 0;
             ras_hold_until_next_pop <= 0;
             $display("[RAS] HELD DATA CLEARED");
