@@ -372,12 +372,12 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                //  if (ras_held_valid) begin
-                // pdt_pc = ras_held_data;
-                //  pred_used_ras = 0;
-                // $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
-                //  end 
-                // else
+                 if (ras_held_valid) begin
+                pdt_pc = ras_held_data;
+                 pred_used_ras = 0;
+                $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
+                 end 
+                else
                 if (ras_pop_valid) begin
                 pdt_pc = ras_pop_data;
                 pred_used_ras = 0;
