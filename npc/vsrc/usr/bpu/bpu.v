@@ -195,22 +195,36 @@ reg [`XLEN-1:0] ras_held_data;
 reg ras_held_valid;
 reg ras_hold_pending; // 标记有数据需要保持
 
-
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_held_valid <= 0;
         ras_held_data <= 0;
+        ras_hold_pending <= 0;
     end else begin
-        // 实时捕获所有RET执行
+        // 捕获新的弹出数据
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            ras_held_data <= ras[ras_sp-1];  // 直接捕获最新数据
-            ras_held_valid <= 1;              // 立即激活
-            $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
-        end 
-        // 数据使用后清除
-        else if (is_ret && ras_held_valid) begin
+            ras_held_data <= ras[ras_sp-1];
+            ras_hold_pending <= 1; // 标记有数据需要保持
+            $display("[RAS] HOLD PENDING: data=0x%h", ras[ras_sp-1]);
+        end
+        
+        // 当IF阶段没有RET指令时，激活保持的数据
+        if (ras_hold_pending && !is_ret) begin
+            ras_held_valid <= 1;
+            ras_hold_pending <= 0;
+            $display("[RAS] HELD DATA ACTIVATED: data=0x%h", ras_held_data);
+        end
+        
+        // 清除条件：数据被使用
+        if (is_ret && ras_held_valid) begin
             ras_held_valid <= 0;
             $display("[RAS] HELD DATA CLEARED (USED)");
+        end
+        
+        // 当有新的弹出操作时，更新保持的数据
+        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_pending) begin
+            ras_held_data <= ras[ras_sp-1];
+            $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
         end
     end
 end
@@ -245,7 +259,7 @@ end
         /* verilator lint_off WIDTHEXPAND */
         if (ex_branch_valid_i) begin
             // 更新全局历史寄存器
-             global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i}; // 使用栈指针LSB
+            global_history <= {global_history[GLOBAL_HIST_WIDTH-2:0], ex_branch_taken_i};
             // 记录上一次预测的提供者
             provider_history_reg <= provider_history_comb;
                 next_sp = ras_sp; // 使用临时变量，初始化为当前栈指针
@@ -358,12 +372,6 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                if (ex_is_ret && !ex_stall_valid_i) begin
-         pdt_pc = ras[ras_sp-1];
-        pred_used_ras = 1;
-              $display("[RAS] COMBO POP: target=0x%h", pdt_pc);
-            end
-        else
                  if (ras_held_valid) begin
                 pdt_pc = ras_held_data;
                  pred_used_ras = 0;
