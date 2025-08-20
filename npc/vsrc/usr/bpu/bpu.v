@@ -170,7 +170,7 @@ always @(posedge clk or posedge rst) begin
         end
         
         // 当IF阶段没有RET指令时，激活前递的数据
-        if (ras_pop_pending) begin
+        if (ras_pop_pending && !is_ret) begin
             ras_pop_valid <= 1;
             ras_pop_pending <= 0;
             $display("[RAS] POP ACTIVATED: data=0x%h", ras_pop_data);
@@ -372,6 +372,12 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
+                if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
+                pdt_pc = ras[ras_sp-1];
+                pred_used_ras = 1;
+                $display("[RAS] COMBO POP: target=0x%h", pdt_pc);
+              end
+                else
                  if (ras_held_valid) begin
                 pdt_pc = ras_held_data;
                  pred_used_ras = 0;
