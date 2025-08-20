@@ -156,7 +156,7 @@ end
     reg pop_occurred;
     reg [RAS_PTR_WIDTH-1:0] pop_index;
 
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk or posedge rst) 
         if (rst == 1) begin
             global_history <= {GLOBAL_HIST_WIDTH{1'b0}};
             provider_history_reg <= 2'b0;
@@ -202,7 +202,7 @@ end
                     pop_occurred = 1;
                 end
             end
-        end
+        
             
   // ID阶段压栈处理 - PUSH操作（解码时）
         if (id_ras_push_valid_i && !ex_stall_valid_i) begin
