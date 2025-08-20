@@ -152,79 +152,46 @@ end
 // ================== RAS状态前递逻辑 ==================
 reg [`XLEN-1:0] ras_pop_data;
 reg ras_pop_valid;
-reg ras_pop_pending; // 标记有弹出操作待处理
 
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        ras_pop_valid <= 0;
-        ras_pop_data <= 0;
-        ras_pop_pending <= 0;
-    end else begin
-        // 捕获新的弹出操作
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            if (ras_sp > 0) begin
-                ras_pop_pending <= 1;
-                ras_pop_data <= ras[ras_sp-1];
-                $display("[RAS] POP PENDING: data=0x%h", ras[ras_sp-1]);
-            end
-        end
-        
-        // 当IF阶段没有RET指令时，激活前递的数据
-        if (ras_pop_pending && !is_ret) begin
-            ras_pop_valid <= 1;
-            ras_pop_pending <= 0;
-            $display("[RAS] POP ACTIVATED: data=0x%h", ras_pop_data);
-        end
-        
-        // 清除条件：数据被使用
-        if (is_ret && ras_pop_valid) begin
-            ras_pop_valid <= 0;
-            $display("[RAS] POP CLEARED (USED)");
-        end
-        
-        // 当有新的弹出操作时，更新前递的数据
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_pop_pending) begin
-            ras_pop_data <= ras[ras_sp-1];
-            $display("[RAS] POP UPDATED: data=0x%h", ras[ras_sp-1]);
-        end
-    end
-end
 // ================== RAS数据保持逻辑 ==================
-// ================== 重新设计RAS数据保持逻辑 ==================
 reg [`XLEN-1:0] ras_held_data;
 reg ras_held_valid;
-reg ras_hold_pending; // 标记有数据需要保持
+reg ras_hold_until_next_pop; // 标记保持到下一次弹出
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_held_valid <= 0;
         ras_held_data <= 0;
-        ras_hold_pending <= 0;
+        ras_hold_until_next_pop <= 0;
     end else begin
-        // 捕获新的弹出数据
+        // 捕获新的弹出数据并设置保持标志
         if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            ras_held_data <= ras[ras_sp-1];
-            ras_hold_pending <= 1; // 标记有数据需要保持
-            $display("[RAS] HOLD PENDING: data=0x%h", ras[ras_sp-1]);
-        end
-        
-        // 当IF阶段没有RET指令时，激活保持的数据
-        if (ras_hold_pending && !is_ret) begin
             ras_held_valid <= 1;
-            ras_hold_pending <= 0;
-            $display("[RAS] HELD DATA ACTIVATED: data=0x%h", ras_held_data);
-        end
-        
-        // 清除条件：数据被使用
-        if (is_ret && ras_held_valid) begin
-            ras_held_valid <= 0;
-            $display("[RAS] HELD DATA CLEARED (USED)");
+            ras_held_data <= ras[ras_sp-1];
+            ras_hold_until_next_pop <= 1; // 保持到下一次弹出
+            $display("[RAS] HELD DATA CAPTURED: data=0x%h, hold_until_next_pop=1", ras[ras_sp-1]);
         end
         
         // 当有新的弹出操作时，更新保持的数据
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_pending) begin
+        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && ras_hold_until_next_pop) begin
             ras_held_data <= ras[ras_sp-1];
             $display("[RAS] HELD DATA UPDATED: data=0x%h", ras[ras_sp-1]);
+        end
+        
+        // 清除保持条件：数据被使用或新的弹出操作
+        if ((is_ret && ras_held_valid) || 
+            (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i && !ras_hold_until_next_pop)) begin
+            ras_held_valid <= 0;
+            ras_hold_until_next_pop <= 0;
+            $display("[RAS] HELD DATA CLEARED");
+        end
+        
+        // 当保持到下一次弹出的数据被使用后，重新评估保持策略
+        if (is_ret && ras_held_valid && ras_hold_until_next_pop) begin
+            // 数据已被使用，但保持标志仍然有效，等待下一次弹出
+            ras_held_valid <= 0; // 先清除有效标志
+            ras_hold_until_next_pop <= 1; // 保持标志仍然有效
+            $display("[RAS] HELD DATA USED, WAITING FOR NEXT POP");
         end
     end
 end
@@ -372,12 +339,12 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                 if (ras_held_valid) begin
-                pdt_pc = ras_held_data;
-                 pred_used_ras = 0;
-                $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
-                 end 
-                else
+                //  if (ras_held_valid) begin
+                // pdt_pc = ras_held_data;
+                //  pred_used_ras = 0;
+                // $display("[RAS] USE HELD DATA: target=0x%h", ras_held_data);
+                //  end 
+                // else
                 if (ras_pop_valid) begin
                 pdt_pc = ras_pop_data;
                 pred_used_ras = 0;
