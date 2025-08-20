@@ -48,39 +48,39 @@ module ifu (
   assign inst_addr_o = inst_addr_i;
   wire [`XLEN-1:0] _inst_data = if_rdata_i[31:0];
 
-  // bpu bpu (
-  //     .clk           (clk),
-  //     .rst           (rst),
-  //     .if_inst       ( _inst_data),
-  //     .if_pc       (inst_addr_i),
+  bpu bpu (
+      .clk           (clk),
+      .rst           (rst),
+      .if_inst       ( _inst_data),
+      .if_pc       (inst_addr_i),
 
-  //     //form exu
-  //     .ex_branch_valid_i(ex_branch_valid_i),
-  //     .ex_branch_taken_i(ex_branch_taken_i),
-  //     .ex_pdt_true_i(ex_pdt_true_i), // TODO: 预测是否正确
-  //     // .ex_which_pdt_i(ex_which_pdt_i), // TODO: 预测使用的预测器类型
-  //     .ex_pc_i (ex_pc_i),
-  //     .ex_history_i(ex_history_i), // TODO: 预测时使用的历史记录
-  //     // .ex_jump_type_i(ex_jump_type_i), // 跳转类型
-  //     // .ex_target_addr_i(ex_target_addr_i), // EX阶段计算的实际目标地址
-  //     // .ex_rd_addr_i(ex_rd_addr_i), // 目的寄存器地址
-  //     .ex_target_i(ex_target_i),
-  //     .ex_inst_i(ex_inst_i),
+      //form exu
+      .ex_branch_valid_i(ex_branch_valid_i),
+      .ex_branch_taken_i(ex_branch_taken_i),
+      .ex_pdt_true_i(ex_pdt_true_i), // TODO: 预测是否正确
+      // .ex_which_pdt_i(ex_which_pdt_i), // TODO: 预测使用的预测器类型
+      .ex_pc_i (ex_pc_i),
+      .ex_history_i(ex_history_i), // TODO: 预测时使用的历史记录
+      // .ex_jump_type_i(ex_jump_type_i), // 跳转类型
+      // .ex_target_addr_i(ex_target_addr_i), // EX阶段计算的实际目标地址
+      // .ex_rd_addr_i(ex_rd_addr_i), // 目的寄存器地址
+      .ex_target_i(ex_target_i),
+      .ex_inst_i(ex_inst_i),
 
-  //     .id_ras_push_valid_i(id_ras_push_valid_i), // ID阶段检测到CALL指令
-  //     .id_ras_push_data_i(id_ras_push_data_i), // ID阶段计算
-  //     // .if_stall_i(_ram_stall), // 暂停流水线时清除预测
-  //     .flush_valid_i(if_flush_i), // 清空 IF 阶段指令
-  //     .ex_stall_valid_i(ex_stall_valid_i), // 暂停流水线时清除预测
+      .id_ras_push_valid_i(id_ras_push_valid_i), // ID阶段检测到CALL指令
+      .id_ras_push_data_i(id_ras_push_data_i), // ID阶段计算
+      // .if_stall_i(_ram_stall), // 暂停流水线时清除预测
+      .flush_valid_i(if_flush_i), // 清空 IF 阶段指令
+      .ex_stall_valid_i(ex_stall_valid_i), // 暂停流水线时清除预测
 
-  //     .pdt_pc  (bpu_pc_o),
-  //     .branch_or_not(bpu_pc_valid_o),
+      .pdt_pc  (bpu_pc_o),
+      .branch_or_not(bpu_pc_valid_o),
       
-  //     .pdt_res(pdt_res),
-  //     // .which_pdt_o(which_pdt_o),
-  //     .history_o(history_o)
+      .pdt_res(pdt_res),
+      // .which_pdt_o(which_pdt_o),
+      .history_o(history_o)
 
-  // );
+  );
 
   // 若 icache 数据没有准备好,发出 stall 请求,暂停流水线
   wire _ram_stall = (!if_rdata_valid_i);
