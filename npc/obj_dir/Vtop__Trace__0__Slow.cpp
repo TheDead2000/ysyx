@@ -1055,16 +1055,16 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+550,"RAS_DEPTH", false,-1, 31,0);
     tracep->declBus(c+551,"RAS_PTR_WIDTH", false,-1, 31,0);
     tracep->declBus(c+503,"GLOBAL_HIST_WIDTH", false,-1, 31,0);
-    tracep->declBus(c+550,"BIMODAL_ENTRIES", false,-1, 31,0);
-    tracep->declBus(c+552,"T0_ENTRIES", false,-1, 31,0);
-    tracep->declBus(c+552,"T1_ENTRIES", false,-1, 31,0);
-    tracep->declBus(c+553,"TAG_WIDTH", false,-1, 31,0);
-    tracep->declBus(c+554,"PARTIAL_TAG_BITS", false,-1, 31,0);
-    tracep->declBus(c+552,"BTB_ENTRIES", false,-1, 31,0);
+    tracep->declBus(c+552,"BIMODAL_ENTRIES", false,-1, 31,0);
+    tracep->declBus(c+553,"T0_ENTRIES", false,-1, 31,0);
+    tracep->declBus(c+553,"T1_ENTRIES", false,-1, 31,0);
+    tracep->declBus(c+554,"TAG_WIDTH", false,-1, 31,0);
+    tracep->declBus(c+551,"PARTIAL_TAG_BITS", false,-1, 31,0);
+    tracep->declBus(c+553,"BTB_ENTRIES", false,-1, 31,0);
     tracep->declBus(c+555,"BTB_TAG_WIDTH", false,-1, 31,0);
     tracep->declBus(c+382,"global_history", false,-1, 15,0);
-    tracep->declBus(c+383,"ras_sp", false,-1, 8,0);
-    tracep->declBus(c+384,"pred_ras_sp", false,-1, 8,0);
+    tracep->declBus(c+383,"ras_sp", false,-1, 5,0);
+    tracep->declBus(c+384,"pred_ras_sp", false,-1, 5,0);
     tracep->declBit(c+460,"pred_used_ras", false,-1);
     tracep->declBus(c+385,"provider_history_reg", false,-1, 1,0);
     tracep->declBus(c+39,"provider_history_comb", false,-1, 1,0);
@@ -1079,9 +1079,9 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+391,"ras_forward_valid", false,-1);
     tracep->declBus(c+392,"ras_forward_data", false,-1, 31,0);
     tracep->declBit(c+393,"ras_forward_used", false,-1);
-    tracep->declBus(c+394,"next_sp", false,-1, 8,0);
+    tracep->declBus(c+394,"next_sp", false,-1, 5,0);
     tracep->declBit(c+395,"pop_occurred", false,-1);
-    tracep->declBus(c+396,"pop_index", false,-1, 8,0);
+    tracep->declBus(c+396,"pop_index", false,-1, 5,0);
     tracep->declBus(c+409,"btb_index", false,-1, 7,0);
     tracep->declBus(c+410,"btb_tag_val", false,-1, 21,0);
     tracep->declBit(c+411,"btb_hit", false,-1);
@@ -1100,7 +1100,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+420,"t1_match", false,-1);
     tracep->declBus(c+415,"bm_index", false,-1, 8,0);
     tracep->declBit(c+30,"ras_conflict", false,-1);
-    tracep->declBus(c+40,"ex_next_ras_sp", false,-1, 8,0);
+    tracep->declBus(c+40,"ex_next_ras_sp", false,-1, 5,0);
     tracep->declBus(c+41,"ex_next_ras_top", false,-1, 31,0);
     tracep->declBus(c+233,"t0_index_u", false,-1, 7,0);
     tracep->declBus(c+234,"t1_index_u", false,-1, 7,0);
@@ -1453,7 +1453,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+340,"dcache_rdata", false,-1, 31,0);
     tracep->pushNamePrefix("u_dcache_data ");
     tracep->declBus(c+558,"IDX_LEN", false,-1, 31,0);
-    tracep->declBus(c+554,"BLK_LEN", false,-1, 31,0);
+    tracep->declBus(c+551,"BLK_LEN", false,-1, 31,0);
     tracep->declBus(c+136,"dcache_index_i", false,-1, 6,0);
     tracep->declBus(c+301,"dcache_blk_addr_i", false,-1, 5,0);
     tracep->declArray(c+142,"dcache_line_wdata_i", false,-1, 127,0);
@@ -1597,7 +1597,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+46,"icache_final_data", false,-1, 31,0);
     tracep->pushNamePrefix("u_icache_data ");
     tracep->declBus(c+558,"IDX_LEN", false,-1, 31,0);
-    tracep->declBus(c+554,"BLK_LEN", false,-1, 31,0);
+    tracep->declBus(c+551,"BLK_LEN", false,-1, 31,0);
     tracep->declBus(c+38,"icache_index_i", false,-1, 6,0);
     tracep->declBus(c+359,"icache_blk_addr_i", false,-1, 5,0);
     tracep->declArray(c+170,"icache_line_wdata_i", false,-1, 127,0);
@@ -1809,7 +1809,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullCData(oldp+38,((0x7fU & (vlSelf->top__DOT__pc_next 
                                        >> 6U))),7);
     bufp->fullCData(oldp+39,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb),2);
-    bufp->fullSData(oldp+40,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp),9);
+    bufp->fullCData(oldp+40,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp),6);
     bufp->fullIData(oldp+41,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top),32);
     bufp->fullCData(oldp+42,((0x3fU & vlSelf->top__DOT__pc_next)),6);
     bufp->fullIData(oldp+43,((vlSelf->top__DOT__pc_next 
@@ -2706,8 +2706,8 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+380,(vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__i),32);
     bufp->fullIData(oldp+381,(vlSelf->top__DOT__u_icache_top__DOT____Vcellinp__u_ysyx_041514_uncache_check__addr_check_i),32);
     bufp->fullSData(oldp+382,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history),16);
-    bufp->fullSData(oldp+383,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),9);
-    bufp->fullSData(oldp+384,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp),9);
+    bufp->fullCData(oldp+383,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),6);
+    bufp->fullCData(oldp+384,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp),6);
     bufp->fullCData(oldp+385,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_reg),2);
     bufp->fullIData(oldp+386,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches),32);
     bufp->fullIData(oldp+387,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions),32);
@@ -2717,9 +2717,9 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullBit(oldp+391,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid));
     bufp->fullIData(oldp+392,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data),32);
     bufp->fullBit(oldp+393,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used));
-    bufp->fullSData(oldp+394,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp),9);
+    bufp->fullCData(oldp+394,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp),6);
     bufp->fullBit(oldp+395,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred));
-    bufp->fullSData(oldp+396,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index),9);
+    bufp->fullCData(oldp+396,(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index),6);
     bufp->fullIData(oldp+397,(((0U < vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
                                 ? VL_DIV_III(32, ((IData)(0x64U) 
                                                   * vlSelf->top__DOT__ifu__DOT__bpu__DOT__correct_predictions), vlSelf->top__DOT__ifu__DOT__bpu__DOT__total_branches)
@@ -2902,11 +2902,11 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+547,(0x73U),32);
     bufp->fullIData(oldp+548,(0x100073U),32);
     bufp->fullIData(oldp+549,(0x30200073U),32);
-    bufp->fullIData(oldp+550,(0x200U),32);
-    bufp->fullIData(oldp+551,(9U),32);
-    bufp->fullIData(oldp+552,(0x100U),32);
-    bufp->fullIData(oldp+553,(0xaU),32);
-    bufp->fullIData(oldp+554,(6U),32);
+    bufp->fullIData(oldp+550,(0x40U),32);
+    bufp->fullIData(oldp+551,(6U),32);
+    bufp->fullIData(oldp+552,(0x200U),32);
+    bufp->fullIData(oldp+553,(0x100U),32);
+    bufp->fullIData(oldp+554,(0xaU),32);
     bufp->fullIData(oldp+555,(0x16U),32);
     bufp->fullBit(oldp+556,(1U));
     bufp->fullIData(oldp+557,(0x80U),32);
