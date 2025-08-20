@@ -120,32 +120,18 @@ module bpu (
 // ================== RAS前递逻辑 ==================
 reg ras_forward_valid;
 reg [`XLEN-1:0] ras_forward_data;
-reg ras_forward_used;
-
-// 增加保持寄存器
-reg [`XLEN-1:0] ras_pop_hold_data;
-reg ras_pop_hold_valid;
-reg [1:0] ras_pop_hold_count;
-
-// RAS弹出数据捕获
-reg ras_pop_valid;
-reg [`XLEN-1:0] ras_pop_data;
-
+reg ras_forward_used; // 前递数据已使用标志
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         ras_forward_valid <= 0;
         ras_forward_data <= 0;
         ras_forward_used <= 0;
-        ras_pop_valid <= 0;
-        ras_pop_data <= 0;
-        ras_pop_hold_valid <= 0;
-        ras_pop_hold_data <= 0;
-        ras_pop_hold_count <= 0;
     end else begin
-        // 前递数据使用标记
+        // 当使用前递数据时，立即失效
         if (is_ret && ras_forward_valid && !ex_stall_valid_i) begin
             ras_forward_valid <= 0;
             ras_forward_used <= 1;
+            $display("[RAS] FORWARD USED: data=0x%h", ras_forward_data);
         end
         
         // 捕获新的前递数据
@@ -153,39 +139,19 @@ always @(posedge clk or posedge rst) begin
             ras_forward_valid <= 1;
             ras_forward_data <= id_ras_push_data_i;
             ras_forward_used <= 0;
+            $display("[RAS] FORWARD CAPTURED: data=0x%h", id_ras_push_data_i);
         end
         
         // 重置使用标志
         if (!id_ras_push_valid_i && !is_ret) begin
             ras_forward_used <= 0;
         end
-        
-        // 保持寄存器逻辑
-        if (ras_pop_valid) begin
-            ras_pop_hold_valid <= 1;
-            ras_pop_hold_data <= ras_pop_data;
-            ras_pop_hold_count <= 2;
-        end else if (ras_pop_hold_valid && ras_pop_hold_count > 0) begin
-            ras_pop_hold_count <= ras_pop_hold_count - 1;
-            if (ras_pop_hold_count == 1) begin
-                ras_pop_hold_valid <= 0;
-            end
-        end
-        
-        // RAS弹出数据捕获
-        if ((is_ret && ras_pop_valid) || (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i)) begin
-            ras_pop_valid <= 0;
-        end
-        
-        if (ex_branch_valid_i && ex_branch_taken_i && ex_is_ret && !ex_stall_valid_i) begin
-            if (ras_sp > 0) begin
-                ras_pop_valid <= 1;
-                ras_pop_data <= ras[ras_sp-1];
-            end
-        end
     end
 end
 
+// ================== RAS状态前递逻辑 ==================
+reg [`XLEN-1:0] ras_pop_data;
+reg ras_pop_valid;
 
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
@@ -330,12 +296,7 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
                 pdt_res = 1'b1; // RET总是跳转
-                 if (ras_pop_hold_valid) begin
-                 pdt_pc = ras_pop_hold_data;
-                 pred_used_ras = 0;
-                 $display("[RAS] USE HOLD: target=0x%h", ras_pop_hold_data);
-                end 
-                else
+              
                 if (ras_pop_valid) begin
                 pdt_pc = ras_pop_data;
                 pred_used_ras = 0;
