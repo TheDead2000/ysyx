@@ -310,7 +310,7 @@ wire is_ret = is_jalr &&
                       pred_used_ras = 1'b0;
                   $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
                  end 
-                if (ras_sp > 0) begin
+                else if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS

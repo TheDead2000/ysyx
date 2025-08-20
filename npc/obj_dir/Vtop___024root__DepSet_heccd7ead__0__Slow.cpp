@@ -1934,8 +1934,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
                 VL_WRITEF("[RAS] PREDICT (from ID): target=0x%x\n",
                           32,vlSelf->top__DOT__bpu_pc_o);
-            }
-            if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
+            } else if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                     [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
