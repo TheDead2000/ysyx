@@ -3828,8 +3828,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                                - (IData)(1U)))];
             }
         }
-        if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending) 
-                         & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret))))) {
+        if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending)) {
             VL_WRITEF("[RAS] POP ACTIVATED: data=0x%x\n",
                       32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data);
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid = 1U;

@@ -170,7 +170,7 @@ always @(posedge clk or posedge rst) begin
         end
         
         // 当IF阶段没有RET指令时，激活前递的数据
-        if (ras_pop_pending && !is_ret) begin
+        if (ras_pop_pending) begin
             ras_pop_valid <= 1;
             ras_pop_pending <= 0;
             $display("[RAS] POP ACTIVATED: data=0x%h", ras_pop_data);
