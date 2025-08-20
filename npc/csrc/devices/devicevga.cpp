@@ -124,22 +124,22 @@ word_t Devicevga::read(paddr_t addr)
 
 void Devicevga::initscreen()
 {
-    // SDL_Window *window = NULL;
-    // char title[128] = "riscv32e-npc";
+    SDL_Window *window = NULL;
+    char title[128] = "riscv32e-npc";
 
-    // SDL_Init(SDL_INIT_VIDEO);
-    // SDL_CreateWindowAndRenderer(
-    //     SCREEN_W * 2,
-    //     SCREEN_H * 2,
-    //     0, &window, &renderer);
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_CreateWindowAndRenderer(
+        SCREEN_W * 2,
+        SCREEN_H * 2,
+        0, &window, &renderer);
     // SDL_SetWindowTitle(window, title);
-    // texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-    //                             SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
 
-    // uint32_t buffsize = screen_size();
-    // vgaregs.fbbuff = new uint32_t[buffsize];
+    uint32_t buffsize = screen_size();
+    vgaregs.fbbuff = new uint32_t[buffsize];
 
-    // fbbuff_lock = SDL_CreateMutex();
+    fbbuff_lock = SDL_CreateMutex();
 }
 
 uint32_t Devicevga::screen_width()
