@@ -333,6 +333,7 @@ wire is_ret = is_jalr &&
                 if (ras_pop_valid_reg) begin
                      pdt_pc = ras_pop_data_reg;
                      pred_used_ras = 0;
+                      $display("[RAS] POPREG FORWARD: target=0x%h", ras_pop_data);
                 end 
                 else
                 if (ras_pop_valid) begin
