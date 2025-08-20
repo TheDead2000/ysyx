@@ -301,16 +301,20 @@ wire is_ret = is_jalr &&
                   $display("[RAS] POP FORWARD: target=0x%h", ras_pop_data);
                 end 
                 // 其次使用前递的PUSH数据
-                 else if (ras_forward_valid) begin
+                 else 
+                 if (ras_forward_valid) begin
                   pdt_pc = ras_forward_data;
                   pred_used_ras = 0; // 标记未使用实际RAS
                 $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-            end else if (id_ras_push_valid_i) begin
+            end 
+            else 
+                if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
                       pred_used_ras = 1'b0;
                   $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
                  end 
-                else if (ras_sp > 0) begin
+                else 
+                    if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
@@ -321,11 +325,6 @@ wire is_ret = is_jalr &&
                 //     pdt_pc = btb_target_val;
                 //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
                 // end
-                else begin
-                    // RAS和BTB都未命中，使用默认PC+4
-                    pdt_res = 1'b0; // 不跳转
-                    $display("都未命中\n");
-                end
             end
             // 处理JAL指令
             else if (is_jal) begin
