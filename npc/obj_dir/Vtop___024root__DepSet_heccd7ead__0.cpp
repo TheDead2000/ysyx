@@ -3736,14 +3736,14 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     // Body
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_held_valid 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_held_valid;
-    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_data 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_data;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_valid;
+    __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used 
+        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_hits;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits = vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_hits;
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits 
@@ -3777,7 +3777,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                                      - (IData)(1U)))]);
                 __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending = 1U;
                 __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_data 
-                    = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
+                    = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+                    [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                               - (IData)(1U)))];
             }
         }
         if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_pop_pending) 
@@ -3802,7 +3804,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                       [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                  - (IData)(1U)))]);
             __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_pop_data 
-                = ((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+                [(0x1fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                           - (IData)(1U)))];
         }
     }
     if (vlSelf->rst) {
