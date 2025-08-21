@@ -3951,7 +3951,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                                                    ? 4U
                                                    : vlSelf->top__DOT__id2ex__DOT___imm_data_id_ex_q));
     vlSelf->top__DOT__exu__DOT__bpu_pc_wrong = ((IData)(vlSelf->top__DOT__exu__DOT__valid_prediction) 
-                                                | ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                                                & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                                                    != (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q)));
     if (vlSelf->top__DOT__if2id__DOT__reg_rst) {
         vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q = 0x13U;
