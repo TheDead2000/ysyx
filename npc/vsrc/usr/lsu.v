@@ -176,7 +176,7 @@ module memory (
 
 
   /************************××××××向仿真环境传递 PC *****************************/
-  import "DPI-C" function void set_nextpc(input int nextpc);
+  // import "DPI-C" function void set_nextpc(input int nextpc);
 
   // always @(posedge clk) begin
   //   set_nextpc(inst_addr_i);
