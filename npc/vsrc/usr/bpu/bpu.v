@@ -318,12 +318,12 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 $display("[RAS] CONFLICT: But forwarded RAS is empty.");
             end
         end 
-            else 
-                 if (ras_forward_valid) begin
-                  pdt_pc = ras_forward_data;
-                  pred_used_ras = 0; // 标记未使用实际RAS
-                $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-            end 
+            //else 
+            //      if (ras_forward_valid) begin
+            //       pdt_pc = ras_forward_data;
+            //       pred_used_ras = 0; // 标记未使用实际RAS
+            //     $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+            // end 
             else 
                 if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
