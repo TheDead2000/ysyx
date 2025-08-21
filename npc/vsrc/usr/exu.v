@@ -107,7 +107,7 @@ module exu (
   wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
   wire bpu_pc_wrong = valid_prediction | (jump_taken != pdt_res_i);
   // 计算预测是否正确
-  assign pdt_correct_o = (jump_taken == pdt_res_i)  ;
+  assign pdt_correct_o = valid_prediction | (jump_taken == pdt_res_i)  ;
 
   // 预测错误条件：实际跳转方向与预测方向不同
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);
@@ -191,7 +191,7 @@ module exu (
   // 2. exc 阶段为跳转指令，且 exc/mem 正常流通时，计算一次
   always @(*) begin
     if (is_branch_inst & exu_go_ready_i) begin
-      bpu_count(!bpu_pc_wrong);
+      bpu_count(pdt_correct_o);
     end
   end
 

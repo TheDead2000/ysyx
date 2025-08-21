@@ -453,9 +453,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgBit(oldp+217,((1U & ((~ ((IData)(vlSelf->top__DOT__u_icache_top__DOT__icache_hit) 
                                           | (IData)(vlSelf->top__DOT__u_icache_top__DOT__uncache_data_ready))) 
                                       | (IData)(vlSelf->top__DOT__mem_addr_valid)))));
-        bufp->chgBit(oldp+218,(((IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q) 
-                                & (vlSelf->top__DOT__id2ex__DOT___bpu_pdt_tag_id_ex_q 
-                                   == vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q))));
+        bufp->chgBit(oldp+218,(vlSelf->top__DOT__exu__DOT__valid_prediction));
         bufp->chgIData(oldp+219,(vlSelf->top__DOT__exu__DOT___alu_in1),32);
         bufp->chgIData(oldp+220,(vlSelf->top__DOT__exu__DOT___alu_in2),32);
         bufp->chgBit(oldp+221,(vlSelf->top__DOT__exu__DOT___compare_out));
