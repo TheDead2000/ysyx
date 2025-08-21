@@ -107,7 +107,7 @@ module exu (
   wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);
   // 计算预测是否正确
-  assign pdt_correct_o = (jump_taken == pdt_res_i);
+  assign pdt_correct_o = (jump_taken == pdt_res_i) && (jump_taken !=0  && pdt_res_i != 0) ;
 
   // 预测错误条件：实际跳转方向与预测方向不同
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);

@@ -3931,8 +3931,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                                                 == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
                                                & (IData)(vlSelf->top__DOT__exu__DOT___compare_out)) 
                                               | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
-    vlSelf->top__DOT__pdt_correct = ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
-                                     == (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q));
+    vlSelf->top__DOT__pdt_correct = (((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                                      == (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q)) 
+                                     & ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
+                                        & (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q)));
     vlSelf->top__DOT__exu__DOT__redirect_pc = ((((IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q) 
                                                  & (~ (IData)(vlSelf->top__DOT__exu__DOT__jump_taken)))
                                                  ? vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q
