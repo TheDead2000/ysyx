@@ -302,55 +302,55 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             branch_or_not = 1'b1;
             
             //处理RET指令
-        //     if (is_ret) begin
+            if (is_ret) begin
 
-        //         pdt_res = 1'b1; // RET总是跳转
-        //         pdt_pc_tag = if_pc;
-        //        if (ras_conflict) begin
-        //     // 冲突发生，使用前递过来的新状态进行预测！
-        //          if (ex_next_ras_sp > 0) begin
-        //         pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
-        //         $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
-        //          end else begin
-        //         // 如果新栈也是空的，回退到不跳转或其他策略
-        //         pdt_res = 1'b0;
-        //         pdt_pc = if_pc + 4;
-        //         $display("[RAS] CONFLICT: But forwarded RAS is empty.");
-        //     end
-        // end 
-        //     //else 
-        //     //      if (ras_forward_valid) begin
-        //     //       pdt_pc = ras_forward_data;
-        //     //       pred_used_ras = 0; // 标记未使用实际RAS
-        //     //     $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-        //     // end 
-        //     else 
-        //         if (id_ras_push_valid_i) begin
-        //              pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
-        //               pred_used_ras = 1'b0;
-        //           $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
-        //          end 
-        //         else 
-        //             if (ras_sp > 0) begin
-        //             // 使用RAS栈顶地址
-        //             pdt_pc = ras[ras_sp-1];
-        //             pred_used_ras = 1; // 标记使用了RAS
-        //             $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
-        //         end
-        //         // else if (btb_hit) begin
-        //         //     // RAS为空时使用BTB
-        //         //     pdt_pc = btb_target_val;
-        //         //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
-        //         // end
-        //         else begin
-        //             // RAS和BTB都未命中，使用默认PC+4
+                pdt_res = 1'b1; // RET总是跳转
+                pdt_pc_tag = if_pc;
+               if (ras_conflict) begin
+            // 冲突发生，使用前递过来的新状态进行预测！
+                 if (ex_next_ras_sp > 0) begin
+                pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
+                $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
+                 end else begin
+                // 如果新栈也是空的，回退到不跳转或其他策略
+                pdt_res = 1'b0;
+                pdt_pc = if_pc + 4;
+                $display("[RAS] CONFLICT: But forwarded RAS is empty.");
+            end
+        end 
+            else 
+                 if (ras_forward_valid) begin
+                  pdt_pc = ras_forward_data;
+                  pred_used_ras = 0; // 标记未使用实际RAS
+                  $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+                end 
+            else 
+                if (id_ras_push_valid_i) begin
+                     pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
+                      pred_used_ras = 1'b0;
+                  $display("[RAS] PREDICT (from ID): target=0x%h", pdt_pc);
+                 end 
+                else 
+                    if (ras_sp > 0) begin
+                    // 使用RAS栈顶地址
+                    pdt_pc = ras[ras_sp-1];
+                    pred_used_ras = 1; // 标记使用了RAS
+                    $display("[RAS] PREDICT: ras_sp=%0d, target=0x%h", ras_sp-1, pdt_pc);
+                end
+                // else if (btb_hit) begin
+                //     // RAS为空时使用BTB
+                //     pdt_pc = btb_target_val;
+                //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
+                // end
+                else begin
+                    // RAS和BTB都未命中，使用默认PC+4
 
-        //             pdt_res = 1'b0; // 不跳转
-        //             $display("ras miss\n");
-        //         end
-        //     end
-        //     // 处理JAL指令
-        //     else 
+                    pdt_res = 1'b0; // 不跳转
+                    $display("ras miss\n");
+                end
+            end
+            // 处理JAL指令
+            else 
             if (is_jal) begin
                 pdt_res = 1'b1;
                 pdt_pc_tag = if_pc;
