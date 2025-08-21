@@ -194,7 +194,7 @@ end
             if (ex_is_ret) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
-                    $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
+                    //$display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
                     next_sp = next_sp - 1; // 执行pop，栈指针减1
                     pop_occurred = 1;
                 end
@@ -207,7 +207,7 @@ end
         if (id_ras_push_valid_i && !ex_stall_valid_i && !id_stall_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
-                $display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);
+                //$display("[RAS] PUSH: NOW sp=%0d, addr=0x%h", next_sp + 1, id_ras_push_data_i);
                 next_sp = next_sp + 1; // 执行push，栈指针加1
             end
         end
