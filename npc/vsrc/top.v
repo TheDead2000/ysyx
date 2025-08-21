@@ -106,7 +106,7 @@ ifu ifu (
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
   .ex_which_pdt_i(which_pdt_fb), // 连接EXU输出的预测器类型
-  .ex_pc_i (bpu_branch_pc),
+  .ex_pc_i (ex_pc_o),
   .ex_history_i(history_fb), // 连接EXU输出的历史记录
   .ex_jump_type_i(ex_jump_type), // 跳转类型
   .ex_target_i(redirect_pc),
@@ -334,7 +334,7 @@ wire                           jump_hazard_valid;
 wire [             `TRAP_BUS]  trap_bus_ex;
 
 wire bpu_valid;          // 分支结果有效
-wire [             `INST_LEN-1:0]  bpu_branch_pc;
+wire [             `INST_LEN-1:0]  ex_pc_o;
 wire [             `INST_LEN-1:0]  redirect_pc;
 wire                               redirect_pc_valid;
 
@@ -381,9 +381,9 @@ exu exu (
     .bpu_valid_o (bpu_valid),          // 分支结果有效
     .branch_taken_o (exu_branch_taken_o),          // 实际分支方向
 
-    .bpu_branch_pc_o (bpu_branch_pc),
-    .pdt_res_i (bpu_pdt_res_id_ex),        // 预测的跳转方向
-    .which_pdt_i (bpu_which_pdt_id_ex),      // 预测使用的预测器类型
+    .ex_pc_o (ex_pc_o),
+    .pdt_res_i (pdt_res),        // 预测的跳转方向
+    .which_pdt_i (which_pdt_o),      // 预测使用的预测器类型
     .history_i (bpu_history_id_ex),  // 预测时使用的历史记录
     .pdt_correct_o (pdt_correct),        // 预测是否正确
     .which_pdt_o (which_pdt_fb),          // 预测使用的预测器类型

@@ -16,7 +16,7 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:185:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:186:32
     extern void bpu_count(svBit bpu_ret);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/dcache_top.v:76:32
     extern void dcache_hit_count();

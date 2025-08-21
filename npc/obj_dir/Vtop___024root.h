@@ -307,8 +307,18 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vfunc_match__39__Vfuncout;
         CData/*0:0*/ __Vfunc_match__40__Vfuncout;
         CData/*4:0*/ __Vtableidx1;
+        CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid;
+        CData/*0:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used;
+        CData/*1:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__provider_history_reg;
+        CData/*5:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+        CData/*5:0*/ __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
+        CData/*0:0*/ __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
+        CData/*0:0*/ __Vtrigrprev__TOP__top__DOT__exu__DOT__bpu_pc_wrong;
+        CData/*0:0*/ __VstlDidInit;
+        CData/*0:0*/ __VicoDidInit;
         CData/*0:0*/ __Vtrigrprev__TOP__clk;
         CData/*0:0*/ __Vtrigrprev__TOP__rst;
+        CData/*0:0*/ __VactDidInit;
         CData/*0:0*/ __VactContinue;
         SData/*15:0*/ top__DOT__ifu__DOT__bpu__DOT__global_history;
         SData/*9:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_tag_u;
@@ -317,6 +327,7 @@ class Vtop___024root final : public VerilatedModule {
         SData/*15:0*/ top__DOT__if2id__DOT___bpu_history_if_id_q;
         SData/*15:0*/ top__DOT__id2ex__DOT___bpu_history_id_ex_q;
         SData/*12:0*/ top__DOT__id2ex__DOT___exc_op_id_ex_q;
+        SData/*15:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
         VL_OUT(io_master_awaddr,31,0);
         VL_OUT(io_master_wdata,31,0);
         VL_OUT(io_master_araddr,31,0);
@@ -332,6 +343,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__ram_rdata_icache;
         IData/*31:0*/ top__DOT__ram_rdata_dcache;
         VlWide<4>/*127:0*/ top__DOT__io_sram0_rdata;
+    };
+    struct {
         VlWide<4>/*127:0*/ top__DOT__io_sram1_rdata;
         VlWide<4>/*127:0*/ top__DOT__io_sram2_rdata;
         VlWide<4>/*127:0*/ top__DOT__io_sram3_rdata;
@@ -343,8 +356,6 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__u_pc_reg__DOT___pc_next_d;
         IData/*18:0*/ top__DOT__ifu__DOT___if_trap_bus;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__total_branches;
-    };
-    struct {
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_hits;
@@ -398,6 +409,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__u_dcache_top__DOT___ram_raddr_dcache_o;
         IData/*31:0*/ top__DOT__u_dcache_top__DOT___ram_waddr_dcache_o;
         IData/*31:0*/ top__DOT__u_dcache_top__DOT___ram_wdata_dcache_o;
+    };
+    struct {
         VlWide<4>/*127:0*/ top__DOT__u_dcache_top__DOT__dcache_wdata_writehit;
         IData/*31:0*/ top__DOT__u_dcache_top__DOT__uncache_rdata;
         VlWide<4>/*127:0*/ top__DOT__u_dcache_top__DOT__dcache_wmask_writehit;
@@ -409,8 +422,6 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__axi4_rw__DOT__aw_addr;
         IData/*31:0*/ top__DOT__axi4_rw__DOT___arb_rdata_o;
         IData/*31:0*/ top__DOT__axi4_rw__DOT__ar_addr;
-    };
-    struct {
         VlWide<4>/*127:0*/ top__DOT__sram__DOT__SRAM0__DOT__bwen;
         VlWide<4>/*127:0*/ top__DOT__sram__DOT__SRAM4__DOT__bwen;
         IData/*31:0*/ __Vfunc_match__1__inst;
@@ -453,10 +464,19 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__38__inst;
         IData/*31:0*/ __Vfunc_match__39__inst;
         IData/*31:0*/ __Vfunc_match__40__inst;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__total_branches;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__correct_predictions;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t0_hits;
+        IData/*31:0*/ __Vdly__top__DOT__ifu__DOT__bpu__DOT__t1_hits;
+        IData/*31:0*/ __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
         IData/*31:0*/ __VstlIterCount;
         IData/*31:0*/ __VicoIterCount;
         IData/*31:0*/ __VactIterCount;
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT___alu_b;
+    };
+    struct {
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT___add_out;
         VlUnpacked<CData/*1:0*/, 512> top__DOT__ifu__DOT__bpu__DOT__bimodal_table;
         VlUnpacked<SData/*9:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t0_tag;
@@ -475,17 +495,16 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM2__DOT__ram;
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM3__DOT__ram;
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM4__DOT__ram;
-    };
-    struct {
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM5__DOT__ram;
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM6__DOT__ram;
         VlUnpacked<VlWide<4>/*127:0*/, 128> top__DOT__sram__DOT__SRAM7__DOT__ram;
-        VlUnpacked<CData/*0:0*/, 6> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 10> __Vm_traceActivity;
     };
-    VlTriggerVec<1> __VstlTriggered;
-    VlTriggerVec<1> __VicoTriggered;
-    VlTriggerVec<2> __VactTriggered;
-    VlTriggerVec<2> __VnbaTriggered;
+    VlTriggerVec<2> __VstlTriggered;
+    VlTriggerVec<2> __VicoTriggered;
+    VlTriggerVec<3> __VactTriggered;
+    VlTriggerVec<3> __VpreTriggered;
+    VlTriggerVec<3> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vtop__Syms* const vlSymsp;
