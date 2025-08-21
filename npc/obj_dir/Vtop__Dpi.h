@@ -30,6 +30,10 @@ extern "C" {
     extern void inst_commit(int pc, int inst, svBit commit_valid);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:184:32
+    extern void set_mem_pc(int mem_pc);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:179:32
+    extern void set_nextpc(int nextpc);
 
 #ifdef __cplusplus
 }

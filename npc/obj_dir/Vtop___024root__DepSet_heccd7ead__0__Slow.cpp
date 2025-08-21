@@ -171,6 +171,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(Vtop___024root* vlSelf) {
 }
 #endif  // VL_DEBUG
 
+void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_mem_pc_TOP(IData/*31:0*/ mem_pc);
 extern const VlUnpacked<CData/*5:0*/, 32> Vtop__ConstPool__TABLE_h6de4d937_0;
 extern const VlUnpacked<CData/*5:0*/, 32> Vtop__ConstPool__TABLE_h0eb958c7_0;
 void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(CData/*0:0*/ bpu_ret);
@@ -1308,6 +1309,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                           & vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q)) 
               | ((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls32byte))) 
                  & vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q)));
+    if (((IData)(vlSelf->top__DOT__lsu__DOT___isload) 
+         | (IData)(vlSelf->top__DOT__lsu__DOT___isstore))) {
+        Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_mem_pc_TOP(vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q);
+    }
     vlSelf->top__DOT__mem_addr_valid = ((~ (IData)(vlSelf->top__DOT__mem_data_ready)) 
                                         & ((IData)(vlSelf->top__DOT__lsu__DOT___isload) 
                                            | (IData)(vlSelf->top__DOT__lsu__DOT___isstore)));
