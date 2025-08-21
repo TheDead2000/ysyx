@@ -105,25 +105,12 @@ module exu (
 
   
   wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
- wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
+  wire bpu_pc_wrong = valid_prediction | (jump_taken != pdt_res_i);
+  // 计算预测是否正确
+  assign pdt_correct_o = (jump_taken == pdt_res_i);
 
-   reg pdt_correct_o_reg;
-   reg bpu_pc_wrong_reg;
-   reg bpu_pc_wrong;
-   always @(*) begin
-    
-        if (valid_prediction) begin
-           pdt_correct_o_reg = (jump_taken == pdt_res_i);
-           bpu_pc_wrong_reg = (jump_taken != pdt_res_i);
-        end else begin
-           // 如果不匹配，我们可以选择不更新，或者根据设计需求处理
-           pdt_correct_o_reg = 0;
-           bpu_pc_wrong_reg = 0;
-        end
-   end
-   
-   assign pdt_correct_o = pdt_correct_o_reg;
-   assign bpu_pc_wrong = bpu_pc_wrong_reg;
+  // 预测错误条件：实际跳转方向与预测方向不同
+  wire bpu_pc_wrong = (jump_taken != pdt_res_i);
 
   reg [`XLEN-1:0] redirect_pc_op1;
   reg [`XLEN-1:0] redirect_pc_op2;
