@@ -306,12 +306,12 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
 
                 pdt_res = 1'b1; // RET总是跳转
                 pdt_pc_tag = if_pc;
-       if (ras_conflict) begin
+               if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
-            if (ex_next_ras_sp > 0) begin
+                 if (ex_next_ras_sp > 0) begin
                 pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
                 $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
-            end else begin
+                 end else begin
                 // 如果新栈也是空的，回退到不跳转或其他策略
                 pdt_res = 1'b0;
                 pdt_pc = if_pc + 4;
@@ -369,7 +369,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 else if (t0_match)  pdt_res = t0_counter[t0_index][1];
                 else                pdt_res = bimodal_table[bm_index][1];
                 
-
+                if (is_jalr) begin
+                        pdt_res = 0;
+                end
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
                     // $display("use here!\n");
@@ -380,13 +382,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     else if (is_branch) begin
                         pdt_pc = if_pc + branch_offset;
                     end
-                    else if (is_jalr) begin
-                        pdt_res = 0;
-                    end
                 end
             end
         end
-        
         // 记录预测时RAS栈指针
         pred_ras_sp = ras_sp;
     end

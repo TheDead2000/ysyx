@@ -171,6 +171,9 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                        >> 1U))] 
                                                    >> 1U));
             }
+            if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+                vlSelf->top__DOT__pdt_res = 0U;
+            }
             if (vlSelf->top__DOT__pdt_res) {
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
@@ -191,8 +194,6 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                          | (0x1eU 
                                                             & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                                >> 7U))))));
-                } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-                    vlSelf->top__DOT__pdt_res = 0U;
                 }
             }
         }
@@ -4153,6 +4154,9 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                        >> 1U))] 
                                                    >> 1U));
             }
+            if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+                vlSelf->top__DOT__pdt_res = 0U;
+            }
             if (vlSelf->top__DOT__pdt_res) {
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
@@ -4173,8 +4177,6 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                          | (0x1eU 
                                                             & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                                >> 7U))))));
-                } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-                    vlSelf->top__DOT__pdt_res = 0U;
                 }
             }
         }

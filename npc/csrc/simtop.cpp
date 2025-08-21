@@ -27,7 +27,7 @@ Simtop::Simtop() {
     u_axi4 = new SimAxi4(top);
 #ifdef TOP_WAVE
     top->trace(tfp, 0);
-    tfp->open("sim.fst");
+    tfp->open("sim.vcd");
 #endif
     this->top_status = TOP_RUNNING;
     cout << "test111" << endl;
