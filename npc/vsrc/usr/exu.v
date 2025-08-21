@@ -191,7 +191,7 @@ module exu (
   // 2. exc 阶段为跳转指令，且 exc/mem 正常流通时，计算一次
   always @(*) begin
     if (is_branch_inst & exu_go_ready_i) begin
-      bpu_count(pdt_correct_o);
+      bpu_count(!bpu_pc_wrong);
     end
   end
 
