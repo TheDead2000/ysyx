@@ -291,7 +291,7 @@ assign ex_next_ras_sp = (ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i && 
 // 注意：这里计算新栈顶地址需要谨慎，因为ras[ex_next_ras_sp-1]的写法在ex_next_ras_sp为0时会越界。
 // 更安全的做法是使用一个MUX：
 assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN{1'b0}}; // 如果新SP为0，则返回0或其他安全值
-    always @(*) begin 
+    always @(*) begin
         // 默认值
         branch_or_not = 1'b0;
         pdt_pc = if_pc + 4;
@@ -306,7 +306,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
 
                 pdt_res = 1'b1; // RET总是跳转
                 pdt_pc_tag = if_pc;
-       if (ras_conflict) begin 
+       if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
             if (ex_next_ras_sp > 0) begin
                 pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
@@ -348,7 +348,6 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     $display("ras miss\n");
                 end
             end
-        end
             // 处理JAL指令
             else if (is_jal) begin
                 pdt_res = 1'b1;
@@ -359,9 +358,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
                 end
             end
+            // 处理分支指令
+            else begin
 
-            else 
-                begin
                 // 当前预测的提供者（组合逻辑）
                 assign provider_history_comb = (t1_match) ? 2'b10 : 
                                               (t0_match) ? 2'b01 : 2'b00;
@@ -381,14 +380,12 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                         pdt_pc = if_pc + branch_offset;
                     end
                 end
-                else
-                pdt_res = 0;
             end
-            pred_ras_sp = ras_sp;
         end
         
         // 记录预测时RAS栈指针
-
+        pred_ras_sp = ras_sp;
+    end
 
     // ================== 更新逻辑 (时序逻辑) ==================
     // 更新计算使用临时变量
