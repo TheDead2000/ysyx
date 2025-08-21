@@ -194,7 +194,7 @@ end
             if (ex_is_ret) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
-                    $display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
+                    //$display("[RAS] POP: now sp=%0d, pop_addr=0x%h", pop_index, ras[pop_index]);
                     next_sp = next_sp - 1; // 执行pop，栈指针减1
                     pop_occurred = 1;
                 end
