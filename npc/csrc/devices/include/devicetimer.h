@@ -9,7 +9,7 @@ namespace Topdevice {
     private:
         timeval boottime;
         timeval now;
-        uint64_t rtc_time;
+        uint32_t rtc_time;
     public:
         Devicetimer(/* args */);
         virtual  ~Devicetimer();
