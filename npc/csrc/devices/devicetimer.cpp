@@ -15,7 +15,7 @@ void Devicetimer::init(const char* name) {
     deviceinfo_t t;
     t.name.append(name);
     t.addr = RTC_ADDR;
-    t.len = 8;
+    t.len = 4;
     t.isok = true;
     deviceinfo.push_back(t);
     gettimeofday(&boottime, NULL);
