@@ -9,16 +9,23 @@
 #include "mysdb.h"
 #include "simMem.h"
 #include "simconf.h"
-
+#include <SDL2/SDL.h>
 
 namespace cr = CppReadline;
 using ret = cr::Console::ReturnCode;
 
-// const char *ref_so_file = "/home/zy/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so";
-const char *ref_so_file = "/home/zy/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so";
-// const char* img_path = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv32e-npc.bin";
-const char* img_path = "";
+
+
+
+
+
+const char *nemu_so_path = "/home/zy/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so";
+const char* img_path = " ";
+
 Simtop* mysim_p;
+
+
+
 int main(int argc, char* argv[]) {
 
   /* 解析参数 获取镜像路径*/
@@ -27,17 +34,26 @@ int main(int argc, char* argv[]) {
     if (i == 1) {
       img_path = argv[i];
     }
+    else if (i == 2) {
+      nemu_so_path = argv[i];
+    }
   }
+
+
+
 
   /* 不知道为什么将 Simtop mysim 声明为全局变量会崩溃(已有思路,全局对象的特性)*/
   mysim_p = new Simtop;
-  /* 加载镜像 */
-  // mysim_p->mem->setImagePath(img_path);
-  // mysim_p->mem->loadImage();
+  // /* 加载镜像,若无输入镜像，加载默认镜像 */
+   // mysim_p->mem->setImagePath(img_path);
+   // mysim_p->mem->loadImage();
   mysim_p->reset();
-  
+
   size_t file_size = mysim_p->u_axi4->dram->load_binary(0, img_path);
+
   cout << "file_size " << file_size << endl;
+
+
   /* 注册命令 */
   cr::Console c(">:");
   c.registerCommand("info", cmd_info);
@@ -49,10 +65,11 @@ int main(int argc, char* argv[]) {
   c.registerCommand("w", cmd_w);
   c.registerCommand("d", cmd_d);
   c.registerCommand("sdb", cmd_sdb);
+
   int retCode;
 
 #ifdef TOP_TRACE
-  mysim_p->u_difftest.init(ref_so_file,file_size, 0);
+  mysim_p->u_difftest.init(nemu_so_path, file_size, 0);
   c.executeCommand("sdb on difftest");
 #endif
 
@@ -63,17 +80,15 @@ int main(int argc, char* argv[]) {
     retCode = c.readLine();
     // We can also change the prompt based on last return value:
     if (retCode == ret::Ok)
-      c.setGreeting(">:");
+      c.setGreeting(">");
     else
       c.setGreeting("!>");
   } while (retCode != ret::Quit);
 #endif
-
-  mysim_p->excute(1);
   mysim_p->showSimPerformance();
+  mysim_p->excute(1);
   bool hitgood = mysim_p->npcHitGood();
   delete mysim_p;
-  c.executeCommand("exit");
   return hitgood;
 }
 
