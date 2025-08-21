@@ -627,6 +627,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+406,"is_branch_inst", false,-1);
     tracep->declBit(c+407,"jump_taken", false,-1);
     tracep->declBit(c+219,"valid_prediction", false,-1);
+    tracep->declBit(c+408,"pdt_correct_o_reg", false,-1);
+    tracep->declBit(c+411,"bpu_pc_wrong_reg", false,-1);
     tracep->declBit(c+411,"bpu_pc_wrong", false,-1);
     tracep->declBus(c+462,"redirect_pc_op1", false,-1, 31,0);
     tracep->declBus(c+463,"redirect_pc_op2", false,-1, 31,0);
@@ -2173,9 +2175,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullBit(oldp+218,((1U & ((~ ((IData)(vlSelf->top__DOT__u_icache_top__DOT__icache_hit) 
                                        | (IData)(vlSelf->top__DOT__u_icache_top__DOT__uncache_data_ready))) 
                                    | (IData)(vlSelf->top__DOT__mem_addr_valid)))));
-    bufp->fullBit(oldp+219,(((IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q) 
-                             & (vlSelf->top__DOT__id2ex__DOT___bpu_pdt_tag_id_ex_q 
-                                == vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q))));
+    bufp->fullBit(oldp+219,(vlSelf->top__DOT__exu__DOT__valid_prediction));
     bufp->fullIData(oldp+220,(vlSelf->top__DOT__exu__DOT___alu_in1),32);
     bufp->fullIData(oldp+221,(vlSelf->top__DOT__exu__DOT___alu_in2),32);
     bufp->fullBit(oldp+222,(vlSelf->top__DOT__exu__DOT___compare_out));
@@ -2776,10 +2776,10 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+405,(vlSelf->top__DOT__u_pc_reg__DOT___pc_current),32);
     bufp->fullBit(oldp+406,(vlSelf->top__DOT__exu__DOT__is_branch_inst));
     bufp->fullBit(oldp+407,(vlSelf->top__DOT__exu__DOT__jump_taken));
-    bufp->fullBit(oldp+408,(vlSelf->top__DOT__pdt_correct));
+    bufp->fullBit(oldp+408,(vlSelf->top__DOT__exu__DOT__pdt_correct_o_reg));
     bufp->fullIData(oldp+409,(vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q),32);
     bufp->fullIData(oldp+410,(((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q)),32);
-    bufp->fullBit(oldp+411,(vlSelf->top__DOT__exu__DOT__bpu_pc_wrong));
+    bufp->fullBit(oldp+411,(vlSelf->top__DOT__exu__DOT__bpu_pc_wrong_reg));
     bufp->fullIData(oldp+412,(vlSelf->top__DOT__exu__DOT__redirect_pc),32);
     bufp->fullCData(oldp+413,((0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                         >> 2U))),8);
