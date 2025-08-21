@@ -85,7 +85,7 @@ extern "C" void inst_commit(int pc, int inst, svBit commit_valid) {
     }
     mysim_p->addCommitedInst(pc, inst);
 #ifdef MTRACH
-    printf("commit:%p\n", (void*)pc);
+    printf("commit:%x\n", (void*)pc);
 #endif
     //printf("pc:%p,commit:%d\n", (void*)pc, commit_valid);
 }
