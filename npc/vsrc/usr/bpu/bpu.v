@@ -352,9 +352,11 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             else if (is_jal) begin
                 pdt_res = 1'b1;
                 pdt_pc_tag = if_pc;
-                if (btb_hit) begin
-                    pdt_pc = btb_target_val;
-                end else begin
+                // if (btb_hit) begin
+                //     pdt_pc = btb_target_val;
+                // end 
+                // else 
+                begin
                     pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
                 end
             end
@@ -376,10 +378,11 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 if (pdt_res) begin
                     // $display("use here!\n");
                     pdt_pc_tag = if_pc;
-                    if (btb_hit) begin
-                        pdt_pc = btb_target_val;
-                    end
-                    else if (is_branch) begin
+                    // if (btb_hit) begin
+                    //     pdt_pc = btb_target_val;
+                    // end
+                    // else
+                     if (is_branch) begin
                         pdt_pc = if_pc + branch_offset;
                     end
                 end
