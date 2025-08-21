@@ -2173,7 +2173,9 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullBit(oldp+218,((1U & ((~ ((IData)(vlSelf->top__DOT__u_icache_top__DOT__icache_hit) 
                                        | (IData)(vlSelf->top__DOT__u_icache_top__DOT__uncache_data_ready))) 
                                    | (IData)(vlSelf->top__DOT__mem_addr_valid)))));
-    bufp->fullBit(oldp+219,(vlSelf->top__DOT__exu__DOT__valid_prediction));
+    bufp->fullBit(oldp+219,(((IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q) 
+                             & (vlSelf->top__DOT__id2ex__DOT___bpu_pdt_tag_id_ex_q 
+                                == vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q))));
     bufp->fullIData(oldp+220,(vlSelf->top__DOT__exu__DOT___alu_in1),32);
     bufp->fullIData(oldp+221,(vlSelf->top__DOT__exu__DOT___alu_in2),32);
     bufp->fullBit(oldp+222,(vlSelf->top__DOT__exu__DOT___compare_out));
