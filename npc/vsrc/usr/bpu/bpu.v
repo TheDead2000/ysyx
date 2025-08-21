@@ -133,7 +133,7 @@ always @(posedge clk or posedge rst) begin
         if (is_ret && ras_forward_valid && !id_stall_i) begin
             ras_forward_valid <= 0;
             ras_forward_used <= 1;
-            $display("[RAS] FORWARD USED: data=0x%h", ras_forward_data);
+            //$display("[RAS] FORWARD USED: data=0x%h", ras_forward_data);
         end
         
         // 捕获新的前递数据
@@ -141,7 +141,7 @@ always @(posedge clk or posedge rst) begin
             ras_forward_valid <= 1;
             ras_forward_data <= id_ras_push_data_i;
             ras_forward_used <= 0;
-            $display("[RAS] FORWARD CAPTURED: data=0x%h", id_ras_push_data_i);
+            //$display("[RAS] FORWARD CAPTURED: data=0x%h", id_ras_push_data_i);
         end
         
         // 重置使用标志
