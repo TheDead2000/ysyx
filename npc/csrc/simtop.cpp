@@ -364,7 +364,6 @@ void Simtop::addCommitedInst(uint32_t inst_pc, uint32_t inst_data) {
     inst_t temp_inst;
     temp_inst.inst_data = inst_data;
     temp_inst.inst_pc = inst_pc;
-    this->pc = inst_pc;
     this->commited_list.inst.push_back(temp_inst);
     commit_count++;
 }
