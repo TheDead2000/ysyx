@@ -1980,19 +1980,18 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                              >> 0x14U)))))));
         } else {
             if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match) {
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
                 vlSelf->top__DOT__pdt_res = (1U & (
                                                    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
                                                    >> 1U));
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
             } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
                 vlSelf->top__DOT__pdt_res = (1U & (
                                                    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
                                                    [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
                                                    >> 1U));
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
             } else {
-                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
                 vlSelf->top__DOT__pdt_res = (1U & (
                                                    vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
                                                    [
@@ -2000,8 +1999,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                     & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                                        >> 1U))] 
                                                    >> 1U));
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
             }
-            if (vlSelf->top__DOT__pdt_res) {
+            if (VL_UNLIKELY(vlSelf->top__DOT__pdt_res)) {
+                VL_WRITEF("use here!\n\n");
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
@@ -2022,8 +2023,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                             & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                                >> 7U))))));
                 }
-            } else {
-                vlSelf->top__DOT__pdt_res = 0U;
             }
         }
     }

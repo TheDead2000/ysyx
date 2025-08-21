@@ -372,6 +372,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
+                    $display("use here!\n");
                     pdt_pc_tag = if_pc;
                     if (btb_hit) begin
                         pdt_pc = btb_target_val;
@@ -380,8 +381,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                         pdt_pc = if_pc + branch_offset;
                     end
                 end
-                else 
-                pdt_res = 0;
+   
             end
         end
         
