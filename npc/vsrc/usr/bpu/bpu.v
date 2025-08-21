@@ -361,9 +361,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             end
 
             else 
-            if(is_branch) 
-            begin
-
+                begin
                 // 当前预测的提供者（组合逻辑）
                 assign provider_history_comb = (t1_match) ? 2'b10 : 
                                               (t0_match) ? 2'b01 : 2'b00;
@@ -383,6 +381,8 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                         pdt_pc = if_pc + branch_offset;
                     end
                 end
+                else
+                pdt_res = 0;
             end
             pred_ras_sp = ras_sp;
         end

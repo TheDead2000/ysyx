@@ -149,24 +149,24 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                    | (0x7feU 
                                                       & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                          >> 0x14U)))))));
-    } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+    } else {
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
                                                [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
         } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
                                                [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
         } else {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
                                                [(0x1ffU 
                                                  & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                                     >> 1U))] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
         }
         if (vlSelf->top__DOT__pdt_res) {
             vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
@@ -188,6 +188,8 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                           & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                              >> 7U))))));
             }
+        } else {
+            vlSelf->top__DOT__pdt_res = 0U;
         }
     }
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
@@ -4119,24 +4121,24 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                    | (0x7feU 
                                                       & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                          >> 0x14U)))))));
-    } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+    } else {
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_counter
                                                [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
         } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_match) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_counter
                                                [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 1U;
         } else {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
             vlSelf->top__DOT__pdt_res = (1U & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table
                                                [(0x1ffU 
                                                  & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                                     >> 1U))] 
                                                >> 1U));
-            vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 0U;
         }
         if (vlSelf->top__DOT__pdt_res) {
             vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
@@ -4158,6 +4160,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                           & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                              >> 7U))))));
             }
+        } else {
+            vlSelf->top__DOT__pdt_res = 0U;
         }
     }
     vlSelf->top__DOT__u_pc_reg__DOT___pc_next_d = (
