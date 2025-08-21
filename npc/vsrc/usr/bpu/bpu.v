@@ -360,7 +360,6 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             end
             // 处理分支指令
             else begin
-
                 // 当前预测的提供者（组合逻辑）
                 assign provider_history_comb = (t1_match) ? 2'b10 : 
                                               (t0_match) ? 2'b01 : 2'b00;
@@ -370,6 +369,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 else if (t0_match)  pdt_res = t0_counter[t0_index][1];
                 else                pdt_res = bimodal_table[bm_index][1];
                 
+                if(is_jalr)begin
+                pdt_res=0;
+                end
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
                     $display("use here!\n");
