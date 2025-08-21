@@ -1895,8 +1895,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                  (0x1fU 
                                                   & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                                                      >> 7U)))));
-    if ((((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
-          & (IData)(vlSelf->top__DOT__pdt_correct)) 
+    if (((IData)(vlSelf->top__DOT__exu__DOT__is_branch_inst) 
          & (~ (((IData)(vlSelf->top__DOT__flush_clint) 
                 | (IData)(vlSelf->top__DOT__stall_clint)) 
                >> 3U)))) {

@@ -190,7 +190,7 @@ module exu (
   // 1. 用于分支预测准确率
   // 2. exc 阶段为跳转指令，且 exc/mem 正常流通时，计算一次
   always @(*) begin
-    if (is_branch_inst && pdt_correct_o && exu_go_ready_i) begin
+    if (is_branch_inst & exu_go_ready_i) begin
       bpu_count(pdt_correct_o);
     end
   end
