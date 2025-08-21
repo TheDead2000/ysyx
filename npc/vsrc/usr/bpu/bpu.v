@@ -296,7 +296,6 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
         branch_or_not = 1'b0;
         pdt_pc = if_pc + 4;
         pdt_res = 1'b0;
-        pdt_pc_tag = if_pc;
         pred_used_ras = 0; // 默认未使用RAS
         
         if (is_branch || is_jal || is_jalr) begin // 分支指令
@@ -304,9 +303,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
-                pdt_pc_tag = if_pc;
-                pdt_res = 1'b1; // RET总是跳转
 
+                pdt_res = 1'b1; // RET总是跳转
+                pdt_pc_tag = if_pc;
        if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
             if (ex_next_ras_sp > 0) begin
@@ -346,7 +345,6 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     // RAS和BTB都未命中，使用默认PC+4
 
                     pdt_res = 1'b0; // 不跳转
-                    pdt_pc_tag = if_pc;
                     $display("ras miss\n");
                 end
             end
