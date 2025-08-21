@@ -1953,9 +1953,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                     [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
-                VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
-                          32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                              - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
+                VL_WRITEF("[RAS] PC= %x PREDICT: ras_sp=%0#, target=0x%x\n",
+                          32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current,
+                          6,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),
+                          32,vlSelf->top__DOT__bpu_pc_o);
             } else {
                 VL_WRITEF("ras miss\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;

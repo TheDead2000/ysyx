@@ -118,9 +118,10 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                     [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
-                VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
-                          32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                              - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
+                VL_WRITEF("[RAS] PC= %x PREDICT: ras_sp=%0#, target=0x%x\n",
+                          32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current,
+                          6,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),
+                          32,vlSelf->top__DOT__bpu_pc_o);
             } else {
                 VL_WRITEF("ras miss\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
@@ -3822,7 +3823,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
                             = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
                                         - (IData)(1U)));
-                        VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr=0x%x\n",
+                        VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr= %x\n",
                                   6,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
                                   32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
                                   [vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index]);
@@ -3842,7 +3843,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         __Vdlyvset__top__DOT__ifu__DOT__bpu__DOT__ras__v0 = 1U;
         __Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0 
             = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
-        VL_WRITEF("[RAS] PUSH: NOW sp=%0#, addr=0x%x\n",
+        VL_WRITEF("[RAS] PUSH: NOW sp=%0#, addr= %x\n",
                   32,((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)),
                   32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
@@ -4086,9 +4087,10 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                     [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
-                VL_WRITEF("[RAS] PREDICT: ras_sp=%0#, target=0x%x\n",
-                          32,((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                              - (IData)(1U)),32,vlSelf->top__DOT__bpu_pc_o);
+                VL_WRITEF("[RAS] PC= %x PREDICT: ras_sp=%0#, target=0x%x\n",
+                          32,vlSelf->top__DOT__u_pc_reg__DOT___pc_current,
+                          6,(IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp),
+                          32,vlSelf->top__DOT__bpu_pc_o);
             } else {
                 VL_WRITEF("ras miss\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
