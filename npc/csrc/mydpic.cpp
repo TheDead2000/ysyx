@@ -45,25 +45,25 @@ extern "C" void dcache_hit_count() {
 extern "C" void set_nextpc(int nextpc) {
     static bool isfirst_inst = true;
     // NOP 指令对于的 PC 为 0
-//     if (nextpc == 0) {
-//         return;
-//     }
-//     /**
-//      * 第一条指令特殊处理
-//      * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
-//      * 2. 第一条指令之前没有指令
-//      * 3. nextpc 与 commited pc 一一对应，nextpc 为 commited pc 下一条所指令的指令
-//      * 4. nextpc 为第一条指令时，没有对于的 commited pc
-//      *
-//      */
-// #ifdef MTRACH
-//     printf("set_nextpc:%p\n", (void*)nextpc);
-// #endif
-//     if (isfirst_inst) {
-//         printf("isfirst_inst\n");
-//         isfirst_inst = false;
-//         return;
-//     }
+    if (nextpc == 0) {
+        return;
+    }
+    /**
+     * 第一条指令特殊处理
+     * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
+     * 2. 第一条指令之前没有指令
+     * 3. nextpc 与 commited pc 一一对应，nextpc 为 commited pc 下一条所指令的指令
+     * 4. nextpc 为第一条指令时，没有对于的 commited pc
+     *
+     */
+#ifdef MTRACH
+    printf("set_nextpc:%p\n", (void*)nextpc);
+#endif
+    if (isfirst_inst) {
+        printf("isfirst_inst\n");
+        isfirst_inst = false;
+        return;
+    }
 
     mysim_p->commited_list.nextpc.push_back(nextpc);
 }
