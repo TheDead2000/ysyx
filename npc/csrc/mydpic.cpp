@@ -70,7 +70,7 @@ extern "C" void set_nextpc(int nextpc) {
 
 extern "C" void set_mem_pc(int mem_pc) {
 #ifdef MTRACH
-    printf("set_mem_pc:%p\n", (void*)mem_pc);
+    // printf("set_mem_pc:%p\n", (void*)mem_pc);
 #endif
     mysim_p->mem_pc = mem_pc;
 }

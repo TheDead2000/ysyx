@@ -32,16 +32,6 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TO
     bpu_count(bpu_ret__Vcvt);
 }
 
-extern "C" void set_nextpc(int nextpc);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP\n"); );
-    // Body
-    int nextpc__Vcvt;
-    for (size_t nextpc__Vidx = 0; nextpc__Vidx < 1; ++nextpc__Vidx) nextpc__Vcvt = nextpc;
-    set_nextpc(nextpc__Vcvt);
-}
-
 extern "C" void set_mem_pc(int mem_pc);
 
 VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_mem_pc_TOP(IData/*31:0*/ mem_pc) {
