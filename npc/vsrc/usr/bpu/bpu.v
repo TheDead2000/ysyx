@@ -24,7 +24,8 @@ module bpu (
     // 输出
     output reg branch_or_not, 
     output reg [`XLEN-1:0] pdt_pc,
-    output reg pdt_res,
+    output reg [31:0] pdt_pc_tag,  // 预测对应的 PC 标签
+    output  pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
 
@@ -295,6 +296,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
         branch_or_not = 1'b0;
         pdt_pc = if_pc + 4;
         pdt_res = 1'b0;
+        pdt_pc_tag = if_pc;
         pred_used_ras = 0; // 默认未使用RAS
         
         if (is_branch || is_jal || is_jalr) begin // 分支指令
@@ -302,11 +304,11 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             
             // 处理RET指令（优先使用RAS）
             if (is_ret) begin
+                pdt_pc_tag = if_pc;
                 pdt_res = 1'b1; // RET总是跳转
 
        if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
-            pdt_res = 1'b1;
             if (ex_next_ras_sp > 0) begin
                 pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
                 $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
@@ -342,13 +344,16 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 // end
                 else begin
                     // RAS和BTB都未命中，使用默认PC+4
+
                     pdt_res = 1'b0; // 不跳转
+                    pdt_pc_tag = if_pc;
                     $display("ras miss\n");
                 end
             end
             // 处理JAL指令
             else if (is_jal) begin
                 pdt_res = 1'b1;
+                pdt_pc_tag = if_pc;
                 if (btb_hit) begin
                     pdt_pc = btb_target_val;
                 end else begin
@@ -369,6 +374,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
+                    pdt_pc_tag = if_pc;
                     if (btb_hit) begin
                         pdt_pc = btb_target_val;
                     end

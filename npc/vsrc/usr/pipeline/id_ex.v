@@ -19,11 +19,12 @@ module id_ex (
     input bpu_pdt_res_id_i,
     input bpu_which_pdt_id_i,
     input[`HISLEN-1:0] bpu_history_id_i,
+    output [`XLEN-1:0] bpu_pdt_tag_id_i,
 
     output bpu_pdt_res_id_ex_o,
     output bpu_which_pdt_id_ex_o,
     output[`HISLEN-1:0] bpu_history_id_ex_o,
-
+    output [`XLEN-1:0] bpu_pdt_tag_id_ex_o,
 
     input      [     `INST_LEN-1:0]rs1_data_id_ex_i,
     input      [     `INST_LEN-1:0] rs2_data_id_ex_i,
@@ -59,6 +60,24 @@ module id_ex (
     wire reg_wen = !stall_valid_i;
   wire _flush_valid = flush_valid_i;
   wire reg_rst = rst | _flush_valid;
+
+
+    wire [`INST_LEN-1:0] _bpu_pdt_tag_id_ex_d = bpu_pdt_tag_id_i;
+    wire [`INST_LEN-1:0] _bpu_pdt_tag_id_ex_q;
+    regTemplate #(
+        .WIDTH    (`INST_LEN),
+        .RESET_VAL(`INST_LEN'b0)
+    ) u_bpu_tag_id_ex (
+        .clk (clk),
+        .rst (reg_rst),
+        .din (_bpu_pdt_tag_id_ex_d),
+        .dout(_bpu_pdt_tag_id_ex_q),
+        .wen (reg_wen)
+    );
+    assign bpu_pdt_tag_id_ex_o = _bpu_pdt_tag_id_ex_q;
+
+
+
 
   /* bpu_taken_if_i 寄存器 */
   wire _bpu_taken_id_ex_d = bpu_taken_id_ex_i;

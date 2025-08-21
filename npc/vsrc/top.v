@@ -83,6 +83,7 @@ wire [`XLEN-1:0] bpu_pc_o;
 wire bpu_pc_valid_o;
 
 wire pdt_res;
+wire [`XLEN-1:0] pdt_tag;
 wire which_pdt_o; 
 wire [`HISLEN-1:0] history_o;
 
@@ -122,6 +123,7 @@ ifu ifu (
   
   //to if/id
   .pdt_res(pdt_res),
+  .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
   .which_pdt_o(which_pdt_o),
   .history_o(history_o),
 
@@ -139,6 +141,7 @@ wire [`TRAP_BUS] trap_bus_if_id;
 wire bpu_pc_valid_if_id;
 wire bpu_pdt_res_if_id;
 wire bpu_which_pdt_if_id;
+wire[`XLEN-1:0] bpu_pdt_tag_if_id;
 wire [`HISLEN-1:0] bpu_history_if_id;
 
 if_id if2id(
@@ -157,10 +160,12 @@ if_id if2id(
   .bpu_pdt_res_if_i(pdt_res),
   .bpu_which_pdt_if_i(which_pdt_o),
   .bpu_history_if_i(history_o),
+  .bpu_pdt_tag_if_i(pdt_tag),
 
   .bpu_pdt_res_if_id_o(bpu_pdt_res_if_id),
   .bpu_which_pdt_if_id_o(bpu_which_pdt_if_id),
   .bpu_history_if_id_o(bpu_history_if_id),
+  .bpu_pdt_tag_if_id_o(bpu_pdt_tag_if_id),
 
   .inst_addr_if_id_o (inst_addr_if_id),
   .inst_data_if_id_o (inst_data_if_id),
@@ -253,6 +258,7 @@ wire [             `TRAP_BUS]  trap_bus_id_ex;
 wire bpu_pc_valid_id_ex;
 wire bpu_pdt_res_id_ex;
 wire bpu_which_pdt_id_ex;
+wire [`XLEN-1:0] bpu_pdt_tag_id_ex;
 wire [`HISLEN-1:0] bpu_history_id_ex;
 
 id_ex id2ex (
@@ -274,17 +280,16 @@ id_ex id2ex (
     .bpu_taken_id_ex_i    (bpu_pc_valid_if_id),
     .bpu_taken_id_ex_o    (bpu_pc_valid_id_ex),
 
- 
-
-
 
     .bpu_pdt_res_id_i(bpu_pdt_res_if_id),
     .bpu_which_pdt_id_i(bpu_which_pdt_if_id),
     .bpu_history_id_i(bpu_history_if_id),
+    .bpu_pdt_tag_id_i(bpu_pdt_tag_if_id),
 
     .bpu_pdt_res_id_ex_o(bpu_pdt_res_id_ex),
     .bpu_which_pdt_id_ex_o(bpu_which_pdt_id_ex),
     .bpu_history_id_ex_o(bpu_history_id_ex),
+    .bpu_pdt_tag_id_ex_o(bpu_pdt_tag_id_ex),
 
     // alu 操作码
     .mem_op_id_ex_i       (mem_op_id),
@@ -382,8 +387,9 @@ exu exu (
     .branch_taken_o (exu_branch_taken_o),          // 实际分支方向
 
     .ex_pc_o (ex_pc_o),
-    .pdt_res_i (pdt_res),        // 预测的跳转方向
-    .which_pdt_i (which_pdt_o),      // 预测使用的预测器类型
+    .pdt_tag_i(bpu_pdt_tag_id_ex),
+    .pdt_res_i (bpu_pdt_res_id_ex),        // 预测的跳转方向
+    .which_pdt_i (bpu_which_pdt_id_ex),      // 预测使用的预测器类型
     .history_i (bpu_history_id_ex),  // 预测时使用的历史记录
     .pdt_correct_o (pdt_correct),        // 预测是否正确
     .which_pdt_o (which_pdt_fb),          // 预测使用的预测器类型

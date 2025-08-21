@@ -40,6 +40,8 @@ module ifu (
 
     //to exu
     output reg pdt_res,
+    output reg [31:0] pdt_pc_tag,  // 预测对应的 PC 标签
+
     output reg which_pdt_o,
     output wire [`HISLEN-1:0] history_o
 );
@@ -77,6 +79,7 @@ module ifu (
       .branch_or_not(bpu_pc_valid_o),
       
       .pdt_res(pdt_res),
+      .pdt_pc_tag(pdt_pc_tag),
       // .which_pdt_o(which_pdt_o),
       .history_o(history_o)
 

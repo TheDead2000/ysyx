@@ -16,10 +16,12 @@ module if_id (
     input wire bpu_pdt_res_if_i,        // IF阶段分支预测结果
     input wire bpu_which_pdt_if_i,      // IF阶段使用的预测器类型
     input wire [`HISLEN-1:0] bpu_history_if_i,  // IF阶段使用的历史记录
-    
+    input wire [`XLEN-1:0] bpu_pdt_tag_if_i,
+
     output wire bpu_pdt_res_if_id_o,
     output wire bpu_which_pdt_if_id_o,
     output wire [`HISLEN-1:0] bpu_history_if_id_o,
+    output wire [`XLEN-1:0] bpu_pdt_tag_if_id_o,
 
     input wire [`TRAP_BUS] trap_bus_if_i,
 
@@ -110,7 +112,21 @@ module if_id (
     assign bpu_which_pdt_if_id_o = _bpu_which_pdt_if_id_q;
     
     /* ============= 历史寄存器 ============= */
-    wire [`HISLEN-1:0] _bpu_history_if_id_d = bpu_history_if_i;
+    wire [`INST_LEN-1:0] _bpu_pdt_tag_if_id_d = bpu_pdt_tag_if_i;
+    wire [`INST_LEN-1:0] _bpu_pdt_tag_if_id_q;
+    regTemplate #(
+        .WIDTH    (`INST_LEN),
+        .RESET_VAL(`INST_LEN'b0)
+    ) u_bpu_tag_if_id (
+        .clk (clk),
+        .rst (reg_rst),
+        .din (_bpu_pdt_tag_if_id_d),
+        .dout(_bpu_pdt_tag_if_id_q),
+        .wen (reg_wen)
+    );
+    assign bpu_pdt_tag_if_id_o = _bpu_pdt_tag_if_id_q;
+
+     wire [`HISLEN-1:0] _bpu_history_if_id_d = bpu_history_if_i;
     wire [`HISLEN-1:0] _bpu_history_if_id_q;
     regTemplate #(
         .WIDTH    (`HISLEN),
@@ -123,6 +139,7 @@ module if_id (
         .wen (reg_wen)
     );
     assign bpu_history_if_id_o = _bpu_history_if_id_q;
+
 
 
   /* trap_bus_if_i 寄存器 */

@@ -24,6 +24,7 @@ module exu (
     input   pdt_res_i,        // 预测的跳转方向
     input   which_pdt_i,      // 预测使用的预测器类型
     input   [`HISLEN-1:0] history_i,  // 预测时使用的历史记录
+    input   [`XLEN-1:0] pdt_tag_i,
     // 新增输出到BPU的反馈信号
     output pdt_correct_o,        // 预测是否正确
     output which_pdt_o,          // 预测使用的预测器类型
@@ -47,6 +48,7 @@ module exu (
     output bpu_valid_o,          // 分支结果有效
     output branch_taken_o,          // 实际分支方向
     output [`XLEN-1:0] ex_pc_o,
+    
 
     output [1:0] exu_jump_type_o, // 跳转类型
     output [4:0] exu_rd_addr_o, // 目的寄存器地址 
@@ -100,13 +102,14 @@ module exu (
 
   wire is_branch_inst = _excop_branch | _excop_jal | _excop_jalr;
   wire jump_taken = (_excop_branch & _compare_out) | (_excop_jal | _excop_jalr);
-  
 
+  
+  wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
+  wire bpu_pc_wrong = valid_prediction && (jump_taken != pdt_res_i);
   // 计算预测是否正确
-  assign pdt_correct_o = (jump_taken == pdt_res_i);
+  assign pdt_correct_o = valid_prediction && (jump_taken == pdt_res_i);
 
   // 预测错误条件：实际跳转方向与预测方向不同
-/* verilator lint_off UNOPTFLAT */
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);
 
   reg [`XLEN-1:0] redirect_pc_op1;
