@@ -570,7 +570,7 @@ void PowerNES(void) {
 	SetReadHandler(0x800, 0x1FFF, ARAMH);	// Part of a little
 	SetWriteHandler(0x800, 0x1FFF, BRAMH);	//hack for a small speed boost.
 	InitializeInput();
-	FCEU_DispMessage("Power test5");
+
 	FCEUSND_Power();
 	FCEU_DispMessage("Power test6");
 	FCEUPPU_Power();
