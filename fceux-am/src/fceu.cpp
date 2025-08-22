@@ -577,8 +577,9 @@ void PowerNES(void) {
 	InitializeInput();
 		FCEU_DispMessage("Power test5");
 	FCEUSND_Power();
+	FCEU_DispMessage("Power test6");
 	FCEUPPU_Power();
-
+	FCEU_DispMessage("Power test7");
 	//Have the external game hardware "powered" after the internal NES stuff.  Needed for the NSF code and VS System code.
 	GameInterface(GI_POWER);
 
