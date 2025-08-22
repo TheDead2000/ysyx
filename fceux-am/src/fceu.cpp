@@ -569,6 +569,8 @@ void PowerNES(void) {
 	SetReadHandler(0, 0x7FF, ARAML);
 	SetWriteHandler(0, 0x7FF, BRAML);
 
+	FCEU_DispMessage("Power test3");
+
 	SetReadHandler(0x800, 0x1FFF, ARAMH);	// Part of a little
 	SetWriteHandler(0x800, 0x1FFF, BRAMH);	//hack for a small speed boost.
 
