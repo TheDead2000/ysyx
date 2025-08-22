@@ -1,15 +1,12 @@
 int test1(int a)
 {
-    a = 2;
-    return 0;
+asm volatile("ret");
 }
 int test2(int b){
-    b = 3;
-    return 0;
+asm volatile("ret");
 } 
 int test3(int c) {
-    c = 4;
-    return 0;
+asm volatile("ret");
 }
 int main() {
     int a = 1;
