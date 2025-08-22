@@ -318,7 +318,7 @@ void ResetGameLoaded(void) {
 	MMC5Hack = 0;
 	PEC586Hack = 0;
 	QTAIHack = 0;
-	PAL &= 1;
+	PAL = 1;
 	default_palette_selection = 0;
 }
 
