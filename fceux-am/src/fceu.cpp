@@ -561,6 +561,8 @@ void PowerNES(void) {
 
 	FCEU_MemoryRand(RAM, 0x800);
 
+	FCEU_DispMessage("Power test1");
+
 	SetReadHandler(0x0000, 0xFFFF, ANull);
 	SetWriteHandler(0x0000, 0xFFFF, BNull);
 
@@ -578,6 +580,7 @@ void PowerNES(void) {
 	GameInterface(GI_POWER);
 
 	timestampbase = 0;
+		FCEU_DispMessage("Power test2");
 	X6502_Power();
 	// clear back buffer
 	//extern uint8 *XBackBuf;
