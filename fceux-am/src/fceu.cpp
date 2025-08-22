@@ -561,22 +561,17 @@ void PowerNES(void) {
 
 	FCEU_MemoryRand(RAM, 0x800);
 
-	FCEU_DispMessage("Power test1");
-
 	SetReadHandler(0x0000, 0xFFFF, ANull);
 	SetWriteHandler(0x0000, 0xFFFF, BNull);
 
 	SetReadHandler(0, 0x7FF, ARAML);
 	SetWriteHandler(0, 0x7FF, BRAML);
 
-	FCEU_DispMessage("Power test3");
-
 	SetReadHandler(0x800, 0x1FFF, ARAMH);	// Part of a little
 	SetWriteHandler(0x800, 0x1FFF, BRAMH);	//hack for a small speed boost.
-		FCEU_DispMessage("Power test4");
 	InitializeInput();
 	FCEU_DispMessage("Power test5");
-	// FCEUSND_Power();
+	FCEUSND_Power();
 	FCEU_DispMessage("Power test6");
 	FCEUPPU_Power();
 	FCEU_DispMessage("Power test7");
@@ -584,7 +579,6 @@ void PowerNES(void) {
 	GameInterface(GI_POWER);
 
 	timestampbase = 0;
-		FCEU_DispMessage("Power test2");
 	X6502_Power();
 	// clear back buffer
 	//extern uint8 *XBackBuf;
