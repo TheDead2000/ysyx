@@ -398,6 +398,7 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 			FCEUI_printf("Dendy mode set");
 		}
 		else if ((lastpal || lastdendy) && !(PAL || dendy)) {
+			printf("last pal=%d,lastdendy %d PAL%d dendy%d\n",lastpal,lastdendy,PAL,dendy);
 			FCEU_DispMessage("NTSC mode set");
 			FCEUI_printf("NTSC mode set");
 		}
