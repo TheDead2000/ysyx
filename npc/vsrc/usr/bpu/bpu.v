@@ -28,7 +28,7 @@ module bpu (
     output  pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
-`define MTRACE
+// `define MTRACE
     // ================== RAS参数 ==================
     localparam RAS_DEPTH = 64;          // RAS深度
     localparam RAS_PTR_WIDTH = 6;       // 栈指针位宽
