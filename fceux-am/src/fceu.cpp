@@ -318,7 +318,7 @@ void ResetGameLoaded(void) {
 	MMC5Hack = 0;
 	PEC586Hack = 0;
 	QTAIHack = 0;
-	PAL = 1;
+	PAL &= 1;
 	default_palette_selection = 0;
 }
 
@@ -333,7 +333,7 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 	char fullname[2048];	// this name contains both archive name and ROM file name
 	int lastpal = PAL;
 	int lastdendy = dendy;
-
+	printf("here pal %d\n",lastpal);
 	const char* romextensions[] = { "nes", "fds", 0 };
 
 	// indicator for if the operaton was canceled by user
