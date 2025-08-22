@@ -194,7 +194,9 @@ end
             if (ex_is_ret) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
+                    `ifdef MTRACE
                     $display("[RAS] POP: now sp=%0d, pop_addr= %h", pop_index, ras[pop_index]);
+                `endif 
                     next_sp = next_sp - 1; // 执行pop，栈指针减1
                     pop_occurred = 1;
                 end
@@ -207,7 +209,9 @@ end
         if (id_ras_push_valid_i && !ex_stall_valid_i && !id_stall_i) begin
             if (next_sp < RAS_DEPTH) begin
                 ras[next_sp] <= id_ras_push_data_i; // 使用当前next_sp写入（pop后的位置）
+                `ifdef MTRACE
                 $display("[RAS] PUSH: NOW sp=%0d, addr= %h", next_sp + 1, id_ras_push_data_i);
+            `endif
                 next_sp = next_sp + 1; // 执行push，栈指针加1
             end
         end
@@ -328,7 +332,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
                       pred_used_ras = 1'b0;
-                  $display("[RAS]  PC= %h PREDICT (from ID): target=0x%h",if_pc, pdt_pc);
+                    $display("[RAS]  PC= %h PREDICT (from ID): target=0x%h",if_pc, pdt_pc);
                  end 
                 else 
                     if (ras_sp > 0) begin
