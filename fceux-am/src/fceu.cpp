@@ -387,7 +387,7 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 			FCEU_LoadGamePalette();
 
 		FCEU_ResetPalette();
-		printf("last pal=%d,lastdendy %d PAL%d dendy%d\n",lastpal,lastdendy,PAL,dendy);
+		printf("last pal=%x,lastdendy %x PAL%d dendy%d\n",lastpal,lastdendy,PAL,dendy);
 		if (!lastpal && PAL) {
 			FCEU_DispMessage("PAL mode set");
 			FCEUI_printf("PAL mode set");
