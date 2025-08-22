@@ -54,6 +54,9 @@ void *malloc(size_t size) {
 }
 
 void free(void *ptr) {
+  int a = 1;
+  int b = 2;
+  int sum = a + b;
 }
 
 #endif
