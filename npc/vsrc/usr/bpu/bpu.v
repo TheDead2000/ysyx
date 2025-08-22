@@ -28,7 +28,7 @@ module bpu (
     output  pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
-// `define MTRACE
+`define MTRACE
     // ================== RAS参数 ==================
     localparam RAS_DEPTH = 64;          // RAS深度
     localparam RAS_PTR_WIDTH = 6;       // 栈指针位宽
@@ -151,25 +151,6 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
-// 添加寄存器来跟踪预测时使用的 RAS 状态
-reg [RAS_PTR_WIDTH-1:0] pred_ras_sp_history;
-reg [`XLEN-1:0] pred_ras_top_history;
-reg pred_used_forward_history;
-
-// 在预测阶段更新这些寄存器
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        pred_ras_sp_history <= 0;
-        pred_ras_top_history <= 0;
-        pred_used_forward_history <= 0;
-    end else if (!id_stall_i) begin
-        if (is_ret) begin
-            pred_ras_sp_history <= ras_sp;
-            pred_ras_top_history <= (ras_sp > 0) ? ras[ras_sp-1] : 0;
-            pred_used_forward_history <= ras_conflict;
-        end
-    end
-end
 
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
@@ -211,7 +192,6 @@ end
            if (ex_branch_taken_i && !ex_stall_valid_i) begin
             // 识别RET指令: JALR且rs1=x1或x5
             if (ex_is_ret) begin
-                  if (!pred_used_forward_history) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
                     `ifdef MTRACE
@@ -220,14 +200,6 @@ end
                     next_sp = next_sp - 1; // 执行pop，栈指针减1
                     pop_occurred = 1;
                 end
-                else begin
-                        // 预测时使用了前递数据，需要同步 RAS 状态
-                        ras_sp <= pred_ras_sp_history;
-                        `ifdef MTRACE
-                        $display("[RAS] SYNC: syncing sp to %0d due to forward usage", pred_ras_sp_history);
-                        `endif
-                    end
-            end
             end
         end
         end
@@ -341,10 +313,11 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
                  if (ex_next_ras_sp > 0) begin
-                pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
-                `ifdef MTRACE
-                $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
-                `endif 
+                    pdt_res = 0;
+                // pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
+                // `ifdef MTRACE
+                // $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
+                // `endif 
                  end else begin
                 // 如果新栈也是空的，回退到不跳转或其他策略
                 pdt_res = 1'b0;
@@ -384,7 +357,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     // RAS和BTB都未命中，使用默认PC+4
 
                     pdt_res = 1'b0; // 不跳转
-                    //$display("ras miss\n");
+                    $display("ras miss\n");
                 end
             end
             // 处理JAL指令
