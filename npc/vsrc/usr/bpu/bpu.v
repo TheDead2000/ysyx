@@ -314,7 +314,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             // 冲突发生，使用前递过来的新状态进行预测！
                  if (ex_next_ras_sp > 0) begin
                 pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
+                `ifdef MTRACE
                 $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
+                `endif 
                  end else begin
                 // 如果新栈也是空的，回退到不跳转或其他策略
                 pdt_res = 1'b0;
@@ -332,14 +334,18 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 if (id_ras_push_valid_i) begin
                      pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
                       pred_used_ras = 1'b0;
+                               `ifdef MTRACE
                     $display("[RAS]  PC= %h PREDICT (from ID): target=0x%h",if_pc, pdt_pc);
+                    `endif 
                  end 
                 else 
                     if (ras_sp > 0) begin
                     // 使用RAS栈顶地址
                     pdt_pc = ras[ras_sp-1];
                     pred_used_ras = 1; // 标记使用了RAS
+                             `ifdef MTRACE
                     $display("[RAS] PC= %h PREDICT: ras_sp=%0d, target=0x%h",if_pc,ras_sp, pdt_pc);
+                              `endif 
                 end
                 // else if (btb_hit) begin
                 //     // RAS为空时使用BTB
