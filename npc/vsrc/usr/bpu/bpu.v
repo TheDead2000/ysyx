@@ -384,7 +384,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     // RAS和BTB都未命中，使用默认PC+4
 
                     pdt_res = 1'b0; // 不跳转
-                    $display("ras miss\n");
+                    //$display("ras miss\n");
                 end
             end
             // 处理JAL指令
