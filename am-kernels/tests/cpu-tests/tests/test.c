@@ -6,7 +6,7 @@ int test2(int b){
     test3(b);
 } 
 int test3(int c) {
-asm volatile("ret");
+    return 0;
 }
 int main() {
     int a = 1;
