@@ -28,7 +28,7 @@ module bpu (
     output  pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
-// `define MTRACE
+`define MTRACE
     // ================== RAS参数 ==================
     localparam RAS_DEPTH = 64;          // RAS深度
     localparam RAS_PTR_WIDTH = 6;       // 栈指针位宽
@@ -291,7 +291,7 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
 wire [RAS_PTR_WIDTH-1:0] ex_next_ras_sp;
 wire [`XLEN-1:0] ex_next_ras_top; // Pop之后的新栈顶地址
 
-assign ex_next_ras_sp = (ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i && (ras_sp > 0)) ? (ras_sp - 1) : ras_sp;
+assign ex_next_ras_sp = (ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i && (ras_sp > 0)) ? (ras_sp - 1) : (ras_sp - 1);
 // 注意：这里计算新栈顶地址需要谨慎，因为ras[ex_next_ras_sp-1]的写法在ex_next_ras_sp为0时会越界。
 // 更安全的做法是使用一个MUX：
 assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN{1'b0}}; // 如果新SP为0，则返回0或其他安全值
@@ -313,11 +313,10 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                if (ras_conflict) begin
             // 冲突发生，使用前递过来的新状态进行预测！
                  if (ex_next_ras_sp > 0) begin
-                    pdt_res = 0;
-                // pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
-                // `ifdef MTRACE
-                // $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
-                // `endif 
+                pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
+                `ifdef MTRACE
+                $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
+                `endif 
                  end else begin
                 // 如果新栈也是空的，回退到不跳转或其他策略
                 pdt_res = 1'b0;
