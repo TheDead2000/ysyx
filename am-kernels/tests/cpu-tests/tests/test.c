@@ -6,7 +6,7 @@ int test2(int b){
     test3(b);
 } 
 int test3(int c) {
-    return 0;
+    return 1;
 }
 int main() {
     int a = 1;
