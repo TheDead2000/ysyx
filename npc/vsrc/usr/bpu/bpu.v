@@ -150,7 +150,15 @@ always @(posedge clk or posedge rst) begin
         end
     end
 end
-
+reg pred_used_ras_ex;
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        pred_used_ras_ex <= 0;
+    end else begin
+        // 捕获预测阶段的pred_used_ras，假设没有流水线停顿
+        pred_used_ras_ex <= pred_used_ras;
+    end
+end
 
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
@@ -191,7 +199,7 @@ end
             // 处理RAS出栈（RET指令实际执行时）
            if (ex_branch_taken_i && !ex_stall_valid_i) begin
             // 识别RET指令: JALR且rs1=x1或x5
-            if (ex_is_ret) begin
+            if (ex_is_ret && pred_used_ras_ex) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
                     `ifdef MTRACE

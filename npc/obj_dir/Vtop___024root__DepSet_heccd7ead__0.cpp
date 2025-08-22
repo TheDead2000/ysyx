@@ -3824,7 +3824,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             if (((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                  & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                        >> 2U)))) {
-                if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) {
+                if (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+                     & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras_ex))) {
                     if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)))) {
                         vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
                             = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
@@ -3893,6 +3894,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras_ex 
+        = ((~ (IData)(vlSelf->rst)) & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
 }
