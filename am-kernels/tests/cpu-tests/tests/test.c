@@ -1,9 +1,9 @@
 int test1(int a)
 {
-asm volatile("ret");
+    test2(a);
 }
 int test2(int b){
-asm volatile("ret");
+    test3(b);
 } 
 int test3(int c) {
 asm volatile("ret");
