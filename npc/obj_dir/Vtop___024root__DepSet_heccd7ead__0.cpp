@@ -71,6 +71,11 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                >> 3U)))) {
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(vlSelf->top__DOT__pdt_correct);
     }
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_conflict 
+        = ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
+           & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+              & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                     >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp 
         = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
                     - ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
@@ -93,10 +98,7 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
             vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-            if (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
-                 & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
-                    & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                           >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
+            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_conflict) {
                 if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp))) {
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top;
                     VL_WRITEF("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%x\n",
@@ -3766,10 +3768,21 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid;
     if (vlSelf->rst) {
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_top_history = 0U;
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid = 0U;
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data = 0U;
         __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_forward_used = 0U;
     } else {
+        if ((1U & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                      >> 1U)))) {
+            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
+                vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_top_history 
+                    = ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))
+                        ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+                       [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                                  - (IData)(1U)))] : 0U);
+            }
+        }
         if ((((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
               & (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) 
              & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
@@ -3825,18 +3838,25 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                  & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
                        >> 2U)))) {
                 if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) {
-                    if (VL_UNLIKELY((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)))) {
-                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
-                            = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
-                                        - (IData)(1U)));
-                        VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr= %x\n",
-                                  6,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
-                                  32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-                                  [vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index]);
-                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 1U;
-                        vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
-                            = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
-                                        - (IData)(1U)));
+                    if ((1U & (~ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_forward_history)))) {
+                        if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp))) {
+                            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index 
+                                = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
+                                            - (IData)(1U)));
+                            VL_WRITEF("[RAS] POP: now sp=%0#, pop_addr= %x\n",
+                                      6,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index,
+                                      32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+                                      [vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index]);
+                            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 1U;
+                            vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
+                                = (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp) 
+                                            - (IData)(1U)));
+                        } else {
+                            VL_WRITEF("[RAS] SYNC: syncing sp to %0# due to forward usage\n",
+                                      6,vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp_history);
+                            __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp 
+                                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp_history;
+                        }
                     }
                 }
             }
@@ -3854,6 +3874,18 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                   32,((IData)(4U) + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q));
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp 
             = (0x3fU & ((IData)(1U) + (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp)));
+    }
+    if (vlSelf->rst) {
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_forward_history = 0U;
+        vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp_history = 0U;
+    } else if ((1U & (~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                         >> 1U)))) {
+        if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_forward_history 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_conflict;
+            vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp_history 
+                = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
+        }
     }
     __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp = vlSelf->top__DOT__ifu__DOT__bpu__DOT__next_sp;
     if (vlSelf->top__DOT__exu__DOT__is_branch_inst) {
@@ -3890,9 +3922,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras[__Vdlyvdim0__top__DOT__ifu__DOT__bpu__DOT__ras__v0] 
             = __Vdlyvval__top__DOT__ifu__DOT__bpu__DOT__ras__v0;
     }
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history 
         = __Vdly__top__DOT__ifu__DOT__bpu__DOT__global_history;
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp = __Vdly__top__DOT__ifu__DOT__bpu__DOT__ras_sp;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
 }
@@ -3902,6 +3934,20 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___nba_sequent__TOP__2\n"); );
     // Body
+    vlSelf->top__DOT__exu__DOT__is_branch_inst = ((7U 
+                                                   == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
+                                                  | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret 
+        = ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
+           & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                               >> 0xfU))) | (5U == 
+                                             (0x1fU 
+                                              & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
+                                                 >> 0xfU)))));
+    vlSelf->top__DOT__exu__DOT__jump_taken = (((7U 
+                                                == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
+                                               & (IData)(vlSelf->top__DOT__exu__DOT___compare_out)) 
+                                              | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret = (IData)(
                                                            ((0x67U 
                                                              == 
@@ -3917,20 +3963,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                                                                   (0x1fU 
                                                                    & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                                       >> 0xfU))))));
-    vlSelf->top__DOT__exu__DOT__is_branch_inst = ((7U 
-                                                   == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
-                                                  | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret 
-        = ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
-           & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                               >> 0xfU))) | (5U == 
-                                             (0x1fU 
-                                              & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
-                                                 >> 0xfU)))));
-    vlSelf->top__DOT__exu__DOT__jump_taken = (((7U 
-                                                == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
-                                               & (IData)(vlSelf->top__DOT__exu__DOT___compare_out)) 
-                                              | (IData)(vlSelf->top__DOT__exu__DOT___pc_4));
     vlSelf->top__DOT__pdt_correct = ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                                      == (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q));
     vlSelf->top__DOT__exu__DOT__redirect_pc = ((((IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q) 
@@ -4017,6 +4049,11 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
                >> 3U)))) {
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(vlSelf->top__DOT__pdt_correct);
     }
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_conflict 
+        = ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
+           & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
+              & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
+                     >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))));
 }
 
 VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
@@ -4068,10 +4105,7 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) {
             vlSelf->top__DOT__pdt_res = 1U;
             vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-            if (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret) 
-                 & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
-                    & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
-                           >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
+            if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_conflict) {
                 if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp))) {
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top;
                     VL_WRITEF("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%x\n",

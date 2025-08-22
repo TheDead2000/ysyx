@@ -151,6 +151,25 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
+// 添加寄存器来跟踪预测时使用的 RAS 状态
+reg [RAS_PTR_WIDTH-1:0] pred_ras_sp_history;
+reg [`XLEN-1:0] pred_ras_top_history;
+reg pred_used_forward_history;
+
+// 在预测阶段更新这些寄存器
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        pred_ras_sp_history <= 0;
+        pred_ras_top_history <= 0;
+        pred_used_forward_history <= 0;
+    end else if (!id_stall_i) begin
+        if (is_ret) begin
+            pred_ras_sp_history <= ras_sp;
+            pred_ras_top_history <= (ras_sp > 0) ? ras[ras_sp-1] : 0;
+            pred_used_forward_history <= ras_conflict;
+        end
+    end
+end
 
     // 全局历史和提供者寄存器的更新
     reg [RAS_PTR_WIDTH-1:0] next_sp;
@@ -192,6 +211,7 @@ end
            if (ex_branch_taken_i && !ex_stall_valid_i) begin
             // 识别RET指令: JALR且rs1=x1或x5
             if (ex_is_ret) begin
+                  if (!pred_used_forward_history) begin
                 if (next_sp > 0) begin
                     pop_index = next_sp - 1; // pop前的栈顶索引
                     `ifdef MTRACE
@@ -200,6 +220,14 @@ end
                     next_sp = next_sp - 1; // 执行pop，栈指针减1
                     pop_occurred = 1;
                 end
+                else begin
+                        // 预测时使用了前递数据，需要同步 RAS 状态
+                        ras_sp <= pred_ras_sp_history;
+                        `ifdef MTRACE
+                        $display("[RAS] SYNC: syncing sp to %0d due to forward usage", pred_ras_sp_history);
+                        `endif
+                    end
+            end
             end
         end
         end
