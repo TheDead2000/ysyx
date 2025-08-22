@@ -329,7 +329,9 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                  if (ras_forward_valid) begin
                   pdt_pc = ras_forward_data;
                   pred_used_ras = 0; // 标记未使用实际RAS
+                  `ifdef MTRACE
                 $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+                `endif 
             end 
             else 
                 if (id_ras_push_valid_i) begin

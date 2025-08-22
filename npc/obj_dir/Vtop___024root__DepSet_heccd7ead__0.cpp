@@ -93,11 +93,9 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                     & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
                            >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
                 vlSelf->top__DOT__pdt_res = 0U;
-            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
+            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
-                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
             } else if (vlSelf->top__DOT__id_ras_push_valid) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
@@ -108,8 +106,8 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
             } else {
-                VL_WRITEF("ras miss\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
+                VL_WRITEF("ras miss\n\n");
             }
         } else if ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
             vlSelf->top__DOT__pdt_res = 1U;
@@ -4063,11 +4061,9 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                     & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
                            >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
                 vlSelf->top__DOT__pdt_res = 0U;
-            } else if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid)) {
+            } else if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_valid) {
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data;
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 0U;
-                VL_WRITEF("[RAS] FORWARD: target=0x%x\n",
-                          32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_forward_data);
             } else if (vlSelf->top__DOT__id_ras_push_valid) {
                 vlSelf->top__DOT__bpu_pc_o = ((IData)(4U) 
                                               + vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q);
@@ -4078,8 +4074,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                - (IData)(1U)))];
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_used_ras = 1U;
             } else {
-                VL_WRITEF("ras miss\n\n");
                 vlSelf->top__DOT__pdt_res = 0U;
+                VL_WRITEF("ras miss\n\n");
             }
         } else if ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
             vlSelf->top__DOT__pdt_res = 1U;
