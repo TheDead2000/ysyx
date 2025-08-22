@@ -382,7 +382,7 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 			FCEU_ResetVidSys();
 
 		PowerNES();
-
+		FCEU_DispMessage("Power finish");
 		if (GameInfo->type != GIT_NSF)
 			FCEU_LoadGamePalette();
 
