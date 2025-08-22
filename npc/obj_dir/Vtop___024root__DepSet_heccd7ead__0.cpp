@@ -86,8 +86,7 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                  & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
                     & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
                            >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
-                if ((0U < (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                    - (IData)(2U))))) {
+                if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top;
                     VL_WRITEF("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%x\n",
                               32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top);
@@ -3886,11 +3885,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pred_ras_sp 
         = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top 
-        = ((0U < (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                           - (IData)(2U)))) ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
-           [(0x3fU & (((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                       - (IData)(2U)) - (IData)(1U)))]
-            : 0U);
+        = ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))
+            ? vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras
+           [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
+                      - (IData)(1U)))] : 0U);
 }
 
 VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) {
@@ -4057,8 +4055,7 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                  & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret) 
                     & ((~ ((IData)(vlSelf->top__DOT__stall_clint) 
                            >> 2U)) & (IData)(vlSelf->top__DOT__exu__DOT__jump_taken))))) {
-                if ((0U < (0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp) 
-                                    - (IData)(2U))))) {
+                if ((0U < (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ras_sp))) {
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top;
                     VL_WRITEF("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%x\n",
                               32,vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_top);

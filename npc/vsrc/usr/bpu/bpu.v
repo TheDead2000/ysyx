@@ -291,7 +291,7 @@ wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) &&
 wire [RAS_PTR_WIDTH-1:0] ex_next_ras_sp;
 wire [`XLEN-1:0] ex_next_ras_top; // Pop之后的新栈顶地址
 
-assign ex_next_ras_sp = (ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i && (ras_sp > 0)) ? (ras_sp - 2) : (ras_sp - 2);
+assign ex_next_ras_sp = (ex_is_ret && ex_branch_taken_i && !ex_stall_valid_i && (ras_sp > 0)) ? (ras_sp ) : (ras_sp );
 // 注意：这里计算新栈顶地址需要谨慎，因为ras[ex_next_ras_sp-1]的写法在ex_next_ras_sp为0时会越界。
 // 更安全的做法是使用一个MUX：
 assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN{1'b0}}; // 如果新SP为0，则返回0或其他安全值
