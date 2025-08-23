@@ -374,6 +374,15 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     pdt_pc = if_pc + {{12{if_inst[31]}}, if_inst[19:12], if_inst[20], if_inst[30:21], 1'b0};
                 end
             end
+            else   
+            if (is_jalr) begin
+                pdt_res = 1;
+                if (btb_hit) begin
+                    pdt_pc = btb_target_val;
+                end
+                else 
+                    pdt_res = 0;
+                end
             // 处理分支指令
             else
              begin
@@ -386,21 +395,12 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 else if (t0_match)  pdt_res = t0_counter[t0_index][1];
                 else                pdt_res = bimodal_table[bm_index][1];
                 
-                if (is_jalr) begin
-                        pdt_res = 1;
-                        if (btb_hit) begin
-                        $display("branch btb hit\n");
-                        pdt_pc = btb_target_val;
-                    end
-                    else 
-                        pdt_res = 0;
-                    end
+              
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
                     // $display("use here!\n");
                     pdt_pc_tag = if_pc;
                     if (btb_hit) begin
-                        $display("branch btb hit\n");
                         pdt_pc = btb_target_val;
                     end
                     else 
