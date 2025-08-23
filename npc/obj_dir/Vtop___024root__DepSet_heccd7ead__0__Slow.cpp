@@ -385,6 +385,14 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                   & vlSelf->top__DOT__exu__DOT___exc_trap_bus) 
                                                  | ((IData)(vlSelf->top__DOT__exu__DOT____Vlvbound_h62a375be__0) 
                                                     << 0x12U));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit = 
+        (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_valid
+         [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                    >> 2U))] & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag
+                                [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                           >> 2U))] 
+                                == (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                    >> 0xaU)));
     vlSelf->top__DOT__sram__DOT__SRAM0__DOT__bwen[0U] 
         = (((- (IData)((3U == (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)))) 
             & ((0U == (3U & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__burst_count)))
@@ -523,18 +531,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                  == (IData)(vlSelf->top__DOT__ex2mem__DOT___mem_op_ex_mem_q)) 
                                                 | (7U 
                                                    == (IData)(vlSelf->top__DOT__ex2mem__DOT___mem_op_ex_mem_q))));
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val 
-        = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target
-        [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                   >> 2U))];
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit = 
-        (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_valid
-         [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                    >> 2U))] & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_tag
-                                [(0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                           >> 2U))] 
-                                == (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                    >> 0xaU)));
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret 
         = ((0x67U == (0x7fU & vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q)) 
            & ((1U == (0x1fU & (vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
@@ -1945,24 +1941,19 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         } else if ((0x6fU == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
             vlSelf->top__DOT__pdt_res = 1U;
             vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-            if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)) {
-                VL_WRITEF("jal btb hit\n\n");
-                vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-            } else {
-                vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                                              + (((- (IData)(
-                                                             (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                              >> 0x1fU))) 
-                                                  << 0x14U) 
-                                                 | ((0xff000U 
-                                                     & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
-                                                    | ((0x800U 
-                                                        & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                           >> 9U)) 
-                                                       | (0x7feU 
-                                                          & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                             >> 0x14U))))));
-            }
+            vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                                          + (((- (IData)(
+                                                         (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                          >> 0x1fU))) 
+                                              << 0x14U) 
+                                             | ((0xff000U 
+                                                 & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data) 
+                                                | ((0x800U 
+                                                    & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                       >> 9U)) 
+                                                   | (0x7feU 
+                                                      & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                         >> 0x14U))))));
         } else {
             if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match) {
                 vlSelf->top__DOT__ifu__DOT__bpu__DOT__provider_history_comb = 2U;
@@ -1991,10 +1982,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
             }
             if (vlSelf->top__DOT__pdt_res) {
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-                if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)) {
-                    VL_WRITEF("branch btb hit\n\n");
-                    vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
-                } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
+                if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
                     vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
                                                   + 
                                                   (((- (IData)(
@@ -2220,7 +2208,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_occurred = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__pop_index = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit = 0;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_is_ret = 0;
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index = 0;
