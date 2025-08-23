@@ -376,15 +376,15 @@ void Simtop::showSimPerformance() {
     cout << COLOR_GREEN << "icache req num:" << icache_count << endl;
     cout << COLOR_GREEN << "icache hit num:" << icache_hit_count << endl;
     cout << COLOR_GREEN << "icache unhit num:" << icache_unhit_count << endl;
-    cout << COLOR_GREEN << "icache hit rate:" << (float)((float)icache_hit_count / (float)icache_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "icache hit rate:" << (float)((float)icache_hit_count / (float)icache_count)*100 << COLOR_END << endl;
     cout << COLOR_GREEN << "----------------------------dcache:-------------------------" << endl;
     cout << COLOR_GREEN << "dcache req num:" << dcache_count << endl;
     cout << COLOR_GREEN << "dcache hit num:" << dcache_hit_count << endl;
     cout << COLOR_GREEN << "dcache unhit num:" << dcache_unhit_count << endl;
-    cout << COLOR_GREEN << "dcache hit rate:" << (float)((float)dcache_hit_count / (float)dcache_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "dcache hit rate:" << (float)((float)dcache_hit_count / (float)dcache_count)*100 << COLOR_END << endl;
     cout << COLOR_GREEN << "----------------------------bpu:-------------------------" << endl;
     cout << COLOR_GREEN << "bpu req num:" << bpu_count << endl;
     cout << COLOR_GREEN << "bpu hit num:" << bpu_hit_count << endl;
     cout << COLOR_GREEN << "bpu unhit num:" << bpu_count - bpu_hit_count << endl;
-    cout << COLOR_GREEN << "bpu hit rate:" << (float)((float)bpu_hit_count / (float)bpu_count) << COLOR_END << endl;
+    cout << COLOR_GREEN << "bpu hit rate:" << (float)((float)bpu_hit_count / (float)bpu_count)*100 << COLOR_END << endl;
 }
