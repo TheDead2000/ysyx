@@ -387,17 +387,14 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 else                pdt_res = bimodal_table[bm_index][1];
                 
                 if (is_jalr) begin
-                     if (btb_hit) begin
-                    $display("jalr btb hit\n");
-                    pdt_res = 1;
-                    pdt_pc = btb_target_val;
-                end 
+                        pdt_res = 0;
                     end
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
                     // $display("use here!\n");
                     pdt_pc_tag = if_pc;
                     if (btb_hit) begin
+                        $display("branch btb hit\n");
                         pdt_pc = btb_target_val;
                     end
                     else 
