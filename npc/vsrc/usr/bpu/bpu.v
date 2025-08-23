@@ -323,7 +323,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             //     pdt_res = 1'b0;
             //     pdt_pc = if_pc + 4;
             //     $display("[RAS] CONFLICT: But forwarded RAS is empty.");
-            // end
+            // end   
         end 
             else 
                  if (ras_forward_valid) begin
@@ -393,6 +393,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                     // $display("use here!\n");
                     pdt_pc_tag = if_pc;
                     if (btb_hit) begin
+                        $display("jal btb hit\n");
                         pdt_pc = btb_target_val;
                     end
                     else 

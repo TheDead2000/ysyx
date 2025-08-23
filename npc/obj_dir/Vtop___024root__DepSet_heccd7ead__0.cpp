@@ -155,7 +155,8 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
             }
             if (vlSelf->top__DOT__pdt_res) {
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-                if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)) {
+                    VL_WRITEF("jal btb hit\n\n");
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
                 } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
                     vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
@@ -4123,7 +4124,8 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
             }
             if (vlSelf->top__DOT__pdt_res) {
                 vlSelf->top__DOT__pdt_tag = vlSelf->top__DOT__u_pc_reg__DOT___pc_current;
-                if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                if (VL_UNLIKELY(vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit)) {
+                    VL_WRITEF("jal btb hit\n\n");
                     vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
                 } else if ((0x63U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
                     vlSelf->top__DOT__bpu_pc_o = (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
