@@ -18,10 +18,6 @@
 
 #include <common.h>
 
- // csr 寄存器地址映射
-enum {
-  mtvec, mepc, mstatus, mcause,
-};
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;
