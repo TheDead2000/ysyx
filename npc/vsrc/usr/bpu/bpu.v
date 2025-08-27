@@ -375,15 +375,10 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             end
             else   
             if (is_jalr) begin
-                if (btb_hit) begin
-                    pdt_res = 1;
-                    pdt_pc = btb_target_val;
-                end
-                else 
                     pdt_res = 0;
                 end
             // 处理分支指令
-            else
+            else if(is_branch)
              begin
                 // 当前预测的提供者（组合逻辑）
                 assign provider_history_comb = (t1_match) ? 2'b10 : 
