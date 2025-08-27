@@ -41,9 +41,6 @@ module bpu (
     localparam TAG_WIDTH = 10;         // 标签位宽
     localparam PARTIAL_TAG_BITS = 6;   // 部分标签匹配位数
     
-    // ================== BTB参数 ==================
-    localparam BTB_ENTRIES = 256;      // BTB项数
-    localparam BTB_TAG_WIDTH = 22;      // BTB标签位宽
     
     // ================== 预测器状态 ==================
     reg [GLOBAL_HIST_WIDTH-1:0] global_history;
@@ -60,10 +57,16 @@ module bpu (
     reg [TAG_WIDTH-1:0] t1_tag [0:T1_ENTRIES-1];    // 标签
     reg [1:0]           t1_counter [0:T1_ENTRIES-1]; // 饱和计数器
     
-    // BTB表（分支目标缓冲）
-    reg [BTB_TAG_WIDTH-1:0] btb_tag [0:BTB_ENTRIES-1]; // 标签
-    reg [`XLEN-1:0]         btb_target [0:BTB_ENTRIES-1]; // 目标地址
-    reg                     btb_valid [0:BTB_ENTRIES-1]; // 有效位
+    // ================== BTB参数 ==================
+    localparam BTB_ENTRIES = 256;
+    localparam BTB_ASSOC = 2;
+    localparam BTB_ASSOC_WIDTH = 1; // 2-way = 1 bit
+
+// ================== BTB表结构 ==================
+reg [`XLEN-1:0] btb_pc [0:BTB_ENTRIES-1][0:BTB_ASSOC-1];
+reg [`XLEN-1:0] btb_target [0:BTB_ENTRIES-1][0:BTB_ASSOC-1];
+reg btb_valid [0:BTB_ENTRIES-1][0:BTB_ASSOC-1];
+
     
     // ================== RAS状态 ==================
     reg [`XLEN-1:0]         ras [0:RAS_DEPTH-1]; // 返回地址栈
@@ -102,12 +105,12 @@ module bpu (
             t1_counter[i] = 2'b01;
         end
         
-        // 初始化BTB
-        for (i = 0; i < BTB_ENTRIES; i = i + 1) begin
-            btb_tag[i] = {BTB_TAG_WIDTH{1'b0}};
-            btb_target[i] = {`XLEN{1'b0}};
-            btb_valid[i] = 1'b0;
-        end
+        // // 初始化BTB
+        // for (i = 0; i < BTB_ENTRIES; i = i + 1) begin
+        //     btb_tag[i] = {BTB_TAG_WIDTH{1'b0}};
+        //     btb_target[i] = {`XLEN{1'b0}};
+        //     btb_valid[i] = 1'b0;
+        // end
         
         // 初始化RAS
         ras_sp = 0;
@@ -117,7 +120,89 @@ module bpu (
             ras[i] = 0;
         end
     end
-/* verilator lint_off CASEINCOMPLETE */
+
+// 循环指针替换策略
+reg [BTB_ASSOC_WIDTH-1:0] victim_ptr [0:BTB_ENTRIES-1];
+
+// BTB索引计算
+wire [7:0] btb_index = if_pc[9:2]; // 256项BTB，使用PC[9:2]作为索引
+
+// ================== BTB查找逻辑 ==================
+reg btb_hit; // 改为reg类型
+reg [`XLEN-1:0] btb_target_val; // 改为reg类型
+reg [BTB_ASSOC_WIDTH-1:0] btb_hit_way;
+
+// 定义一个局部参数用于比较
+/* verilator lint_off WIDTHTRUNC */
+localparam [BTB_ASSOC_WIDTH-1:0] BTB_ASSOC_LAST = BTB_ASSOC - 1;
+
+always @(*) begin
+    btb_hit = 1'b0;
+    btb_target_val = {`XLEN{1'b0}};
+    btb_hit_way = {BTB_ASSOC_WIDTH{1'b0}};
+    
+    for (integer i = 0; i < BTB_ASSOC; i = i + 1) begin
+        if (btb_valid[btb_index][i] && (btb_pc[btb_index][i] == if_pc)) begin
+            btb_hit = 1'b1;
+            btb_target_val = btb_target[btb_index][i];
+            // 修复位宽截断警告
+            btb_hit_way = BTB_ASSOC_WIDTH'(i); // 使用类型转换
+        end
+    end
+end
+
+// ================== BTB更新逻辑 ==================
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        // 复位时重新初始化
+        for (integer i = 0; i < BTB_ENTRIES; i = i + 1) begin
+            for (integer j = 0; j < BTB_ASSOC; j = j + 1) begin
+                btb_valid[i][j] = 1'b0;
+                btb_pc[i][j] = {`XLEN{1'b0}};
+                btb_target[i][j] = {`XLEN{1'b0}};
+            end
+            victim_ptr[i] = {BTB_ASSOC_WIDTH{1'b0}};
+        end
+    end else if (ex_branch_valid_i && ex_branch_taken_i) begin
+        // BTB更新逻辑
+        reg found;
+        reg [BTB_ASSOC_WIDTH-1:0] update_way;
+        reg [7:0] btb_index_u; // 修复位宽扩展警告
+        
+        // 修复位宽扩展警告
+        btb_index_u = ex_pc_i[9:2];  
+        found = 1'b0;
+        update_way = {BTB_ASSOC_WIDTH{1'b0}};
+        
+        // 查找是否已存在该条目
+        for (integer k = 0; k < BTB_ASSOC; k = k + 1) begin
+            if (btb_valid[btb_index_u][k] && (btb_pc[btb_index_u][k] == ex_pc_i)) begin
+                found = 1'b1;
+                // 修复位宽截断警告
+                update_way = BTB_ASSOC_WIDTH'(k); // 使用类型转换
+            end
+        end
+        
+        if (found) begin
+            // 更新已存在的条目
+            btb_target[btb_index_u][update_way] <= ex_target_i;
+        end else begin
+            // 使用循环指针替换策略
+            update_way = victim_ptr[btb_index_u];
+            btb_valid[btb_index_u][update_way] <= 1'b1;
+            btb_pc[btb_index_u][update_way] <= ex_pc_i;
+            btb_target[btb_index_u][update_way] <= ex_target_i;
+            
+            // 更新victim指针
+            // 修复位宽扩展警告
+            if (victim_ptr[btb_index_u] == BTB_ASSOC_LAST)
+                victim_ptr[btb_index_u] <= {BTB_ASSOC_WIDTH{1'b0}};
+            else
+                victim_ptr[btb_index_u] <= victim_ptr[btb_index_u] + 1;
+        end
+    end
+end
+
 
 // ================== RAS前递逻辑 ==================
 reg ras_forward_valid;
@@ -227,6 +312,7 @@ end
         // end
 
         // 其他性能计数器更新逻辑保持不变
+/* verilator lint_off CASEINCOMPLETE */
         if (ex_branch_valid_i) begin
             total_branches <= total_branches + 1;
             if (ex_pdt_true_i) begin
@@ -239,14 +325,6 @@ end
             end
         end
     end
-
-    // ================== BTB索引和标签计算 ==================
-    wire [7:0] btb_index = if_pc[9:2]; // 256项BTB，使用PC[9:2]作为索引
-    wire [BTB_TAG_WIDTH-1:0] btb_tag_val = if_pc[31:32-BTB_TAG_WIDTH]; // 高位作为标签
-    
-    // BTB命中判断
-    wire btb_hit = btb_valid[btb_index] && (btb_tag[btb_index] == btb_tag_val);
-    wire [`XLEN-1:0] btb_target_val = btb_target[btb_index];
 
     // ================== 预测逻辑 (组合逻辑) ==================
     // 指令类型解码
@@ -421,10 +499,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
     reg [TAG_WIDTH-1:0] t1_tag_u;
     reg [8:0] bm_index_u;
     
-    // BTB更新索引和标签
-    reg [7:0] btb_index_u;
-    reg [BTB_TAG_WIDTH-1:0] btb_tag_u;
-    
+
     always @(posedge clk) begin
         if (rst != 1 && ex_branch_valid_i) begin
             // 计算更新索引和标签
@@ -434,9 +509,7 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             t1_tag_u = ex_pc_i[17:8] ^ {{(TAG_WIDTH-8){1'b0}}, ex_history_i[7:0]};
             bm_index_u = ex_pc_i[9:1];
             
-            // BTB更新索引和标签
-            btb_index_u = ex_pc_i[9:2];
-            btb_tag_u = ex_pc_i[31:32-BTB_TAG_WIDTH];
+
             
             // 基础预测器总是更新
             if (ex_branch_taken_i) begin
@@ -494,15 +567,6 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                             t0_counter[t0_index_u] <= t0_counter[t0_index_u] - 1;
                     end
                 end
-            end
-            
-            // BTB更新逻辑
-            // 当分支实际跳转时，更新BTB
-            if (ex_branch_taken_i) begin
-                btb_tag[btb_index_u] <= btb_tag_u;
-                btb_target[btb_index_u] <= ex_target_i;
-                btb_valid[btb_index_u] <= 1'b1;
-                // $display("[BPU-UPDATE] BTB updated: pc=0x%h, target=0x%h", ex_pc_i, ex_target_i);
             end
         end
     end
