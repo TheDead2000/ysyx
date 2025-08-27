@@ -1,5 +1,5 @@
 #include <am.h>
-#include <nemu.h>
+#include <npc.h>
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
@@ -13,8 +13,6 @@ void __am_gpu_init() {
   uint32_t cfg = inl(VGACTL_ADDR);
   width = cfg & WMASK >> 16;  
   height = cfg & HMASK;  
-  // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // for (int i = 0; i < width * height; i ++) fb[i] = i;
 
   outl(SYNC_ADDR, 1);
 }

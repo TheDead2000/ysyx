@@ -1,5 +1,5 @@
 #include <am.h>
-#include <nemu.h>
+#include <npc.h>
 
 #define KEYDOWN_MASK 0x8000
 static uint32_t key = AM_KEY_NONE;
