@@ -375,8 +375,8 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             end
             else   
             if (is_jalr) begin
-                pdt_res = 1;
                 if (btb_hit) begin
+                    pdt_res = 1;
                     pdt_pc = btb_target_val;
                 end
                 else 

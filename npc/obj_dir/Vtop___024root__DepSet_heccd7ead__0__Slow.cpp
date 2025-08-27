@@ -1961,8 +1961,8 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                           & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
                                                              >> 0x14U)))))));
         } else if ((0x67U == (0x7fU & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data))) {
-            vlSelf->top__DOT__pdt_res = 1U;
             if (vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_hit) {
+                vlSelf->top__DOT__pdt_res = 1U;
                 vlSelf->top__DOT__bpu_pc_o = vlSelf->top__DOT__ifu__DOT__bpu__DOT__btb_target_val;
             } else {
                 vlSelf->top__DOT__pdt_res = 0U;
