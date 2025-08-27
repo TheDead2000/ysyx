@@ -44,21 +44,12 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  printf("kstack.end:%p,kstack.start:%p,size:%d\n", kstack.end, kstack.start, kstack.end - kstack.start);
-  Context* p = (Context*)(kstack.end - sizeof(Context));
-  memset(p, 0, sizeof(Context));
+  Context *c  = (Context *)(kstack.end - sizeof(Context));
+  c->mepc = (uintptr_t)entry;
+  c->mstatus = 0x1800;
+  c->gpr[10] = (uintptr_t)arg; //a0
+  return c; 
 
-  printf("Context size:%d\n", (kstack.end - (void*)p));
-  assert((kstack.end - (void*)p) == sizeof(Context));
-
-  printf("entry:%p\n", entry);
-  p->mepc = (uintptr_t)entry;   // mret 后，进入 entry
-  p->gpr[10] = (uintptr_t)arg; // a0 传惨,暂定为一个字符串
-
-
-  p->mstatus = 0x1800; // for difftest
-
-  return p;
 }
 
 void yield() {

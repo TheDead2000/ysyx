@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "Makefile": "makefile",
-        "*.nxdc": "makefile",
-        "difftest-def.h": "c",
-        "isa.h": "c",
-        "dlfcn.h": "c"
-    }
-}
