@@ -32,7 +32,6 @@ static void welcome() {
   Log("Build time: %s, %s", __TIME__, __DATE__);
   printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
-  // Log("Exercise: Please remove me in the source code and compile NEMU again.");
   // assert(0);
 }
 
@@ -43,7 +42,7 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = NULL;
+static char *img_file = "/home/zy/ysyx-workbench/fceux-am/build/fceux-riscv32e-npc.bin";
 static int difftest_port = 1234;
 
 static long load_img() {
@@ -132,8 +131,10 @@ void init_monitor(int argc, char *argv[]) {
   IFDEF(CONFIG_ITRACE, init_disasm(
     MUXDEF(CONFIG_ISA_x86,     "i686",
     MUXDEF(CONFIG_ISA_mips32,  "mipsel",
-    MUXDEF(CONFIG_ISA_riscv32, "riscv32",
-    MUXDEF(CONFIG_ISA_riscv64, "riscv64", "bad")))) "-pc-linux-gnu"
+    MUXDEF(CONFIG_ISA_riscv,
+      MUXDEF(CONFIG_RV64,      "riscv64",
+                               "riscv32"),
+                               "bad"))) "-pc-linux-gnu"
   ));
 #endif
 
