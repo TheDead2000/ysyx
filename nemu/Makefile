@@ -30,14 +30,18 @@ ENGINE ?= $(call remove_quote,$(CONFIG_ENGINE))
 NAME    = $(GUEST_ISA)-nemu-$(ENGINE)
 
 # Include all filelist.mk to merge file lists
-FILELIST_MK = $(shell find -L ./src -name "filelist.mk")
+FILELIST_MK = $(shell find ./src -name "filelist.mk")
 include $(FILELIST_MK)
 
 # Filter out directories and files in blacklist to obtain the final set of source files
 DIRS-BLACKLIST-y += $(DIRS-BLACKLIST)
-SRCS-BLACKLIST-y += $(SRCS-BLACKLIST) $(shell find -L $(DIRS-BLACKLIST-y) -name "*.c")
-SRCS-y += $(shell find -L $(DIRS-y) -name "*.c")
+SRCS-BLACKLIST-y += $(SRCS-BLACKLIST) $(shell find $(DIRS-BLACKLIST-y) -name "*.c")
+SRCS-y += $(shell find $(DIRS-y) -name "*.c")
 SRCS = $(filter-out $(SRCS-BLACKLIST-y),$(SRCS-y))
+
+# add by leesum
+CXXSRC += $(NEMU_HOME)/src/monitor/sdb/exprresult.cc
+CXXSRC += $(NEMU_HOME)/src/monitor/sdb/watchpoint.cc
 
 # Extract compiler and options from menuconfig
 CC = $(call remove_quote,$(CONFIG_CC))
@@ -47,7 +51,7 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_ASAN),-fsanitize=address,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -D__GUEST_ISA__=$(GUEST_ISA)
-LDFLAGS += $(CFLAGS_BUILD)
+LDFLAGS += $(CFLAGS_BUILD) -fuse-ld=gold -fPIC
 
 # Include rules for menuconfig
 include $(NEMU_HOME)/scripts/config.mk

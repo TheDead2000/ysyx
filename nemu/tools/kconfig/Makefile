@@ -5,17 +5,12 @@ SRCS += $(obj)/lexer.lex.c $(obj)/parser.tab.c
 CC = gcc
 CFLAGS += -DYYDEBUG
 INC_PATH += .
-DISTRO = $(shell cat /etc/os-release | grep PRETTY_NAME | sed 's/PRETTY_NAME=//')
-
-ifeq ($(DISTRO),"Gentoo Linux")
-LIBS += -ltinfo
-endif
 
 ifeq ($(NAME),conf)
 SRCS += conf.c
 else ifeq ($(NAME),mconf)
 SRCS += mconf.c $(shell find lxdialog/ -name "*.c")
-LIBS += -lncurses
+LIBS += -lncurses -ltinfo
 else
 $(error bad target=$(NAME))
 endif
