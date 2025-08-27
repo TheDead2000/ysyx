@@ -13,22 +13,23 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#ifndef __ISA_RISCV64_H__
+#define __ISA_RISCV64_H__
+
 #include <common.h>
 
-extern uint64_t g_nr_guest_inst;
-FILE *log_fp = NULL;
+typedef struct {
+  word_t gpr[32];
+  vaddr_t pc;
+} riscv64_CPU_state;
 
-void init_log(const char *log_file) {
-  log_fp = stdout;
-  if (log_file != NULL) {
-    FILE *fp = fopen(log_file, "w");
-    Assert(fp, "Can not open '%s'", log_file);
-    log_fp = fp;
-  }
-  Log("Log is written to %s", log_file ? log_file : "stdout");
-}
+// decode
+typedef struct {
+  union {
+    uint32_t val;
+  } inst;
+} riscv64_ISADecodeInfo;
 
-bool log_enable() {
-  return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
-}
+#define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
+
+#endif

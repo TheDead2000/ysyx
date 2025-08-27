@@ -13,22 +13,13 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <common.h>
+#include <isa.h>
+#include <cpu/difftest.h>
+#include "../local-include/reg.h"
 
-extern uint64_t g_nr_guest_inst;
-FILE *log_fp = NULL;
-
-void init_log(const char *log_file) {
-  log_fp = stdout;
-  if (log_file != NULL) {
-    FILE *fp = fopen(log_file, "w");
-    Assert(fp, "Can not open '%s'", log_file);
-    log_fp = fp;
-  }
-  Log("Log is written to %s", log_file ? log_file : "stdout");
+bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
+  return false;
 }
 
-bool log_enable() {
-  return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
-         (g_nr_guest_inst <= CONFIG_TRACE_END), false);
+void isa_difftest_attach() {
 }

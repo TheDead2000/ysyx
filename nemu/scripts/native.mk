@@ -20,7 +20,7 @@ include $(NEMU_HOME)/tools/difftest.mk
 
 compile_git:
 	$(call git_commit, "compile NEMU")
-$(BINARY):: compile_git
+$(BINARY): compile_git
 
 # Some convenient rules
 
@@ -47,6 +47,4 @@ $(clean-tools):
 clean-tools: $(clean-tools)
 clean-all: clean distclean clean-tools
 
-count:
-	find . -name "*.c" -o -name "*.h" -exec cat {} \; | grep -v "^$$" | wc -l  
 .PHONY: run gdb run-env clean-tools clean-all $(clean-tools)
