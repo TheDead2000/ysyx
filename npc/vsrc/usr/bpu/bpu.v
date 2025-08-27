@@ -394,7 +394,8 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
                 else if (t0_match)  pdt_res = t0_counter[t0_index][1];
                 else                pdt_res = bimodal_table[bm_index][1];
                 
-              
+                if(is_jalr)
+                    pdt_res = 0;
                 // 计算目标地址（优先使用BTB）
                 if (pdt_res) begin
                     // $display("use here!\n");
