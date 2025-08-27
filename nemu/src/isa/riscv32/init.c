@@ -34,7 +34,7 @@ static void restart() {
   cpu.gpr[0] = 0;
   
   /* riscv32, mstatus is initialized to 0x1800. */
-  csr(MSTATUS) = 0x1800;
+  cpu.csr[mstatus] |= 0x1800;
 }
 
 void init_isa() {

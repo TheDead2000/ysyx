@@ -23,9 +23,10 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 #ifdef CONFIG_ETRACE
   Log(" ETRACE: Detect interrupt/exception: mepc==%x, mcause==%x, mtvec==%x",epc,NO,csr(MTVEC));
 #endif
-   csr(MCAUSE) = NO;
-   csr(MEPC) = epc;
-   return csr(MTVEC);
+  cpu.csr[mepc] = epc;   //存放触发异常 pc 的值
+  cpu.csr[mcause] = NO;  //中断号
+  cpu.csr[mstatus] |= 0x1800; 
+  return cpu.csr[mtvec]; //返回统一的异常处理程序地址
 }
 
 word_t isa_query_intr() {
