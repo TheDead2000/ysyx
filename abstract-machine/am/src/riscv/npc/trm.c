@@ -1,8 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
-#include <npc.h>
-
-#define npc_ebreak(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
+#include "npc.h"
 
 extern char _heap_start;
 int main(const char *args);
@@ -22,9 +20,7 @@ void putch(char ch) {
 }
 
 void halt(int code) {
-  npc_ebreak(code);
-
-  //should not reach here
+  npc_trap(code);
   while (1);
 }
 
