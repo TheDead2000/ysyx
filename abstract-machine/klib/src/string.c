@@ -4,117 +4,129 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-// size_t strnlen(const char* s, size_t count) {
-//   const char* s_p;
-//   for (s_p = s; *s_p != '\0' && ((s_p - s) < count); ++s_p)
-//     ;
-//   return (s_p - s);
-// }
-
-size_t strlen(const char* s) {
-  char* s_p = (char*)s;
-  while (*s_p != '\0') {
-    s_p++;
+size_t strlen(const char *s) {
+  size_t len = 0;
+  while (*s++ != '\0') {
+    len++;
   }
-  return (s_p - s); // 返回两个指针的距离，就是 str 的长度
+  return len;
 }
 
-char* strcpy(char* dst, const char* src) {
-  char* dst_p = dst;
-  while (*src != '\0') {
-    *dst_p++ = *src++;
-  }
-  *dst_p = '\0'; // 添加结束标志
+char *strcpy(char *dst, const char *src) {
+  char *d = dst;
+  
+  while ((*d++ = *src++) != 0);
+
   return dst;
 }
 
-char* strncpy(char* dst, const char* src, size_t n) {
+char *strncpy(char *dst, const char *src, size_t n) {
+  char *d = dst;
 
-  char* dst_p = dst;
+  while (n) {
+    if ((*d = *src) != 0) src++;
+    ++d;
+    --n;
+  }
+
+  return dst;
+}
+
+char *strcat(char *dst, const char *src) {
+    char *d = dst;
+
+    while (*d++);
+    --d;
+    while ((*d++ = *src++) != 0);
+
+    return dst;
+}
+
+int strcmp(const char *s1, const char *s2) {
+  while (*((char *)s1) == *((char *)s2)) {
+    if (!*s1++) {
+        return 0;
+    }
+    ++s2;
+  }
+
+  return (*((char *)s1) < *((char *)s2)) ? -1 : 1;
+}
+
+int strncmp(const char *s1, const char *s2, size_t n) {
+  while (n && (*((char *)s1) == *((char *)s2))) {
+		if (!*s1++) {
+			return 0;
+		}
+		++s2;
+		--n;
+	}
+
+	return (n == 0) ? 0 : (*((char *)s1) - *((char *)s2));
+}
+
+void *memset(void *s, int c, size_t n) {
+  char *tmp = (char *)s;
+
   for (size_t i = 0; i < n; i++) {
-    *dst_p++ = *src++;
+    tmp[i] = c;
   }
-  return dst;
-}
 
-
-char* strcat(char* dst, const char* src) {
-
-  char* dst_p = dst;
-  while (*dst_p != '\0') { // 移动到字符串结尾
-    dst_p++;
-  }
-  strcpy(dst_p, src);
-  return dst;
-}
-
-int strcmp(const char* s1, const char* s2) {
-  int ret = 0;
-  char* s1_p = (char*)s1;
-  char* s2_p = (char*)s2;
-  while (*s1_p != '\0' && *s2_p != '\0') {
-    ret = *s1_p++ - *s2_p++;
-    if (ret != 0) // 不相等直接返回
-      return ret;
-  }
-  ret = *s1_p - *s2_p; // 比较字符串结束标志 \0
-  return ret;
-}
-
-int strncmp(const char* s1, const char* s2, size_t n) {
-  int ret = 0;
-  char* s1_p = (char*)s1;
-  char* s2_p = (char*)s2;
-  for (int i = 0; i < n;i++) {
-    ret = *(s1_p++) - *(s2_p++);
-    if (ret != 0)
-      break;
-  }
-  return ret;
-}
-
-void* memset(void* s, int c, size_t n) {
-  char* s_p = (char*)s;
-  for (size_t i = 0;i < n;i++) {
-    *(s_p++) = c;
-  }
   return s;
 }
 
-void* memmove(void* dst, const void* src, size_t n) {
-  char* dst_p = (char*)dst;
-  char* src_p = (char*)src;
-  if (dst <= src) { // 从前往后
-    for (size_t i = 0; i < n; i++) {
-      *dst_p++ = *src_p++;
+
+/**
+ * 此函数处理内存重叠情况
+*/
+void *memmove(void *dst, const void *src, size_t n) {
+    char *d = (char *)dst;
+    const char *s = (const char *)src;
+
+    if (s >= d) {
+        while (n) {
+            *d++ = *s++;
+            --n;
+        }
+    } else {
+        while (n) {
+            --n;
+            d[n] = s[n];
+        }
     }
-  }
-  else {// 从后往前
-    dst_p += (n - 1);
-    src_p += (n - 1);// 移动到最后一个元素上
-    for (size_t i = 0; i < n; i++) {
-      *dst_p-- = *src_p--;
-    }
-  }
-  return dst;
+
+    return dst;
 }
 
-void* memcpy(void* dst, const void* src, size_t n) {
+/**
+ * 此函数不处理内存重叠，涉及内存重叠使用memmove
+*/
+void *memcpy(void *out, const void *in, size_t n) {
+  char *o = (char *)out;
+  const char *i = (const char *)in;
 
-  memmove(dst, src, n);
-  return dst;
+  while (n--) {
+    *o++ = *i++;
+  }
+
+  return out;
 }
 
-int memcmp(const void* s1, const void* s2, size_t n) {
-  int ret = 0;
-  char* s1_p = (char*)s1;
-  char* s2_p = (char*)s2;
-  for (int i = 0; i < n;i++) {
-    ret = *(s1_p++) - *(s2_p++);// 逐个比较，不相等就退出
-    if (ret != 0)
-      break;
-  }
-  return ret;
+/**
+ * 返回-1表示s1 < s2, 返回1表示s1 > s2, 返回0表示相等
+*/
+int memcmp(const void *s1, const void *s2, size_t n) {
+    const char *p1 = s1;
+    const char *p2 = s2;
+
+    for (size_t i = 0; i < n; i++) {
+        if (p1[i] < p2[i]) {
+            return -1;
+        } else if (p1[i] > p2[i]) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 #endif

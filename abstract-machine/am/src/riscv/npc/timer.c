@@ -2,12 +2,12 @@
 #include "npc.h"
 #include <stdio.h>
 
-static uint64_t boot_time = 0;
+static uint32_t boot_time = 0;
 
-static uint64_t read_time() {
-  uint64_t us_low = inl(RTC_ADDR);
-  uint64_t us_high = inl(RTC_ADDR + 4);
-  uint64_t time = ((uint64_t)us_high << 32) | us_low;
+static uint32_t read_time() {
+  uint32_t h = inl(RTC_ADDR + 4);
+  uint32_t l = inl(RTC_ADDR);
+  uint32_t time = (uint64_t)l + ((uint64_t)h << 32);
   return time;
 }
 

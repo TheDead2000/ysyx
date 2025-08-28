@@ -22,5 +22,8 @@
 #define FB_ADDR         (MMIO_BASE   + 0x1000000)
 #define AUDIO_SBUF_ADDR (MMIO_BASE   + 0x1200000)
 
+void __am_gpu_config(AM_GPU_CONFIG_T* cfg);
+void __am_gpu_fbdraw(AM_GPU_FBDRAW_T* ctl);
+void __am_gpu_status(AM_GPU_STATUS_T* status);
 
 #endif
