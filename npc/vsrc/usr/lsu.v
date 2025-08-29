@@ -181,10 +181,10 @@ module memory (
   // always @(posedge clk) begin
   //   set_nextpc(inst_addr_i);
   // end
-  // import "DPI-C" function void set_mem_pc(input int mem_pc);
-  // always @(*) begin
-  //   if (ls_valid) begin
-  //     set_mem_pc(inst_addr_i);
-  //   end
-  // end
+  import "DPI-C" function void set_mem_pc(input int mem_pc);
+  always @(*) begin
+    if (ls_valid) begin
+      set_mem_pc(inst_addr_i);
+    end
+  end
 endmodule

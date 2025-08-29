@@ -32,13 +32,16 @@ module ifu (
     input wire id_ras_push_valid_i,        // ID阶段检测到CALL指令
     input wire [`XLEN-1:0] id_ras_push_data_i,  // ID阶段计算的返回地址
     input wire ex_stall_valid_i, // 暂停流水线时清除预测
-
+    input wire if_flush_i, // 清空 IF 阶段指令
+    input wire id_stall_i,
     //to pc
     output [`XLEN-1:0] bpu_pc_o,
     output bpu_pc_valid_o,
 
     //to exu
     output reg pdt_res,
+    output reg [31:0] pdt_pc_tag,  // 预测对应的 PC 标签
+
     output reg which_pdt_o,
     output wire [`HISLEN-1:0] history_o
 );
@@ -65,14 +68,18 @@ module ifu (
       // .ex_rd_addr_i(ex_rd_addr_i), // 目的寄存器地址
       .ex_target_i(ex_target_i),
       .ex_inst_i(ex_inst_i),
+
       .id_ras_push_valid_i(id_ras_push_valid_i), // ID阶段检测到CALL指令
       .id_ras_push_data_i(id_ras_push_data_i), // ID阶段计算
-      .flush_i(_ram_stall), // 暂停流水线时清除预测
+      // .if_stall_i(_ram_stall), // 暂停流水线时清除预测
+      .flush_valid_i(if_flush_i), // 清空 IF 阶段指令
       .ex_stall_valid_i(ex_stall_valid_i), // 暂停流水线时清除预测
+      .id_stall_i(id_stall_i),
       .pdt_pc  (bpu_pc_o),
       .branch_or_not(bpu_pc_valid_o),
       
       .pdt_res(pdt_res),
+      .pdt_pc_tag(pdt_pc_tag),
       // .which_pdt_o(which_pdt_o),
       .history_o(history_o)
 

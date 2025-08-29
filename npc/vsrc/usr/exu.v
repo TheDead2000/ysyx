@@ -24,6 +24,7 @@ module exu (
     input   pdt_res_i,        // 预测的跳转方向
     input   which_pdt_i,      // 预测使用的预测器类型
     input   [`HISLEN-1:0] history_i,  // 预测时使用的历史记录
+    input   [`XLEN-1:0] pdt_tag_i,
     // 新增输出到BPU的反馈信号
     output pdt_correct_o,        // 预测是否正确
     output which_pdt_o,          // 预测使用的预测器类型
@@ -46,7 +47,8 @@ module exu (
     /************************* to ifu **************************/
     output bpu_valid_o,          // 分支结果有效
     output branch_taken_o,          // 实际分支方向
-    output [`XLEN-1:0] bpu_branch_pc_o,
+    output [`XLEN-1:0] ex_pc_o,
+    
 
     output [1:0] exu_jump_type_o, // 跳转类型
     output [4:0] exu_rd_addr_o, // 目的寄存器地址 
@@ -100,10 +102,12 @@ module exu (
 
   wire is_branch_inst = _excop_branch | _excop_jal | _excop_jalr;
   wire jump_taken = (_excop_branch & _compare_out) | (_excop_jal | _excop_jalr);
-  
 
+  
+  wire valid_prediction = pdt_res_i && (inst_addr_i == pdt_tag_i);
+  wire bpu_pc_wrong =  (jump_taken != pdt_res_i);
   // 计算预测是否正确
-  assign pdt_correct_o = (jump_taken == pdt_res_i);
+  assign pdt_correct_o =  (jump_taken == pdt_res_i)  ;
 
   // 预测错误条件：实际跳转方向与预测方向不同
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);
@@ -127,7 +131,7 @@ module exu (
   // ================== BPU更新接口 ==================
   assign bpu_valid_o = is_branch_inst;       // 总是更新BPU（无论预测是否正确）
   assign branch_taken_o = jump_taken;         // 实际分支方向
-  assign bpu_branch_pc_o = inst_addr_i;       // 分支指令的PC
+  assign ex_pc_o = inst_addr_i;       // 分支指令的PC
   assign exu_rd_addr_o = rd_idx_i; // 目的寄存器地址
 
   assign exu_jump_type_o = 

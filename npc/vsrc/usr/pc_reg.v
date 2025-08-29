@@ -47,6 +47,7 @@ module pc_reg (
     end else begin
       _pc_next = pc_temp_plus4;
     end
+    // $display("pc_reg:= %h", _pc_next);
   end
 
 

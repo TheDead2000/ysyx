@@ -83,6 +83,7 @@ wire [`XLEN-1:0] bpu_pc_o;
 wire bpu_pc_valid_o;
 
 wire pdt_res;
+wire [`XLEN-1:0] pdt_tag;
 wire which_pdt_o; 
 wire [`HISLEN-1:0] history_o;
 
@@ -106,7 +107,7 @@ ifu ifu (
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
   .ex_which_pdt_i(which_pdt_fb), // 连接EXU输出的预测器类型
-  .ex_pc_i (bpu_branch_pc),
+  .ex_pc_i (ex_pc_o),
   .ex_history_i(history_fb), // 连接EXU输出的历史记录
   .ex_jump_type_i(ex_jump_type), // 跳转类型
   .ex_target_i(redirect_pc),
@@ -114,13 +115,15 @@ ifu ifu (
   .id_ras_push_valid_i(id_ras_push_valid), // ID阶段检测到CALL指令
   .id_ras_push_data_i(id_ras_push_data), // ID阶段计算的返回地址
   .ex_stall_valid_i(stall_clint[`CTRLBUS_ID_EX]), // 暂停流水线时清除预测
-
+  .if_flush_i(flush_clint[`CTRLBUS_IF_ID]), // 清空 IF 阶段指令
+  .id_stall_i(stall_clint[`CTRLBUS_IF_ID]),
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
   
   //to if/id
   .pdt_res(pdt_res),
+  .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
   .which_pdt_o(which_pdt_o),
   .history_o(history_o),
 
@@ -138,6 +141,7 @@ wire [`TRAP_BUS] trap_bus_if_id;
 wire bpu_pc_valid_if_id;
 wire bpu_pdt_res_if_id;
 wire bpu_which_pdt_if_id;
+wire[`XLEN-1:0] bpu_pdt_tag_if_id;
 wire [`HISLEN-1:0] bpu_history_if_id;
 
 if_id if2id(
@@ -156,10 +160,12 @@ if_id if2id(
   .bpu_pdt_res_if_i(pdt_res),
   .bpu_which_pdt_if_i(which_pdt_o),
   .bpu_history_if_i(history_o),
+  .bpu_pdt_tag_if_i(pdt_tag),
 
   .bpu_pdt_res_if_id_o(bpu_pdt_res_if_id),
   .bpu_which_pdt_if_id_o(bpu_which_pdt_if_id),
   .bpu_history_if_id_o(bpu_history_if_id),
+  .bpu_pdt_tag_if_id_o(bpu_pdt_tag_if_id),
 
   .inst_addr_if_id_o (inst_addr_if_id),
   .inst_data_if_id_o (inst_data_if_id),
@@ -227,7 +233,8 @@ idu idu (
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令
-    .id_ras_push_data_o(id_ras_push_data)  // ID阶段计算的返回地址
+    .id_ras_push_data_o(id_ras_push_data),  // ID阶段计算的返回地址
+    .flush_i(flush_clint[`CTRLBUS_IF_ID]) // 清空 ID 阶段指令
 
 );
 
@@ -251,6 +258,7 @@ wire [             `TRAP_BUS]  trap_bus_id_ex;
 wire bpu_pc_valid_id_ex;
 wire bpu_pdt_res_id_ex;
 wire bpu_which_pdt_id_ex;
+wire [`XLEN-1:0] bpu_pdt_tag_id_ex;
 wire [`HISLEN-1:0] bpu_history_id_ex;
 
 id_ex id2ex (
@@ -272,17 +280,16 @@ id_ex id2ex (
     .bpu_taken_id_ex_i    (bpu_pc_valid_if_id),
     .bpu_taken_id_ex_o    (bpu_pc_valid_id_ex),
 
- 
-
-
 
     .bpu_pdt_res_id_i(bpu_pdt_res_if_id),
     .bpu_which_pdt_id_i(bpu_which_pdt_if_id),
     .bpu_history_id_i(bpu_history_if_id),
+    .bpu_pdt_tag_id_i(bpu_pdt_tag_if_id),
 
     .bpu_pdt_res_id_ex_o(bpu_pdt_res_id_ex),
     .bpu_which_pdt_id_ex_o(bpu_which_pdt_id_ex),
     .bpu_history_id_ex_o(bpu_history_id_ex),
+    .bpu_pdt_tag_id_ex_o(bpu_pdt_tag_id_ex),
 
     // alu 操作码
     .mem_op_id_ex_i       (mem_op_id),
@@ -332,7 +339,7 @@ wire                           jump_hazard_valid;
 wire [             `TRAP_BUS]  trap_bus_ex;
 
 wire bpu_valid;          // 分支结果有效
-wire [             `INST_LEN-1:0]  bpu_branch_pc;
+wire [             `INST_LEN-1:0]  ex_pc_o;
 wire [             `INST_LEN-1:0]  redirect_pc;
 wire                               redirect_pc_valid;
 
@@ -379,7 +386,8 @@ exu exu (
     .bpu_valid_o (bpu_valid),          // 分支结果有效
     .branch_taken_o (exu_branch_taken_o),          // 实际分支方向
 
-    .bpu_branch_pc_o (bpu_branch_pc),
+    .ex_pc_o (ex_pc_o),
+    .pdt_tag_i(bpu_pdt_tag_id_ex),
     .pdt_res_i (bpu_pdt_res_id_ex),        // 预测的跳转方向
     .which_pdt_i (bpu_which_pdt_id_ex),      // 预测使用的预测器类型
     .history_i (bpu_history_id_ex),  // 预测时使用的历史记录

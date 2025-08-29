@@ -333,7 +333,7 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 	char fullname[2048];	// this name contains both archive name and ROM file name
 	int lastpal = PAL;
 	int lastdendy = dendy;
-
+	printf("here pal %d\n",lastpal);
 	const char* romextensions[] = { "nes", "fds", 0 };
 
 	// indicator for if the operaton was canceled by user
@@ -382,12 +382,12 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 			FCEU_ResetVidSys();
 
 		PowerNES();
-
+		FCEU_DispMessage("Power finish");
 		if (GameInfo->type != GIT_NSF)
 			FCEU_LoadGamePalette();
 
 		FCEU_ResetPalette();
-
+		printf("last pal=%d,lastdendy %d PAL%d dendy%d\n",lastpal,lastdendy,PAL,dendy);
 		if (!lastpal && PAL) {
 			FCEU_DispMessage("PAL mode set");
 			FCEUI_printf("PAL mode set");
@@ -569,11 +569,12 @@ void PowerNES(void) {
 
 	SetReadHandler(0x800, 0x1FFF, ARAMH);	// Part of a little
 	SetWriteHandler(0x800, 0x1FFF, BRAMH);	//hack for a small speed boost.
-
 	InitializeInput();
-	FCEUSND_Power();
-	FCEUPPU_Power();
 
+	// FCEU_DispMessage("Power test5");
+	FCEUSND_Power();
+	FCEU_DispMessage("Power test6");
+	FCEUPPU_Power();
 	//Have the external game hardware "powered" after the internal NES stuff.  Needed for the NSF code and VS System code.
 	GameInterface(GI_POWER);
 

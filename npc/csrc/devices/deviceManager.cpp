@@ -176,7 +176,7 @@ word_t DeviceManager::read(paddr_t addr) {
     Devicebase* base = findDevicebyaddr(addr);
     if (base == nullptr) {
         cout << COLOR_RED << hex
-            << addr << " is out of device addr" COLOR_END << endl;
+            << addr << " read is out of device addr" COLOR_END << endl;
         assert(base);
         return 0;
     }
@@ -196,7 +196,7 @@ void DeviceManager::write(paddr_t addr, word_t data, uint32_t len) {
     Devicebase* base = findDevicebyaddr(addr);
     if (base == nullptr) {
         cout << COLOR_RED << hex
-            << addr << " is out of device addr" COLOR_END << endl;
+            << addr << " write is out of device addr" COLOR_END << endl;
         assert(base);
         return;
     }
