@@ -1752,7 +1752,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_3(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+5485,(0x6033U),32);
     bufp->fullIData(oldp+5486,(0x7033U),32);
     bufp->fullIData(oldp+5487,(0x73U),32);
-    bufp->fullIData(oldp+5488,(0x2000073U),32);
+    bufp->fullIData(oldp+5488,(0x100073U),32);
     bufp->fullIData(oldp+5489,(0x30200073U),32);
     bufp->fullIData(oldp+5490,(0x1073U),32);
     bufp->fullIData(oldp+5491,(0x2073U),32);
