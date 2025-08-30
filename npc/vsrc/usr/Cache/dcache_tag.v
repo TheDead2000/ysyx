@@ -1,6 +1,6 @@
 `include "sysconfig.v"
 
-module ysyx_041514_dcache_tag #(
+module dcache_tag #(
     parameter TAG_LEN = 19,  // 20->19
     parameter IDX_LEN = 7,   // 6->7
     parameter TAG_NUM = 128  // 64->128

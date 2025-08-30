@@ -5,24 +5,39 @@
 `define REG_NUM 32          //寄存器个数
 `define REG_ADDRWIDTH 5     //寄存器地址宽度
 `define PC_RESET_ADDR `CPU_WIDTH'h80000000
-
+`define XLEN_BUS 31:0
 
 `define INST_NOP 32'h00000013           //ADDI x0, x0, 0
 `define TRUE 1'b1
 `define FALSE 1'b0
 `define HISLEN 16
 
-`define TRAP_LEN 19
-`define TRAP_BUS `TRAP_LEN-1:0
-
 
 `define TRAP_INST_ADDR_MISALIGNED 0
 `define TRAP_INST_ACCESS_FAULT 1
 `define TRAP_ILLEGAL_INST 2
+`define TRAP_BREAKPOINT 3
+`define TRAP_LOAD_ADDR_MISALIGNED 4
+`define TRAP_LOAD_ACCESS_FAULT 5
+`define TRAP_STORE_ADDR_MISALIGNED 6
+`define TRAP_STORE_ACCESS_FAULT 7
+`define TRAP_ECALL_U 8
+`define TRAP_ECALL_S 9 
+`define TRAP_RESERVED0 10 
+`define TRAP_ECALL_M 11
 `define TRAP_INST_PAGE_FAULT 12
+`define TRAP_LOAD_PAGE_FAULT 13
+`define TRAP_RESERVED1 14
+`define TRAP_STORE_PAGE_FAULT 15
+
+
 `define TRAP_MRET 16 // 把 MRET 当成 trap
-`define TRAP_EBREAK 17 // 把 EBREAK 当成 trap
-`define TRAP_ECALL 18 // 把 ECALL 当成 trap
+`define TRAP_SRET 17
+`define TRAP_EBREAK 18 // 把 EBREAK 当成 trap
+`define TRAP_FENCEI 19 // 把 fencei 当成 trap,复用线路
+`define TRAP_LEN 20
+`define TRAP_BUS `TRAP_LEN-1:0
+
 
 //PC,IF_ID, ID_EX, EX_MEM, MEM_WB
 `define CTRLBUS_PC 0
@@ -33,29 +48,49 @@
 
 
 /* ALU 操作码 */
-`define ALUOP_LEN 5
+`define ALUOP_LEN 33
 
-`define ALUOP_NONE `ALUOP_LEN'd0
-`define ALUOP_ADD `ALUOP_LEN'd1
-`define ALUOP_SUB `ALUOP_LEN'd2
+`define ALUOP_NONE 'd0
+`define ALUOP_ADD 'd1
+`define ALUOP_SUB 'd2
 /* 逻辑操作 */
-`define ALUOP_XOR `ALUOP_LEN'd3
-`define ALUOP_OR `ALUOP_LEN'd4
-`define ALUOP_AND `ALUOP_LEN'd5
+`define ALUOP_XOR 'd3
+`define ALUOP_OR 'd4
+`define ALUOP_AND 'd5
 /* 移位操作 */
-`define ALUOP_SRL `ALUOP_LEN'd6
-`define ALUOP_SLL `ALUOP_LEN'd7
-`define ALUOP_SRA `ALUOP_LEN'd8
+`define ALUOP_SLL 'd6
+`define ALUOP_SRL 'd7
+`define ALUOP_SRA 'd8
+//忽略高32位的移位操作
+`define ALUOP_SLLW 'd9
+`define ALUOP_SRLW 'd10
+`define ALUOP_SRAW 'd11
 /* 比较操作 */
-`define ALUOP_SLT `ALUOP_LEN'd9
-`define ALUOP_SLTU `ALUOP_LEN'd10
+`define ALUOP_SLT 'd12
+`define ALUOP_SLTU 'd13
 
-`define ALUOP_BEQ `ALUOP_LEN'd11
-`define ALUOP_BNE `ALUOP_LEN'd12
-`define ALUOP_BLT `ALUOP_LEN'd13
-`define ALUOP_BGE `ALUOP_LEN'd14
-`define ALUOP_BLTU `ALUOP_LEN'd15
-`define ALUOP_BGEU `ALUOP_LEN'd16
+`define ALUOP_BEQ 'd14
+`define ALUOP_BNE 'd15
+`define ALUOP_BLT 'd16
+`define ALUOP_BGE 'd17
+`define ALUOP_BLTU 'd18
+`define ALUOP_BGEU 'd19
+
+/* 乘除法 */
+`define ALUOP_MUL 'd20
+`define ALUOP_MULH 'd21
+`define ALUOP_MULHSU 'd22
+`define ALUOP_MULHU 'd23
+`define ALUOP_MULW 'd24
+
+`define ALUOP_DIV 'd25
+`define ALUOP_DIVU 'd26
+`define ALUOP_REM 'd27
+`define ALUOP_REMU 'd28
+`define ALUOP_DIVW 'd29
+`define ALUOP_DIVUW 'd30
+`define ALUOP_REMW 'd31
+`define ALUOP_REMUW 'd32
 
 
 /* exc 操作码 */
@@ -69,10 +104,12 @@
 `define EXCOP_LOAD 'd5
 `define EXCOP_STORE 'd6
 `define EXCOP_BRANCH 'd7
-`define EXCOP_CSR 'd8
-`define EXCOP_EBREAK 'd9
-`define EXCOP_OPIMM 'd10
-`define EXCOP_OPREG 'd11
+`define EXCOP_OPIMM 'd8
+`define EXCOP_OPIMM32 'd9
+`define EXCOP_OP 'd10
+`define EXCOP_OP32 'd11
+`define EXCOP_CSR 'd12
+
 
 /* mem操作码 */
 `define MEMOP_LEN 4
@@ -99,6 +136,51 @@
 `define PCOP_JALR `PCOP_LEN'd3
 `define PCOP_INC4 `PCOP_LEN'd4
 `define PCOP_TRAP `PCOP_LEN'd5
+
+
+
+/*************CSR************/
+
+`define CSROP_LEN 5
+
+`define CSROP_NONE 'd0
+`define CSROP_READ 'd1
+`define CSROP_WRITE 'd2
+`define CSROP_SET 'd3
+`define CSROP_CLEAR 'd4
+
+
+//寄存器地址
+`define CSR_REG_ADDRWIDTH 12
+//Machine Trap Setup
+`define CSR_MSTATUS 12'h300
+`define CSR_MISA 12'h301
+`define CSR_MEDELEG 12'h302
+`define CSR_MIDELEG 12'h303
+`define CSR_MIE 12'h304
+`define CSR_MTVEC 12'h305
+`define CSR_MCOUNTEREN 12'h306
+//Machine Trap Handling
+`define CSR_MSCRATCH 12'h340
+`define CSR_MEPC 12'h341
+`define CSR_MCAUSE 12'h342
+`define CSR_MTVAL 12'h343
+`define CSR_MIP 12'h344
+`define CSR_MTINST 12'h34a
+`define CSR_MTVAL2 12'h34b
+
+
+`define CSR_MSTATUS_DEFAULT `XLEN'ha00001800 
+
+
+`define MTIMECMP_ADDR_LOW   32'h2004000 // mtimecmp[31:0]
+`define MTIMECMP_ADDR_HIGH  32'h2004004 // mtimecmp[63:32]
+
+// 将 64 位的 mtime 寄存器拆分为两个 32 位寄存器
+`define MTIME_ADDR_LOW      32'h200BFF8 // mtime[31:0]
+`define MTIME_ADDR_HIGH     32'h200BFFC // mtime[63:32]
+
+
 
 
 

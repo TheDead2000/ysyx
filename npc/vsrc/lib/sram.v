@@ -1,4 +1,4 @@
-module ysyx_041514_sram (
+module sram (
 
     input clk,
     

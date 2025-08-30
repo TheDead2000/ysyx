@@ -1,6 +1,6 @@
 `include "sysconfig.v"
 
-module ysyx_041514_icache_tag #(
+module icache_tag #(
     parameter TAG_LEN = 19,  // tag 长度
     parameter IDX_LEN = 7,   // 组号 长度
     parameter TAG_NUM = 128  // tag 个数

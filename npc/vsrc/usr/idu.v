@@ -13,6 +13,8 @@ module idu (
     /* from gpr regs */
     input [`INST_LEN-1:0] rs1_data_i,
     input [`INST_LEN-1:0] rs2_data_i,
+      /* from csr regs */
+    input [`XLEN_BUS] csr_data_i,
     /*通用寄存器译码结果：to id/ex */
     output [    `REG_ADDRWIDTH-1:0] rs1_idx_o,
     output [    `REG_ADDRWIDTH-1:0] rs2_idx_o,
@@ -26,6 +28,10 @@ module idu (
     /* from exc bypass */
     input [`INST_LEN-1:0] ex_rd_data_i,
     input [`REG_ADDRWIDTH-1:0] ex_rd_addr_i,
+    
+    input [`CSR_REG_ADDRWIDTH-1:0] ex_csr_writeaddr_i,  // TODO 用于 csr bypass
+    input [`XLEN_BUS] ex_csr_writedata_i,
+
     /* from mem bypass */
     input [`INST_LEN-1:0] mem_rd_data_i,
     input [`REG_ADDRWIDTH-1:0] mem_rd_addr_i,
@@ -34,10 +40,18 @@ module idu (
     output [`MEMOP_LEN-1:0] mem_op_o,  // mem 操作码 
     output [`EXCOP_LEN-1:0] exc_op_o,  // exc 操作码
     output [`PCOP_LEN-1:0] pc_op_o,   // pc 操作码
-
+    output [`CSROP_LEN-1:0] csr_op_o,  // csr 操作码
+    
     //to id_ex
     output [`INST_LEN-1:0] inst_addr_o,
     output [`INST_LEN-1:0] inst_data_o,
+
+     /* CSR 译码结果：to id/ex*/
+    output [          `IMM_LEN-1:0] csr_imm_o,
+    output                                      csr_imm_valid_o,
+    output [`CSR_REG_ADDRWIDTH-1:0] csr_idx_o,
+    output [             `XLEN_BUS] csr_readdata_o,
+
     // 请求暂停流水线
     output _load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
@@ -54,7 +68,7 @@ localparam [31:0] MASK_FUNC3  = 32'b0000000_00000_00000_111_00000_1111111;
 localparam [31:0] MASK_FUNC7  = 32'b1111111_00000_00000_111_00000_1111111;
 localparam [31:0] MASK_ALL    = 32'hFFFFFFFF;
 
-// 指令模板
+// rv32 I
 localparam [31:0] LUI_VAL    = 32'b0000000_00000_00000_000_00000_0110111;
 localparam [31:0] AUIPC_VAL  = 32'b0000000_00000_00000_000_00000_0010111;
 
@@ -98,9 +112,27 @@ localparam [31:0] SRA_VAL    = 32'b0100000_00000_00000_101_00000_0110011;
 localparam [31:0] OR_VAL     = 32'b0000000_00000_00000_110_00000_0110011;
 localparam [31:0] AND_VAL    = 32'b0000000_00000_00000_111_00000_0110011;
 
-localparam [31:0] ECALL_VAL  = 32'h00000073;
-localparam [31:0] EBREAK_VAL = 32'h00100073;
+localparam [31:0] ECALL_VAL  = 32'b0000000_00000_00000_000_00000_1110011;
+localparam [31:0] EBREAK_VAL = 32'b0000001_00000_00000_000_00000_1110011;
 localparam [31:0] MRET_VAL   = 32'h30200073;
+
+/***************CSR**********************/
+localparam [31:0] CSRRW_VAL = 32'b0000000_00000_00000_001_00000_1110011;
+localparam [31:0] CSRRS_VAL = 32'b0000000_00000_00000_010_00000_1110011;
+localparam [31:0] CSRRC_VAL = 32'b0000000_00000_00000_011_00000_1110011;
+localparam [31:0] CSRRWI_VAL = 32'b0000000_00000_00000_101_00000_1110011;
+localparam [31:0] CSRRSI_VAL = 32'b0000000_00000_00000_110_00000_1110011;
+localparam [31:0] CSRRCI_VAL = 32'b0000000_00000_00000_111_00000_1110011;
+
+/******************RV32M*****************/
+localparam [31:0] MUL_VAL =    32'b0000001_00000_00000_000_00000_0110011;
+localparam [31:0] MULH_VAL =    32'b0000001_00000_00000_001_00000_0110011;
+localparam [31:0] MULHSU_VAL =    32'b0000001_00000_00000_010_00000_0110011;
+localparam [31:0] MULHU_VAL =    32'b0000001_00000_00000_011_00000_0110011;
+localparam [31:0] DIV_VAL =    32'b0000001_00000_00000_100_00000_0110011;
+localparam [31:0] DIVU_VAL =    32'b0000001_00000_00000_101_00000_0110011;
+localparam [31:0] REM_VAL =    32'b0000001_00000_00000_110_00000_0110011;
+localparam [31:0] REMU_VAL =    32'b0000001_00000_00000_111_00000_0110011;
 
   assign inst_addr_o = inst_addr_i;
   assign inst_data_o = inst_data_i;
@@ -114,8 +146,9 @@ localparam [31:0] MRET_VAL   = 32'h30200073;
   wire [4:0] _rs1 = _inst[19:15];
   wire [4:0] _rs2 = _inst[24:20];
   wire [6:0] _func7 = _inst[31:25];
-
-
+  
+  wire [`CSR_REG_ADDRWIDTH-1:0] _csr = _inst[31:20];  // CSR 地址
+  wire [`IMM_LEN-1:0] _immCSR = {27'b0, _inst[19:15]};
 // 不同指令类型的立即数
   wire [`IMM_LEN-1:0] _immI = { {21{_inst[31]} }, _inst[30:20]};
   wire [`IMM_LEN-1:0] _immS = { {20{_inst[31]} }, _inst[31:25], _inst[11:7] };
@@ -124,10 +157,9 @@ localparam [31:0] MRET_VAL   = 32'h30200073;
   wire [`IMM_LEN-1:0] _immJ = {
     {12{_inst[31]}}, _inst[19:12], _inst[20], _inst[30:25], _inst[24:21], 1'b0
   };
-  // wire [`IMM_LEN-1:0] _immCSR = {27'b0, _inst[19:15]};
+
   
-
-
+//RV32I
 wire _inst_lui    = match(_inst, MASK_OPCODE, LUI_VAL);
 wire _inst_auipc  = match(_inst, MASK_OPCODE, AUIPC_VAL);
 wire _inst_jal    = match(_inst, MASK_OPCODE, JAL_VAL);
@@ -176,6 +208,23 @@ wire _inst_ecall  = match(_inst, MASK_ALL,    ECALL_VAL);
 wire _inst_ebreak = match(_inst, MASK_ALL,    EBREAK_VAL);
 wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
 
+//RV32 CSR
+wire _inst_csrrw  = match(_inst,MASK_FUNC3, CSRRW_VAL);
+wire _inst_csrrs =  match(_inst,MASK_FUNC3, CSRRS_VAL);
+wire _inst_csrrc =  match(_inst,MASK_FUNC3, CSRRC_VAL);
+wire _inst_csrrwi = match(_inst,MASK_FUNC3, CSRRWI_VAL);
+wire _inst_csrrsi = match(_inst,MASK_FUNC3, CSRRSI_VAL);
+wire _inst_csrrci = match(_inst,MASK_FUNC3, CSRRCI_VAL);
+//RV32M
+wire _inst_mul    = match(_inst,MASK_FUNC7,MUL_VAL);
+wire _inst_mulh    = match(_inst,MASK_FUNC7,MULH_VAL);
+wire _inst_mulhsu    = match(_inst,MASK_FUNC7,MULHSU_VAL);
+wire _inst_mulhu    = match(_inst,MASK_FUNC7,MULHU_VAL);
+wire _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
+wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
+wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
+wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
+
    wire _type_lui = _inst_lui;
    wire _type_auipc = _inst_auipc;
    wire _type_jal = _inst_jal;
@@ -200,18 +249,18 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   wire _NONE_type = ~(_R_type | _I_type | _S_type | _U_type | _J_type | _B_type);
 
   /*获取操作数  */  //TODO:一些特殊指令没有归类ecall,ebreak
-  wire _isNeed_imm = (_I_type | _S_type | _B_type | _U_type | _J_type);
-  // wire _csr_imm_valid = (_inst_csrrci | _inst_csrrsi | _inst_csrrwi);
+  wire _csr_imm_valid = (_inst_csrrci | _inst_csrrsi | _inst_csrrwi);
 
   // I 型指令中, CSR 立即数占了 rs1 的位置
-  wire _isNeed_rs1 = (_R_type | _I_type | _S_type | _B_type);
+  wire _isNeed_rs1 = (_R_type | _I_type | _S_type | _B_type) & (~_csr_imm_valid);
   wire _isNeed_rs2 = (_R_type | _S_type | _B_type);
   wire _isNeed_rd = (_R_type | _I_type | _U_type | _J_type);
+  wire _isNeed_csr = (_inst_csrrc|_inst_csrrci|_inst_csrrs|_inst_csrrsi|_inst_csrrw|_inst_csrrwi);
   
   wire [`REG_ADDRWIDTH-1:0] _rs1_idx = (_isNeed_rs1) ? _rs1 : 5'b0;
   wire [`REG_ADDRWIDTH-1:0] _rs2_idx = (_isNeed_rs2) ? _rs2 : 5'b0;
   wire [`REG_ADDRWIDTH-1:0] _rd_idx = (_isNeed_rd) ? _rd : 5'b0;
-
+ wire [`CSR_REG_ADDRWIDTH-1:0] _csr_idx = (_isNeed_csr) ? _csr : `CSR_REG_ADDRWIDTH'b0;
 
   /* assign 实现多路选择器：根据指令类型选立即数 */
   wire [`IMM_LEN-1:0] _imm_data = ({`IMM_LEN{_I_type}}&_immI) |
@@ -219,12 +268,16 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
                                   ({`IMM_LEN{_B_type}}&_immB) |
                                   ({`IMM_LEN{_U_type}}&_immU) |
                                   ({`IMM_LEN{_J_type}}&_immJ);
-    
+
+
   assign rs1_idx_o = _rs1_idx;
   assign rs2_idx_o = _rs2_idx;
   assign rd_idx_o = _rd_idx;
+  assign csr_idx_o = _csr_idx;
   assign imm_data_o = _imm_data;
 
+  assign csr_imm_valid_o = _csr_imm_valid;
+  assign csr_imm_o = _immCSR;
 
 /******************************************冲突处理***************************************************/
   wire _pre_inst_is_load = (id_ex_exc_op_i == `EXCOP_LOAD);
@@ -260,11 +313,41 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   assign rs2_data_o = _rs2_data;
   assign _load_use_valid_o = _load_use_data_hazard_valid;
 
+  /***************CSR 寄存器冲突处理*****************/
+  // TODO 添加 csr 数据旁路
+  assign csr_readdata_o = csr_data_i;
+
+  /******************************************×××××××***************************************************/
+
+  /* CSR_OP */
+  wire _csr_write = (_inst_csrrw | _inst_csrrwi);
+  wire _csr_set = (_inst_csrrs | _inst_csrrsi) & _rs1_idx_not_zero;
+  wire _csr_clear = (_inst_csrrc | _inst_csrrci) & _rs1_idx_not_zero;
+  // CSRRSI/CSRRCI must not write 0 to CSRs (uimm[4:0]=='0)
+  // CSRRS/CSRRC must not write from x0 to CSRs (rs1=='0)
+  wire _csr_read = (_csr_set | _csr_clear) & (~_rs1_idx_not_zero);
+  wire _csr_none = ~(_csr_write | _csr_set | _csr_clear | _csr_read);
+  // read 优先级高
+  // wire [`CSROP_LEN-1:0]_csr_op = (_csr_read)?`CSROP_READ:(
+  //                ({`CSROP_LEN{_csr_write}}&`CSROP_WRITE)|
+  //                ({`CSROP_LEN{_csr_set}}&`CSROP_SET)|
+  //                ({`CSROP_LEN{_csr_clear}}&`CSROP_CLEAR));
+  wire [`CSROP_LEN-1:0] _csr_op;
+  assign _csr_op[`CSROP_NONE] = _csr_none;
+  assign _csr_op[`CSROP_READ] = _csr_read;
+  assign _csr_op[`CSROP_WRITE] = _csr_write;
+  assign _csr_op[`CSROP_SET] = _csr_set;
+  assign _csr_op[`CSROP_CLEAR] = _csr_clear;
+
+  assign csr_op_o = _csr_op;
+
+
+
 
   /* ALU_OP */
   //加减和逻辑
   wire _alu_add = _inst_add  |_inst_addi | _type_load 
-                  | _type_store | _inst_jal |_inst_jalr |_inst_auipc | _inst_lui;
+                  | _type_store | _inst_jal |_inst_jalr |_inst_auipc | _inst_lui | _isNeed_csr;
   wire _alu_sub = _inst_sub ;
   wire _alu_xor = _inst_xor | _inst_xori;
 
@@ -283,46 +366,65 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
   wire _alu_bge = _inst_bge;
   wire _alu_bltu = _inst_bltu;
   wire _alu_bgeu = _inst_bgeu;
+  //定点乘法
+  wire _alu_mul = _inst_mul;
+  wire _alu_mulh = _inst_mulh;
+  wire _alu_mulhsu = _inst_mulhsu;
+  wire _alu_mulhu = _inst_mulhu;
+  //定点除法
+  wire _alu_div = _inst_div;
+  wire _alu_divu = _inst_divu;
+  wire _alu_rem = _inst_rem;
+  wire _alu_remu = _inst_remu;
 
 
  // // ALU 计算结果是否需要符号扩展,放在 execute 下实现
   // wire _alu_sext = _type_op_imm_32 | _type_op_32;
   //多路选择器
-  wire [`ALUOP_LEN-1:0] _alu_op = ({`ALUOP_LEN{_alu_add}} & `ALUOP_ADD)|
-                                  ({`ALUOP_LEN{_alu_sub}} & `ALUOP_SUB)|
-                                  ({`ALUOP_LEN{_alu_xor}} & `ALUOP_XOR)|
-                                  ({`ALUOP_LEN{_alu_or}} & `ALUOP_OR)|
-                                  ({`ALUOP_LEN{_alu_and}} & `ALUOP_AND)|
-                                  ({`ALUOP_LEN{_alu_sll}} & `ALUOP_SLL)|
-                                  ({`ALUOP_LEN{_alu_srl}} & `ALUOP_SRL)|
-                                  ({`ALUOP_LEN{_alu_sra}} & `ALUOP_SRA)|
-                                  ({`ALUOP_LEN{_alu_slt}} & `ALUOP_SLT)|
-                                  ({`ALUOP_LEN{_alu_sltu}} & `ALUOP_SLTU)|
-                                  ({`ALUOP_LEN{_alu_beq}} & `ALUOP_BEQ)|
-                                  ({`ALUOP_LEN{_alu_bne}} & `ALUOP_BNE)|
-                                  ({`ALUOP_LEN{_alu_blt}} & `ALUOP_BLT)|
-                                  ({`ALUOP_LEN{_alu_bge}} & `ALUOP_BGE)|
-                                  ({`ALUOP_LEN{_alu_bltu}} & `ALUOP_BLTU)|
-                                  ({`ALUOP_LEN{_alu_bgeu}} & `ALUOP_BGEU);
+ wire [`ALUOP_LEN-1:0] _alu_op;
+  assign _alu_op[`ALUOP_NONE] = 'b0;  // TODO 以后处理
+  assign _alu_op[`ALUOP_ADD] = _alu_add;
+  assign _alu_op[`ALUOP_SUB] = _alu_sub;
+  assign _alu_op[`ALUOP_XOR] = _alu_xor;
+  assign _alu_op[`ALUOP_OR] = _alu_or;
+  assign _alu_op[`ALUOP_AND] = _alu_and;
+  assign _alu_op[`ALUOP_SLL] = _alu_sll;
+  assign _alu_op[`ALUOP_SRL] = _alu_srl;
+  assign _alu_op[`ALUOP_SRA] = _alu_sra;
+  assign _alu_op[`ALUOP_SLT] = _alu_slt;
+  assign _alu_op[`ALUOP_SLTU] = _alu_sltu;
+  assign _alu_op[`ALUOP_BEQ] = _alu_beq;
+  assign _alu_op[`ALUOP_BNE] = _alu_bne;
+  assign _alu_op[`ALUOP_BLT] = _alu_blt;
+  assign _alu_op[`ALUOP_BGE] = _alu_bge;
+  assign _alu_op[`ALUOP_BLTU] = _alu_bltu;
+  assign _alu_op[`ALUOP_BGEU] = _alu_bgeu;
+  assign _alu_op[`ALUOP_MUL] = _alu_mul;
+  assign _alu_op[`ALUOP_MULH] = _alu_mulh;
+  assign _alu_op[`ALUOP_MULHSU] = _alu_mulhsu;
+  assign _alu_op[`ALUOP_MULHU] = _alu_mulhu;
+  assign _alu_op[`ALUOP_DIV] = _alu_div;
+  assign _alu_op[`ALUOP_DIVU] = _alu_divu;
+  assign _alu_op[`ALUOP_REM] = _alu_rem;
+  assign _alu_op[`ALUOP_REMU] = _alu_remu;
                                   
 
   assign alu_op_o = _alu_op;
 
   /* EXC_OP */
-  wire [`EXCOP_LEN-1:0] _exc_op = ({`EXCOP_LEN{_type_auipc}}&`EXCOP_AUIPC) |
-                                  ({`EXCOP_LEN{_type_lui}}&`EXCOP_LUI) |
-                                  ({`EXCOP_LEN{_type_jal}}&`EXCOP_JAL) |
-                                  ({`EXCOP_LEN{_type_jalr}}&`EXCOP_JALR) |
-                                  ({`EXCOP_LEN{_type_load}}&`EXCOP_LOAD) |
-                                  ({`EXCOP_LEN{_type_store}}&`EXCOP_STORE) |
-                                  ({`EXCOP_LEN{_type_branch}}&`EXCOP_BRANCH) |
-                                  ({`EXCOP_LEN{_type_Imm_add}}&`EXCOP_OPIMM) |
-                                  //({`EXCOP_LEN{_type_op_imm_32}}&`EXCOP_OPIMM32) |
-                                  ({`EXCOP_LEN{_type_Reg_add}}&`EXCOP_OPREG) |
-                                  //({`EXCOP_LEN{_type_op_32}}&`EXCOP_OP32) |
-                                  //({`EXCOP_LEN{_isNeed_csr}}&`EXCOP_CSR) |
-                                  ({`EXCOP_LEN{_inst_ebreak}}&`EXCOP_EBREAK) | //TODO:暂时对 ebreak 特殊处理
-  ({`EXCOP_LEN{_NONE_type}} & `EXCOP_NONE);
+
+ wire [`EXCOP_LEN-1:0] _exc_op;
+  assign _exc_op[`EXCOP_NONE] = 'b0;  // TODO 以后处理
+  assign _exc_op[`EXCOP_AUIPC] = _type_auipc;
+  assign _exc_op[`EXCOP_LUI] = _type_lui;
+  assign _exc_op[`EXCOP_JAL] = _type_jal;
+  assign _exc_op[`EXCOP_JALR] = _type_jalr;
+  assign _exc_op[`EXCOP_LOAD] = _type_load;
+  assign _exc_op[`EXCOP_STORE] = _type_store;
+  assign _exc_op[`EXCOP_BRANCH] = _type_branch;
+  assign _exc_op[`EXCOP_OPIMM] = _type_Imm_add;
+  assign _exc_op[`EXCOP_OP] = _type_Reg_add;
+  assign _exc_op[`EXCOP_CSR] = _isNeed_csr;
 
   assign exc_op_o = _exc_op;
 
@@ -351,7 +453,7 @@ wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
         _decode_trap_bus[i] = _inst_mret;
       end else if (i == `TRAP_EBREAK) begin
         _decode_trap_bus[i] = _inst_ebreak;
-      end else if (i == `TRAP_ECALL) begin
+      end else if (i == `TRAP_ECALL_M) begin
         _decode_trap_bus[i] = _inst_ecall;
       end else if (i == `TRAP_ILLEGAL_INST) begin
         _decode_trap_bus[i] = _Illegal_instruction;

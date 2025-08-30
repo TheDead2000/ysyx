@@ -177,6 +177,8 @@ if_id if2id(
 wire [    `REG_ADDRWIDTH-1:0 ] rs1_idx_id;
 wire [    `REG_ADDRWIDTH-1:0 ] rs2_idx_id;
 wire [    `REG_ADDRWIDTH-1:0 ] rd_idx_id;
+
+
 wire [             `INST_LEN-1:0]  rs1_data_id;
 wire [             `INST_LEN-1:0]  rs2_data_id;
 wire [          `IMM_LEN-1:0 ] imm_data_id;
@@ -188,6 +190,14 @@ wire [         `PCOP_LEN-1:0 ] pc_op_id;  // pc 操作码
 
 wire [             `INST_LEN-1:0]  inst_addr_id;
 wire [         `INST_LEN-1:0 ] inst_data_id;
+
+  /* CSR 译码结果：to id/ex*/
+  wire [`IMM_LEN-1:0] csr_imm_id;
+  wire csr_imm_valid_id;
+  wire [`CSR_REG_ADDRWIDTH-1:0] csr_idx_id;
+  wire [`XLEN_BUS] csr_readdata_id;
+  wire [`XLEN-1:0] csr_data_csr;
+   wire [`CSROP_LEN-1:0] csr_op_id;  // csr 操作码
 // 请求暂停流水线
 wire                           load_use_valid;
 /* TARP 总线 */
@@ -203,11 +213,22 @@ idu idu (
     /* from gpr regs */
     .rs1_data_i(rs1_data_gpr),
     .rs2_data_i(rs2_data_gpr),
+
+
+    /* from csr regs */
+    .csr_data_i(csr_data_csr),
+
+
     /* from id/ex stage */
     .id_ex_exc_op_i (exc_op_id_ex), // 上一条指令的类型，用于判断上一条指令是否是访存指令
     /* from exc bypass */
     .ex_rd_data_i(exc_alu_data_ex),
     .ex_rd_addr_i(rd_idx_ex),
+
+
+    .ex_csr_writeaddr_i(exc_csr_addr_ex),
+    .ex_csr_writedata_i(exc_csr_data_ex),
+
     /* from mem bypass */
     .mem_rd_data_i(mem_data_mem),
     .mem_rd_addr_i(rd_idx_mem),
@@ -218,14 +239,28 @@ idu idu (
     .rs1_data_o(rs1_data_id),
     .rs2_data_o(rs2_data_id),
     .imm_data_o(imm_data_id),
+
+
+    /* CSR 译码结果：to id/ex*/
+    .csr_imm_o(csr_imm_id),
+    .csr_imm_valid_o(csr_imm_valid_id),
+    .csr_idx_o(csr_idx_id),
+    .csr_readdata_o(csr_readdata_id),
+
+
     // alu 操作码
     .alu_op_o(alu_op_id),
+        // mem 操作码
     .mem_op_o(mem_op_id),
-    // mem 操作码
-    .exc_op_o(exc_op_id),
     // exc 操作码
-    .pc_op_o(pc_op_id),
+    .exc_op_o(exc_op_id),
     // pc 操作码
+    .pc_op_o(pc_op_id),
+
+
+    .csr_op_o(csr_op_id),
+
+
     .inst_addr_o(inst_addr_id),
     .inst_data_o(inst_data_id),
     // 请求暂停流水线 to ctrl
@@ -242,6 +277,13 @@ idu idu (
 wire [    `REG_ADDRWIDTH-1:0 ] rs1_idx_id_ex;
 wire [    `REG_ADDRWIDTH-1:0 ] rs2_idx_id_ex;
 wire [    `REG_ADDRWIDTH-1:0 ] rd_idx_id_ex;
+
+  wire [`IMM_LEN-1:0] csr_imm_id_ex;
+  wire csr_imm_valid_id_ex;
+  wire [`CSR_REG_ADDRWIDTH-1:0] csr_idx_id_ex;
+  wire [`XLEN_BUS] csr_readdata_id_ex;
+  wire [`CSROP_LEN-1:0] csr_op_id_ex;  // csr 操作码
+
 wire [             `INST_LEN-1:0]  rs1_data_id_ex;
 wire [             `INST_LEN-1:0]  rs2_data_id_ex;
 wire [          `IMM_LEN-1:0 ] imm_data_id_ex;
@@ -273,6 +315,14 @@ id_ex id2ex (
     .rs2_idx_id_ex_i      (rs2_idx_id),
     .rd_idx_id_ex_i       (rd_idx_id),
     .imm_data_id_ex_i     (imm_data_id),
+
+    .csr_imm_id_ex_i      (csr_imm_id),
+    .csr_imm_valid_id_ex_i(csr_imm_valid_id),
+    .csr_idx_id_ex_i      (csr_idx_id),
+    .csr_op_id_ex_i       (csr_op_id),
+    .csr_data_id_ex_i     (csr_readdata_id),
+
+
     .rs1_data_id_ex_i     (rs1_data_id),
     .rs2_data_id_ex_i     (rs2_data_id),
     .alu_op_id_ex_i       (alu_op_id),
@@ -298,6 +348,7 @@ id_ex id2ex (
     // exc 操作码
     .pc_op_id_ex_i        (pc_op_id),
     // pc 操作码
+
     /* TARP 总线 */
     .trap_bus_id_ex_i     (trap_bus_id),
     /* 输出 */
@@ -307,6 +358,13 @@ id_ex id2ex (
     .rs2_idx_id_ex_o      (rs2_idx_id_ex),
     .rd_idx_id_ex_o       (rd_idx_id_ex),
     .imm_data_id_ex_o     (imm_data_id_ex),
+
+    .csr_imm_id_ex_o      (csr_imm_id_ex),
+    .csr_imm_valid_id_ex_o(csr_imm_valid_id_ex),
+    .csr_idx_id_ex_o      (csr_idx_id_ex),
+    .csr_data_id_ex_o     (csr_readdata_id_ex),
+    .csr_op_id_ex_o       (csr_op_id_ex),
+
     .rs1_data_id_ex_o     (rs1_data_id_ex),
     .rs2_data_id_ex_o     (rs2_data_id_ex),
     .alu_op_id_ex_o       (alu_op_id_ex),
@@ -317,6 +375,7 @@ id_ex id2ex (
     // exc 操作码
     .pc_op_id_ex_o        (pc_op_id_ex),
     // pc 操作码
+
     /* TARP 总线 */
     .trap_bus_id_ex_o     (trap_bus_id_ex)
 );
@@ -346,7 +405,15 @@ wire                               redirect_pc_valid;
 wire exc_go_ready = (~flush_clint[`CTRLBUS_EX_MEM])
                   & (~stall_clint[`CTRLBUS_EX_MEM]);
 
+
+  wire [`XLEN_BUS] exc_csr_data_ex;
+  wire exc_csr_valid_ex;
+  wire [`CSR_REG_ADDRWIDTH-1:0] exc_csr_addr_ex;
+  wire alu_mul_div_valid;
+
 exu exu (
+    .clk(clk),
+    .rst(rst),
     /******************************* from id/ex *************************/
     // pc
     .inst_addr_i    (inst_addr_id_ex),
@@ -356,6 +423,18 @@ exu exu (
     .rs1_data_i     (rs1_data_id_ex),
     .rs2_data_i     (rs2_data_id_ex),
     .imm_data_i     (imm_data_id_ex),
+
+     // CSR 译码结果 
+      .csr_readaddr_i (csr_idx_id_ex),
+      .csr_data_i     (csr_readdata_id_ex),
+      .csr_imm_i      (csr_imm_id_ex),
+      .csr_imm_valid_i(csr_imm_valid_id_ex),
+      .csr_op_i       (csr_op_id_ex),
+
+      .exc_csr_data_o (exc_csr_data_ex),
+      .exc_csr_valid_o(exc_csr_valid_ex),
+      .exc_csr_addr_o (exc_csr_addr_ex),
+
     // 指令微码
     .alu_op_i       (alu_op_id_ex),
     // alu 操作码
@@ -381,6 +460,7 @@ exu exu (
     .exc_alu_data_o (exc_alu_data_ex),
 
     .bpu_taken_i    (bpu_pc_valid_id_ex),
+
     .exu_go_ready_i (exc_go_ready), // EXU ready signal
     /************************* to ifu **************************/
     .bpu_valid_o (bpu_valid),          // 分支结果有效
@@ -407,15 +487,10 @@ exu exu (
     // 请求暂停流水线
     .ram_stall_valid_mem_i(ram_stall_valid_mem),  // mem 阶段访存暂停
     .jump_hazard_valid_o(jump_hazard_valid),
-
+    .alu_mul_div_valid_o(alu_mul_div_valid),
     /* TARP 总线 */
     .trap_bus_o         (trap_bus_ex)
 );
-
-
-
-
-
 
 
   wire [             `INST_LEN-1:0]  pc_ex_mem;
@@ -430,8 +505,12 @@ exu exu (
   /* TARP 总线 */
   wire [             `TRAP_BUS]  trap_bus_ex_mem;
 
+  wire [`XLEN_BUS] csr_writedata_ex_mem;
+  wire csr_writevalid_ex_mem;
+  wire [`CSR_REG_ADDRWIDTH-1:0] csr_addr_ex_mem;
+
   ex_mem ex2mem(
- .clk                    (clk),
+      .clk                    (clk),
       .rst                    (rst),
       .flush_valid_i          (flush_clint[`CTRLBUS_EX_MEM]),
       .stall_valid_i          (stall_clint[`CTRLBUS_EX_MEM]),
@@ -444,6 +523,14 @@ exu exu (
       .alu_data_ex_mem_i      (exc_alu_data_ex),
       .pc_op_ex_mem_i         (pc_op_ex),
       .mem_op_ex_mem_i        (mem_op_ex),
+
+      .csr_writedata_ex_mem_i (exc_csr_data_ex),
+      .csr_writevalid_ex_mem_i(exc_csr_valid_ex),
+      .csr_addr_ex_mem_i      (exc_csr_addr_ex),
+      .csr_writedata_ex_mem_o (csr_writedata_ex_mem),
+      .csr_writevalid_ex_mem_o(csr_writevalid_ex_mem),
+      .csr_addr_ex_mem_o      (csr_addr_ex_mem),
+
       /* TARP 总线 */
       .trap_bus_ex_mem_i      (trap_bus_ex),
       .inst_addr_ex_mem_o     (pc_ex_mem),
@@ -482,6 +569,20 @@ exu exu (
   wire mem_data_ready;  // 读/写 数据是否准备好
   wire ram_stall_valid_mem;
 
+  /* clint 接口 */
+  wire [`XLEN_BUS] clint_addr;
+  wire clint_valid;
+  wire clint_write_valid;
+  wire [`XLEN_BUS] clint_wdata;
+  wire [`XLEN_BUS] clint_rdata;
+
+// CSR 读写接口线
+wire        csr_write_valid_mem;      // 来自MEM阶段的CSR写使能
+wire [11:0] csr_addr_mem;             // 来自MEM阶段的CSR地址
+wire [31:0] exc_csr_data_mem;         // 来自MEM阶段的CSR写数据
+wire [11:0] csr_idx_id;               // 来自ID阶段的CSR读地址
+wire [31:0] csr_data_csr;             // CSR读数据输出
+ wire exc_csr_valid_mem;
 
   memory lsu (
       .clk            (clk),
@@ -496,6 +597,22 @@ exu exu (
       .mem_op_i       (mem_op_ex_mem),
       // 访存操作码
       .exc_alu_data_i (alu_data_ex_mem),
+      //csr
+      .csr_addr_i(csr_addr_ex_mem),
+      .exc_csr_data_i(csr_writedata_ex_mem),
+      .exc_csr_valid_i(csr_writevalid_ex_mem),
+
+      .csr_addr_o(csr_addr_mem),  // csr 写回地址
+      .exc_csr_data_o(exc_csr_data_mem),  // csr 写回数据
+      .exc_csr_valid_o(exc_csr_valid_mem),  // 写回数据有效位
+
+     /* clint 接口 */
+      .clint_addr_o(clint_addr),
+      .clint_valid_o(clint_valid),
+      .clint_write_valid_o(clint_write_valid),
+      .clint_wdata_o(clint_wdata),
+      .clint_rdata_i(clint_rdata),
+
       // TARP 总线
       .trap_bus_i     (trap_bus_ex_mem),
 
@@ -576,6 +693,126 @@ exu exu (
     inst_commit(pc_mem, inst_data_mem, commit_valid);
   end
 
+ /* 输出至取指阶段 */
+  wire [`XLEN-1:0] clint_pc;
+  wire clint_pc_valid;
+  reg[5:0]  stall_clint;  // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
+  wire [5:0] flush_clint;
+
+// CLINT 到 CSR 的连接线
+wire        clint_csr_write_en;
+wire [11:0] clint_csr_write_addr;
+wire [31:0] clint_csr_write_data;
+
+// CSR 到 CLINT 的输出线
+wire [31:0] csr_mstatus;
+wire [31:0] csr_mtvec;
+wire [31:0] csr_mepc;
+wire [31:0] csr_mcause;
+wire [31:0] csr_mtval;
+wire [31:0] csr_mie;
+wire [31:0] csr_mip;
+wire [31:0] csr_medeleg;
+wire [31:0] csr_mideleg;
+wire [31:0] csr_stvec;
+wire [31:0] csr_sepc;
+wire [31:0] csr_scause;
+wire [31:0] csr_stval;
+wire [31:0] csr_sstatus;
+wire [31:0] csr_sie;
+wire [31:0] csr_sip;
+wire [31:0] csr_satp;
+wire [1:0]  csr_privilege;
+wire [1:0]  next_privilege;
+
+clint clint_u (
+    .clk(clk),
+    .rst(rst),
+    .pc_from_exe_i(pc_ex),
+    .pc_from_mem_i(pc_ex_mem),
+    .inst_data_i(inst_data_ex_mem),
+
+    .clint_addr_i(clint_addr),
+    .clint_valid_i(clint_valid),
+    .clint_write_valid_i(clint_write_valid),
+    .clint_wdata_i(clint_wdata),
+    .clint_rdata_o(clint_rdata),
+
+    .trap_bus_i(trap_bus_mem),
+
+    .ram_stall_valid_if_i(ram_stall_valid_if),
+    .ram_stall_valid_mem_i(ram_stall_valid_mem),
+    .load_use_valid_id_i(load_use_valid),
+    .jump_valid_ex_i(jump_hazard_valid),
+    .alu_mul_div_valid_ex_i(alu_mul_div_valid),
+
+    .csr_mstatus_i(csr_mstatus),
+    .csr_mtvec_i(csr_mtvec),
+    .csr_mepc_i(csr_mepc),
+    .csr_mcause_i(csr_mcause),
+    .csr_mtval_i(csr_mtval),
+    .csr_mie_i(csr_mie),
+    .csr_mip_i(csr_mip),
+    .csr_medeleg_i(csr_medeleg),
+    .csr_mideleg_i(csr_mideleg),
+    .csr_stvec_i(csr_stvec),
+    .csr_sepc_i(csr_sepc),
+    .csr_scause_i(csr_scause),
+    .csr_stval_i(csr_stval),
+    .csr_sstatus_i(csr_sstatus),
+    .csr_sie_i(csr_sie),
+    .csr_sip_i(csr_sip),
+    .csr_satp_i(csr_satp),
+    .csr_privilege_i(csr_privilege),
+    .csr_write_en_o(clint_csr_write_en),
+    .csr_write_addr_o(clint_csr_write_addr),
+    .csr_write_data_o(clint_csr_write_data),
+
+    .clint_pc_o(clint_pc),
+    .clint_pc_valid_o(clint_pc_valid),
+    // .clint_pc_plus4_valid_o(),
+
+    .stall_o(stall_clint),
+    .flush_o(flush_clint),
+    .privilege_o(next_privilege)
+);
+
+
+
+/*****************************csr******************************/
+
+CSRs rv32_csr_regfile(
+    .clk(clk),
+    .rst(rst),
+    .csr_write_wen(csr_write_valid_mem | clint_csr_write_en),
+    .csr_write_address(csr_write_valid_mem ? csr_addr_mem : clint_csr_write_addr),
+    .csr_write_data(csr_write_valid_mem ? exc_csr_data_mem : clint_csr_write_data),
+    .csr_read_address(csr_idx_id),
+    .csr_read_error(),
+    .csr_read_data(csr_data_csr),
+    .clint_csr_write_en(clint_csr_write_en),
+    .clint_csr_write_addr(clint_csr_write_addr),
+    .clint_csr_write_data(clint_csr_write_data),
+    .io_mstatus(csr_mstatus),
+    .io_mtvec(csr_mtvec),
+    .io_mepc(csr_mepc),
+    .io_mcause(csr_mcause),
+    .io_mtval(csr_mtval),
+    .io_mie(csr_mie),
+    .io_mip(csr_mip),
+    .io_medeleg(csr_medeleg),
+    .io_mideleg(csr_mideleg),
+    .io_stvec(csr_stvec),
+    .io_sepc(csr_sepc),
+    .io_scause(csr_scause),
+    .io_stval(csr_stval),
+    .io_sstatus(csr_sstatus),
+    .io_sie(csr_sie),
+    .io_sip(csr_sip),
+    .io_satp(csr_satp),
+    .io_privilege(csr_privilege)
+);
+
 
 
 
@@ -599,29 +836,7 @@ exu exu (
   );
 
 
-  /* 输出至取指阶段 */
-  wire [`XLEN-1:0] clint_pc;
-  wire clint_pc_valid;
-  reg[5:0]  stall_clint;  // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
-  wire [5:0] flush_clint;
-  clint clint_u (
-      // input wire clk,
-      .rst(rst),
-      .pc_i(pc_ex_mem),
-      .inst_data_i(inst_data_ex_mem),
-      .trap_bus_i(trap_bus_mem),
-      .load_use_valid_id_i(load_use_valid),
-      .jump_valid_ex_i(jump_hazard_valid),
-      .clint_pc_o(clint_pc),
-      .clint_pc_valid_o(clint_pc_valid),
-
-
-      .stall_o(stall_clint),
-      .flush_o(flush_clint),
-      .ram_stall_valid_if_i(ram_stall_valid_if),
-      .ram_stall_valid_mem_i(ram_stall_valid_mem)
-
-  );
+ 
 
 /********************************cache*************************************/
 
@@ -635,7 +850,7 @@ exu exu (
   
 
 
-  ysyx_041514_icache_top u_icache_top (
+  icache_top u_icache_top (
       .clk(clk),
       .rst(rst),
       /* cpu<-->cache 端口 */
@@ -700,7 +915,7 @@ exu exu (
   wire [7:0] ram_wlen_dcache;
 
 
-  ysyx_041514_dcache_top u_dcache_top (
+  dcache_top u_dcache_top (
       .clk(clk),
       .rst(rst),
       /* cpu<-->cache 端口 */
@@ -988,7 +1203,7 @@ exu exu (
   wire [127:0] io_sram7_wdata;
   wire [127:0] io_sram7_rdata;
 
-  ysyx_041514_sram sram (
+  sram sram (
       .clk           (clk),
       .io_sram0_addr (io_sram0_addr),
       .io_sram0_cen  (io_sram0_cen),

@@ -10,7 +10,7 @@
 // 3. cache 块个数: 128个 (128 * 64Byte==8192Byte)
 // 6. 组号: 7bit（2^7==128）
 // 6. tag: 32-6-7 == 19 bit 
-module ysyx_041514_icache_top (
+module icache_top (
     input clk,
     input rst,
     /* cpu<-->cache 端口 */
@@ -57,7 +57,7 @@ module ysyx_041514_icache_top (
     input  [                    127:0] io_sram7_rdata
 );
 
-`ifndef ysyx_041514_YSYX_SOC
+`ifndef YSYX_SOC
   import "DPI-C" function void icache_hit_count(
     input int last_pc,
     input int now_pc
@@ -107,7 +107,7 @@ module ysyx_041514_icache_top (
   wire [3:0] burst_count_plus1 = burst_count + 1;
 
 
-  ysyx_041514_uncache_check u_ysyx_041514_uncache_check (
+  uncache_check u_uncache_check (
       .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
       .uncache_valid_o(uncache)
   );
@@ -158,7 +158,7 @@ module ysyx_041514_icache_top (
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
             _ram_rlen_icache_o <= 8'd15;    // 突发16次 
             burst_count <= 0;  // 清空计数器
-`ifndef ysyx_041514_YSYX_SOC 
+`ifndef YSYX_SOC 
             icache_unhit_count();
 `endif
           end else if (~icache_hit && uncache) begin
@@ -169,7 +169,7 @@ module ysyx_041514_icache_top (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
-`ifndef ysyx_041514_YSYX_SOC 
+`ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
           end
@@ -201,7 +201,7 @@ module ysyx_041514_icache_top (
     end
   end
 
-  ysyx_041514_icache_tag u_icache_tag (
+  icache_tag u_icache_tag (
       .clk           (clk),
       .rst           (rst),
       .icache_tag_i  (line_tag_reg),            // tag
@@ -224,7 +224,7 @@ wire [127:0] icache_wdate =
     (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
                                   {ram_rdata_icache_i[31:0], 96'b0};
   wire [`XLEN-1:0] icache_rdata;
-  ysyx_041514_icache_data u_icache_data (
+  icache_data u_icache_data (
 
       .icache_index_i     (cache_line_idx),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
       .icache_blk_addr_i(blk_addr_reg),  // icache_blk_addr_i 使用寄存器中的数据

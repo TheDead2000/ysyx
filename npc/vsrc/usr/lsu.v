@@ -13,6 +13,22 @@ module memory (
     // input  [      `IMM_LEN-1:0] imm_data_i,
     input  [        `MEMOP_LEN-1:0] mem_op_i,         // 访存操作码
     input  [             `INST_LEN-1:0] exc_alu_data_i,
+
+    input [`CSR_REG_ADDRWIDTH-1:0] csr_addr_i,
+    input [`XLEN_BUS] exc_csr_data_i,
+    input exc_csr_valid_i,
+    output [`CSR_REG_ADDRWIDTH-1:0] csr_addr_o,
+    output [`XLEN_BUS] exc_csr_data_o,
+    output exc_csr_valid_o,
+
+    /* clint 接口 */
+    output [`XLEN_BUS] clint_addr_o,
+    output clint_valid_o,
+    output clint_write_valid_o,
+    output [`XLEN_BUS] clint_wdata_o,
+    input [`XLEN_BUS] clint_rdata_i,
+
+
     // TARP 总线
     input  [             `TRAP_BUS] trap_bus_i,
     /* to mem/wb */
@@ -37,9 +53,20 @@ module memory (
 
 );
 
+  wire [`XLEN_BUS]  clint_addr;
+  wire                              clint_valid;
+  wire                              clint_write_valid;
+  wire [    `XLEN_BUS]  clint_wdata;
+  wire [    `XLEN_BUS]  clint_rdata;
+  wire [    `XLEN_BUS]  mem_rdata;
+
   assign inst_addr_o = inst_addr_i;
   assign inst_data_o = inst_data_i;
   assign rd_idx_o = rd_idx_i;
+  assign csr_addr_o = csr_addr_i;
+  assign exc_csr_data_o = exc_csr_data_i;
+  assign exc_csr_valid_o = exc_csr_valid_i;
+
 
   wire _memop_none = (mem_op_i == `MEMOP_NONE);
   wire _memop_lb = (mem_op_i == `MEMOP_LB);
@@ -66,11 +93,12 @@ module memory (
   // assign load_valid_o = _load_valid;
 
   /* 从内存中读取的数据 */
-  wire [`XLEN-1:0]  mem_rdata;
+
+  wire [`XLEN_BUS] rdata_switch = (clint_valid) ? clint_rdata : mem_rdata;
   wire [`XLEN-1:0] mem_rdata_ext;
   lsu_ext lsu_ext_load (
       /* from ex/mem */
-      .ext_data_i (mem_rdata),
+      .ext_data_i (rdata_switch),
       .ls_signed_i(ls_signed),
       // signed:1,unsigned:0
       .ls_size_i  (ls_size),
@@ -79,6 +107,8 @@ module memory (
   );
 
   wire [`INST_LEN-1:0] _mem_write;
+
+
 
   lsu_ext lsu_ext_store (
       /* from ex/mem */
@@ -111,6 +141,24 @@ module memory (
   wire [`INST_LEN-1:0] _addr = (_memop_none) ? `PC_RESET_ADDR : exc_alu_data_i;
   wire [`INST_LEN-1:0] _raddr = _addr;
   wire [`INST_LEN-1:0] _waddr = _addr;
+
+
+  /***************************** clint 接口 ************************************************/
+assign clint_addr = _addr[31:0];
+assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
+                    (_addr[31:0] == `MTIME_ADDR_HIGH)  |
+                    (_addr[31:0] == `MTIMECMP_ADDR_LOW)  |
+                    (_addr[31:0] == `MTIMECMP_ADDR_HIGH);
+
+
+  assign clint_write_valid = _isstore;
+  assign clint_wdata = _mem_write;
+  assign clint_rdata = clint_rdata_i;
+
+  assign clint_addr_o = clint_addr;
+  assign clint_valid_o = clint_valid;
+  assign clint_write_valid_o = clint_write_valid;
+  assign clint_wdata_o = clint_wdata;
 
 
 

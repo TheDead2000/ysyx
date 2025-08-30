@@ -1,7 +1,7 @@
 `include "sysconfig.v"
 
 
-module ysyx_041514_dcache_data #(
+module dcache_data #(
     IDX_LEN = 7,  // 组号 长度
     BLK_LEN = 6   // 块内地址 长度
     // TAG_NUM = 64  // tag 个数

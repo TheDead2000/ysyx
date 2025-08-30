@@ -11,7 +11,7 @@
 // 6. 组号: 6bit（2^6==64）
 // 6. tag: 32-6-6 == 20 bit 
 
-module ysyx_041514_dcache_top (
+module dcache_top (
     input clk,
     input rst,
 
@@ -72,7 +72,7 @@ module ysyx_041514_dcache_top (
 );
   // 寄存器已复位
 
-`ifndef ysyx_041514_YSYX_SOC
+`ifndef YSYX_SOC
   import "DPI-C" function void dcache_hit_count();
   import "DPI-C" function void dcache_unhit_count();
 `endif
@@ -80,7 +80,7 @@ module ysyx_041514_dcache_top (
 
   // uncache 检查
   wire uncache;
-  ysyx_041514_uncache_check u_ysyx_041514_uncache_check1 (
+  uncache_check u_uncache_check1 (
       .addr_check_i   (mem_addr_i),
       .uncache_valid_o(uncache)
   );
@@ -198,7 +198,7 @@ module ysyx_041514_dcache_top (
               dcache_hit, mem_write_valid_i
             })
               2'b11: begin : write_hit  // TODO : 只写入 cache ，不写入内存
-`ifndef ysyx_041514_YSYX_SOC
+`ifndef YSYX_SOC
                 dcache_hit_count();
 `endif
                 dcache_state <= CACHE_IDLE;
@@ -213,14 +213,14 @@ module ysyx_041514_dcache_top (
                dcache_wmask_writehit <= {96'b0, wmask_bit} << (mem_addr_i[3:2] * 32);
               end
               2'b10: begin : read_hit
-`ifndef ysyx_041514_YSYX_SOC
+`ifndef YSYX_SOC
                 dcache_hit_count();
 `endif
                 dcache_data_ready <= 1;
                 dcache_state <= CACHE_IDLE;
               end
               2'b00, 2'b01: begin : miss_allocate  // miss 时 分配 cache，需要考虑脏位
-`ifndef ysyx_041514_YSYX_SOC
+`ifndef YSYX_SOC
                 dcache_unhit_count();
 `endif
                 if (dirty_bit_read) begin  // 需要写回
@@ -422,7 +422,7 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
 
   wire [`XLEN-1:0] dcache_rdata;
   
-  ysyx_041514_dcache_tag u_dcache_tag (
+  dcache_tag u_dcache_tag (
       .clk              (clk),
       .rst              (rst),
       .dcache_tag_i     (dcache_tag_write),  // tag
@@ -435,7 +435,7 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
       .dcache_hit_o     (dcache_hit)
   );
 
-  ysyx_041514_dcache_data u_dcache_data (
+  dcache_data u_dcache_data (
       // .clk                     (clk),
       // .rst                     (rst),
       .dcache_index_i          (dcache_index),
