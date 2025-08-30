@@ -106,7 +106,7 @@
 `define EXCOP_BRANCH 'd7
 `define EXCOP_OPIMM 'd8
 `define EXCOP_OPIMM32 'd9
-`define EXCOP_OP 'd10
+`define EXCOP_OPREG 'd10
 `define EXCOP_OP32 'd11
 `define EXCOP_CSR 'd12
 

@@ -412,19 +412,19 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
   assign alu_op_o = _alu_op;
 
   /* EXC_OP */
-
- wire [`EXCOP_LEN-1:0] _exc_op;
-  assign _exc_op[`EXCOP_NONE] = 'b0;  // TODO 以后处理
-  assign _exc_op[`EXCOP_AUIPC] = _type_auipc;
-  assign _exc_op[`EXCOP_LUI] = _type_lui;
-  assign _exc_op[`EXCOP_JAL] = _type_jal;
-  assign _exc_op[`EXCOP_JALR] = _type_jalr;
-  assign _exc_op[`EXCOP_LOAD] = _type_load;
-  assign _exc_op[`EXCOP_STORE] = _type_store;
-  assign _exc_op[`EXCOP_BRANCH] = _type_branch;
-  assign _exc_op[`EXCOP_OPIMM] = _type_Imm_add;
-  assign _exc_op[`EXCOP_OP] = _type_Reg_add;
-  assign _exc_op[`EXCOP_CSR] = _isNeed_csr;
+  wire [`EXCOP_LEN-1:0] _exc_op = ({`EXCOP_LEN{_type_auipc}}&`EXCOP_AUIPC) |
+                                  ({`EXCOP_LEN{_type_lui}}&`EXCOP_LUI) |
+                                  ({`EXCOP_LEN{_type_jal}}&`EXCOP_JAL) |
+                                  ({`EXCOP_LEN{_type_jalr}}&`EXCOP_JALR) |
+                                  ({`EXCOP_LEN{_type_load}}&`EXCOP_LOAD) |
+                                  ({`EXCOP_LEN{_type_store}}&`EXCOP_STORE) |
+                                  ({`EXCOP_LEN{_type_branch}}&`EXCOP_BRANCH) |
+                                  ({`EXCOP_LEN{_type_Imm_add}}&`EXCOP_OPIMM) |
+                                  //({`EXCOP_LEN{_type_op_imm_32}}&`EXCOP_OPIMM32) |
+                                  ({`EXCOP_LEN{_type_Reg_add}}&`EXCOP_OPREG) |
+                                  //({`EXCOP_LEN{_type_op_32}}&`EXCOP_OP32) |
+                                  ({`EXCOP_LEN{_isNeed_csr}}&`EXCOP_CSR) |
+                                  ({`EXCOP_LEN{_NONE_type}} & `EXCOP_NONE);
 
   assign exc_op_o = _exc_op;
 

@@ -9876,10 +9876,10 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                      | (IData)(vlSelf->top__DOT__u_icache_top__DOT__uncache_data_ready))))));
     bufp->fullBit(oldp+48,(vlSelf->top__DOT__id2ex__DOT___bpu_which_pdt_id_ex_q));
     bufp->fullSData(oldp+49,(vlSelf->top__DOT__id2ex__DOT___bpu_history_id_ex_q),16);
-    bufp->fullCData(oldp+50,(((8U & (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
-                               ? 1U : ((0x10U & (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
-                                        ? 2U : ((0x80U 
-                                                 & (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
+    bufp->fullCData(oldp+50,(((3U == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
+                               ? 1U : ((4U == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
+                                        ? 2U : ((7U 
+                                                 == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q))
                                                  ? 3U
                                                  : 0U)))),2);
     bufp->fullCData(oldp+51,(vlSelf->top__DOT__id2ex__DOT___rd_idx_id_ex_q),5);
@@ -9972,7 +9972,21 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                                  & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_sh)))) 
                                                 | (8U 
                                                    & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_sw)))))))))))),4);
-    bufp->fullSData(oldp+68,(vlSelf->top__DOT__idu__DOT___exc_op),13);
+    bufp->fullSData(oldp+68,(((1U & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_auipc)))) 
+                              | ((2U & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_lui)))) 
+                                 | ((3U & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_jal)))) 
+                                    | ((4U & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr)))) 
+                                       | ((5U & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_load)))) 
+                                          | ((6U & 
+                                              (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_store)))) 
+                                             | ((7U 
+                                                 & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_branch)))) 
+                                                | ((8U 
+                                                    & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Imm_add)))) 
+                                                   | ((0xaU 
+                                                       & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Reg_add)))) 
+                                                      | (0xcU 
+                                                         & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___isNeed_csr)))))))))))))),13);
     bufp->fullIData(oldp+69,((0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                                        >> 0xfU))),32);
     bufp->fullBit(oldp+70,(vlSelf->top__DOT__id2ex__DOT___csr_imm_valid_id_ex_d));
@@ -17789,26 +17803,4 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                             >> 0x3aU)))));
     bufp->fullBit(oldp+2162,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout 
                                             >> 0x3aU)))));
-    bufp->fullBit(oldp+2163,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__11__KET____DOT__u_regTemplate__dout 
-                                            >> 0x3aU)))));
-    bufp->fullBit(oldp+2164,((1U & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__9__KET____DOT__u_regTemplate__dout 
-                                             >> 0x3aU)) 
-                                    ^ ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout 
-                                                >> 0x3aU)) 
-                                       ^ (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__11__KET____DOT__u_regTemplate__dout 
-                                                  >> 0x3aU)))))));
-    bufp->fullBit(oldp+2165,((1U & (((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__9__KET____DOT__u_regTemplate__dout 
-                                              >> 0x3aU)) 
-                                     & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout 
-                                                 >> 0x3aU)) 
-                                        | (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__11__KET____DOT__u_regTemplate__dout 
-                                                   >> 0x3aU)))) 
-                                    | ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout 
-                                                >> 0x3aU)) 
-                                       & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__11__KET____DOT__u_regTemplate__dout 
-                                                  >> 0x3aU)))))));
-    bufp->fullBit(oldp+2166,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__9__KET____DOT__u_regTemplate__dout 
-                                            >> 0x3bU)))));
-    bufp->fullBit(oldp+2167,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout 
-                                            >> 0x3bU)))));
 }

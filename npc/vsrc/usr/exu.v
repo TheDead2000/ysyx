@@ -97,17 +97,17 @@ module exu (
   assign which_pdt_o = which_pdt_i;
   assign history_o = history_i;
   
-  wire _excop_none = exc_op_i[`EXCOP_NONE];
-  wire _excop_auipc = exc_op_i[`EXCOP_AUIPC];
-  wire _excop_lui = exc_op_i[`EXCOP_LUI];
-  wire _excop_jal = exc_op_i[`EXCOP_JAL];
-  wire _excop_jalr = exc_op_i[`EXCOP_JALR];
-  wire _excop_load = exc_op_i[`EXCOP_LOAD];
-  wire _excop_store = exc_op_i[`EXCOP_STORE];
-  wire _excop_branch = exc_op_i[`EXCOP_BRANCH];
-  wire _excop_opimm = exc_op_i[`EXCOP_OPIMM];
-  wire _excop_op = exc_op_i[`EXCOP_OP];
-  wire _excop_csr = exc_op_i[`EXCOP_CSR];
+  wire _excop_auipc = (exc_op_i == `EXCOP_AUIPC);
+  wire _excop_lui = (exc_op_i == `EXCOP_LUI);
+  wire _excop_jal = (exc_op_i == `EXCOP_JAL);
+  wire _excop_jalr = (exc_op_i == `EXCOP_JALR);
+  wire _excop_load = (exc_op_i == `EXCOP_LOAD);
+  wire _excop_store = (exc_op_i == `EXCOP_STORE);
+  wire _excop_branch = (exc_op_i == `EXCOP_BRANCH);
+  wire _excop_imm = (exc_op_i == `EXCOP_OPIMM);
+  wire _excop_reg = (exc_op_i == `EXCOP_OPREG);
+  wire _excop_csr = (exc_op_i == `EXCOP_CSR);
+  wire _excop_none = (exc_op_i == `EXCOP_NONE);
 
   /*****************************branch 操作********************************/
   wire is_branch_inst = _excop_branch | _excop_jal | _excop_jalr;
@@ -156,8 +156,8 @@ module exu (
   // 跳转冒险信号（通知流水线刷新）
   assign jump_hazard_valid_o = bpu_pc_wrong;
 
-  wire _rs1_rs2 = _excop_op | _excop_branch;
-  wire _rs1_imm = _excop_opimm | _excop_load | _excop_store;
+  wire _rs1_rs2 = _excop_reg | _excop_branch;
+  wire _rs1_imm = _excop_imm | _excop_load | _excop_store;
   wire _pc_4 = _excop_jal | _excop_jalr;
   wire _pc_imm12 = _excop_auipc;
   wire _none_imm12 = _excop_lui;
