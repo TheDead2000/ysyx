@@ -57,7 +57,7 @@ extern "C" void set_nextpc(int nextpc) {
      *
      */
 #ifdef MTRACH
-    printf("set_nextpc:%d\n", (void*)nextpc);
+    printf("set_nextpc:%x\n", (void*)nextpc);
 #endif
     if (isfirst_inst) {
         printf("isfirst_inst\n");
