@@ -224,11 +224,11 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
 
 
   /************************××××××向仿真环境传递 PC *****************************/
-  // import "DPI-C" function void set_nextpc(input int nextpc);
+  import "DPI-C" function void set_nextpc(input int nextpc);
 
-  // always @(posedge clk) begin
-  //   set_nextpc(inst_addr_i);
-  // end
+  always @(posedge clk) begin
+    set_nextpc(inst_addr_i);
+  end
   import "DPI-C" function void set_mem_pc(input int mem_pc);
   always @(*) begin
     if (ls_valid) begin
