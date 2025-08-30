@@ -1721,6 +1721,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q 
             = vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q;
     }
+    if (VL_UNLIKELY((0x40000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus))) {
+        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 391, "");
+    }
     vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt 
         = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
            & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 

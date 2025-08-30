@@ -10893,6 +10893,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                                    | ((IData)(vlSelf->top__DOT__idu__DOT___inst_sra) 
                                                                       | ((IData)(vlSelf->top__DOT__idu__DOT___inst_and) 
                                                                          | (IData)(vlSelf->top__DOT__idu__DOT___inst_or))))))))));
+    if (VL_UNLIKELY((0x40000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus))) {
+        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 391, "");
+    }
     vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt 
         = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
            & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
@@ -11256,12 +11259,4 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
         = ((0xfffffffffffffffeULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
             [1U]) | (IData)((IData)((1U & (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
                                                   [2U])))));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum[2U] 
-        = ((0xfffffffffffffffeULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-            [2U]) | (IData)((IData)((1U & ((IData)(
-                                                   vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
-                                                   [3U]) 
-                                           ^ (IData)(
-                                                     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
-                                                     [4U]))))));
 }

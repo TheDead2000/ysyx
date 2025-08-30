@@ -385,4 +385,10 @@ end
   
   assign clint_rdata_o = mtime_rdata;
 
+  wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
+  always @(*) begin
+    if (_trap_ebreak) begin
+      $finish;
+    end
+  end
 endmodule
