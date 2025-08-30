@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
   mysim_p->excute(1);
   bool hitgood = mysim_p->npcHitGood();
   delete mysim_p;
+  c.executeCommand("exit");
   return hitgood;
 }
 
