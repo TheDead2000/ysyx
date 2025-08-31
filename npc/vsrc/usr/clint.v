@@ -101,7 +101,7 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  assign trap_valid = (|trap_bus_i[15:0]) || machine_timer_interrupt || supervisor_timer_interrupt ||
+  assign trap_valid = trap_mret || trap_sret || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
   

@@ -214,12 +214,14 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 1U;
         vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 1U;
     }
-    vlSelf->top__DOT__clint_u__DOT__trap_valid = ((0U 
-                                                   != 
-                                                   (0xffffU 
-                                                    & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) 
-                                                  | ((IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) 
-                                                     | (IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt)));
+    vlSelf->top__DOT__clint_u__DOT__trap_valid = (1U 
+                                                  & (IData)(
+                                                            (((0U 
+                                                               != 
+                                                               (0xb0000U 
+                                                                & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) 
+                                                              | (IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt)) 
+                                                             | (IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt))));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg_next32[0U] 
         = (IData)((((QData)((IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg[0U])) 
                     << 1U) | (QData)((IData)((1U & 
