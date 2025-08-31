@@ -116,7 +116,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgSData(oldp+46,(vlSelf->top__DOT__if2id__DOT___bpu_history_if_id_q),16);
         bufp->chgCData(oldp+47,(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d),5);
         bufp->chgCData(oldp+48,(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d),5);
-        bufp->chgCData(oldp+49,((((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h21bd8601__0) 
+        bufp->chgCData(oldp+49,((((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h53d079cf__0) 
                                   | ((IData)(vlSelf->top__DOT__idu__DOT___U_type) 
                                      | (IData)(vlSelf->top__DOT__idu__DOT___inst_jal)))
                                   ? (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
@@ -275,7 +275,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                                    | ((8U 
                                                        & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Imm_add)))) 
                                                       | ((0xaU 
-                                                          & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Reg_add)))) 
+                                                          & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Reg)))) 
                                                          | (0xcU 
                                                             & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___isNeed_csr)))))))))))))),13);
         bufp->chgIData(oldp+56,((0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 

@@ -234,12 +234,16 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
    wire _type_store = _inst_sb | _inst_sh | _inst_sw;
    wire _type_Imm_add = _inst_addi | _inst_slti | _inst_sltiu | _inst_xori | 
                         _inst_ori | _inst_andi | _inst_slli | _inst_srli | _inst_srai;
-   wire _type_Reg_add = _inst_add | _inst_sub | _inst_sll | _inst_slt | _inst_sltu |
-                        _inst_xor | _inst_srl | _inst_sra | _inst_or | _inst_and;
+   
+   wire _type_Reg = _inst_add | _inst_sub | _inst_sll | _inst_slt | _inst_sltu |
+                        _inst_xor | _inst_srl | _inst_sra | _inst_or | _inst_and
+                        | _inst_mul | _inst_mulh | _inst_mulhsu | _inst_mulhu
+                        | _inst_div | _inst_divu | _inst_rem | _inst_remu;
+                        
   wire _type_system = _inst_ecall | _inst_ebreak | _inst_mret;
   
 
-  wire _R_type = _type_Reg_add;
+  wire _R_type = _type_Reg;
   wire _I_type = _type_load | _type_Imm_add | _type_jalr | _type_system;
   wire _S_type = _type_store;
   wire _B_type = _type_branch;
@@ -421,7 +425,7 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
                                   ({`EXCOP_LEN{_type_branch}}&`EXCOP_BRANCH) |
                                   ({`EXCOP_LEN{_type_Imm_add}}&`EXCOP_OPIMM) |
                                   //({`EXCOP_LEN{_type_op_imm_32}}&`EXCOP_OPIMM32) |
-                                  ({`EXCOP_LEN{_type_Reg_add}}&`EXCOP_OPREG) |
+                                  ({`EXCOP_LEN{_type_Reg}}&`EXCOP_OPREG) |
                                   //({`EXCOP_LEN{_type_op_32}}&`EXCOP_OP32) |
                                   ({`EXCOP_LEN{_isNeed_csr}}&`EXCOP_CSR) |
                                   ({`EXCOP_LEN{_NONE_type}} & `EXCOP_NONE);

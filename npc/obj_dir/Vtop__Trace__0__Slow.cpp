@@ -9867,7 +9867,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullSData(oldp+47,(vlSelf->top__DOT__if2id__DOT___bpu_history_if_id_q),16);
     bufp->fullCData(oldp+48,(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d),5);
     bufp->fullCData(oldp+49,(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d),5);
-    bufp->fullCData(oldp+50,((((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h21bd8601__0) 
+    bufp->fullCData(oldp+50,((((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h53d079cf__0) 
                                | ((IData)(vlSelf->top__DOT__idu__DOT___U_type) 
                                   | (IData)(vlSelf->top__DOT__idu__DOT___inst_jal)))
                                ? (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
@@ -10021,7 +10021,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                                 | ((8U 
                                                     & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Imm_add)))) 
                                                    | ((0xaU 
-                                                       & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Reg_add)))) 
+                                                       & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___type_Reg)))) 
                                                       | (0xcU 
                                                          & (- (IData)((IData)(vlSelf->top__DOT__idu__DOT___isNeed_csr)))))))))))))),13);
     bufp->fullIData(oldp+57,((0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 

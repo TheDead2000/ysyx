@@ -29,7 +29,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__3(Vtop___024root* vlSelf) {
          | ((IData)(vlSelf->top__DOT__idu__DOT____Vlvbound_heef95465__4) 
             << 1U));
     vlSelf->top__DOT__idu__DOT____Vlvbound_heef95465__3 
-        = (1U & (~ ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h988c60f7__0) 
+        = (1U & (~ ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h3feb1649__0) 
                     | ((IData)(vlSelf->top__DOT__idu__DOT___U_type) 
                        | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jal) 
                           | (IData)(vlSelf->top__DOT__idu__DOT___type_branch))))));
@@ -155,7 +155,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__3(Vtop___024root* vlSelf) {
             << 0x13U));
     vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d 
         = (((~ (IData)(vlSelf->top__DOT__id2ex__DOT___csr_imm_valid_id_ex_d)) 
-            & ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h988c60f7__0) 
+            & ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h3feb1649__0) 
                | (IData)(vlSelf->top__DOT__idu__DOT___type_branch)))
             ? (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                         >> 0xfU)) : 0U);
@@ -767,7 +767,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__idu__DOT___type_load = 0;
     vlSelf->top__DOT__idu__DOT___type_store = 0;
     vlSelf->top__DOT__idu__DOT___type_Imm_add = 0;
-    vlSelf->top__DOT__idu__DOT___type_Reg_add = 0;
+    vlSelf->top__DOT__idu__DOT___type_Reg = 0;
     vlSelf->top__DOT__idu__DOT___I_type = 0;
     vlSelf->top__DOT__idu__DOT___U_type = 0;
     vlSelf->top__DOT__idu__DOT___isNeed_csr = 0;
@@ -783,8 +783,8 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__idu__DOT____Vlvbound_heef95465__2 = 0;
     vlSelf->top__DOT__idu__DOT____Vlvbound_heef95465__3 = 0;
     vlSelf->top__DOT__idu__DOT____Vlvbound_heef95465__4 = 0;
-    vlSelf->top__DOT__idu__DOT____VdfgTmp_h988c60f7__0 = 0;
-    vlSelf->top__DOT__idu__DOT____VdfgTmp_h21bd8601__0 = 0;
+    vlSelf->top__DOT__idu__DOT____VdfgTmp_h3feb1649__0 = 0;
+    vlSelf->top__DOT__idu__DOT____VdfgTmp_h53d079cf__0 = 0;
     vlSelf->top__DOT__idu__DOT____VdfgTmp_hc23742a8__0 = 0;
     vlSelf->top__DOT__id2ex__DOT__reg_rst = 0;
     vlSelf->top__DOT__id2ex__DOT___bpu_pdt_tag_id_ex_q = 0;

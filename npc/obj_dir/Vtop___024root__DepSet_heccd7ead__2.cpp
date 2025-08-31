@@ -242,7 +242,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__2(Vtop___024root* vlSelf) 
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                          >> 2U)))) {
         vlSelf->top__DOT__id2ex__DOT___rd_idx_id_ex_q 
-            = (((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h21bd8601__0) 
+            = (((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h53d079cf__0) 
                 | ((IData)(vlSelf->top__DOT__idu__DOT___U_type) 
                    | (IData)(vlSelf->top__DOT__idu__DOT___inst_jal)))
                 ? (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 

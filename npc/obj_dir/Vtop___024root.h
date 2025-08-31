@@ -141,7 +141,7 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT___type_load;
         CData/*0:0*/ top__DOT__idu__DOT___type_store;
         CData/*0:0*/ top__DOT__idu__DOT___type_Imm_add;
-        CData/*0:0*/ top__DOT__idu__DOT___type_Reg_add;
+        CData/*0:0*/ top__DOT__idu__DOT___type_Reg;
         CData/*0:0*/ top__DOT__idu__DOT___I_type;
         CData/*0:0*/ top__DOT__idu__DOT___U_type;
         CData/*0:0*/ top__DOT__idu__DOT___isNeed_csr;
@@ -158,8 +158,8 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__2;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__3;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__4;
-        CData/*0:0*/ top__DOT__idu__DOT____VdfgTmp_h988c60f7__0;
-        CData/*0:0*/ top__DOT__idu__DOT____VdfgTmp_h21bd8601__0;
+        CData/*0:0*/ top__DOT__idu__DOT____VdfgTmp_h3feb1649__0;
+        CData/*0:0*/ top__DOT__idu__DOT____VdfgTmp_h53d079cf__0;
         CData/*0:0*/ top__DOT__idu__DOT____VdfgTmp_hc23742a8__0;
         CData/*0:0*/ top__DOT__id2ex__DOT__reg_rst;
         CData/*0:0*/ top__DOT__id2ex__DOT___bpu_taken_id_ex_q;
