@@ -129,14 +129,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT___inst_csrrwi;
         CData/*0:0*/ top__DOT__idu__DOT___inst_csrrsi;
         CData/*0:0*/ top__DOT__idu__DOT___inst_csrrci;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_mul;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_mulh;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_mulhsu;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_mulhu;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_div;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_divu;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_rem;
-        CData/*0:0*/ top__DOT__idu__DOT___inst_remu;
         CData/*0:0*/ top__DOT__idu__DOT___type_branch;
         CData/*0:0*/ top__DOT__idu__DOT___type_load;
         CData/*0:0*/ top__DOT__idu__DOT___type_store;
@@ -145,14 +137,22 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__idu__DOT___I_type;
         CData/*0:0*/ top__DOT__idu__DOT___U_type;
         CData/*0:0*/ top__DOT__idu__DOT___isNeed_csr;
-    };
-    struct {
         CData/*0:0*/ top__DOT__idu__DOT___rs1_exc_bypass_valid;
         CData/*0:0*/ top__DOT__idu__DOT___rs2_exc_bypass_valid;
         CData/*0:0*/ top__DOT__idu__DOT___csr_write;
         CData/*0:0*/ top__DOT__idu__DOT___csr_set;
         CData/*0:0*/ top__DOT__idu__DOT___csr_clear;
         CData/*0:0*/ top__DOT__idu__DOT___csr_read;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_mul;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_mulh;
+    };
+    struct {
+        CData/*0:0*/ top__DOT__idu__DOT___inst_mulhsu;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_mulhu;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_div;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_divu;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_rem;
+        CData/*0:0*/ top__DOT__idu__DOT___inst_remu;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__0;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__1;
         CData/*0:0*/ top__DOT__idu__DOT____Vlvbound_heef95465__2;
