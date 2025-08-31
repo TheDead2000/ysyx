@@ -236,10 +236,10 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
                         _inst_ori | _inst_andi | _inst_slli | _inst_srli | _inst_srai;
    
    wire _type_Reg = _inst_add | _inst_sub | _inst_sll | _inst_slt | _inst_sltu |
-                        _inst_xor | _inst_srl | _inst_sra | _inst_or | _inst_and
-                        | _inst_mul | _inst_mulh | _inst_mulhsu | _inst_mulhu
-                        | _inst_div | _inst_divu | _inst_rem | _inst_remu;
-                        
+                        _inst_xor | _inst_srl | _inst_sra | _inst_or | _inst_and | 
+                        _inst_mul | _inst_mulh | _inst_mulhsu | _inst_mulhu |
+                         _inst_div | _inst_divu | _inst_rem | _inst_remu;
+
   wire _type_system = _inst_ecall | _inst_ebreak | _inst_mret;
   
 
