@@ -5695,22 +5695,64 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                                     (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_carry
                                                      [1U] 
                                                      >> 8U)))))));
-        bufp->chgQData(oldp+1183,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf6214425__0),64);
+        bufp->chgQData(oldp+1183,((((QData)((IData)(
+                                                    (0x3fffffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf6214425__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x22U) | vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf6214425__0)),64);
         bufp->chgQData(oldp+1185,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1187,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h690ba010__0 
-                                   << 0x14U)),64);
+        bufp->chgQData(oldp+1187,((((QData)((IData)(
+                                                    (0x3ffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h690ba010__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x36U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h690ba010__0 
+                                                 << 0x14U))),64);
         bufp->chgQData(oldp+1189,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__10__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1191,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h0aa273b8__0 
-                                   << 0x16U)),64);
+        bufp->chgQData(oldp+1191,((((QData)((IData)(
+                                                    (0xffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h0aa273b8__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x38U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h0aa273b8__0 
+                                                 << 0x16U))),64);
         bufp->chgQData(oldp+1193,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__11__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1195,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha506d195__0 
-                                   << 0x18U)),64);
+        bufp->chgQData(oldp+1195,((((QData)((IData)(
+                                                    (0x3fU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha506d195__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x3aU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha506d195__0 
+                                                 << 0x18U))),64);
         bufp->chgQData(oldp+1197,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__12__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1199,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf184b46c__0 
-                                   << 0x1aU)),64);
+        bufp->chgQData(oldp+1199,((((QData)((IData)(
+                                                    (0xfU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf184b46c__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x3cU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf184b46c__0 
+                                                 << 0x1aU))),64);
         bufp->chgQData(oldp+1201,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__13__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1203,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha67af118__0 
-                                   << 0x1cU)),64);
+        bufp->chgQData(oldp+1203,((((QData)((IData)(
+                                                    (3U 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha67af118__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x3eU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha67af118__0 
+                                                 << 0x1cU))),64);
         bufp->chgQData(oldp+1205,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__14__KET____DOT__u_regTemplate__dout),64);
         bufp->chgQData(oldp+1207,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hdbbb5045__0 
                                    << 0x1eU)),64);
@@ -5718,32 +5760,95 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgQData(oldp+1211,(((QData)((IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha448e796__0)) 
                                    << 0x20U)),64);
         bufp->chgQData(oldp+1213,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__16__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1215,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc6528860__0 
-                                   << 2U)),64);
+        bufp->chgQData(oldp+1215,((((QData)((IData)(
+                                                    (0xfffffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc6528860__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x24U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc6528860__0 
+                                                 << 2U))),64);
         bufp->chgQData(oldp+1217,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__1__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1219,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h9ed15e07__0 
-                                   << 4U)),64);
+        bufp->chgQData(oldp+1219,((((QData)((IData)(
+                                                    (0x3ffffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h9ed15e07__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x26U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h9ed15e07__0 
+                                                 << 4U))),64);
         bufp->chgQData(oldp+1221,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__2__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1223,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h6568449b__0 
-                                   << 6U)),64);
+        bufp->chgQData(oldp+1223,((((QData)((IData)(
+                                                    (0xffffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h6568449b__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x28U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h6568449b__0 
+                                                 << 6U))),64);
         bufp->chgQData(oldp+1225,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__3__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1227,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h8d75619e__0 
-                                   << 8U)),64);
+        bufp->chgQData(oldp+1227,((((QData)((IData)(
+                                                    (0x3fffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h8d75619e__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x2aU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h8d75619e__0 
+                                                 << 8U))),64);
         bufp->chgQData(oldp+1229,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__4__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1231,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h518c77c4__0 
-                                   << 0xaU)),64);
+        bufp->chgQData(oldp+1231,((((QData)((IData)(
+                                                    (0xfffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h518c77c4__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x2cU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h518c77c4__0 
+                                                 << 0xaU))),64);
         bufp->chgQData(oldp+1233,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__5__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1235,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc9138a91__0 
-                                   << 0xcU)),64);
+        bufp->chgQData(oldp+1235,((((QData)((IData)(
+                                                    (0x3ffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc9138a91__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x2eU) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc9138a91__0 
+                                                 << 0xcU))),64);
         bufp->chgQData(oldp+1237,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1239,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0 
-                                   << 0xeU)),64);
+        bufp->chgQData(oldp+1239,((((QData)((IData)(
+                                                    (0xffffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x30U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0 
+                                                 << 0xeU))),64);
         bufp->chgQData(oldp+1241,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1243,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0 
-                                   << 0x10U)),64);
+        bufp->chgQData(oldp+1243,((((QData)((IData)(
+                                                    (0x3fffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x32U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0 
+                                                 << 0x10U))),64);
         bufp->chgQData(oldp+1245,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout),64);
-        bufp->chgQData(oldp+1247,((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hd66b1d0c__0 
-                                   << 0x12U)),64);
+        bufp->chgQData(oldp+1247,((((QData)((IData)(
+                                                    (0xfffU 
+                                                     & (- (IData)(
+                                                                  (1U 
+                                                                   & (IData)(
+                                                                             (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hd66b1d0c__0 
+                                                                              >> 0x21U)))))))) 
+                                    << 0x34U) | (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hd66b1d0c__0 
+                                                 << 0x12U))),64);
         bufp->chgQData(oldp+1249,(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__9__KET____DOT__u_regTemplate__dout),64);
         bufp->chgBit(oldp+1251,((1U & (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout))));
         bufp->chgBit(oldp+1252,((1U & (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__1__KET____DOT__u_regTemplate__dout))));
@@ -9711,46 +9816,5 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                           ^ (IData)(
                                                     (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
                                                      >> 0x21U)))))));
-        bufp->chgBit(oldp+2025,((1U & (((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                                 >> 0x21U)) 
-                                        & ((IData)(
-                                                   (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                                    >> 0x21U)) 
-                                           | (IData)(
-                                                     (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                                      >> 0x21U)))) 
-                                       | ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                                   >> 0x21U)) 
-                                          & (IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                                     >> 0x21U)))))));
-        bufp->chgBit(oldp+2026,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                               >> 0x22U)))));
-        bufp->chgBit(oldp+2027,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                               >> 0x22U)))));
-        bufp->chgBit(oldp+2028,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                               >> 0x22U)))));
-        bufp->chgBit(oldp+2029,((1U & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                                >> 0x22U)) 
-                                       ^ ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                                   >> 0x22U)) 
-                                          ^ (IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                                     >> 0x22U)))))));
-        bufp->chgBit(oldp+2030,((1U & (((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                                 >> 0x22U)) 
-                                        & ((IData)(
-                                                   (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                                    >> 0x22U)) 
-                                           | (IData)(
-                                                     (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                                      >> 0x22U)))) 
-                                       | ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
-                                                   >> 0x22U)) 
-                                          & (IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
-                                                     >> 0x22U)))))));
-        bufp->chgBit(oldp+2031,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                               >> 0x23U)))));
     }
 }

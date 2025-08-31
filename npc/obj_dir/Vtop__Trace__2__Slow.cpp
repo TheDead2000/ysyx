@@ -11,6 +11,36 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_2(Vtop___024root* vlSelf, Veril
     // Init
     uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode);
     // Body
+    bufp->fullBit(oldp+3566,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                            [3U] >> 0x18U)))));
+    bufp->fullBit(oldp+3567,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
+                                            [3U] >> 0x17U)))));
+    bufp->fullBit(oldp+3568,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                            [4U] >> 0x18U)))));
+    bufp->fullBit(oldp+3569,((1U & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                             [3U] >> 0x18U)) 
+                                    ^ ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
+                                                [3U] 
+                                                >> 0x17U)) 
+                                       ^ (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                                  [4U] 
+                                                  >> 0x18U)))))));
+    bufp->fullBit(oldp+3570,((1U & (((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                              [3U] 
+                                              >> 0x18U)) 
+                                     & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
+                                                 [3U] 
+                                                 >> 0x17U)) 
+                                        | (IData)((
+                                                   vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                                   [4U] 
+                                                   >> 0x18U)))) 
+                                    | ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
+                                                [3U] 
+                                                >> 0x17U)) 
+                                       & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+                                                  [4U] 
+                                                  >> 0x18U)))))));
     bufp->fullBit(oldp+3571,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
                                             [3U] >> 0x19U)))));
     bufp->fullBit(oldp+3572,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
@@ -7696,34 +7726,4 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_2(Vtop___024root* vlSelf, Veril
                                             [0U] >> 0x28U)))));
     bufp->fullBit(oldp+4936,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
                                             [1U] >> 0x29U)))));
-    bufp->fullBit(oldp+4937,((1U & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                             [0U] >> 0x29U)) 
-                                    ^ ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_carry
-                                                [0U] 
-                                                >> 0x28U)) 
-                                       ^ (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                                  [1U] 
-                                                  >> 0x29U)))))));
-    bufp->fullBit(oldp+4938,((1U & (((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                              [0U] 
-                                              >> 0x29U)) 
-                                     & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_carry
-                                                 [0U] 
-                                                 >> 0x28U)) 
-                                        | (IData)((
-                                                   vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                                   [1U] 
-                                                   >> 0x29U)))) 
-                                    | ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_carry
-                                                [0U] 
-                                                >> 0x28U)) 
-                                       & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                                  [1U] 
-                                                  >> 0x29U)))))));
-    bufp->fullBit(oldp+4939,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                            [0U] >> 0x2aU)))));
-    bufp->fullBit(oldp+4940,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_carry
-                                            [0U] >> 0x29U)))));
-    bufp->fullBit(oldp+4941,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-                                            [1U] >> 0x2aU)))));
 }
