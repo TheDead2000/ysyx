@@ -48,7 +48,7 @@
 
 
 /* ALU 操作码 */
-`define ALUOP_LEN 33
+`define ALUOP_LEN 25
 
 `define ALUOP_NONE 'd0
 `define ALUOP_ADD 'd1
@@ -58,40 +58,27 @@
 `define ALUOP_OR 'd4
 `define ALUOP_AND 'd5
 /* 移位操作 */
-`define ALUOP_SLL 'd6
-`define ALUOP_SRL 'd7
+`define ALUOP_SRL 'd6
+`define ALUOP_SLL 'd7
 `define ALUOP_SRA 'd8
-//忽略高32位的移位操作
-`define ALUOP_SLLW 'd9
-`define ALUOP_SRLW 'd10
-`define ALUOP_SRAW 'd11
 /* 比较操作 */
-`define ALUOP_SLT 'd12
-`define ALUOP_SLTU 'd13
+`define ALUOP_SLT 'd9
+`define ALUOP_SLTU 'd10
 
-`define ALUOP_BEQ 'd14
-`define ALUOP_BNE 'd15
-`define ALUOP_BLT 'd16
-`define ALUOP_BGE 'd17
-`define ALUOP_BLTU 'd18
-`define ALUOP_BGEU 'd19
-
-/* 乘除法 */
-`define ALUOP_MUL 'd20
-`define ALUOP_MULH 'd21
-`define ALUOP_MULHSU 'd22
-`define ALUOP_MULHU 'd23
-`define ALUOP_MULW 'd24
-
-`define ALUOP_DIV 'd25
-`define ALUOP_DIVU 'd26
-`define ALUOP_REM 'd27
-`define ALUOP_REMU 'd28
-`define ALUOP_DIVW 'd29
-`define ALUOP_DIVUW 'd30
-`define ALUOP_REMW 'd31
-`define ALUOP_REMUW 'd32
-
+`define ALUOP_BEQ 'd11
+`define ALUOP_BNE 'd12
+`define ALUOP_BLT 'd13
+`define ALUOP_BGE 'd14
+`define ALUOP_BLTU 'd15
+`define ALUOP_BGEU 'd16
+`define ALUOP_MUL 'd17
+`define ALUOP_MULH 'd18
+`define ALUOP_MULHSU 'd19
+`define ALUOP_MULHU 'd20
+`define ALUOP_DIV 'd21
+`define ALUOP_DIVU 'd22
+`define ALUOP_REM 'd23
+`define ALUOP_REMU 'd24
 
 /* exc 操作码 */
 `define EXCOP_LEN 13

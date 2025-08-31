@@ -33,9 +33,6 @@ module alu_top (
   wire _aluop_sll = (alu_op_i[`ALUOP_SLL]);
   wire _aluop_srl = (alu_op_i[`ALUOP_SRL]);
   wire _aluop_sra = (alu_op_i[`ALUOP_SRA]);
-  wire _aluop_sllw = (alu_op_i[`ALUOP_SLLW]);
-  wire _aluop_srlw = (alu_op_i[`ALUOP_SRLW]);
-  wire _aluop_sraw = (alu_op_i[`ALUOP_SRAW]);
   //比较
   wire _aluop_slt = (alu_op_i[`ALUOP_SLT]);
   wire _aluop_sltu = (alu_op_i[`ALUOP_SLTU]);
@@ -52,17 +49,13 @@ module alu_top (
   wire _aluop_mulh = (alu_op_i[`ALUOP_MULH]);
   wire _aluop_mulhsu = (alu_op_i[`ALUOP_MULHSU]);
   wire _aluop_mulhu = (alu_op_i[`ALUOP_MULHU]);
-  wire _aluop_mulw = (alu_op_i[`ALUOP_MULW]);
 
   //除法
   wire _aluop_div = (alu_op_i[`ALUOP_DIV]);
   wire _aluop_divu = (alu_op_i[`ALUOP_DIVU]);
   wire _aluop_rem = (alu_op_i[`ALUOP_REM]);
   wire _aluop_remu = (alu_op_i[`ALUOP_REMU]);
-  wire _aluop_divw = (alu_op_i[`ALUOP_DIVW]);
-  wire _aluop_divuw = (alu_op_i[`ALUOP_DIVUW]);
-  wire _aluop_remw = (alu_op_i[`ALUOP_REMW]);
-  wire _aluop_remuw = (alu_op_i[`ALUOP_REMUW]);
+
 
   wire _isCMP =   _aluop_slt | _aluop_bgeu |
                   _aluop_sltu |_aluop_beq |
@@ -218,8 +211,8 @@ module alu_top (
                                 ({`XLEN{_shift_sra|_shift_srl|_shift_sll}}&_shift_out)|
                                 ({`XLEN{_aluop_mul}}&_inst_mul_result) |
                                 ({`XLEN{_aluop_mulh|_aluop_mulhsu|_aluop_mulhu}}&_inst_mulh_mulhsu_mulhu_result) |
-                                ({`XLEN{_aluop_div|_aluop_divu|_aluop_divw|_aluop_divuw}}&_inst_div_divu_ret)|
-                                ({`XLEN{_aluop_rem|_aluop_remu|_aluop_remw|_aluop_remuw}}&_inst_rem_remu_ret);
+                                ({`XLEN{_aluop_div|_aluop_divu}}&_inst_div_divu_ret)|
+                                ({`XLEN{_aluop_rem|_aluop_remu}}&_inst_rem_remu_ret);
 
   /* 选择最后输出 */
   assign alu_out_o = (_isCMP) ? {31'b0, _compare_out} : _alu_out;
