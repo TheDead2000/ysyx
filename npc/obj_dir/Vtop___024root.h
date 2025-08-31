@@ -196,8 +196,8 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__exu__DOT__u_alu__DOT____VdfgTmp_h374b09af__0;
         CData/*0:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_shift__DOT____VdfgTmp_h17d4dcd5__0;
         CData/*2:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_state;
-        CData/*2:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count;
-        CData/*2:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count_plus1;
+        CData/*3:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count;
+        CData/*3:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count_plus1;
         CData/*0:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_ready;
         CData/*0:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__booth_rs1_signed_valid;
         CData/*0:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__booth_rs2_signed_valid;
@@ -641,8 +641,6 @@ class Vtop___024root final : public VerilatedModule {
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT___alu_b;
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT___add_out;
         QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_data64;
-        QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_sum;
-        QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_carry;
         QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_final_a;
         QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_final_b;
         QData/*63:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout;
@@ -673,10 +671,10 @@ class Vtop___024root final : public VerilatedModule {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc9138a91__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0;
-    };
-    struct {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hd66b1d0c__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h690ba010__0;
+    };
+    struct {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h0aa273b8__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha506d195__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hf184b46c__0;
@@ -713,7 +711,12 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<QData/*63:0*/, 6> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_pp_q;
         VlUnpacked<QData/*63:0*/, 2> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_sum;
         VlUnpacked<QData/*63:0*/, 2> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_carry;
-        VlUnpacked<QData/*63:0*/, 3> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step5_pp_q;
+        VlUnpacked<QData/*63:0*/, 4> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step5_pp_q;
+        VlUnpacked<QData/*63:0*/, 1> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step5_sum;
+        VlUnpacked<QData/*63:0*/, 1> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step5_carry;
+        VlUnpacked<QData/*63:0*/, 3> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_pp_q;
+        VlUnpacked<QData/*63:0*/, 1> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_sum;
+        VlUnpacked<QData/*63:0*/, 1> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_carry;
         VlUnpacked<QData/*33:0*/, 17> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT__pp_o;
         VlUnpacked<IData/*31:0*/, 32> top__DOT__rv32_gpr_regfile__DOT__rf;
         VlUnpacked<IData/*19:0*/, 128> top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs;

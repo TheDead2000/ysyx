@@ -1,17 +1,16 @@
 `include "sysconfig.v"
-// 32位 Booth 华莱士乘法树，采用全加器（CSA）实现
-module alu_mul_wallace_csa_32 (
+// 32位 booth 华莱士乘法树，采用全加器（csa）实现
+module alu_mul_wallace_csa (
     input                            clk,
     input                            rst,
     input                            rs1_signed_valid_i,
     input                            rs2_signed_valid_i,
-    input  [  `XLEN_BUS] rs1_data_i,  // 32位
-    input  [  `XLEN_BUS] rs2_data_i,  // 32位
+    input  [  `XLEN_BUS] rs1_data_i,
+    input  [  `XLEN_BUS] rs2_data_i,
     input                            mul_valid_i,
     output                           mul_ready_o,
-    output [63:0]                    mul_out_o    // 64位输出
+    output [`XLEN*2-1:0] mul_out_o
 );
-
   // 寄存器已经复位
   localparam STATE_LEN = 3;
   localparam MUL_RST = 3'd0;
@@ -21,18 +20,18 @@ module alu_mul_wallace_csa_32 (
   wire _mul_valid = mul_valid_i;
   reg [STATE_LEN-1:0] mul_state;
 
-  reg [2:0] mul_count;  // 减少计数位宽
-  wire [2:0] mul_count_plus1 = mul_count + 'd1;
+  reg [3:0] mul_count;
+  wire [3:0] mul_count_plus1 = mul_count + 'd1;
 
   reg mul_ready;
-  reg [63:0] mul_data64;  // 64位结果
+  reg [63:0] mul_data64;  // 改为64位输出
 
   reg [`XLEN_BUS] booth_rs1;
   reg [`XLEN_BUS] booth_rs2;
   reg booth_rs1_signed_valid;
   reg booth_rs2_signed_valid;
 
-  wire [63:0] mul_final64;
+  wire [63:0] mul_final64;  // 改为64位最终结果
   assign mul_ready_o = mul_ready;
   assign mul_out_o   = mul_data64;
 
@@ -81,7 +80,8 @@ module alu_mul_wallace_csa_32 (
     end
   end
 
-  wire [63:0] Partial_product[17-1:0];  // 32位需要17个部分积
+  // 32位Booth编码生成17个部分积
+  wire [63:0] Partial_product[17-1:0];  // 改为17个64位部分积
   alu_mul_booth_r4_32 u_alu_mul_booth_r4_32 (
       .rs1_signed_valid_i(booth_rs1_signed_valid),
       .rs2_signed_valid_i(booth_rs2_signed_valid),
@@ -107,13 +107,13 @@ module alu_mul_wallace_csa_32 (
   );
 
   // 部分积生成 (共17个),缓存一个周期
-  wire [63:0] step1_pp_q[17-1:0];
+  wire [63:0] step1_pp_q[17-1:0];  // 改为64位宽度
 
   genvar step1_Dflap;
   generate
     for (step1_Dflap = 0; step1_Dflap < 17; step1_Dflap = step1_Dflap + 1) begin
       regTemplate #(
-          .WIDTH    (64),
+          .WIDTH    (64),  // 改为64位
           .RESET_VAL(0)
       ) u_regTemplate (
           .clk (clk),
@@ -125,13 +125,23 @@ module alu_mul_wallace_csa_32 (
     end
   endgenerate
 
-  // 华莱士树压缩 - 32位版本需要更少的级数
-  // 第一级: 17个部分积 -> 5个CSA(3-2) + 2个保留 = 12个输出
+  /*******                    booth                ********/
+  /* 流水线缓存1 */
+  /*******                wallace tree            ********/
+  /*******(17)             5*csa(3-2) + 2个直接传递 ********/
+  /*******(12)             4*csa(3-2)              ********/
+  /*******(8)              2*csa(3-2) + 2个直接传递 ********/
+  /*******(6)              2*csa(3-2)              ********/
+  /*******(4)              1*csa(3-2) + 1个直接传递 ********/
+  /*******(3)              1*csa(3-2)              ********/
+  /*******(2)              add(2-1)               ********/
+
+  /* step1 - 17个部分积压缩到12个 */
   localparam STEP1_CSA_NUM = 5;
   genvar step1_num_count;
   genvar step1_bit_count;
-  wire [63:0] step1_sum  [STEP1_CSA_NUM-1:0];
-  wire [63:0] step1_carry[STEP1_CSA_NUM-1:0];
+  wire [64-1:0] step1_sum  [STEP1_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step1_carry[STEP1_CSA_NUM-1:0];  // 改为64位
 
   generate
     for (
@@ -149,9 +159,10 @@ module alu_mul_wallace_csa_32 (
     end
   endgenerate
 
-  // 第二级: 12个部分积 (5个和 + 5个进位 + 2个保留)
-  wire [63:0] step2_pp_q[12-1:0];
-  assign step2_pp_q[10] = step1_pp_q[15]; // 保留的两个部分积
+  /* step2 - 12个部分积 */
+  wire [64-1:0] step2_pp_q[12-1:0];  // 改为64位
+  // 直接传递的两个部分积
+  assign step2_pp_q[10] = step1_pp_q[15];
   assign step2_pp_q[11] = step1_pp_q[16];
   
   genvar step2_pp_q_count;
@@ -162,17 +173,17 @@ module alu_mul_wallace_csa_32 (
         step2_pp_q_count = step2_pp_q_count + 1
     ) begin
       assign step2_pp_q[step2_pp_q_count*2+0] = step1_sum[step2_pp_q_count];
-      assign step2_pp_q[step2_pp_q_count*2+1] = {step1_carry[step2_pp_q_count][62:0], 1'b0};
+      assign step2_pp_q[step2_pp_q_count*2+1] = {step1_carry[step2_pp_q_count][62:0], 1'b0};  // 调整位宽
     end
   endgenerate
 
-  // 第三级: 12个部分积 -> 4个CSA(3-2) = 8个输出
+  /* step3 - 12个部分积压缩到8个 */
   localparam STEP2_CSA_NUM = 4;
   genvar step2_num_count;
   genvar step2_bit_count;
-  wire [63:0] step2_sum  [STEP2_CSA_NUM-1:0];
-  wire [63:0] step2_carry[STEP2_CSA_NUM-1:0];
-  
+  wire [64-1:0] step2_sum  [STEP2_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step2_carry[STEP2_CSA_NUM-1:0];  // 改为64位
+
   generate
     for (
         step2_num_count = 0; step2_num_count < STEP2_CSA_NUM; step2_num_count = step2_num_count + 1
@@ -189,8 +200,8 @@ module alu_mul_wallace_csa_32 (
     end
   endgenerate
 
-  // 第四级: 8个部分积 (4个和 + 4个进位)
-  wire [63:0] step3_pp_q[8-1:0];
+  /* step4 - 8个部分积 */
+  wire [64-1:0] step3_pp_q[8-1:0];  // 改为64位
   genvar step3_pp_q_count;
   generate
     for (
@@ -199,17 +210,17 @@ module alu_mul_wallace_csa_32 (
         step3_pp_q_count = step3_pp_q_count + 1
     ) begin
       assign step3_pp_q[step3_pp_q_count*2+0] = step2_sum[step3_pp_q_count];
-      assign step3_pp_q[step3_pp_q_count*2+1] = {step2_carry[step3_pp_q_count][62:0], 1'b0};
+      assign step3_pp_q[step3_pp_q_count*2+1] = {step2_carry[step3_pp_q_count][62:0], 1'b0};  // 调整位宽
     end
   endgenerate
 
-  // 第五级: 8个部分积 -> 2个CSA(3-2) + 2个保留 = 6个输出
+  /* step5 - 8个部分积压缩到6个 */
   localparam STEP3_CSA_NUM = 2;
   genvar step3_num_count;
   genvar step3_bit_count;
-  wire [63:0] step3_sum  [STEP3_CSA_NUM-1:0];
-  wire [63:0] step3_carry[STEP3_CSA_NUM-1:0];
-  
+  wire [64-1:0] step3_sum  [STEP3_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step3_carry[STEP3_CSA_NUM-1:0];  // 改为64位
+
   generate
     for (
         step3_num_count = 0; step3_num_count < STEP3_CSA_NUM; step3_num_count = step3_num_count + 1
@@ -226,9 +237,10 @@ module alu_mul_wallace_csa_32 (
     end
   endgenerate
 
-  // 第六级: 6个部分积 (2个和 + 2个进位 + 2个保留)
-  wire [63:0] step4_pp_q[6-1:0];
-  assign step4_pp_q[4] = step3_pp_q[6]; // 保留的两个部分积
+  /* step6 - 6个部分积 */
+  wire [64-1:0] step4_pp_q[6-1:0];  // 改为64位
+  // 直接传递的两个部分积
+  assign step4_pp_q[4] = step3_pp_q[6];
   assign step4_pp_q[5] = step3_pp_q[7];
   
   genvar step4_pp_q_count;
@@ -239,17 +251,17 @@ module alu_mul_wallace_csa_32 (
         step4_pp_q_count = step4_pp_q_count + 1
     ) begin
       assign step4_pp_q[step4_pp_q_count*2+0] = step3_sum[step4_pp_q_count];
-      assign step4_pp_q[step4_pp_q_count*2+1] = {step3_carry[step4_pp_q_count][62:0], 1'b0};
+      assign step4_pp_q[step4_pp_q_count*2+1] = {step3_carry[step4_pp_q_count][62:0], 1'b0};  // 调整位宽
     end
   endgenerate
 
-  // 第七级: 6个部分积 -> 2个CSA(3-2) = 4个输出
+  /* step7 - 6个部分积压缩到4个 */
   localparam STEP4_CSA_NUM = 2;
   genvar step4_num_count;
   genvar step4_bit_count;
-  wire [63:0] step4_sum  [STEP4_CSA_NUM-1:0];
-  wire [63:0] step4_carry[STEP4_CSA_NUM-1:0];
-  
+  wire [64-1:0] step4_sum  [STEP4_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step4_carry[STEP4_CSA_NUM-1:0];  // 改为64位
+
   generate
     for (
         step4_num_count = 0; step4_num_count < STEP4_CSA_NUM; step4_num_count = step4_num_count + 1
@@ -266,63 +278,103 @@ module alu_mul_wallace_csa_32 (
     end
   endgenerate
 
-  // 第八级: 4个部分积 -> 1个CSA(3-2) + 1个保留 = 3个输出
-  wire [63:0] step5_pp_q[3-1:0];
-  assign step5_pp_q[2] = step4_pp_q[5]; // 保留的部分积
-  
+  /* step8 - 4个部分积 */
+  wire [64-1:0] step5_pp_q[4-1:0];  // 改为64位
   genvar step5_pp_q_count;
   generate
     for (
         step5_pp_q_count = 0;
-        step5_pp_q_count < 1; // 只处理前两个
+        step5_pp_q_count < STEP4_CSA_NUM;
         step5_pp_q_count = step5_pp_q_count + 1
     ) begin
       assign step5_pp_q[step5_pp_q_count*2+0] = step4_sum[step5_pp_q_count];
-      assign step5_pp_q[step5_pp_q_count*2+1] = {step4_carry[step5_pp_q_count][62:0], 1'b0};
+      assign step5_pp_q[step5_pp_q_count*2+1] = {step4_carry[step5_pp_q_count][62:0], 1'b0};  // 调整位宽
     end
   endgenerate
 
-  // 第九级: 3个部分积 -> 1个CSA(3-2) = 2个输出
-  wire [63:0] step6_sum;
-  wire [63:0] step6_carry;
-  
-  genvar step6_bit_count;
+  /* step9 - 4个部分积压缩到3个 */
+  localparam STEP5_CSA_NUM = 1;
+  genvar step5_num_count;
+  genvar step5_bit_count;
+  wire [64-1:0] step5_sum  [STEP5_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step5_carry[STEP5_CSA_NUM-1:0];  // 改为64位
+
   generate
-    for (step6_bit_count = 0; step6_bit_count < 64; step6_bit_count = step6_bit_count + 1) begin
-      full_adder u_full_adder_step6 (
-          .a (step5_pp_q[0][step6_bit_count]),
-          .b (step5_pp_q[1][step6_bit_count]),
-          .ci(step5_pp_q[2][step6_bit_count]),
-          .s (step6_sum[step6_bit_count]),
-          .co(step6_carry[step6_bit_count])
-      );
+    for (
+        step5_num_count = 0; step5_num_count < STEP5_CSA_NUM; step5_num_count = step5_num_count + 1
+    ) begin
+      for (step5_bit_count = 0; step5_bit_count < 64; step5_bit_count = step5_bit_count + 1) begin
+        full_adder u_full_adder_step5 (
+            .a (step5_pp_q[step5_num_count*3+0][step5_bit_count]),
+            .b (step5_pp_q[step5_num_count*3+1][step5_bit_count]),
+            .ci(step5_pp_q[step5_num_count*3+2][step5_bit_count]),
+            .s (step5_sum[step5_num_count][step5_bit_count]),
+            .co(step5_carry[step5_num_count][step5_bit_count])
+        );
+      end
     end
   endgenerate
 
-  // 最终加法
-  wire [63:0] step7_pp_a = step6_sum;
-  wire [63:0] step7_pp_b = {step6_carry[62:0], 1'b0};
+  /* step10 - 3个部分积 */
+  wire [64-1:0] step6_pp_q[3-1:0];  // 改为64位
+  // 直接传递的一个部分积
+  assign step6_pp_q[2] = step5_pp_q[3];
   
+  genvar step6_pp_q_count;
+  generate
+    for (
+        step6_pp_q_count = 0;
+        step6_pp_q_count < STEP5_CSA_NUM;
+        step6_pp_q_count = step6_pp_q_count + 1
+    ) begin
+      assign step6_pp_q[step6_pp_q_count*2+0] = step5_sum[step6_pp_q_count];
+      assign step6_pp_q[step6_pp_q_count*2+1] = {step5_carry[step6_pp_q_count][62:0], 1'b0};  // 调整位宽
+    end
+  endgenerate
+
+  /* step11 - 3个部分积压缩到2个 */
+  localparam STEP6_CSA_NUM = 1;
+  genvar step6_num_count;
+  genvar step6_bit_count;
+  wire [64-1:0] step6_sum  [STEP6_CSA_NUM-1:0];  // 改为64位
+  wire [64-1:0] step6_carry[STEP6_CSA_NUM-1:0];  // 改为64位
+
+  generate
+    for (
+        step6_num_count = 0; step6_num_count < STEP6_CSA_NUM; step6_num_count = step6_num_count + 1
+    ) begin
+      for (step6_bit_count = 0; step6_bit_count < 64; step6_bit_count = step6_bit_count + 1) begin
+        full_adder u_full_adder_step6 (
+            .a (step6_pp_q[step6_num_count*3+0][step6_bit_count]),
+            .b (step6_pp_q[step6_num_count*3+1][step6_bit_count]),
+            .ci(step6_pp_q[step6_num_count*3+2][step6_bit_count]),
+            .s (step6_sum[step6_num_count][step6_bit_count]),
+            .co(step6_carry[step6_num_count][step6_bit_count])
+        );
+      end
+    end
+  endgenerate
+
   // 插入流水线缓存
-  wire [63:0] mul_final_a;
-  wire [63:0] mul_final_b;
+  wire [64-1:0] mul_final_a;
+  wire [64-1:0] mul_final_b;
   regTemplate #(
-      .WIDTH    (64),
+      .WIDTH    (64),  // 改为64位
       .RESET_VAL('b0)
-  ) u_regTemplate_step7_a (
+  ) u_regTemplate_step7_sum (
       .clk (clk),
       .rst (rst),
-      .din (step7_pp_a),
+      .din (step6_sum[0]),
       .dout(mul_final_a),
       .wen (1'b1)
   );
   regTemplate #(
-      .WIDTH    (64),
+      .WIDTH    (64),  // 改为64位
       .RESET_VAL('b0)
-  ) u_regTemplate_step7_b (
+  ) u_regTemplate_step7_carry (
       .clk (clk),
       .rst (rst),
-      .din (step7_pp_b),
+      .din ({step6_carry[0][62:0], 1'b0}),  // 调整位宽
       .dout(mul_final_b),
       .wen (1'b1)
   );

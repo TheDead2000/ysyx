@@ -74,6 +74,9 @@ VL_ATTR_COLD void Vtop___024root___eval_initial__TOP(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_carry[1U] 
         = (0xfffffffffffffffeULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step4_carry
            [1U]);
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_carry[0U] 
+        = (0xfffffffffffffffeULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_carry
+           [0U]);
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__i = 0U;
     while (VL_GTS_III(32, 0x200U, vlSelf->top__DOT__ifu__DOT__bpu__DOT__i)) {
         vlSelf->top__DOT__ifu__DOT__bpu__DOT__bimodal_table[(0x1ffU 
@@ -225,7 +228,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->io_master_arsize = vlSelf->top__DOT__axi4_rw__DOT__ar_size;
     vlSelf->io_master_rready = vlSelf->top__DOT__axi4_rw__DOT__r_ready;
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count_plus1 
-        = (7U & ((IData)(1U) + (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count)));
+        = (0xfU & ((IData)(1U) + (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count)));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_is_zero 
         = (1U & (~ (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count)));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_next 
