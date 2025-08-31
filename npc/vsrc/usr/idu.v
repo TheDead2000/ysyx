@@ -216,23 +216,14 @@ wire _inst_csrrwi = match(_inst,MASK_FUNC3, CSRRWI_VAL);
 wire _inst_csrrsi = match(_inst,MASK_FUNC3, CSRRSI_VAL);
 wire _inst_csrrci = match(_inst,MASK_FUNC3, CSRRCI_VAL);
 //RV32M
-// wire _inst_mul    = match(_inst,MASK_FUNC7,MUL_VAL);
-// wire _inst_mulh    = match(_inst,MASK_FUNC7,MULH_VAL);
-// wire _inst_mulhsu    = match(_inst,MASK_FUNC7,MULHSU_VAL);
-// wire _inst_mulhu    = match(_inst,MASK_FUNC7,MULHU_VAL);
-// wire _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
-// wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
-// wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
-// wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
-/* verilator lint_off IMPLICIT */
-assign _inst_mul    = match(_inst,MASK_FUNC7,MUL_VAL);
-assign _inst_mulh    = match(_inst,MASK_FUNC7,MULH_VAL);
-assign _inst_mulhsu    = match(_inst,MASK_FUNC7,MULHSU_VAL);
-assign _inst_mulhu    = match(_inst,MASK_FUNC7,MULHU_VAL);
-assign _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
-assign _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
-assign _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
-assign _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
+wire _inst_mul    = match(_inst,MASK_FUNC7,MUL_VAL);
+wire _inst_mulh    = match(_inst,MASK_FUNC7,MULH_VAL);
+wire _inst_mulhsu    = match(_inst,MASK_FUNC7,MULHSU_VAL);
+wire _inst_mulhu    = match(_inst,MASK_FUNC7,MULHU_VAL);
+wire _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
+wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
+wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
+wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
 
    wire _type_lui = _inst_lui;
    wire _type_auipc = _inst_auipc;
