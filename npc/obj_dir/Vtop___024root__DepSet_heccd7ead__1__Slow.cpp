@@ -9430,17 +9430,23 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
                                               | ((IData)(vlSelf->top__DOT__idu__DOT___inst_jalr) 
                                                  | ((IData)(vlSelf->top__DOT__idu__DOT___inst_ecall) 
                                                     | ((IData)(vlSelf->top__DOT__idu__DOT___inst_ebreak) 
-                                                       | (IData)(vlSelf->top__DOT__idu__DOT___inst_mret))))));
-    vlSelf->top__DOT__idu__DOT___isNeed_csr = ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_hc23742a8__0) 
-                                               | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrs) 
-                                                  | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrsi) 
-                                                     | (IData)(vlSelf->top__DOT__idu__DOT___csr_write))));
+                                                       | ((IData)(vlSelf->top__DOT__idu__DOT___inst_mret) 
+                                                          | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrw) 
+                                                             | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrs) 
+                                                                | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrc) 
+                                                                   | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrwi) 
+                                                                      | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrci) 
+                                                                         | (IData)(vlSelf->top__DOT__idu__DOT___inst_csrrsi))))))))))));
     vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d 
         = (((IData)(vlSelf->top__DOT__idu__DOT___type_Reg) 
             | ((IData)(vlSelf->top__DOT__idu__DOT___type_store) 
                | (IData)(vlSelf->top__DOT__idu__DOT___type_branch)))
             ? (0x1fU & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                         >> 0x14U)) : 0U);
+    vlSelf->top__DOT__idu__DOT___isNeed_csr = ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_hc23742a8__0) 
+                                               | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrs) 
+                                                  | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrsi) 
+                                                     | (IData)(vlSelf->top__DOT__idu__DOT___csr_write))));
     vlSelf->top__DOT__clint_u__DOT__interrupt_code = 0U;
     vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 0U;
     vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 0U;

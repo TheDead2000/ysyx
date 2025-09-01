@@ -204,6 +204,7 @@ wire                           load_use_valid;
 wire [             `TRAP_BUS]  trap_bus_id;
 wire id_ras_push_valid; // ID阶段检测到CALL指令
 wire [31:0] id_ras_push_data; // ID阶段计算的返回地址
+wire csr_imm_valid_o;
 
 idu idu (
     /* from if/id */
@@ -246,7 +247,6 @@ idu idu (
     .csr_imm_valid_o(csr_imm_valid_id),
     .csr_idx_o(csr_idx_id),
     .csr_readdata_o(csr_readdata_id),
-
 
     // alu 操作码
     .alu_op_o(alu_op_id),
