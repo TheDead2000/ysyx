@@ -4168,30 +4168,21 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
     } else if ((0x8000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
         vlSelf->top__DOT__clint_u__DOT__cause_value = 0xfU;
     }
-    vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0U;
-    vlSelf->top__DOT__next_privilege = vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg;
     vlSelf->top__DOT__clint_u__DOT__csr_write_en = 0U;
+    vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0U;
     if (vlSelf->top__DOT__clint_u__DOT__trap_valid) {
-        if (vlSelf->top__DOT__clint_u__DOT__interrupt_delegated) {
-            vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x100U;
-            vlSelf->top__DOT__next_privilege = 1U;
-        } else {
-            vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x300U;
-            vlSelf->top__DOT__next_privilege = 3U;
-        }
         vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
+        vlSelf->top__DOT__clint_u__DOT__csr_write_addr 
+            = ((IData)(vlSelf->top__DOT__clint_u__DOT__interrupt_delegated)
+                ? 0x100U : 0x300U);
     } else if ((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
+        vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
         vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x300U;
-        vlSelf->top__DOT__next_privilege = (3U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
-                                                  >> 0xbU));
-        vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
     } else if ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
-        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x100U;
-        vlSelf->top__DOT__next_privilege = ((0x100U 
-                                             & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)
-                                             ? 1U : 0U);
         vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
+        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x100U;
     }
+    vlSelf->top__DOT__next_privilege = vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg;
     vlSelf->top__DOT__clint_u__DOT__trap_stall_valid 
         = ((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
            | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)));
@@ -9399,9 +9390,10 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                                             : 0U))));
     vlSelf->top__DOT__clint_u__DOT__csr_write_data = 0U;
     if (vlSelf->top__DOT__clint_u__DOT__trap_valid) {
-        vlSelf->top__DOT__clint_u__DOT__csr_write_data 
-            = ((IData)(vlSelf->top__DOT__clint_u__DOT__interrupt_delegated)
-                ? ((0xfffffe00U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+        if (vlSelf->top__DOT__clint_u__DOT__interrupt_delegated) {
+            vlSelf->top__DOT__next_privilege = 1U;
+            vlSelf->top__DOT__clint_u__DOT__csr_write_data 
+                = ((0xfffffe00U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
                    | ((0x100U & ((IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg) 
                                  << 8U)) | ((0xc0U 
                                              & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
@@ -9409,14 +9401,20 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                                                 & (vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
                                                    << 4U)) 
                                                | (0x1dU 
-                                                  & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)))))
-                : ((0xffffe000U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                                                  & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)))));
+        } else {
+            vlSelf->top__DOT__next_privilege = 3U;
+            vlSelf->top__DOT__clint_u__DOT__csr_write_data 
+                = ((0xffffe000U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
                    | (((IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg) 
                        << 0xbU) | ((0x700U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
                                    | ((0x80U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
                                                 << 4U)) 
-                                      | (0x77U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg))))));
+                                      | (0x77U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg)))));
+        }
     } else if ((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
+        vlSelf->top__DOT__next_privilege = (3U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
+                                                  >> 0xbU));
         vlSelf->top__DOT__clint_u__DOT__csr_write_data 
             = (0x80U | ((0xffffe000U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
                         | ((0x700U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
@@ -9425,6 +9423,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                                         >> 4U)) | (7U 
                                                    & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg))))));
     } else if ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
+        vlSelf->top__DOT__next_privilege = ((0x100U 
+                                             & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)
+                                             ? 1U : 0U);
         vlSelf->top__DOT__clint_u__DOT__csr_write_data 
             = (0x20U | ((0xfffffe00U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
                         | ((0xc0U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
@@ -9434,19 +9435,16 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                                                    & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg))))));
     }
     if (vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) {
-        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x344U;
         vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
+        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x344U;
         vlSelf->top__DOT__clint_u__DOT__csr_write_data 
             = (0x80U | (0xffffff7fU & vlSelf->top__DOT__rv32_csr_regfile__DOT__mipReg));
     } else if (vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt) {
-        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x144U;
         vlSelf->top__DOT__clint_u__DOT__csr_write_en = 1U;
+        vlSelf->top__DOT__clint_u__DOT__csr_write_addr = 0x144U;
         vlSelf->top__DOT__clint_u__DOT__csr_write_data 
             = (0x100U | (0xfffffeffU & vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg));
     }
-    vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_wen 
-        = ((IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_en) 
-           | (IData)(vlSelf->top__DOT__csr_write_valid_mem));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT___isSLT 
         = (1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT___add_out 
                          >> 0x20U)));

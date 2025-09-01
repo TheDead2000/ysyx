@@ -784,7 +784,7 @@ clint clint_u (
 CSRs rv32_csr_regfile(
     .clk(clk),
     .rst(rst),
-    .csr_write_wen(csr_write_valid_mem | clint_csr_write_en),
+    .csr_write_wen(1'b1),
     .csr_write_address(csr_addr_mem),
     .csr_write_data( exc_csr_data_mem),
     .csr_read_address(csr_idx_id),
