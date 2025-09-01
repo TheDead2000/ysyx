@@ -76,7 +76,7 @@ void Watchpoint::printwp() {
 
 bool Watchpoint::checkDiff() {
     bool has_diff = false;
-    
+
         if (wp_pool.empty()) {
         cout << "No watchpoints set" << endl;
         return false;
@@ -129,29 +129,29 @@ void Watchpoint::showAllwp() {
     }
 }
 
-// 全局Watchpoint实例
-static Watchpoint wp;
+// // 全局Watchpoint实例
+// static Watchpoint wp;
 
-// C接口实现
-extern "C" {
-    void new_wp(char* str) {
-        string temp(str);
-        wp.newWp(temp);
-    }
+// // C接口实现
+// extern "C" {
+//     void new_wp(char* str) {
+//         string temp(str);
+//         wp.newWp(temp);
+//     }
 
-    void free_wp(uint32_t NO) {
-        wp.delWp(NO);
-    }
+//     void free_wp(uint32_t NO) {
+//         wp.delWp(NO);
+//     }
 
-    void show_wp() {
-        wp.showAllwp();
-    }
+//     void show_wp() {
+//         wp.showAllwp();
+//     }
 
-    void prase_wp() {
-        wp.praseAllwp();
-    }
+//     void prase_wp() {
+//         wp.praseAllwp();
+//     }
     
-    bool check_wp_diff() {
-        return wp.checkDiff();
-    }
-}
+//     bool check_wp_diff() {
+//         return wp.checkDiff();
+//     }
+// }

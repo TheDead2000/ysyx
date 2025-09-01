@@ -34,12 +34,12 @@ public:
 };
 
 // 只声明外部C函数，不定义
-extern "C" {
-    void new_wp(char* str);
-    void free_wp(uint32_t NO);
-    void show_wp();
-    void prase_wp();
-    bool check_wp_diff();
-}
+// extern "C" {
+//     void new_wp(char* str);
+//     void free_wp(uint32_t NO);
+//     void show_wp();
+//     void prase_wp();
+//     bool check_wp_diff();
+// }
 
 #endif
