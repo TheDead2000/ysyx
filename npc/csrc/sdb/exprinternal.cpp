@@ -64,7 +64,7 @@ uint64_t Exprinternal::getResult() {
             uint64_t leftval = expl.run1();
             uint64_t rightval = expr.run1();
             
-            cout << "Left value: " << leftval << ", Right value: " << rightval << endl;
+            //cout << "Left value: " << leftval << ", Right value: " << rightval << endl;
             
             bool ret = getCompare(leftval, rightval, *iter);
             //cout << "Comparison result: " << (ret ? "true" : "false") << endl;
