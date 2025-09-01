@@ -116,6 +116,7 @@ void Simtop::stepCycle(bool val) {
         commited_list.inst.pop_front();
         commited_list.nextpc.pop_front();
     }
+    printf("ready to check wp diff\n");
     check_wp_diff();
 #endif
 }
