@@ -78,19 +78,28 @@ namespace expr_namespace {
      * @param success
      * @return Expr::word_t
      */
-    Expr::word_t Expr::getResult(char* e, bool* success) {
-        if (!make_token(e)) {
-            *success = false;
-            printf("make_token fail!\n");
-            exit(0);
-            return 0;
-        }
-        Exprinternal expr_in(tokens, nr_token);
-
-        uint64_t ret = expr_in.getResult();
-        return ret;
+Expr::word_t Expr::getResult(char* e, bool* success) {
+    cout << "Evaluating expression: " << e << endl;
+    
+    if (!make_token(e)) {
+        *success = false;
+        cout << "make_token failed for expression: " << e << endl;
+        return 0;
     }
-
+    
+    cout << "Tokens created successfully, count: " << nr_token << endl;
+    for (int i = 0; i < nr_token; i++) {
+        cout << "  Token " << i << ": '" << tokens[i].str 
+             << "' (type: " << tokens[i].type << ")" << endl;
+    }
+    
+    Exprinternal expr_in(tokens, nr_token);
+    uint64_t ret = expr_in.getResult();
+    
+    cout << "Final result: " << ret << endl;
+    *success = true;
+    return ret;
+}
     // /* 供外部调用 */
     // uint64_t exprgetResult(char* e, bool* success) {
     //     static Expr u_expr;

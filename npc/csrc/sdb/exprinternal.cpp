@@ -37,21 +37,43 @@ Exprinternal::Exprinternal(vector<Token> val) {
  * @return uint64_t
  */
 uint64_t Exprinternal::getResult() {
+    cout << "Exprinternal::getResult() called with tokens:" << endl;
+    for (size_t i = 0; i < tokens.size(); i++) {
+        cout << "  Token[" << i << "]: str='" << tokens[i].str 
+             << "', type=" << tokens[i].type << endl;
+    }
+    
     auto iter = tokens.begin();
     vector<Token> vector_l, vector_r;
+    
     for (; iter != tokens.end(); iter++) {
-        if (isCompare(iter.operator*())) {
+        if (isCompare(*iter)) {
+            cout << "Found comparison operator: " << iter->str 
+                 << " (type: " << iter->type << ")" << endl;
+            
             /* 以比较运算符为界，分为两个表达式 */
             vector<Token> vector_l(tokens.begin(), iter);
             vector<Token> vector_r(iter + 1, tokens.end());
+            
+            cout << "Left expression tokens: " << vector_l.size() << endl;
+            cout << "Right expression tokens: " << vector_r.size() << endl;
+            
             Exprinternal expl(vector_l);
             Exprinternal expr(vector_r);
+            
             uint64_t leftval = expl.run1();
             uint64_t rightval = expr.run1();
-            bool ret = getCompare(leftval, rightval, iter.operator*());
-            return ret;
+            
+            cout << "Left value: " << leftval << ", Right value: " << rightval << endl;
+            
+            bool ret = getCompare(leftval, rightval, *iter);
+            cout << "Comparison result: " << (ret ? "true" : "false") << endl;
+            
+            return ret ? 1 : 0;
         }
     }
+    
+    cout << "No comparison operator found, doing normal calculation" << endl;
     return run1();
 }
 /**
@@ -169,13 +191,14 @@ bool Exprinternal::isCompare(Token val) {
 bool Exprinternal::getCompare(uint64_t leftVal, uint64_t rightVal, Token cmp) {
     bool ret = false;
     switch (cmp.type) {
-    case TK_EQ:
-        ret = (leftVal == rightVal) ? true : false;
+    case TK_EQ:  // ==
+        ret = (leftVal == rightVal);
         break;
-    case TK_NEQ:
-        ret = (leftVal != rightVal) ? true : false;
+    case TK_NEQ: // !=
+        ret = (leftVal != rightVal);
         break;
     default:
+        cout << "Unknown comparison operator: " << cmp.type << endl;
         break;
     }
     return ret;
@@ -320,15 +343,17 @@ void Exprinternal::ref() {
 
 /* 处理寄存器 */
 void Exprinternal::reg() {
-    //https://blog.csdn.net/hechao3225/article/details/55101344
     for (size_t i = 0; i < tokens.size(); i++) {
-        /* 读取寄存器 */
         if (tokens.at(i).type == TK_REG) {
             char* regname = tokens.at(i).str;
+            cout << "Processing register: " << regname << endl;
+            
             /* regname[0] 为 $ ,例如 $pc */
             uint64_t val = mysim_p->getRegVal(&regname[1]); //获取寄存器的值
+            cout << "Register value: " << val << endl;
+            
             tokens[i].type = TK_NUM;
-            sprintf(tokens[i].str, "%lu", val);             //写入寄存器值
+            sprintf(tokens[i].str, "%lu", val);
         }
     }
 }
@@ -337,9 +362,11 @@ void Exprinternal::reg() {
 void Exprinternal::hex() {
     uint64_t ret;
     for (size_t i = 0; i < tokens.size(); i++) {
-        /* 十六进制转10进制,去除 0x 前缀 */
         if (tokens.at(i).type == TK_HEX) {
+            cout << "Processing hex: " << tokens.at(i).str << endl;
             sscanf(tokens.at(i).str, "%lx", &ret);
+            cout << "Hex value: " << ret << endl;
+            
             sprintf(tokens[i].str, "%lu", ret);
             tokens[i].type = TK_NUM;
         }
