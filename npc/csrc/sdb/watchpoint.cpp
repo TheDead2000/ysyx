@@ -92,7 +92,7 @@ bool Watchpoint::checkDiff() {
     for (auto it = wp_pool.begin(); it != wp_pool.end(); it++) {
         bool success;
         uint64_t new_value = mysim_p->u_expr.getResult((char*)it->exp.c_str(), &success);
-        printf("new_value: %lu, old_value: %lu\n", new_value, it->old_value);
+        //printf("new_value: %lu, old_value: %lu\n", new_value, it->old_value);
         if (!success) {
             cout << "Error evaluating expression for watchpoint " << it->NO << ": " << it->exp << endl;
             continue;

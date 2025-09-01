@@ -96,7 +96,7 @@ Expr::word_t Expr::getResult(char* e, bool* success) {
     Exprinternal expr_in(tokens, nr_token);
     uint64_t ret = expr_in.getResult();
     
-    cout << "Final result: " << ret << endl;
+    //cout << "Final result: " << ret << endl;
     *success = true;
     return ret;
 }

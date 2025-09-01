@@ -37,26 +37,26 @@ Exprinternal::Exprinternal(vector<Token> val) {
  * @return uint64_t
  */
 uint64_t Exprinternal::getResult() {
-    cout << "Exprinternal::getResult() called with tokens:" << endl;
-    for (size_t i = 0; i < tokens.size(); i++) {
-        cout << "  Token[" << i << "]: str='" << tokens[i].str 
-             << "', type=" << tokens[i].type << endl;
-    }
+    // cout << "Exprinternal::getResult() called with tokens:" << endl;
+    // for (size_t i = 0; i < tokens.size(); i++) {
+    //     cout << "  Token[" << i << "]: str='" << tokens[i].str 
+    //          << "', type=" << tokens[i].type << endl;
+    // }
     
     auto iter = tokens.begin();
     vector<Token> vector_l, vector_r;
     
     for (; iter != tokens.end(); iter++) {
         if (isCompare(*iter)) {
-            cout << "Found comparison operator: " << iter->str 
-                 << " (type: " << iter->type << ")" << endl;
+            // cout << "Found comparison operator: " << iter->str 
+            //      << " (type: " << iter->type << ")" << endl;
             
             /* 以比较运算符为界，分为两个表达式 */
             vector<Token> vector_l(tokens.begin(), iter);
             vector<Token> vector_r(iter + 1, tokens.end());
             
-            cout << "Left expression tokens: " << vector_l.size() << endl;
-            cout << "Right expression tokens: " << vector_r.size() << endl;
+            // cout << "Left expression tokens: " << vector_l.size() << endl;
+            // cout << "Right expression tokens: " << vector_r.size() << endl;
             
             Exprinternal expl(vector_l);
             Exprinternal expr(vector_r);
@@ -67,7 +67,7 @@ uint64_t Exprinternal::getResult() {
             cout << "Left value: " << leftval << ", Right value: " << rightval << endl;
             
             bool ret = getCompare(leftval, rightval, *iter);
-            cout << "Comparison result: " << (ret ? "true" : "false") << endl;
+            //cout << "Comparison result: " << (ret ? "true" : "false") << endl;
             
             return ret ? 1 : 0;
         }
