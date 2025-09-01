@@ -332,6 +332,7 @@ void Simtop::sdbRun(void) {
         this->printRegisterFile();
     }
     //TODO:add more
+    check_wp_diff();
 }
 
 /**
