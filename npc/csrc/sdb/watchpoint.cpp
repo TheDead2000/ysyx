@@ -18,19 +18,26 @@ bool Watchpoint::newWp(string exp) {
     wpdata newdata;
     newdata.NO = getNum();
     if (newdata.NO == WPNUM) {
+        cout << "Error: No available watchpoint slots" << endl;
         return false;
     }
     newdata.exp = exp;
     
     // 计算初始值
-    bool success;
-    newdata.old_value = mysim_p->u_expr.getResult((char*)exp.c_str(), &success);
+    bool success = false;
+    uint64_t result = mysim_p->u_expr.getResult((char*)exp.c_str(), &success);
+    
     if (!success) {
         delNum(newdata.NO);
+        cout << "Error: Expression evaluation failed: " << exp << endl;
         return false;
     }
     
+    newdata.old_value = result;
     wp_pool.emplace_back(newdata);
+    
+    cout << "Watchpoint " << newdata.NO << " created successfully: " << exp 
+         << " = " << newdata.old_value << endl;
     printwp();
     return true;
 }
