@@ -346,11 +346,11 @@ void Exprinternal::reg() {
     for (size_t i = 0; i < tokens.size(); i++) {
         if (tokens.at(i).type == TK_REG) {
             char* regname = tokens.at(i).str;
-            cout << "Processing register: " << regname << endl;
+            //cout << "Processing register: " << regname << endl;
             
             /* regname[0] 为 $ ,例如 $pc */
             uint64_t val = mysim_p->getRegVal(&regname[1]); //获取寄存器的值
-            cout << "Register value: " << val << endl;
+            //cout << "Register value: " << val << endl;
             
             tokens[i].type = TK_NUM;
             sprintf(tokens[i].str, "%lu", val);
@@ -363,9 +363,9 @@ void Exprinternal::hex() {
     uint64_t ret;
     for (size_t i = 0; i < tokens.size(); i++) {
         if (tokens.at(i).type == TK_HEX) {
-            cout << "Processing hex: " << tokens.at(i).str << endl;
+            //cout << "Processing hex: " << tokens.at(i).str << endl;
             sscanf(tokens.at(i).str, "%lx", &ret);
-            cout << "Hex value: " << ret << endl;
+            //cout << "Hex value: " << ret << endl;
             
             sprintf(tokens[i].str, "%lu", ret);
             tokens[i].type = TK_NUM;

@@ -79,7 +79,7 @@ namespace expr_namespace {
      * @return Expr::word_t
      */
 Expr::word_t Expr::getResult(char* e, bool* success) {
-    cout << "Evaluating expression: " << e << endl;
+    //cout << "Evaluating expression: " << e << endl;
     
     if (!make_token(e)) {
         *success = false;
@@ -87,11 +87,11 @@ Expr::word_t Expr::getResult(char* e, bool* success) {
         return 0;
     }
     
-    cout << "Tokens created successfully, count: " << nr_token << endl;
-    for (int i = 0; i < nr_token; i++) {
-        cout << "  Token " << i << ": '" << tokens[i].str 
-             << "' (type: " << tokens[i].type << ")" << endl;
-    }
+    //cout << "Tokens created successfully, count: " << nr_token << endl;
+    // for (int i = 0; i < nr_token; i++) {
+    //     cout << "  Token " << i << ": '" << tokens[i].str 
+    //          << "' (type: " << tokens[i].type << ")" << endl;
+    // }
     
     Exprinternal expr_in(tokens, nr_token);
     uint64_t ret = expr_in.getResult();
