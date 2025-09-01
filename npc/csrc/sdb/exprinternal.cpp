@@ -347,7 +347,15 @@ void Exprinternal::reg() {
         if (tokens.at(i).type == TK_REG) {
             char* regname = tokens.at(i).str;
             //cout << "Processing register: " << regname << endl;
-            
+             if (strncmp(regname, "$csr_", 5) == 0) {
+                // 提取 CSR 名称
+                char* csr_name = regname + 5;
+                uint32_t csr_value = mysim_p->getCSRreg(csr_name);
+                
+                tokens[i].type = TK_NUM;
+                sprintf(tokens[i].str, "%u", csr_value);
+                continue;
+            }
             /* regname[0] 为 $ ,例如 $pc */
             uint64_t val = mysim_p->getRegVal(&regname[1]); //获取寄存器的值
             //cout << "Register value: " << val << endl;

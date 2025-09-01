@@ -71,6 +71,28 @@ public:
         TOP_STOP,
         TOP_RUNNING
     };
+    enum CSRIndex {
+    CSR_MSTATUS = 0,
+    CSR_MTVEC,
+    CSR_MEPC,
+    CSR_MCAUSE,
+    CSR_MTVAL,
+    CSR_MIE,
+    CSR_MIP,
+    CSR_MEDELEG,
+    CSR_MIDELEG,
+    CSR_STVEC,
+    CSR_SEPC,
+    CSR_SCAUSE,
+    CSR_STVAL,
+    CSR_SSTATUS,
+    CSR_SIE,
+    CSR_SIP,
+    CSR_SATP,
+    CSR_PRIVILEGE,
+    CSR_MAX
+};
+    uint32_t* csr_regs; // CSR寄存器指针
     SimMem* mem;
     SimAxi4* u_axi4;
     Watchpoint u_wp;
@@ -88,9 +110,13 @@ public:
     uint32_t getRegVal(const char* str);
     void setPC(uint32_t val);
     void setGPRregs(uint32_t* ptr);
+    void setCSRregs(uint32_t* ptr);
+    uint32_t getCSRreg(const char* name);
+    
     void GPRregsReset(void);
     void addCommitedInst(uint32_t inst_pc, uint32_t inst_data);
     void printRegisterFile();
+    void printCSRregisters();
     void showSimPerformance();
     void scanMem(paddr_t addr, uint32_t len);
     void excute(int32_t t);
@@ -102,6 +128,29 @@ public:
     bool isSdbOk(const char* sdbname);
     void posedgeCLK();
     void negedgeCLK();
+
+
+
+uint32_t getMstatus() { return getCSRreg("mstatus"); }
+uint32_t getMtvec() { return getCSRreg("mtvec"); }
+uint32_t getMepc() { return getCSRreg("mepc"); }
+uint32_t getMcause() { return getCSRreg("mcause"); }
+uint32_t getMtval() { return getCSRreg("mtval"); }
+uint32_t getMie() { return getCSRreg("mie"); }
+uint32_t getMip() { return getCSRreg("mip"); }
+uint32_t getMedeleg() { return getCSRreg("medeleg"); }
+uint32_t getMideleg() { return getCSRreg("mideleg"); }
+uint32_t getStvec() { return getCSRreg("stvec"); }
+uint32_t getSepc() { return getCSRreg("sepc"); }
+uint32_t getScause() { return getCSRreg("scause"); }
+uint32_t getStval() { return getCSRreg("stval"); }
+uint32_t getSstatus() { return getCSRreg("sstatus"); }
+uint32_t getSie() { return getCSRreg("sie"); }
+uint32_t getSip() { return getCSRreg("sip"); }
+uint32_t getSatp() { return getCSRreg("satp"); }
+uint32_t getPrivilege() { return getCSRreg("privilege"); }
+
+
 };
 
 #endif

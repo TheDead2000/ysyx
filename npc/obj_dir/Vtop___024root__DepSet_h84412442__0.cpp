@@ -42,6 +42,17 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_mem_pc_T
     set_mem_pc(mem_pc__Vcvt);
 }
 
+extern "C" void set_csr_ptr(const svOpenArrayHandle a);
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__rv32_csr_regfile__DOT__set_csr_ptr__Vdpioc2_TOP(const VlUnpacked<IData/*31:0*/, 18> &a) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__rv32_csr_regfile__DOT__set_csr_ptr__Vdpioc2_TOP\n"); );
+    // Body
+    static const int a__Vopenprops__ulims[2] = {0, 17};
+    static const VerilatedVarProps a__Vopenprops(VLVT_UINT32, VLVD_IN, VerilatedVarProps::Packed(), 31, 0, VerilatedVarProps::Unpacked(), 1, a__Vopenprops__ulims);
+    VerilatedDpiOpenVar a__Vopenarray (&a__Vopenprops, &a);
+    set_csr_ptr(&a__Vopenarray);
+}
+
 extern "C" void set_gpr_ptr(const svOpenArrayHandle a);
 
 VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__rv32_gpr_regfile__DOT__set_gpr_ptr__Vdpioc2_TOP(const VlUnpacked<IData/*31:0*/, 32> &a) {

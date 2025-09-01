@@ -12,6 +12,13 @@ static const char* regs[] = {
     "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
     "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6" };
 
+static const char* csr_names[] = {
+    "mstatus", "mtvec", "mepc", "mcause", "mtval", "mie", "mip", 
+    "medeleg", "mideleg", "stvec", "sepc", "scause", "stval", 
+    "sstatus", "sie", "sip", "satp", "privilege"
+};
+
+
 Simtop::Simtop() {
     cout << "SimtopStart!" << endl;
 
@@ -146,6 +153,13 @@ uint32_t Simtop::getRegVal(const char* str) {
         val = this->pc;
         return val;
     }
+    
+    // 检查是否是 CSR 寄存器
+    if (strncmp(str, "csr_", 4) == 0) {
+        const char* csr_name = str + 4;
+        return getCSRreg(csr_name);
+    }
+    
     for (int i = 0; i < 32; i++) {
         /*对比寄存器名字*/
         if (!strcmp(str, regs[i])) {
@@ -155,6 +169,20 @@ uint32_t Simtop::getRegVal(const char* str) {
     }
     return -1;
 }
+
+uint32_t Simtop::getCSRreg(const char* name) {
+    if (!csr_regs) return 0;
+    
+    for (int i = 0; i < CSR_MAX; i++) {
+        if (!strcmp(name, csr_names[i])) {
+            return csr_regs[i];
+        }
+    }
+    
+    cout << "Unknown CSR register: " << name << endl;
+    return 0;
+}
+
 /**
  * @brief 打印所有寄存器的值,包括pc
  *
@@ -171,6 +199,23 @@ void  Simtop::printRegisterFile() {
     cout << "\npc:" << "\t" << hex << this->pc << endl;
 }
 
+void Simtop::printCSRregisters() {
+    if (!csr_regs) {
+        cout << "CSR registers not initialized" << endl;
+        return;
+    }
+    
+    cout << "----------------------------CSR Registers-------------------------" << endl;
+    for (int i = 0; i < CSR_MAX; i++) {
+        cout << setw(10) << left << csr_names[i] 
+             << setw(20) << left << hex << csr_regs[i];
+        
+        if ((i + 1) % 2 == 0) {
+            cout << endl;
+        }
+    }
+    cout << endl;
+}
 
 /**
  * @brief HIT GOOD / BAD TRAP
@@ -351,6 +396,9 @@ void Simtop::setPC(uint32_t val) {
  */
 void Simtop::setGPRregs(uint32_t* ptr) {
     this->registerfile = ptr;
+}
+void Simtop::setCSRregs(uint32_t* ptr) {
+    this->csr_regs = ptr;
 }
 /**
  * @brief 记录已经提交的指令

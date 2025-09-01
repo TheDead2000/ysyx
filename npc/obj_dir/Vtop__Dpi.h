@@ -28,6 +28,8 @@ extern "C" {
     extern void icache_unhit_count();
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:686:32
     extern void inst_commit(int pc, int inst, svBit commit_valid);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:228:32
+    extern void set_csr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:232:32

@@ -75,6 +75,12 @@ extern "C" void set_mem_pc(int mem_pc) {
     mysim_p->mem_pc = mem_pc;
 }
 
+
+// DPI-C函数实现
+extern "C" void set_csr_ptr(const svOpenArrayHandle r) {
+    mysim_p->setCSRregs((uint32_t*)(((VerilatedDpiOpenVar*)r)->datap()));
+}
+
 extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
     mysim_p->setGPRregs((uint32_t*)(((VerilatedDpiOpenVar*)r)->datap()));
 }

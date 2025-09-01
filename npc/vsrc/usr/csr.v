@@ -198,4 +198,36 @@ module CSRs(
     end
   end
 
+  /************仿真使用：传递CSR寄存器指针************/
+  // 创建一个包含所有CSR寄存器的数组
+  reg [31:0] csr_regs [0:17];
+  
+  // 将CSR寄存器映射到数组
+  always @(*) begin
+    csr_regs[0] = mstatusReg;    // index 0: mstatus
+    csr_regs[1] = mtvecReg;      // index 1: mtvec
+    csr_regs[2] = mepcReg;       // index 2: mepc
+    csr_regs[3] = mcauseReg;     // index 3: mcause
+    csr_regs[4] = mtvalReg;      // index 4: mtval
+    csr_regs[5] = mieReg;        // index 5: mie
+    csr_regs[6] = mipReg;        // index 6: mip
+    csr_regs[7] = medelegReg;    // index 7: medeleg
+    csr_regs[8] = midelegReg;    // index 8: mideleg
+    csr_regs[9] = stvecReg;      // index 9: stvec
+    csr_regs[10] = sepcReg;      // index 10: sepc
+    csr_regs[11] = scauseReg;    // index 11: scause
+    csr_regs[12] = stvalReg;     // index 12: stval
+    csr_regs[13] = sstatusReg;   // index 13: sstatus
+    csr_regs[14] = sieReg;       // index 14: sie
+    csr_regs[15] = sipReg;       // index 15: sip
+    csr_regs[16] = satpReg;      // index 16: satp
+    csr_regs[17] = {30'b0, privilegeReg}; // index 17: privilege (扩展为32位)
+  end
+  
+  // DPI-C函数声明
+  import "DPI-C" function void set_csr_ptr(input logic [31:0] a[]);
+  
+  // 初始化时传递CSR寄存器数组指针
+  initial set_csr_ptr(csr_regs);
+
 endmodule
