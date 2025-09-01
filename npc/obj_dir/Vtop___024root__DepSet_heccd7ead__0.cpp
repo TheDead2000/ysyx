@@ -525,24 +525,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         }
         __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q = 0U;
         __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__medelegReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__stvalReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mcauseReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__scauseReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvalReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mipReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__sepcReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mepcReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvecReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__stvecReg = 0U;
         vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg = 3U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg = 0U;
-        vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg = 0U;
         vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q = 0U;
         vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q = 0U;
         __Vdly__top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_state = 0U;
@@ -555,6 +538,23 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg[2U] = 0U;
         vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_reg = 0ULL;
         vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_neg_reg = 0ULL;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__medelegReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__stvalReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mcauseReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__scauseReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvalReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mipReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__sepcReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mepcReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvecReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__stvecReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg = 0U;
+        vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg = 0U;
         __Vdly__top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_state = 0U;
         vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_ready = 0U;
         vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_data64 = 0ULL;
@@ -636,122 +636,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
                 = vlSelf->top__DOT__clint_u__DOT__mtime_wdata_i;
         }
-        if ((1U & (~ (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_en)))) {
-            if (vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_wen) {
-                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                              >> 0xbU)))) {
-                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                  >> 0xaU)))) {
-                        if ((0x200U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                            if ((0x100U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                              >> 7U)))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                  >> 6U)))) {
-                                        if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                    >> 5U)))) {
-                                            if ((1U 
-                                                 & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                     >> 4U)))) {
-                                                if (
-                                                    (1U 
-                                                     & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                         >> 3U)))) {
-                                                    if (
-                                                        (1U 
-                                                         & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                             >> 2U)))) {
-                                                        if (
-                                                            (2U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                                            if (
-                                                                (1U 
-                                                                 & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
-                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__medelegReg 
-                                                                    = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
-                                                            }
-                                                            if (
-                                                                (1U 
-                                                                 & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
-                                                                    = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
-                                                            }
-                                                        }
-                                                    }
-                                                    if (
-                                                        (4U 
-                                                         & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                                        if (
-                                                            (1U 
-                                                             & (~ 
-                                                                ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                                 >> 1U)))) {
-                                                            if (
-                                                                (1U 
-                                                                 & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
-                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg 
-                                                                    = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                      >> 9U)))) {
-                            if ((0x100U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                              >> 7U)))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                  >> 6U)))) {
-                                        if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                    >> 5U)))) {
-                                            if ((1U 
-                                                 & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                     >> 4U)))) {
-                                                if (
-                                                    (1U 
-                                                     & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                         >> 3U)))) {
-                                                    if (
-                                                        (4U 
-                                                         & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                                        if (
-                                                            (1U 
-                                                             & (~ 
-                                                                ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
-                                                                 >> 1U)))) {
-                                                            if (
-                                                                (1U 
-                                                                 & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
-                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg 
-                                                                    = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         if (vlSelf->top__DOT__clint_u__DOT__csr_write_en) {
+            if ((0x300U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_addr))) {
+                vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg 
+                    = (3U & (vlSelf->top__DOT__clint_u__DOT__csr_write_data 
+                             >> 0xbU));
+            }
             if ((1U & (~ ((((((((0x300U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_addr)) 
                                 | (0x305U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_addr))) 
                                | (0x341U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_addr))) 
@@ -844,46 +734,41 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                         = vlSelf->top__DOT__clint_u__DOT__csr_write_data;
                 }
             }
-            if ((0x300U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_addr))) {
-                vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg 
-                    = (3U & (vlSelf->top__DOT__clint_u__DOT__csr_write_data 
-                             >> 0xbU));
-            }
         } else if (vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_wen) {
-            if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+            if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                           >> 0xbU)))) {
-                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                               >> 0xaU)))) {
-                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                   >> 9U)))) {
-                        if ((0x100U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                            if ((0x80U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                        if ((0x100U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                            if ((0x80U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                               >> 6U)))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                   >> 5U)))) {
                                         if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                     >> 4U)))) {
                                             if ((1U 
                                                  & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                      >> 3U)))) {
                                                 if (
                                                     (1U 
                                                      & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                          >> 2U)))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
@@ -892,65 +777,65 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                     }
                                 }
                             }
-                            if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                            if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                           >> 7U)))) {
-                                if ((0x40U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                if ((0x40U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                   >> 5U)))) {
                                         if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                     >> 4U)))) {
                                             if ((1U 
                                                  & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                      >> 3U)))) {
                                                 if (
                                                     (1U 
                                                      & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                          >> 2U)))) {
                                                     if (
                                                         (2U 
-                                                         & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                         & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__stvalReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__scauseReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__sepcReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
                                                 if (
                                                     (4U 
-                                                     & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                     & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
@@ -958,48 +843,48 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                         }
                                     }
                                 }
-                                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                               >> 6U)))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                   >> 5U)))) {
                                         if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                     >> 4U)))) {
                                             if ((1U 
                                                  & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                      >> 3U)))) {
                                                 if (
                                                     (4U 
-                                                     & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                     & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__stvecReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
                                                 if (
                                                     (1U 
                                                      & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                          >> 2U)))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
@@ -1010,67 +895,67 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                             }
                         }
                     }
-                    if ((0x200U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                        if ((0x100U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                            if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                    if ((0x200U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                        if ((0x100U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                            if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                           >> 7U)))) {
-                                if ((0x40U & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                if ((0x40U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                   >> 5U)))) {
                                         if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                     >> 4U)))) {
                                             if ((1U 
                                                  & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                      >> 3U)))) {
                                                 if (
                                                     (1U 
                                                      & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                          >> 2U)))) {
                                                     if (
                                                         (2U 
-                                                         & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                         & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mcauseReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvalReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mepcReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
                                                 if (
                                                     (4U 
-                                                     & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                     & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mipReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
@@ -1078,48 +963,48 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                         }
                                     }
                                 }
-                                if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                               >> 6U)))) {
-                                    if ((1U & (~ ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                   >> 5U)))) {
                                         if ((1U & (~ 
-                                                   ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                     >> 4U)))) {
                                             if ((1U 
                                                  & (~ 
-                                                    ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                      >> 3U)))) {
                                                 if (
                                                     (4U 
-                                                     & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                     & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address))) {
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvecReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
                                                 if (
                                                     (1U 
                                                      & (~ 
-                                                        ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                          >> 2U)))) {
                                                     if (
                                                         (1U 
                                                          & (~ 
-                                                            ((IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address) 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
                                                              >> 1U)))) {
                                                         if (
                                                             (1U 
-                                                             & (~ (IData)(vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_address)))) {
+                                                             & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
                                                             vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
-                                                                = vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_data;
+                                                                = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
                                                         }
                                                     }
                                                 }
@@ -1192,6 +1077,121 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             }
         } else {
             __Vdly__top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_state = 1U;
+        }
+        if ((1U & (~ (IData)(vlSelf->top__DOT__clint_u__DOT__csr_write_en)))) {
+            if (vlSelf->top__DOT____Vcellinp__rv32_csr_regfile__csr_write_wen) {
+                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                              >> 0xbU)))) {
+                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                  >> 0xaU)))) {
+                        if ((0x200U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                            if ((0x100U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                              >> 7U)))) {
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                  >> 6U)))) {
+                                        if ((1U & (~ 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                    >> 5U)))) {
+                                            if ((1U 
+                                                 & (~ 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                     >> 4U)))) {
+                                                if (
+                                                    (1U 
+                                                     & (~ 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                         >> 3U)))) {
+                                                    if (
+                                                        (1U 
+                                                         & (~ 
+                                                            ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                             >> 2U)))) {
+                                                        if (
+                                                            (2U 
+                                                             & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                                            if (
+                                                                (1U 
+                                                                 & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
+                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__medelegReg 
+                                                                    = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
+                                                            }
+                                                            if (
+                                                                (1U 
+                                                                 & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
+                                                                    = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
+                                                            }
+                                                        }
+                                                    }
+                                                    if (
+                                                        (4U 
+                                                         & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                                        if (
+                                                            (1U 
+                                                             & (~ 
+                                                                ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                                 >> 1U)))) {
+                                                            if (
+                                                                (1U 
+                                                                 & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
+                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg 
+                                                                    = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                      >> 9U)))) {
+                            if ((0x100U & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                              >> 7U)))) {
+                                    if ((1U & (~ ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                  >> 6U)))) {
+                                        if ((1U & (~ 
+                                                   ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                    >> 5U)))) {
+                                            if ((1U 
+                                                 & (~ 
+                                                    ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                     >> 4U)))) {
+                                                if (
+                                                    (1U 
+                                                     & (~ 
+                                                        ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                         >> 3U)))) {
+                                                    if (
+                                                        (4U 
+                                                         & (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q))) {
+                                                        if (
+                                                            (1U 
+                                                             & (~ 
+                                                                ((IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q) 
+                                                                 >> 1U)))) {
+                                                            if (
+                                                                (1U 
+                                                                 & (~ (IData)(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q)))) {
+                                                                vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg 
+                                                                    = vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         if ((0U == (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_state))) {
             __Vdly__top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_state = 1U;
@@ -2057,13 +2057,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     }
     if (vlSelf->top__DOT__ex2mem__DOT__reg_rst) {
         vlSelf->top__DOT__ex2mem__DOT___pc_op_ex_mem_q = 0U;
-        vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q = 0U;
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                          >> 3U)))) {
         vlSelf->top__DOT__ex2mem__DOT___pc_op_ex_mem_q 
             = vlSelf->top__DOT__id2ex__DOT___pc_op_id_ex_q;
-        vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q 
-            = vlSelf->top__DOT__id2ex__DOT___csr_idx_id_ex_q;
     }
     if (vlSelf->top__DOT__if2id__DOT__reg_rst) {
         vlSelf->top__DOT__if2id__DOT___trap_bus_if_id_q = 0U;
@@ -2143,7 +2140,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     if (vlSelf->top__DOT__ex2mem__DOT__reg_rst) {
         vlSelf->top__DOT__ex2mem__DOT___csr_writevalid_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q = 0U;
-        vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___rs1_data_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___imm_data_ex_mem_q = 0U;
@@ -2155,19 +2151,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                            >> 1U))));
         vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q 
             = vlSelf->top__DOT__exu__DOT___exc_trap_bus;
-        vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q 
-            = (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
-                                  >> 2U)))) & vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2) 
-               | (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
-                                     >> 3U)))) & (vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q 
-                                                  | vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2)) 
-                  | (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
-                                        >> 4U)))) & 
-                      ((~ vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2) 
-                       & vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q)) 
-                     | ((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
-                                          >> 1U)))) 
-                        & vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q))));
         vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q 
             = vlSelf->top__DOT__id2ex__DOT___rs2_data_id_ex_q;
         vlSelf->top__DOT__ex2mem__DOT___rs1_data_ex_mem_q 
@@ -2181,9 +2164,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__id2ex__DOT___csr_imm_id_ex_q = 0U;
         vlSelf->top__DOT__id2ex__DOT___bpu_history_id_ex_q = 0U;
         vlSelf->top__DOT__id2ex__DOT___pc_op_id_ex_q = 0U;
-        vlSelf->top__DOT__id2ex__DOT___csr_idx_id_ex_q = 0U;
-        vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q = 0U;
-        vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q = 0U;
         vlSelf->top__DOT__id2ex__DOT___rs2_data_id_ex_q = 0U;
         vlSelf->top__DOT__id2ex__DOT___rs1_data_id_ex_q = 0U;
         vlSelf->top__DOT__id2ex__DOT___imm_data_id_ex_q = 0U;
@@ -2269,22 +2249,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__id2ex__DOT___bpu_history_id_ex_q 
             = vlSelf->top__DOT__if2id__DOT___bpu_history_if_id_q;
         vlSelf->top__DOT__id2ex__DOT___pc_op_id_ex_q = 0U;
-        vlSelf->top__DOT__id2ex__DOT___csr_idx_id_ex_q 
-            = vlSelf->top__DOT__id2ex__DOT___csr_idx_id_ex_d;
-        vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q 
-            = (((IData)(vlSelf->top__DOT__idu__DOT___csr_clear) 
-                << 4U) | (((IData)(vlSelf->top__DOT__idu__DOT___csr_set) 
-                           << 3U) | (((IData)(vlSelf->top__DOT__idu__DOT___csr_write) 
-                                      << 2U) | (((IData)(vlSelf->top__DOT__idu__DOT___csr_read) 
-                                                 << 1U) 
-                                                | (1U 
-                                                   & (~ 
-                                                      ((IData)(vlSelf->top__DOT__idu__DOT___csr_write) 
-                                                       | ((IData)(vlSelf->top__DOT__idu__DOT___csr_set) 
-                                                          | ((IData)(vlSelf->top__DOT__idu__DOT___csr_clear) 
-                                                             | (IData)(vlSelf->top__DOT__idu__DOT___csr_read))))))))));
-        vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q 
-            = vlSelf->top__DOT__rv32_csr_regfile__DOT__read_data;
         vlSelf->top__DOT__id2ex__DOT___rs2_data_id_ex_q 
             = ((IData)(vlSelf->top__DOT__idu__DOT___rs2_exc_bypass_valid)
                 ? vlSelf->top__DOT__exu__DOT___alu_out
@@ -2356,6 +2320,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q = 0x13U;
         vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q = 0U;
+        vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q = 0U;
+        vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q = 0U;
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                          >> 3U)))) {
         vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q 
@@ -2364,6 +2330,21 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             = vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q;
         vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q 
             = vlSelf->top__DOT__id2ex__DOT___rd_idx_id_ex_q;
+        vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q 
+            = vlSelf->top__DOT__id2ex__DOT___csr_idx_id_ex_q;
+        vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q 
+            = (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
+                                  >> 2U)))) & vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2) 
+               | (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
+                                     >> 3U)))) & (vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q 
+                                                  | vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2)) 
+                  | (((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
+                                        >> 4U)))) & 
+                      ((~ vlSelf->top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2) 
+                       & vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q)) 
+                     | ((- (IData)((1U & ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
+                                          >> 1U)))) 
+                        & vlSelf->top__DOT__id2ex__DOT___csr_data_id_ex_q))));
     }
     if (__Vdlyvset__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0) {
         vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs[__Vdlyvdim0__top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs__v0] 
@@ -2800,6 +2781,22 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                   & vlSelf->top__DOT__lsu__DOT___mem_trap_bus) 
                                                  | ((IData)(vlSelf->top__DOT__lsu__DOT____Vlvbound_hda221a3d__0) 
                                                     << 0x13U));
+    vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime 
+        = ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
+            > vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
+           | ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
+               == vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
+              & (vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
+                 >= vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q)));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_is_zero 
+        = (1U & (~ (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count)));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_next 
+        = (0x1ffffffffULL & (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count 
+                             >> 1U));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__add_d_32 
+        = (IData)(((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg[2U] 
+                    >> 1U) ^ (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_reg 
+                              >> 0x20U)));
     vlSelf->top__DOT__rv32_csr_regfile__DOT__csr_regs[0U] 
         = vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg;
     vlSelf->top__DOT__rv32_csr_regfile__DOT__csr_regs[1U] 
@@ -2836,22 +2833,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg;
     vlSelf->top__DOT__rv32_csr_regfile__DOT__csr_regs[0x11U] 
         = vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg;
-    vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime 
-        = ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
-            > vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
-           | ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
-               == vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
-              & (vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
-                 >= vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q)));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_is_zero 
-        = (1U & (~ (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count)));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_next 
-        = (0x1ffffffffULL & (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count 
-                             >> 1U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__add_d_32 
-        = (IData)(((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg[2U] 
-                    >> 1U) ^ (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_reg 
-                              >> 0x20U)));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count_plus1 
         = (0xfU & ((IData)(1U) + (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_count)));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT__rs1_34 
@@ -10587,4 +10568,40 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                          (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__2__KET____DOT__u_regTemplate__dout 
                                                           >> 3U))))))) 
                      << 3U));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum[0U] 
+        = ((0xffffffffffffffefULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+            [0U]) | ((QData)((IData)((1U & ((IData)(
+                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout 
+                                                     >> 4U)) 
+                                            ^ ((IData)(
+                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__1__KET____DOT__u_regTemplate__dout 
+                                                        >> 4U)) 
+                                               ^ (IData)(
+                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__2__KET____DOT__u_regTemplate__dout 
+                                                          >> 4U))))))) 
+                     << 4U));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum[0U] 
+        = ((0xffffffffffffffdfULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+            [0U]) | ((QData)((IData)((1U & ((IData)(
+                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout 
+                                                     >> 5U)) 
+                                            ^ ((IData)(
+                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__1__KET____DOT__u_regTemplate__dout 
+                                                        >> 5U)) 
+                                               ^ (IData)(
+                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__2__KET____DOT__u_regTemplate__dout 
+                                                          >> 5U))))))) 
+                     << 5U));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum[0U] 
+        = ((0xffffffffffffffbfULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+            [0U]) | ((QData)((IData)((1U & ((IData)(
+                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__0__KET____DOT__u_regTemplate__dout 
+                                                     >> 6U)) 
+                                            ^ ((IData)(
+                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__1__KET____DOT__u_regTemplate__dout 
+                                                        >> 6U)) 
+                                               ^ (IData)(
+                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__2__KET____DOT__u_regTemplate__dout 
+                                                          >> 6U))))))) 
+                     << 6U));
 }
