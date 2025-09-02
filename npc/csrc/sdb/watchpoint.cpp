@@ -84,10 +84,10 @@ void Watchpoint::printwp() {
 bool Watchpoint::checkDiff() {
     bool has_diff = false;
 
-        if (wp_pool.empty()) {
-        cout << "No watchpoints set" << endl;
-        return false;
-    }
+    //     if (wp_pool.empty()) {
+    //     cout << "No watchpoints set" << endl;
+    //     return false;
+    // }
 
     for (auto it = wp_pool.begin(); it != wp_pool.end(); it++) {
         bool success;
