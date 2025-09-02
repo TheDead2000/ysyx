@@ -57,7 +57,7 @@ static Finfo FILE_TABLE[] __attribute__((used)) = {
   [FD_SB] = {"/dev/sb", 0, 0, invalid_read, sb_write},
   [FD_SBCTL] = {"/dev/sbctl", 0, 0, sbctl_read, sbctl_write},
 
-#include "files.h"
+//#include "files.h"
 };
 
 // Number of entries in file_table
