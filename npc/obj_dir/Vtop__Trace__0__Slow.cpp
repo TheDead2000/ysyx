@@ -510,6 +510,11 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+62,"load_use_valid_id_i", false,-1);
     tracep->declBit(c+5736,"jump_valid_ex_i", false,-1);
     tracep->declBit(c+88,"alu_mul_div_valid_ex_i", false,-1);
+    tracep->declBit(c+118,"csr_write_en_o", false,-1);
+    tracep->declBus(c+119,"csr_write_addr_o", false,-1, 11,0);
+    tracep->declBus(c+120,"csr_write_data_o", false,-1, 31,0);
+    tracep->declBus(c+116,"clint_pc_o", false,-1, 31,0);
+    tracep->declBit(c+117,"clint_pc_valid_o", false,-1);
     tracep->declBus(c+121,"csr_mstatus_i", false,-1, 31,0);
     tracep->declBus(c+122,"csr_mtvec_i", false,-1, 31,0);
     tracep->declBus(c+123,"csr_mepc_i", false,-1, 31,0);
@@ -528,11 +533,6 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+136,"csr_sip_i", false,-1, 31,0);
     tracep->declBus(c+137,"csr_satp_i", false,-1, 31,0);
     tracep->declBus(c+138,"csr_privilege_i", false,-1, 1,0);
-    tracep->declBit(c+118,"csr_write_en_o", false,-1);
-    tracep->declBus(c+119,"csr_write_addr_o", false,-1, 11,0);
-    tracep->declBus(c+120,"csr_write_data_o", false,-1, 31,0);
-    tracep->declBus(c+116,"clint_pc_o", false,-1, 31,0);
-    tracep->declBit(c+117,"clint_pc_valid_o", false,-1);
     tracep->declBus(c+5,"stall_o", false,-1, 5,0);
     tracep->declBus(c+6,"flush_o", false,-1, 5,0);
     tracep->declBus(c+139,"privilege_o", false,-1, 1,0);

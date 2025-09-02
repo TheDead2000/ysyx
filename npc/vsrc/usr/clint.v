@@ -25,8 +25,19 @@ module clint (
     input load_use_valid_id_i,
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
+  
     
-    // CSR寄存器读取接口
+    // CSR寄存器写入接口
+    output        csr_write_en_o,
+    output [11:0] csr_write_addr_o,
+    output [31:0] csr_write_data_o,
+    
+    // 输出至取指阶段
+    output [31:0] clint_pc_o,
+    output        clint_pc_valid_o,
+    // output        clint_pc_plus4_valid_o,
+    
+ // CSR寄存器读取接口
     input  [31:0] csr_mstatus_i,
     input  [31:0] csr_mtvec_i,
     input  [31:0] csr_mepc_i,
@@ -45,17 +56,8 @@ module clint (
     input  [31:0] csr_sip_i,
     input  [31:0] csr_satp_i,
     input  [1:0]  csr_privilege_i,
-    
-    // CSR寄存器写入接口
-    output        csr_write_en_o,
-    output [11:0] csr_write_addr_o,
-    output [31:0] csr_write_data_o,
-    
-    // 输出至取指阶段
-    output [31:0] clint_pc_o,
-    output        clint_pc_valid_o,
-    // output        clint_pc_plus4_valid_o,
-    
+
+
     // 流水线控制
     output reg [5:0] stall_o,
     output reg [5:0] flush_o,
@@ -101,7 +103,7 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  assign trap_valid = trap_mret || trap_sret || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt ||
+  assign trap_valid = |trap_bus_i || trap_mret || trap_sret || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
   
