@@ -42,7 +42,7 @@ extern "C" void dcache_hit_count() {
 
 
 
-extern "C" void set_nextpc(int nextpc, int inst,svBit commit_valid) {
+extern "C" void set_diffpc(int nextpc, int inst,svBit commit_valid) {
     // NOP 指令对于的 PC 为 0
     if (nextpc == 0 || commit_valid == 0) {
         return;
@@ -61,7 +61,7 @@ extern "C" void set_nextpc(int nextpc, int inst,svBit commit_valid) {
      *
      */
 #ifdef MTRACH
-    printf("set_nextpc:%x\n", (void*)nextpc);
+    printf("set_diffpc:%x\n", (void*)nextpc);
 #endif
 
     mysim_p->commited_list.nextpc.push_back(nextpc);

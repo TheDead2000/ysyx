@@ -693,11 +693,15 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
     inst_commit(pc_mem, inst_data_mem, commit_valid);
   end
 
+wire [`INST_LEN-1:0] next_pc;
+
+// 计算下一条指令的 PC
+assign next_pc = redirect_pc_valid ? redirect_pc : (pc_mem + 4);
   /************************××××××向仿真环境传递 PC *****************************/
-  import "DPI-C" function void set_nextpc(input int nextpc,    input int inst,   input bit commit_valid );
+  import "DPI-C" function void set_diffpc(input int nextpc,    input int inst,   input bit commit_valid );
 
   always @(posedge clk) begin
-    set_nextpc(pc_mem,inst_data_mem,commit_valid);
+    set_diffpc(next_pc,inst_data_mem,commit_valid);
   end
 
  /* 输出至取指阶段 */
