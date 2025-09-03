@@ -53,13 +53,6 @@ extern "C" void set_diffpc(int pc, int inst,svBit commit_valid) {
         return;
     }
 
-    if(pc == SERIAL_PORT || pc == KBD_ADDR)
-    {
-        printf("is device access!\n");
-        // mysim_p->u_difftest.difftest_skip_ref();
-        return;
-    }
-
 #ifdef MTRACH
     printf("set_diffpc:%x\n", (void*)pc);
 #endif
