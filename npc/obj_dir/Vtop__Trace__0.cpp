@@ -125,7 +125,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                   ? vlSelf->top__DOT__exu__DOT___alu_out
                                   : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid) 
                                       & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d)))
-                                      ? vlSelf->top__DOT__mem_data_mem
+                                      ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
                                       : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid)
                                           ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                           : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
@@ -134,7 +134,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                   ? vlSelf->top__DOT__exu__DOT___alu_out
                                   : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid) 
                                       & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d)))
-                                      ? vlSelf->top__DOT__mem_data_mem
+                                      ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
                                       : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid)
                                           ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                           : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
@@ -359,7 +359,7 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgIData(oldp+100,(vlSelf->top__DOT__ex2mem__DOT___csr_writedata_ex_mem_q),32);
         bufp->chgBit(oldp+101,(vlSelf->top__DOT__ex2mem__DOT___csr_writevalid_ex_mem_q));
         bufp->chgSData(oldp+102,(vlSelf->top__DOT__ex2mem__DOT___csr_addr_ex_mem_q),12);
-        bufp->chgIData(oldp+103,(vlSelf->top__DOT__mem_data_mem),32);
+        bufp->chgIData(oldp+103,(vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d),32);
         bufp->chgIData(oldp+104,(vlSelf->top__DOT__lsu__DOT___mem_trap_bus),20);
         bufp->chgIData(oldp+105,(vlSelf->top__DOT__clint_u__DOT__mtime_addr_i),32);
         bufp->chgBit(oldp+106,(vlSelf->top__DOT__mem_addr_valid));

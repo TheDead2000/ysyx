@@ -4439,14 +4439,6 @@ void Vtop___024root__trace_chg_sub_3(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                               [(0x3fU & ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__ex_next_ras_sp) 
                                          - (IData)(1U)))]
                                : 0U)),32);
-    bufp->chgIData(oldp+873,(((0x10U & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
-                               ? 0x13U : vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q)),32);
-    bufp->chgIData(oldp+874,(((0x10U & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
-                               ? 0U : vlSelf->top__DOT__mem_data_mem)),32);
-    bufp->chgIData(oldp+875,(((0x10U & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
-                               ? 0U : vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)),32);
-    bufp->chgCData(oldp+876,(((0x10U & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
-                               ? 0U : (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q))),5);
 }
 
 void Vtop___024root__trace_cleanup(void* voidSelf, VerilatedVcd* /*unused*/) {

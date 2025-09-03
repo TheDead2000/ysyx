@@ -62,7 +62,7 @@ module mem_wb (
 
 
   /* pc寄存器 */
-  wire [`XLEN-1:0] _pc_mem_wb_d = (_flush_valid) ? `XLEN'b0 : pc_mem_wb_i;
+  wire [`XLEN-1:0] _pc_mem_wb_d =  pc_mem_wb_i;
   reg [`XLEN-1:0] _pc_mem_wb_q;
   regTemplate #(
       .WIDTH    (`XLEN),
@@ -77,7 +77,7 @@ module mem_wb (
   assign pc_mem_wb_o = _pc_mem_wb_q;
 
   /* inst_data寄存器 */
-  wire [`INST_LEN-1:0] _inst_data_mem_wb_d = (_flush_valid) ? `INST_NOP : inst_data_mem_wb_i;
+  wire [`INST_LEN-1:0] _inst_data_mem_wb_d = inst_data_mem_wb_i;
   reg [`INST_LEN-1:0] _inst_data_mem_wb_q;
   regTemplate #(
       .WIDTH    (`INST_LEN),
@@ -108,7 +108,7 @@ module mem_wb (
   //   assign exc_alu_data_mem_wb_o = _exc_alu_data_mem_wb_q;
 
   /* mem_data寄存器 */
-  wire [`XLEN-1:0] _mem_data_mem_wb_d = (_flush_valid) ? `XLEN'b0 : mem_data_mem_wb_i;
+  wire [`XLEN-1:0] _mem_data_mem_wb_d = mem_data_mem_wb_i;
   reg [`XLEN-1:0] _mem_data_mem_wb_q;
   regTemplate #(
       .WIDTH    (`XLEN),
@@ -140,7 +140,7 @@ module mem_wb (
 
 
   /* rd_addr 寄存器 */
-  wire [`REG_ADDRWIDTH-1:0] _rd_addr_mem_wb_d = (_flush_valid) ? `REG_ADDRWIDTH'b0 : rd_addr_mem_wb_i;
+  wire [`REG_ADDRWIDTH-1:0] _rd_addr_mem_wb_d = rd_addr_mem_wb_i;
   reg [`REG_ADDRWIDTH-1:0] _rd_addr_mem_wb_q;
   regTemplate #(
       .WIDTH    (`REG_ADDRWIDTH),

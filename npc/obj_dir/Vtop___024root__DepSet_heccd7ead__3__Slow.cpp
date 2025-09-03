@@ -4180,7 +4180,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__pdt_correct = 0;
     vlSelf->top__DOT__id_ras_push_valid = 0;
     vlSelf->top__DOT__csr_imm_valid_o = 0;
-    vlSelf->top__DOT__mem_data_mem = 0;
     vlSelf->top__DOT__mem_addr_valid = 0;
     vlSelf->top__DOT__mem_mask = 0;
     vlSelf->top__DOT__mem_wdata = 0;
@@ -4599,6 +4598,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__lsu__DOT____VdfgTmp_h7035a01d__0 = 0;
     vlSelf->top__DOT__mem2wb__DOT___pc_mem_wb_q = 0;
     vlSelf->top__DOT__mem2wb__DOT___inst_data_mem_wb_q = 0;
+    vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d = 0;
     vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_q = 0;
     vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q = 0;
     vlSelf->top__DOT__clint_u__DOT__trap_valid = 0;
