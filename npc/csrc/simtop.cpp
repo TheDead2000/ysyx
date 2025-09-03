@@ -115,12 +115,18 @@ void Simtop::stepCycle(bool val) {
      * 表示 NPC 指令已经提交，并且得到了下一条提交指令的 pc
      * 分别位于 inst，nextpc 的队首
      */
-    if (!commited_list.nextpc.empty() && !commited_list.inst.empty()) {
-        setPC(commited_list.nextpc.front());
-        sdbRun();
-        commited_list.inst.pop_front();
-        commited_list.nextpc.pop_front();
-    }
+    // if (!commited_list.nextpc.empty() && !commited_list.inst.empty()) {
+    //     setPC(commited_list.nextpc.front());
+    //     sdbRun();
+    //     commited_list.inst.pop_front();
+    //     commited_list.nextpc.pop_front();
+    // }
+
+    setPC(commited_list.nextpc.front());
+    printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.front());
+    sdbRun();
+    commited_list.inst.pop_front();
+    commited_list.nextpc.pop_front();
     //printf("ready to check wp diff\n");
     this->u_wp.checkDiff();
 #endif
