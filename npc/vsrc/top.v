@@ -690,7 +690,7 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   );
   always @(posedge clk) begin
     // 延时一个周期，让寄存器写入有效
-    inst_commit(pc_mem, inst_data_mem, commit_valid);
+    inst_commit(pc_mem_wb, inst_data_mem_wb, commit_valid);
   end
 
   /************************××××××向仿真环境传递 PC *****************************/

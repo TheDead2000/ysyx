@@ -500,7 +500,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = vlSelf->top__DOT__axi4_rw__DOT___arb_wdata_ready_o;
     vlSelf->__Vdly__top__DOT__axi_arb__DOT__arb_state 
         = vlSelf->top__DOT__axi_arb__DOT__arb_state;
-    Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q, vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q, 
+    Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(vlSelf->top__DOT__mem2wb__DOT___pc_mem_wb_q, vlSelf->top__DOT__mem2wb__DOT___inst_data_mem_wb_q, 
                                                            (1U 
                                                             & (~ 
                                                                (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
