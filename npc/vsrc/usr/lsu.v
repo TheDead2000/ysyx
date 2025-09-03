@@ -227,7 +227,7 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
   import "DPI-C" function void set_mem_pc(input int mem_pc);
   always @(*) begin
     if (_isstore || _isload) begin
-      $display("set_mem_pc pc:%h", inst_addr_i);
+      // $display("set_mem_pc pc:%h", inst_addr_i);
       set_mem_pc(inst_addr_i);
     end
   end

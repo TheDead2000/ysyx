@@ -9457,9 +9457,8 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
                         & vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q)) 
             | ((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls32byte))) 
                & vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q)));
-    if (VL_UNLIKELY(((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_write_valid_i) 
-                     | (IData)(vlSelf->top__DOT__lsu__DOT___isload)))) {
-        VL_WRITEF("set_mem_pc pc:%x\n",32,vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q);
+    if (((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_write_valid_i) 
+         | (IData)(vlSelf->top__DOT__lsu__DOT___isload))) {
         Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_mem_pc_TOP(vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q);
     }
     vlSelf->top__DOT__mem_addr_valid = ((~ (IData)(vlSelf->top__DOT__mem_data_ready)) 
