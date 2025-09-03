@@ -118,11 +118,12 @@ void Simtop::stepCycle(bool val) {
     if (!commited_list.nextpc.empty() && !commited_list.inst.empty()) {
         
         setPC(commited_list.nextpc.front());
-        printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.front());
+        printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.back());
         sdbRun();
         commited_list.inst.pop_front();
         commited_list.nextpc.pop_front();
     }
+    
     //printf("ready to check wp diff\n");
     this->u_wp.checkDiff();
 #endif
