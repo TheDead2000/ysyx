@@ -183,6 +183,27 @@ module clint (
     end
   end
   
+// 添加锁存寄存器
+reg [31:0] cause_value_latched;
+reg is_delegated_latched;
+reg interrupt_pending_latched;
+
+// 在检测到陷阱时锁存关键信号
+always @(posedge clk or posedge rst) begin
+  if (rst) begin
+    cause_value_latched <= 32'b0;
+    is_delegated_latched <= 1'b0;
+    interrupt_pending_latched <= 1'b0;
+  end else if (trap_valid && csr_state == IDLE) begin
+    // 只在IDLE状态且检测到陷阱时锁存
+    cause_value_latched <= cause_value;
+    is_delegated_latched <= exception_delegated || interrupt_delegated;
+    interrupt_pending_latched <= interrupt_pending;
+  end
+end
+
+
+
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
@@ -268,7 +289,7 @@ module clint (
     case (csr_state)
       SAVE_PC: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated) begin
+        if (is_delegated_latched) begin
           csr_write_addr_o = 12'h141; // sepc
         end else begin
           csr_write_addr_o = 12'h341; // mepc
@@ -278,17 +299,17 @@ module clint (
       
       SAVE_CAUSE: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated) begin
+        if (is_delegated_latched) begin
           csr_write_addr_o = 12'h142; // scause
         end else begin
           csr_write_addr_o = 12'h342; // mcause
         end
-        csr_write_data_o = cause_value;
+        csr_write_data_o = cause_value_latched;
       end
       
       SAVE_VALUE: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated) begin
+        if (is_delegated_latched) begin
           csr_write_addr_o = 12'h143; // stval
         end else begin
           csr_write_addr_o = 12'h343; // mtval
@@ -298,7 +319,7 @@ module clint (
       
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated) begin
+        if (is_delegated_latched) begin
           csr_write_addr_o = 12'h100; // sstatus
           csr_write_data_o = {
             csr_sstatus_i[31:9],
