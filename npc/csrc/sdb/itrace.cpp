@@ -141,7 +141,7 @@ void Itrace::llvmDis() {
 
     disassemble(dis_str, sizeof(dis_str), pc, (uint8_t*)&inst_data, 4);
 
-    sprintf(pc_str, "pc:%p\t", (void*)pc);
+    // sprintf(pc_str, "pc:%p\t", (void*)pc);
     string dis_data;
     dis_data.append(pc_str);
     dis_data.append(dis_str);
