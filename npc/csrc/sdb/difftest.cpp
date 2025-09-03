@@ -149,25 +149,39 @@ void Difftest::difftest_step() {
         return;
     }
 
+    // 获取当前提交的指令
+    auto& committed_inst = mysim_p->commited_list.inst.front();
+    
     CPU_state dutregs = getDutregs();
 
     // 如果提交的指令是需要跳过的指令，以 dut 为准
-    if (!skip_pc.empty() && mysim_p->commited_list.inst.front().inst_pc == skip_pc.front()) {
-        // printf("is_skip_ref\n");
-        // printf("skip_pc:%p\n", (void*)skip_pc.front());
-        // printf("next_pc:%p\n", (void*)dutregs.pc);
+    if (!skip_pc.empty() && committed_inst.inst_pc == skip_pc.front()) {
         diff_regcpy(&dutregs, DIFFTEST_TO_REF);
         skip_pc.pop_front();
-        mysim_p->commited_list.inst.pop_front(); // 弹出已处理的指令
+        mysim_p->commited_list.inst.pop_front();
         return;
     }
 
-    diff_exec(1); // 执行REF一条指令
-    if (!checkregs()) {
-        /* 停止指令执行 */
-        mysim_p->top_status = mysim_p->TOP_STOP;
+    // 确保DUT的PC已经前进
+    static uint64_t last_dut_pc = 0;
+    if (dutregs.pc == last_dut_pc) {
+        // DUT没有进展，不执行REF
+        return;
     }
-    mysim_p->commited_list.inst.pop_front(); // 弹出已处理的指令
+    last_dut_pc = dutregs.pc;
+
+    // 执行REF一步
+    diff_exec(1);
+    
+    // 检查寄存器一致性
+    if (!checkregs()) {
+        // 寄存器不一致，停止执行
+        mysim_p->top_status = mysim_p->TOP_STOP;
+        // 输出详细调试信息
+        printf("REG MISMATCH at PC: %lx\n", committed_inst.inst_pc);
+    }
+    
+    mysim_p->commited_list.inst.pop_front();
 }
 /**
  * @brief 设置需要跳过的 PC，访问外设时使用
