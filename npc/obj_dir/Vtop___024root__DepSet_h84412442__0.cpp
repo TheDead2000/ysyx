@@ -22,6 +22,18 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(IData/
     inst_commit(pc__Vcvt, inst__Vcvt, commit_valid__Vcvt);
 }
 
+extern "C" void set_nextpc(int nextpc, svBit commit_valid);
+
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc, CData/*0:0*/ commit_valid) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__set_nextpc_TOP\n"); );
+    // Body
+    int nextpc__Vcvt;
+    for (size_t nextpc__Vidx = 0; nextpc__Vidx < 1; ++nextpc__Vidx) nextpc__Vcvt = nextpc;
+    svBit commit_valid__Vcvt;
+    for (size_t commit_valid__Vidx = 0; commit_valid__Vidx < 1; ++commit_valid__Vidx) commit_valid__Vcvt = commit_valid;
+    set_nextpc(nextpc__Vcvt, commit_valid__Vcvt);
+}
+
 extern "C" void bpu_count(svBit bpu_ret);
 
 VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(CData/*0:0*/ bpu_ret) {
@@ -30,16 +42,6 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TO
     svBit bpu_ret__Vcvt;
     for (size_t bpu_ret__Vidx = 0; bpu_ret__Vidx < 1; ++bpu_ret__Vidx) bpu_ret__Vcvt = bpu_ret;
     bpu_count(bpu_ret__Vcvt);
-}
-
-extern "C" void set_nextpc(int nextpc);
-
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__lsu__DOT__set_nextpc_TOP\n"); );
-    // Body
-    int nextpc__Vcvt;
-    for (size_t nextpc__Vidx = 0; nextpc__Vidx < 1; ++nextpc__Vidx) nextpc__Vcvt = nextpc;
-    set_nextpc(nextpc__Vcvt);
 }
 
 extern "C" void set_mem_pc(int mem_pc);

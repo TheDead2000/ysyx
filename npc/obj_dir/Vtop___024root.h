@@ -357,7 +357,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__sram__DOT__SRAM5__DOT__wen;
         CData/*0:0*/ top__DOT__sram__DOT__SRAM6__DOT__wen;
         CData/*0:0*/ top__DOT__sram__DOT__SRAM7__DOT__wen;
-        CData/*0:0*/ __Vfunc_match__1__Vfuncout;
         CData/*0:0*/ __Vfunc_match__2__Vfuncout;
         CData/*0:0*/ __Vfunc_match__3__Vfuncout;
         CData/*0:0*/ __Vfunc_match__4__Vfuncout;
@@ -409,10 +408,11 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vfunc_match__50__Vfuncout;
         CData/*0:0*/ __Vfunc_match__51__Vfuncout;
         CData/*0:0*/ __Vfunc_match__52__Vfuncout;
+        CData/*0:0*/ __Vfunc_match__53__Vfuncout;
     };
     struct {
-        CData/*0:0*/ __Vfunc_match__53__Vfuncout;
         CData/*0:0*/ __Vfunc_match__54__Vfuncout;
+        CData/*0:0*/ __Vfunc_match__55__Vfuncout;
         CData/*6:0*/ __Vtableidx1;
         CData/*5:0*/ __Vtableidx2;
         CData/*4:0*/ __Vdlyvdim0__top__DOT__rv32_gpr_regfile__DOT__rf__v0;
@@ -580,7 +580,6 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__axi4_rw__DOT__ar_addr;
         VlWide<4>/*127:0*/ top__DOT__sram__DOT__SRAM0__DOT__bwen;
         VlWide<4>/*127:0*/ top__DOT__sram__DOT__SRAM4__DOT__bwen;
-        IData/*31:0*/ __Vfunc_match__1__inst;
         IData/*31:0*/ __Vfunc_match__2__inst;
         IData/*31:0*/ __Vfunc_match__3__inst;
         IData/*31:0*/ __Vfunc_match__4__inst;
@@ -607,9 +606,9 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__25__inst;
         IData/*31:0*/ __Vfunc_match__26__inst;
         IData/*31:0*/ __Vfunc_match__27__inst;
+        IData/*31:0*/ __Vfunc_match__28__inst;
     };
     struct {
-        IData/*31:0*/ __Vfunc_match__28__inst;
         IData/*31:0*/ __Vfunc_match__29__inst;
         IData/*31:0*/ __Vfunc_match__30__inst;
         IData/*31:0*/ __Vfunc_match__31__inst;
@@ -636,6 +635,7 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__52__inst;
         IData/*31:0*/ __Vfunc_match__53__inst;
         IData/*31:0*/ __Vfunc_match__54__inst;
+        IData/*31:0*/ __Vfunc_match__55__inst;
         IData/*31:0*/ __Vdlyvval__top__DOT__rv32_gpr_regfile__DOT__rf__v0;
         IData/*18:0*/ __Vdly__top__DOT__u_icache_top__DOT__line_tag_reg;
         IData/*31:0*/ __VstlIterCount;

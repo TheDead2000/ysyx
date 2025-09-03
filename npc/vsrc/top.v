@@ -686,11 +686,18 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   import "DPI-C" function void inst_commit(
     input int pc,
     input int inst,
-    input bit commit_valid
+    input bit commit_valid 
   );
   always @(posedge clk) begin
     // 延时一个周期，让寄存器写入有效
     inst_commit(pc_mem, inst_data_mem, commit_valid);
+  end
+
+  /************************××××××向仿真环境传递 PC *****************************/
+  import "DPI-C" function void set_nextpc(input int nextpc,   input bit commit_valid );
+
+  always @(posedge clk) begin
+    set_nextpc(pc_mem,commit_valid);
   end
 
  /* 输出至取指阶段 */

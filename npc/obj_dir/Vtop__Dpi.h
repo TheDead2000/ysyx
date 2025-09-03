@@ -32,10 +32,10 @@ extern "C" {
     extern void set_csr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:232:32
-    extern void set_mem_pc(int mem_pc);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:227:32
-    extern void set_nextpc(int nextpc);
+    extern void set_mem_pc(int mem_pc);
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:697:32
+    extern void set_nextpc(int nextpc, svBit commit_valid);
 
 #ifdef __cplusplus
 }

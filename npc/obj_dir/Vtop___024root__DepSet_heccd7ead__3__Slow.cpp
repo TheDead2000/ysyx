@@ -4786,8 +4786,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     for (int __Vi0 = 0; __Vi0 < 128; ++__Vi0) {
         VL_ZERO_RESET_W(128, vlSelf->top__DOT__sram__DOT__SRAM7__DOT__ram[__Vi0]);
     }
-    vlSelf->__Vfunc_match__1__Vfuncout = 0;
-    vlSelf->__Vfunc_match__1__inst = 0;
     vlSelf->__Vfunc_match__2__Vfuncout = 0;
     vlSelf->__Vfunc_match__2__inst = 0;
     vlSelf->__Vfunc_match__3__Vfuncout = 0;
@@ -4894,6 +4892,8 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->__Vfunc_match__53__inst = 0;
     vlSelf->__Vfunc_match__54__Vfuncout = 0;
     vlSelf->__Vfunc_match__54__inst = 0;
+    vlSelf->__Vfunc_match__55__Vfuncout = 0;
+    vlSelf->__Vfunc_match__55__inst = 0;
     vlSelf->__Vtableidx1 = 0;
     vlSelf->__Vtableidx2 = 0;
     vlSelf->__Vdlyvdim0__top__DOT__rv32_gpr_regfile__DOT__rf__v0 = 0;
