@@ -153,7 +153,7 @@ void Difftest::difftest_step() {
     if (!is_first) {
         is_first = true;
         printf("first exec diffexec\n");
-        diff_exec(2);
+        diff_exec(1);
     }
 
     // 获取当前提交的指令
