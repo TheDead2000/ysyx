@@ -16,6 +16,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
     // Init
     VlWide<4>/*127:0*/ __Vtemp_hc53e4bea__0;
     // Body
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_pp_q[6U] 
+        = vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
+        [3U];
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_pp_q[8U] 
         = vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum
         [4U];
@@ -9290,21 +9293,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
             & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__ram_r_handshake)) 
            | ((IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_data_wen) 
               & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_write_hit_valid)));
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret = (IData)(
-                                                           ((0x67U 
-                                                             == 
-                                                             (0xfff00fffU 
-                                                              & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
-                                                            & ((1U 
-                                                                == 
-                                                                (0x1fU 
-                                                                 & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                                    >> 0xfU))) 
-                                                               | (5U 
-                                                                  == 
-                                                                  (0x1fU 
-                                                                   & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
-                                                                      >> 0xfU))))));
     __Vtemp_hc53e4bea__0[0U] = (((- (IData)((IData)(vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN00))) 
                                  & vlSelf->top__DOT__io_sram0_rdata[0U]) 
                                 | (((- (IData)((IData)(vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN01))) 
@@ -9423,6 +9411,21 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
                                                             & vlSelf->top__DOT__ex2mem__DOT___alu_data_ex_mem_q)) 
                                                           << 3U)))))
                                                   : 0U));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__is_ret = (IData)(
+                                                           ((0x67U 
+                                                             == 
+                                                             (0xfff00fffU 
+                                                              & vlSelf->top__DOT__u_icache_top__DOT__icache_final_data)) 
+                                                            & ((1U 
+                                                                == 
+                                                                (0x1fU 
+                                                                 & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                                    >> 0xfU))) 
+                                                               | (5U 
+                                                                  == 
+                                                                  (0x1fU 
+                                                                   & (vlSelf->top__DOT__u_icache_top__DOT__icache_final_data 
+                                                                      >> 0xfU))))));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__mul_stall_req 
         = (1U & ((~ (IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__mul_ready)) 
                  & ((IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT___is_mul_sr1_signed) 

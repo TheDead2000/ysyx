@@ -123,19 +123,23 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                   : 0U)),5);
         bufp->chgIData(oldp+52,(((IData)(vlSelf->top__DOT__idu__DOT___rs1_exc_bypass_valid)
                                   ? vlSelf->top__DOT__exu__DOT___alu_out
-                                  : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid) 
+                                  : ((((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
+                                       == (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q)) 
                                       & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d)))
                                       ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
-                                      : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid)
+                                      : (((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
+                                          == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
                                           ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                           : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                          [vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d])))),32);
         bufp->chgIData(oldp+53,(((IData)(vlSelf->top__DOT__idu__DOT___rs2_exc_bypass_valid)
                                   ? vlSelf->top__DOT__exu__DOT___alu_out
-                                  : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid) 
+                                  : ((((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
+                                       == (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q)) 
                                       & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d)))
                                       ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
-                                      : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid)
+                                      : (((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
+                                          == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
                                           ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                           : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                          [vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d])))),32);
@@ -492,11 +496,13 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgIData(oldp+136,(vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg),32);
         bufp->chgIData(oldp+137,(vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg),32);
         bufp->chgCData(oldp+138,(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg),2);
-        bufp->chgIData(oldp+139,(((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid)
+        bufp->chgIData(oldp+139,((((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
+                                   == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
                                    ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                    : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                   [vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d])),32);
-        bufp->chgIData(oldp+140,(((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid)
+        bufp->chgIData(oldp+140,((((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
+                                   == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
                                    ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                    : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                   [vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d])),32);
@@ -9811,7 +9817,5 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                           & (IData)(
                                                     (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
                                                      >> 0x22U)))))));
-        bufp->chgBit(oldp+2027,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
-                                               >> 0x23U)))));
     }
 }
