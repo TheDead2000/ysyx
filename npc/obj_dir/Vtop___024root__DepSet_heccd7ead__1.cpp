@@ -1818,12 +1818,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             = vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q;
     }
     if (VL_UNLIKELY((0x40000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus))) {
-        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 460, "");
+        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 423, "");
     }
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_switch_32 
-        = ((IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__add_d_32)
-            ? vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_reg
-            : vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_neg_reg);
     vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt 
         = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
            & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
@@ -1835,6 +1831,10 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                >> 1U) & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg 
                           & vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg) 
                          >> 5U)));
+    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_switch_32 
+        = ((IData)(vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__add_d_32)
+            ? vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_reg
+            : vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__d_neg_reg);
     vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf[vlSelf->__Vdlyvdim0__top__DOT__rv32_gpr_regfile__DOT__rf__v0] 
         = vlSelf->__Vdlyvval__top__DOT__rv32_gpr_regfile__DOT__rf__v0;
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT__pp_o[0U] 

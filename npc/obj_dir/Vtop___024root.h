@@ -264,25 +264,10 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__clint_u__DOT__interrupt_pending;
         CData/*4:0*/ top__DOT__clint_u__DOT__interrupt_code;
         CData/*0:0*/ top__DOT__clint_u__DOT__interrupt_delegated;
-        CData/*0:0*/ top__DOT__clint_u__DOT__csr_write_en;
-        CData/*3:0*/ top__DOT__clint_u__DOT__current_req;
-        CData/*0:0*/ top__DOT__clint_u__DOT__csr_write_busy;
-        CData/*0:0*/ top__DOT__clint_u__DOT__trap_stall_valid;
+        CData/*2:0*/ top__DOT__clint_u__DOT__csr_state;
+        CData/*2:0*/ top__DOT__clint_u__DOT__next_csr_state;
+        CData/*0:0*/ top__DOT__clint_u__DOT__is_delegated;
         CData/*0:0*/ top__DOT__clint_u__DOT__mtime_write_valid_i;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__1;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__2;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__3;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__4;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__5;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__6;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__7;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__8;
-    };
-    struct {
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__9;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__10;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__11;
-        CData/*0:0*/ top__DOT__clint_u__DOT____Vlvbound_h8cc70d38__12;
         CData/*5:0*/ top__DOT__clint_u__DOT__u_pipline_control__DOT___flush;
         CData/*5:0*/ top__DOT__clint_u__DOT__u_pipline_control__DOT___stall;
         CData/*1:0*/ top__DOT__rv32_csr_regfile__DOT__privilegeReg;
@@ -292,6 +277,8 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__u_icache_top__DOT__icache_hit;
         CData/*3:0*/ top__DOT__u_icache_top__DOT__icache_state;
         CData/*5:0*/ top__DOT__u_icache_top__DOT__blk_addr_reg;
+    };
+    struct {
         CData/*6:0*/ top__DOT__u_icache_top__DOT__line_idx_reg;
         CData/*0:0*/ top__DOT__u_icache_top__DOT__icache_tag_write_valid;
         CData/*0:0*/ top__DOT__u_icache_top__DOT__uncache_data_ready;
@@ -343,8 +330,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*2:0*/ top__DOT__axi4_rw__DOT__to_aw_size;
         CData/*2:0*/ top__DOT__axi4_rw__DOT__axi_wstate;
         CData/*0:0*/ top__DOT__axi4_rw__DOT___arb_wdata_ready_o;
-    };
-    struct {
         CData/*0:0*/ top__DOT__axi4_rw__DOT__aw_valid;
         CData/*7:0*/ top__DOT__axi4_rw__DOT__aw_len;
         CData/*2:0*/ top__DOT__axi4_rw__DOT__aw_size;
@@ -358,6 +343,8 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ top__DOT__axi4_rw__DOT___arb_rdata_ready_o;
         CData/*0:0*/ top__DOT__axi4_rw__DOT___arb_rlast_o;
         CData/*0:0*/ top__DOT__axi4_rw__DOT__ar_valid;
+    };
+    struct {
         CData/*2:0*/ top__DOT__axi4_rw__DOT__ar_size;
         CData/*7:0*/ top__DOT__axi4_rw__DOT__ar_len;
         CData/*0:0*/ top__DOT__axi4_rw__DOT__r_ready;
@@ -409,8 +396,6 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vfunc_match__38__Vfuncout;
         CData/*0:0*/ __Vfunc_match__39__Vfuncout;
         CData/*0:0*/ __Vfunc_match__40__Vfuncout;
-    };
-    struct {
         CData/*0:0*/ __Vfunc_match__41__Vfuncout;
         CData/*0:0*/ __Vfunc_match__42__Vfuncout;
         CData/*0:0*/ __Vfunc_match__43__Vfuncout;
@@ -424,8 +409,11 @@ class Vtop___024root final : public VerilatedModule {
         CData/*0:0*/ __Vfunc_match__51__Vfuncout;
         CData/*0:0*/ __Vfunc_match__52__Vfuncout;
         CData/*0:0*/ __Vfunc_match__53__Vfuncout;
+    };
+    struct {
         CData/*0:0*/ __Vfunc_match__54__Vfuncout;
-        CData/*5:0*/ __Vtableidx1;
+        CData/*6:0*/ __Vtableidx1;
+        CData/*5:0*/ __Vtableidx2;
         CData/*4:0*/ __Vdlyvdim0__top__DOT__rv32_gpr_regfile__DOT__rf__v0;
         CData/*3:0*/ __Vdly__top__DOT__u_icache_top__DOT__icache_state;
         CData/*5:0*/ __Vdly__top__DOT__u_icache_top__DOT__blk_addr_reg;
@@ -456,27 +444,12 @@ class Vtop___024root final : public VerilatedModule {
         SData/*11:0*/ top__DOT__id2ex__DOT___csr_idx_id_ex_q;
         SData/*12:0*/ top__DOT__id2ex__DOT___exc_op_id_ex_q;
         SData/*11:0*/ top__DOT__ex2mem__DOT___csr_addr_ex_mem_q;
-        SData/*11:0*/ top__DOT__clint_u__DOT__csr_write_addr;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__1;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__2;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__3;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__4;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__5;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__6;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__7;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__8;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__9;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__10;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__11;
-        SData/*11:0*/ top__DOT__clint_u__DOT____Vlvbound_h57ba5ad2__12;
         VL_OUT(io_master_awaddr,31,0);
         VL_OUT(io_master_wdata,31,0);
         VL_OUT(io_master_araddr,31,0);
         VL_IN(io_master_rdata,31,0);
         IData/*31:0*/ top__DOT__pc_next;
         IData/*31:0*/ top__DOT__bpu_pc_o;
-    };
-    struct {
         IData/*31:0*/ top__DOT__pdt_tag;
         IData/*31:0*/ top__DOT__mem_data_mem;
         IData/*31:0*/ top__DOT__mem_wdata;
@@ -502,6 +475,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__bimodal_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__t0_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__t1_hits;
+    };
+    struct {
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_hits;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__btb_misses;
         IData/*31:0*/ top__DOT__ifu__DOT__bpu__DOT__i;
@@ -541,8 +516,6 @@ class Vtop___024root final : public VerilatedModule {
         VlWide<3>/*65:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_reg_next32;
         IData/*31:0*/ top__DOT__exu__DOT__u_execute_csr__DOT___csr_op2;
         IData/*31:0*/ top__DOT__ex2mem__DOT___pc_ex_mem_q;
-    };
-    struct {
         IData/*31:0*/ top__DOT__ex2mem__DOT___inst_data_ex_mem_q;
         IData/*31:0*/ top__DOT__ex2mem__DOT___rs1_data_ex_mem_q;
         IData/*31:0*/ top__DOT__ex2mem__DOT___rs2_data_ex_mem_q;
@@ -553,22 +526,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__lsu__DOT__rdata_switch;
         IData/*19:0*/ top__DOT__lsu__DOT___mem_trap_bus;
         IData/*31:0*/ top__DOT__clint_u__DOT__cause_value;
-        IData/*31:0*/ top__DOT__clint_u__DOT__csr_write_data;
-        IData/*31:0*/ top__DOT__clint_u__DOT__req_index;
         IData/*31:0*/ top__DOT__clint_u__DOT__mtime_addr_i;
         IData/*31:0*/ top__DOT__clint_u__DOT__mtime_wdata_i;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__1;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__2;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__3;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__4;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__5;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__6;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__7;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__8;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__9;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__10;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__11;
-        IData/*31:0*/ top__DOT__clint_u__DOT____Vlvbound_h04f2f0a1__12;
         IData/*31:0*/ top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q;
         IData/*31:0*/ top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q;
         IData/*31:0*/ top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q;
@@ -582,6 +541,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mipReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__medelegReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__midelegReg;
+    };
+    struct {
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__stvecReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__sepcReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__scauseReg;
@@ -607,8 +568,6 @@ class Vtop___024root final : public VerilatedModule {
         VlWide<4>/*127:0*/ top__DOT__u_dcache_top__DOT__dcache_wdata_writehit;
         IData/*31:0*/ top__DOT__u_dcache_top__DOT__uncache_rdata;
         VlWide<4>/*127:0*/ top__DOT__u_dcache_top__DOT__dcache_wmask_writehit;
-    };
-    struct {
         IData/*19:0*/ top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__read_tag_full;
         IData/*31:0*/ top__DOT__u_dcache_top__DOT__u_dcache_tag__DOT__i;
         VlWide<4>/*127:0*/ top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__D;
@@ -648,6 +607,8 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__27__inst;
         IData/*31:0*/ __Vfunc_match__28__inst;
         IData/*31:0*/ __Vfunc_match__29__inst;
+    };
+    struct {
         IData/*31:0*/ __Vfunc_match__30__inst;
         IData/*31:0*/ __Vfunc_match__31__inst;
         IData/*31:0*/ __Vfunc_match__32__inst;
@@ -673,8 +634,6 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__52__inst;
         IData/*31:0*/ __Vfunc_match__53__inst;
         IData/*31:0*/ __Vfunc_match__54__inst;
-    };
-    struct {
         IData/*31:0*/ __Vdlyvval__top__DOT__rv32_gpr_regfile__DOT__rf__v0;
         IData/*18:0*/ __Vdly__top__DOT__u_icache_top__DOT__line_tag_reg;
         IData/*31:0*/ __VstlIterCount;
@@ -714,6 +673,8 @@ class Vtop___024root final : public VerilatedModule {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hd66b1d0c__0;
+    };
+    struct {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h690ba010__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h0aa273b8__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_ha506d195__0;
@@ -729,7 +690,6 @@ class Vtop___024root final : public VerilatedModule {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__q_correct_32;
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__s_correct_32;
         QData/*32:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_count_next;
-        VlWide<12>/*359:0*/ top__DOT__clint_u__DOT__csr_write_requests;
         VlUnpacked<CData/*1:0*/, 512> top__DOT__ifu__DOT__bpu__DOT__bimodal_table;
         VlUnpacked<SData/*9:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t0_tag;
         VlUnpacked<CData/*1:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__t0_counter;
@@ -739,8 +699,6 @@ class Vtop___024root final : public VerilatedModule {
         VlUnpacked<IData/*31:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_target;
         VlUnpacked<CData/*0:0*/, 256> top__DOT__ifu__DOT__bpu__DOT__btb_valid;
         VlUnpacked<IData/*31:0*/, 64> top__DOT__ifu__DOT__bpu__DOT__ras;
-    };
-    struct {
         VlUnpacked<QData/*63:0*/, 17> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__Partial_product;
         VlUnpacked<QData/*63:0*/, 17> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_pp_q;
         VlUnpacked<QData/*63:0*/, 5> top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_sum;

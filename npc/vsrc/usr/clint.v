@@ -26,19 +26,12 @@ module clint (
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
   
-    
     // CSR寄存器写入接口
-output reg        csr_write_en_o,
-output reg [11:0] csr_write_addr_o,
-output reg [31:0] csr_write_data_o,
-
+    output reg        csr_write_en_o,
+    output reg [11:0] csr_write_addr_o,
+    output reg [31:0] csr_write_data_o,
     
-    // 输出至取指阶段
-    output [31:0] clint_pc_o,
-    output        clint_pc_valid_o,
-    // output        clint_pc_plus4_valid_o,
-    
- // CSR寄存器读取接口
+    // CSR寄存器读取接口
     input  [31:0] csr_mstatus_i,
     input  [31:0] csr_mtvec_i,
     input  [31:0] csr_mepc_i,
@@ -58,7 +51,10 @@ output reg [31:0] csr_write_data_o,
     input  [31:0] csr_satp_i,
     input  [1:0]  csr_privilege_i,
 
-
+    // 输出至取指阶段
+    output [31:0] clint_pc_o,
+    output        clint_pc_valid_o,
+    
     // 流水线控制
     output reg [5:0] stall_o,
     output reg [5:0] flush_o,
@@ -95,10 +91,10 @@ output reg [31:0] csr_write_data_o,
   assign supervisor_timer_interrupt = mtime_ge_mtime && mstatus_sie && sie_sti && csr_mideleg_i[5];
   
   // 其他中断检测（简化实现）
-  assign machine_external_interrupt = 1'b0; // 根据实际需求实现
-  assign supervisor_external_interrupt = 1'b0; // 根据实际需求实现
-  assign machine_software_interrupt = 1'b0; // 根据实际需求实现
-  assign supervisor_software_interrupt = 1'b0; // 根据实际需求实现
+  assign machine_external_interrupt = 1'b0;
+  assign supervisor_external_interrupt = 1'b0;
+  assign machine_software_interrupt = 1'b0;
+  assign supervisor_software_interrupt = 1'b0;
   
   // 陷阱检测
   assign trap_mret = trap_bus_i[`TRAP_MRET];
@@ -150,43 +146,42 @@ output reg [31:0] csr_write_data_o,
   reg [31:0] cause_value;
   reg exception_delegated;
   
-// Replace all these assignments:
-always @(*) begin
-  cause_value = 32'h0;
-  exception_delegated = 1'b0;
-  
-  if (interrupt_pending) begin
-    cause_value = {1'b1, 26'b0, interrupt_code};  // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_INST_ADDR_MISALIGNED]) begin
-    cause_value = {1'b0, 26'b0, 5'd0};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_INST_ACCESS_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd1};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_ILLEGAL_INST]) begin
-    cause_value = {1'b0, 26'b0, 5'd2};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_BREAKPOINT]) begin
-    cause_value = {1'b0, 26'b0, 5'd3};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_LOAD_ADDR_MISALIGNED]) begin
-    cause_value = {1'b0, 26'b0, 5'd4};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_LOAD_ACCESS_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd5};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_STORE_ADDR_MISALIGNED]) begin
-    cause_value = {1'b0, 26'b0, 5'd6};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_STORE_ACCESS_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd7};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_ECALL_U]) begin
-    cause_value = {1'b0, 26'b0, 5'd8};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_ECALL_S]) begin
-    cause_value = {1'b0, 26'b0, 5'd9};           // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_ECALL_M]) begin
-    cause_value = {1'b0, 26'b0, 5'd11};          // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_INST_PAGE_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd12};          // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_LOAD_PAGE_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd13};          // Changed 27'b0 to 26'b0
-  end else if (trap_bus_i[`TRAP_STORE_PAGE_FAULT]) begin
-    cause_value = {1'b0, 26'b0, 5'd15};          // Changed 27'b0 to 26'b0
+  always @(*) begin
+    cause_value = 32'h0;
+    exception_delegated = 1'b0;
+    
+    if (interrupt_pending) begin
+      cause_value = {1'b1, 26'b0, interrupt_code};
+    end else if (trap_bus_i[`TRAP_INST_ADDR_MISALIGNED]) begin
+      cause_value = {1'b0, 26'b0, 5'd0};
+    end else if (trap_bus_i[`TRAP_INST_ACCESS_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd1};
+    end else if (trap_bus_i[`TRAP_ILLEGAL_INST]) begin
+      cause_value = {1'b0, 26'b0, 5'd2};
+    end else if (trap_bus_i[`TRAP_BREAKPOINT]) begin
+      cause_value = {1'b0, 26'b0, 5'd3};
+    end else if (trap_bus_i[`TRAP_LOAD_ADDR_MISALIGNED]) begin
+      cause_value = {1'b0, 26'b0, 5'd4};
+    end else if (trap_bus_i[`TRAP_LOAD_ACCESS_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd5};
+    end else if (trap_bus_i[`TRAP_STORE_ADDR_MISALIGNED]) begin
+      cause_value = {1'b0, 26'b0, 5'd6};
+    end else if (trap_bus_i[`TRAP_STORE_ACCESS_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd7};
+    end else if (trap_bus_i[`TRAP_ECALL_U]) begin
+      cause_value = {1'b0, 26'b0, 5'd8};
+    end else if (trap_bus_i[`TRAP_ECALL_S]) begin
+      cause_value = {1'b0, 26'b0, 5'd9};
+    end else if (trap_bus_i[`TRAP_ECALL_M]) begin
+      cause_value = {1'b0, 26'b0, 5'd11};
+    end else if (trap_bus_i[`TRAP_INST_PAGE_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd12};
+    end else if (trap_bus_i[`TRAP_LOAD_PAGE_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd13};
+    end else if (trap_bus_i[`TRAP_STORE_PAGE_FAULT]) begin
+      cause_value = {1'b0, 26'b0, 5'd15};
+    end
   end
-end
   
   // 处理程序地址计算
   reg [31:0] handler_pc;
@@ -219,107 +214,131 @@ end
     end
   end
   
-  // CSR更新逻辑
-  reg csr_write_en;
-  reg [11:0] csr_write_addr;
-  reg [31:0] csr_write_data;
+  // CSR写入状态机
+  localparam IDLE = 3'b000;
+  localparam SAVE_PC = 3'b001;
+  localparam SAVE_CAUSE = 3'b010;
+  localparam SAVE_VALUE = 3'b011;
+  localparam UPDATE_STATUS = 3'b100;
+  localparam UPDATE_PENDING = 3'b101;
+  localparam RESTORE_STATUS = 3'b110;
   
-
-// 定义 CSR 写入请求结构
-typedef struct packed {
-    logic        valid;
-    logic [11:0] addr;
-    logic [31:0] data;
-} csr_write_req_t;
-
-// 创建多个 CSR 写入请求
-csr_write_req_t [7:0] csr_write_requests;
-integer req_index;
-
-// CSR 写入逻辑
-always @(*) begin
-    // 初始化所有请求为无效
-    for (req_index = 0; req_index < 8; req_index = req_index + 1) begin
-        csr_write_requests[req_index].valid = 1'b0;
-        csr_write_requests[req_index].addr = 12'h0;
-        csr_write_requests[req_index].data = 32'h0;
+  reg [2:0] csr_state;
+  reg [2:0] next_csr_state;
+  reg is_delegated;
+  
+  // 状态转移
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      csr_state <= IDLE;
+    end else begin
+      csr_state <= next_csr_state;
     end
+  end
+  
+  // 下一状态逻辑
+  /* verilator lint_off CASEINCOMPLETE */
+  always @(*) begin
+    next_csr_state = csr_state;
     
-    req_index = 0;
+    case (csr_state)
+      IDLE: begin
+        if (trap_valid) begin
+          next_csr_state = SAVE_PC;
+          is_delegated = exception_delegated || interrupt_delegated;
+        end else if (trap_mret || trap_sret) begin
+          next_csr_state = RESTORE_STATUS;
+        end
+      end
+      SAVE_PC: next_csr_state = SAVE_CAUSE;
+      SAVE_CAUSE: next_csr_state = SAVE_VALUE;
+      SAVE_VALUE: next_csr_state = UPDATE_STATUS;
+      UPDATE_STATUS: next_csr_state = UPDATE_PENDING;
+      UPDATE_PENDING: next_csr_state = IDLE;
+      RESTORE_STATUS: next_csr_state = IDLE;
+    endcase
+  end
+  
+  // CSR写入逻辑
+  always @(*) begin
+    csr_write_en_o = 1'b0;
+    csr_write_addr_o = 12'h0;
+    csr_write_data_o = 32'h0;
     
-    if (trap_valid) begin
-        // 保存PC
-        if (exception_delegated || interrupt_delegated) begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h141; // sepc
-            csr_write_requests[req_index].data = interrupt_pending ? pc_from_exe_i : pc_from_mem_i;
-            req_index = req_index + 1;
+    case (csr_state)
+      SAVE_PC: begin
+        csr_write_en_o = 1'b1;
+        if (is_delegated) begin
+          csr_write_addr_o = 12'h141; // sepc
         end else begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h341; // mepc
-            csr_write_requests[req_index].data = interrupt_pending ? pc_from_exe_i : pc_from_mem_i;
-            req_index = req_index + 1;
+          csr_write_addr_o = 12'h341; // mepc
         end
-        
-        // 保存原因
-        if (exception_delegated || interrupt_delegated) begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h142; // scause
-            csr_write_requests[req_index].data = cause_value;
-            req_index = req_index + 1;
+        csr_write_data_o = interrupt_pending ? pc_from_exe_i : pc_from_mem_i;
+      end
+      
+      SAVE_CAUSE: begin
+        csr_write_en_o = 1'b1;
+        if (is_delegated) begin
+          csr_write_addr_o = 12'h142; // scause
         end else begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h342; // mcause
-            csr_write_requests[req_index].data = cause_value;
-            req_index = req_index + 1;
+          csr_write_addr_o = 12'h342; // mcause
         end
-        
-        // 保存值
-        if (exception_delegated || interrupt_delegated) begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h143; // stval
-            csr_write_requests[req_index].data = inst_data_i;
-            req_index = req_index + 1;
+        csr_write_data_o = cause_value;
+      end
+      
+      SAVE_VALUE: begin
+        csr_write_en_o = 1'b1;
+        if (is_delegated) begin
+          csr_write_addr_o = 12'h143; // stval
         end else begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h343; // mtval
-            csr_write_requests[req_index].data = inst_data_i;
-            req_index = req_index + 1;
+          csr_write_addr_o = 12'h343; // mtval
         end
-        
-        // 更新状态寄存器
-        if (exception_delegated || interrupt_delegated) begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h100; // sstatus
-            csr_write_requests[req_index].data = {
-                csr_sstatus_i[31:9],
-                csr_privilege_i[0], // SPP
-                csr_sstatus_i[7:6],
-                csr_sstatus_i[1],   // SPIE
-                csr_sstatus_i[4:2],
-                1'b0,               // SIE
-                csr_sstatus_i[0]
-            };
-            req_index = req_index + 1;
+        csr_write_data_o = inst_data_i;
+      end
+      
+      UPDATE_STATUS: begin
+        csr_write_en_o = 1'b1;
+        if (is_delegated) begin
+          csr_write_addr_o = 12'h100; // sstatus
+          csr_write_data_o = {
+            csr_sstatus_i[31:9],
+            csr_privilege_i[0], // SPP
+            csr_sstatus_i[7:6],
+            csr_sstatus_i[1],   // SPIE
+            csr_sstatus_i[4:2],
+            1'b0,               // SIE
+            csr_sstatus_i[0]
+          };
         end else begin
-            csr_write_requests[req_index].valid = 1'b1;
-            csr_write_requests[req_index].addr = 12'h300; // mstatus
-            csr_write_requests[req_index].data = {
-                csr_mstatus_i[31:13],
-                csr_privilege_i,     // MPP
-                csr_mstatus_i[10:8],
-                csr_mstatus_i[3],    // MPIE
-                csr_mstatus_i[6:4],
-                1'b0,                // MIE
-                csr_mstatus_i[2:0]
-            };
-            req_index = req_index + 1;
+          csr_write_addr_o = 12'h300; // mstatus
+          csr_write_data_o = {
+            csr_mstatus_i[31:13],
+            csr_privilege_i,     // MPP
+            csr_mstatus_i[10:8],
+            csr_mstatus_i[3],    // MPIE
+            csr_mstatus_i[6:4],
+            1'b0,                // MIE
+            csr_mstatus_i[2:0]
+          };
         end
-    end else if (trap_mret) begin
-        // 恢复状态寄存器
-        csr_write_requests[req_index].valid = 1'b1;
-        csr_write_requests[req_index].addr = 12'h300; // mstatus
-        csr_write_requests[req_index].data = {
+      end
+      
+      UPDATE_PENDING: begin
+        csr_write_en_o = 1'b1;
+        if (machine_timer_interrupt) begin
+          csr_write_addr_o = 12'h344; // mip
+          csr_write_data_o = {csr_mip_i[31:8], 1'b1, csr_mip_i[6:0]};
+        end else if (supervisor_timer_interrupt) begin
+          csr_write_addr_o = 12'h144; // sip
+          csr_write_data_o = {csr_sip_i[31:9], 1'b1, csr_sip_i[7:0]};
+        end
+      end
+      
+      RESTORE_STATUS: begin
+        csr_write_en_o = 1'b1;
+        if (trap_mret) begin
+          csr_write_addr_o = 12'h300; // mstatus
+          csr_write_data_o = {
             csr_mstatus_i[31:13],
             2'b00,                 // MPP
             csr_mstatus_i[10:8],
@@ -327,13 +346,10 @@ always @(*) begin
             csr_mstatus_i[6:4],
             csr_mstatus_i[7],      // MIE
             csr_mstatus_i[2:0]
-        };
-        req_index = req_index + 1;
-    end else if (trap_sret) begin
-        // 恢复状态寄存器
-        csr_write_requests[req_index].valid = 1'b1;
-        csr_write_requests[req_index].addr = 12'h100; // sstatus
-        csr_write_requests[req_index].data = {
+          };
+        end else if (trap_sret) begin
+          csr_write_addr_o = 12'h100; // sstatus
+          csr_write_data_o = {
             csr_sstatus_i[31:9],
             1'b0,                 // SPP
             csr_sstatus_i[7:6],
@@ -341,68 +357,15 @@ always @(*) begin
             csr_sstatus_i[4:2],
             csr_sstatus_i[5],     // SIE
             csr_sstatus_i[0]
-        };
-        req_index = req_index + 1;
-    end
-    
-    // 定时器中断pending位更新
-    if (machine_timer_interrupt) begin
-        csr_write_requests[req_index].valid = 1'b1;
-        csr_write_requests[req_index].addr = 12'h344; // mip
-        csr_write_requests[req_index].data = {csr_mip_i[31:8], 1'b1, csr_mip_i[6:0]};
-        req_index = req_index + 1;
-    end else if (supervisor_timer_interrupt) begin
-        csr_write_requests[req_index].valid = 1'b1;
-        csr_write_requests[req_index].addr = 12'h144; // sip
-        csr_write_requests[req_index].data = {csr_sip_i[31:9], 1'b1, csr_sip_i[7:0]};
-        req_index = req_index + 1;
-    end
-end
-
-// CSR 写入仲裁器
-reg [3:0] current_req; // 改为 4 位以支持与 8 的比较
-reg csr_write_busy;
-
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        current_req <= 4'b0;
-        csr_write_busy <= 1'b0;
-        csr_write_en_o <= 1'b0;
-        csr_write_addr_o <= 12'h0;
-        csr_write_data_o <= 32'h0;
-    end else begin
-        if (!csr_write_busy) begin
-            // 查找下一个有效的 CSR 写入请求
-            while (current_req < 4'd8 && !csr_write_requests[current_req].valid) begin
-                current_req <= current_req + 1;
-            end
-            
-            if (current_req < 4'd8 && csr_write_requests[current_req].valid) begin
-                csr_write_en_o <= 1'b1;
-                csr_write_addr_o <= csr_write_requests[current_req].addr;
-                csr_write_data_o <= csr_write_requests[current_req].data;
-                csr_write_busy <= 1'b1;
-                current_req <= current_req + 1;
-            end else begin
-                csr_write_en_o <= 1'b0;
-                current_req <= 4'b0;
-            end
-        end else begin
-            // 等待 CSR 写入完成
-            csr_write_en_o <= 1'b0;
-            csr_write_busy <= 1'b0;
+          };
         end
-    end
-end
+      end
+    endcase
+  end
   
   // 输出赋值
-  // assign csr_write_en_o = csr_write_en;
-  // assign csr_write_addr_o = csr_write_addr;
-  // assign csr_write_data_o = csr_write_data;
-  
   assign clint_pc_o = handler_pc;
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei;
-  // assign clint_pc_plus4_valid_o = trap_fencei;
   
   // 特权级别更新
   always @(*) begin
@@ -422,7 +385,7 @@ end
   end
   
   // 流水线控制
-  wire trap_stall_valid = trap_valid || trap_mret || trap_sret || trap_fencei;
+  wire trap_stall_valid = (csr_state != IDLE);
   
   pipline_control u_pipline_control (
       .rst(rst),
