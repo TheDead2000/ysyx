@@ -327,11 +327,14 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
 
   /* CSR_OP */
   wire _csr_write = (_inst_csrrw | _inst_csrrwi);
-  wire _csr_set = (_inst_csrrs | _inst_csrrsi) & _rs1_idx_not_zero;
-  wire _csr_clear = (_inst_csrrc | _inst_csrrci) & _rs1_idx_not_zero;
+  // wire _csr_set = (_inst_csrrs | _inst_csrrsi) & _rs1_idx_not_zero;
+  // wire _csr_clear = (_inst_csrrc | _inst_csrrci) & _rs1_idx_not_zero;
+  wire _csr_set = (_inst_csrrs | _inst_csrrsi) ;
+  wire _csr_clear = (_inst_csrrc | _inst_csrrci) ;
   // CSRRSI/CSRRCI must not write 0 to CSRs (uimm[4:0]=='0)
   // CSRRS/CSRRC must not write from x0 to CSRs (rs1=='0)
-  wire _csr_read = (_csr_set | _csr_clear) & (~_rs1_idx_not_zero);
+  // wire _csr_read = (_csr_set | _csr_clear) & (~_rs1_idx_not_zero);
+  wire _csr_read = (_csr_set | _csr_clear);
   wire _csr_none = ~(_csr_write | _csr_set | _csr_clear | _csr_read);
   // read 优先级高
   // wire [`CSROP_LEN-1:0]_csr_op = (_csr_read)?`CSROP_READ:(
