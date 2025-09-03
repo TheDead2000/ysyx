@@ -144,16 +144,9 @@ void Difftest::printregs(CPU_state& cpu_regs) {
  *
  */
 void Difftest::difftest_step() {
-    static bool is_first = false;
     // 如果没有指令提交，直接返回
     if (mysim_p->commited_list.inst.empty()) {
         return;
-    }
-    // 如果是第一条指令，直接让 ref 执行
-    if (!is_first) {
-        is_first = true;
-        printf("first exec diffexec\n");
-        diff_exec(1);
     }
 
     // 获取当前提交的指令
