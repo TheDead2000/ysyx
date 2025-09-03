@@ -47,11 +47,6 @@ extern "C" void set_nextpc(int nextpc, int inst,svBit commit_valid) {
     if (nextpc == 0 || commit_valid == 0) {
         return;
     }
-    if(inst == 0x13)
-    {
-        printf("nop!");
-        return;
-    }
     /**
      * 第一条指令特殊处理
      * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
