@@ -116,8 +116,9 @@ void Simtop::stepCycle(bool val) {
      * 分别位于 inst，nextpc 的队首
      */
     if (!commited_list.nextpc.empty() && !commited_list.inst.empty()) {
-        
-        setPC(commited_list.nextpc.front());
+        uint32_t pc_value = commited_list.inst.back().inst_pc;
+        setPC(pc_value);
+        //setPC(  commited_list.inst.back());
         printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.back());
         sdbRun();
         commited_list.inst.pop_front();
