@@ -694,10 +694,10 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   end
 
   /************************××××××向仿真环境传递 PC *****************************/
-  import "DPI-C" function void set_nextpc(input int nextpc,   input bit commit_valid );
+  import "DPI-C" function void set_nextpc(input int nextpc,    input int inst,   input bit commit_valid );
 
   always @(posedge clk) begin
-    set_nextpc(pc_mem,commit_valid);
+    set_nextpc(pc_mem,inst_data_mem,commit_valid);
   end
 
  /* 输出至取指阶段 */

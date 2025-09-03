@@ -22,16 +22,18 @@ VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__inst_commit_TOP(IData/
     inst_commit(pc__Vcvt, inst__Vcvt, commit_valid__Vcvt);
 }
 
-extern "C" void set_nextpc(int nextpc, svBit commit_valid);
+extern "C" void set_nextpc(int nextpc, int inst, svBit commit_valid);
 
-VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc, CData/*0:0*/ commit_valid) {
+VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__set_nextpc_TOP(IData/*31:0*/ nextpc, IData/*31:0*/ inst, CData/*0:0*/ commit_valid) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__set_nextpc_TOP\n"); );
     // Body
     int nextpc__Vcvt;
     for (size_t nextpc__Vidx = 0; nextpc__Vidx < 1; ++nextpc__Vidx) nextpc__Vcvt = nextpc;
+    int inst__Vcvt;
+    for (size_t inst__Vidx = 0; inst__Vidx < 1; ++inst__Vidx) inst__Vcvt = inst;
     svBit commit_valid__Vcvt;
     for (size_t commit_valid__Vidx = 0; commit_valid__Vidx < 1; ++commit_valid__Vidx) commit_valid__Vcvt = commit_valid;
-    set_nextpc(nextpc__Vcvt, commit_valid__Vcvt);
+    set_nextpc(nextpc__Vcvt, inst__Vcvt, commit_valid__Vcvt);
 }
 
 extern "C" void bpu_count(svBit bpu_ret);

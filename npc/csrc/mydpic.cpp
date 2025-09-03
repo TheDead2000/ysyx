@@ -42,10 +42,15 @@ extern "C" void dcache_hit_count() {
 
 
 
-extern "C" void set_nextpc(int nextpc, svBit commit_valid) {
+extern "C" void set_nextpc(int nextpc, int inst,svBit commit_valid) {
     //static bool isfirst_inst = true;
     // NOP 指令对于的 PC 为 0
     if (nextpc == 0 || commit_valid == 0) {
+        return;
+    }
+    if(inst == 0x13)
+    {
+        printf("nop!");
         return;
     }
     /**

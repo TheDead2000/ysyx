@@ -35,7 +35,7 @@ extern "C" {
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:227:32
     extern void set_mem_pc(int mem_pc);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:697:32
-    extern void set_nextpc(int nextpc, svBit commit_valid);
+    extern void set_nextpc(int nextpc, int inst, svBit commit_valid);
 
 #ifdef __cplusplus
 }
