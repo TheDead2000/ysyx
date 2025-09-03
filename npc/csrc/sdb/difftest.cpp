@@ -144,13 +144,13 @@ void Difftest::printregs(CPU_state& cpu_regs) {
  *
  */
 void Difftest::difftest_step() {
-    /* 寄存器不一样 */
+    // 如果没有指令提交，直接返回
+    if (mysim_p->commited_list.inst.empty()) {
+        return;
+    }
 
-    /* 跳过当前指令的 difftest ,以 dut 为准 */
     CPU_state dutregs = getDutregs();
 
-    // printf("inst_pc:%p,size:%d\n", mysim_p->commited_list.inst.front().inst_pc, mysim_p->commited_list.inst.size());
-    // printf("skip_pc:%p,size:%d\n", skip_pc.front(), skip_pc.size());
     // 如果提交的指令是需要跳过的指令，以 dut 为准
     if (!skip_pc.empty() && mysim_p->commited_list.inst.front().inst_pc == skip_pc.front()) {
         // printf("is_skip_ref\n");
@@ -158,16 +158,17 @@ void Difftest::difftest_step() {
         // printf("next_pc:%p\n", (void*)dutregs.pc);
         diff_regcpy(&dutregs, DIFFTEST_TO_REF);
         skip_pc.pop_front();
+        mysim_p->commited_list.inst.pop_front(); // 弹出已处理的指令
         return;
     }
 
-    diff_exec(1);
+    diff_exec(1); // 执行REF一条指令
     if (!checkregs()) {
         /* 停止指令执行 */
         mysim_p->top_status = mysim_p->TOP_STOP;
     }
+    mysim_p->commited_list.inst.pop_front(); // 弹出已处理的指令
 }
-
 /**
  * @brief 设置需要跳过的 PC，访问外设时使用
  *
