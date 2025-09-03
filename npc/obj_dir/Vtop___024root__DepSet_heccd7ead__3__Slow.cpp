@@ -4596,6 +4596,9 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__clint_u__DOT__interrupt_code = 0;
     vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 0;
     vlSelf->top__DOT__clint_u__DOT__cause_value = 0;
+    vlSelf->top__DOT__clint_u__DOT__cause_value_latched = 0;
+    vlSelf->top__DOT__clint_u__DOT__is_delegated_latched = 0;
+    vlSelf->top__DOT__clint_u__DOT__interrupt_pending_latched = 0;
     vlSelf->top__DOT__clint_u__DOT__csr_state = 0;
     vlSelf->top__DOT__clint_u__DOT__next_csr_state = 0;
     vlSelf->top__DOT__clint_u__DOT__is_delegated = 0;

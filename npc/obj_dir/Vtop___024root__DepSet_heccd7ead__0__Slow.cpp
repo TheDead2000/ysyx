@@ -645,20 +645,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->__Vfunc_match__3__Vfuncout = (0x6fU == 
                                           (0x7fU & vlSelf->__Vfunc_match__3__inst));
     vlSelf->top__DOT__idu__DOT___inst_jal = vlSelf->__Vfunc_match__3__Vfuncout;
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index 
-        = (0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                    ^ ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
-                       >> 8U)));
-    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index 
-        = (0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
-                    ^ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history)));
-    vlSelf->top__DOT__u_icache_top__DOT____Vcellinp__u_uncache_check__addr_check_i 
-        = ((vlSelf->top__DOT__u_icache_top__DOT__line_tag_reg 
-            << 0xdU) | (((IData)(vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg) 
-                         << 6U) | (IData)(vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg)));
-    vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT____VdfgTmp_h5eeedcde__0 
-        = ((3U != (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)) 
-           & (4U != (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)));
     vlSelf->top__DOT__lsu__DOT____Vlvbound_hda221a3d__0 
         = (1U & vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q);
     vlSelf->top__DOT__lsu__DOT___mem_trap_bus = ((0xffffeU 
@@ -797,6 +783,20 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                   & vlSelf->top__DOT__lsu__DOT___mem_trap_bus) 
                                                  | ((IData)(vlSelf->top__DOT__lsu__DOT____Vlvbound_hda221a3d__0) 
                                                     << 0x13U));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index 
+        = (0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                    ^ ((IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history) 
+                       >> 8U)));
+    vlSelf->top__DOT__ifu__DOT__bpu__DOT__t0_index 
+        = (0xffU & (vlSelf->top__DOT__u_pc_reg__DOT___pc_current 
+                    ^ (IData)(vlSelf->top__DOT__ifu__DOT__bpu__DOT__global_history)));
+    vlSelf->top__DOT__u_icache_top__DOT____Vcellinp__u_uncache_check__addr_check_i 
+        = ((vlSelf->top__DOT__u_icache_top__DOT__line_tag_reg 
+            << 0xdU) | (((IData)(vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg) 
+                         << 6U) | (IData)(vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg)));
+    vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT____VdfgTmp_h5eeedcde__0 
+        = ((3U != (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)) 
+           & (4U != (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)));
     vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__read_tag_full 
         = vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__icache_tag_regs
         [vlSelf->top__DOT__u_icache_top__DOT__line_idx_reg];
@@ -915,6 +915,13 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                           (0x707fU 
                                            & vlSelf->__Vfunc_match__4__inst));
     vlSelf->top__DOT__idu__DOT___inst_jalr = vlSelf->__Vfunc_match__4__Vfuncout;
+    vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime 
+        = ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
+            > vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
+           | ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
+               == vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
+              & (vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
+                 >= vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q)));
     vlSelf->__Vfunc_match__5__inst = vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q;
     vlSelf->__Vfunc_match__5__Vfuncout = (0x63U == 
                                           (0x707fU 
@@ -1050,13 +1057,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                            == (0xfe00707fU 
                                                & vlSelf->__Vfunc_match__54__inst));
     vlSelf->top__DOT__idu__DOT___inst_remu = vlSelf->__Vfunc_match__54__Vfuncout;
-    vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime 
-        = ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
-            > vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
-           | ((vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
-               == vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_high_q) 
-              & (vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
-                 >= vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtimecmp_low_q)));
     vlSelf->__Vfunc_match__44__inst = vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q;
     vlSelf->__Vfunc_match__44__Vfuncout = (0x5073U 
                                            == (0x707fU 
@@ -10700,6 +10700,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__u_dcache_top__DOT__ram_r_handshake 
         = ((IData)(vlSelf->top__DOT__u_dcache_top__DOT___ram_raddr_valid_dcache_o) 
            & (IData)(vlSelf->top__DOT__ram_rdata_ready_dcache));
+    if (VL_UNLIKELY((0x40000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus))) {
+        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 444, "");
+    }
     vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_match 
         = ((0x3fU & (vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_tag
                      [vlSelf->top__DOT__ifu__DOT__bpu__DOT__t1_index] 
@@ -10828,9 +10831,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN11 
         = ((3U == (IData)(vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT____VdfgTmp_h5837c3bf__0)) 
            & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT____VdfgTmp_h5eeedcde__0));
-    if (VL_UNLIKELY((0x40000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus))) {
-        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 423, "");
-    }
     vlSelf->top__DOT__u_icache_top__DOT__icache_hit 
         = ((vlSelf->top__DOT__u_icache_top__DOT__line_tag_reg 
             == (0x7ffffU & vlSelf->top__DOT__u_icache_top__DOT__u_icache_tag__DOT__read_tag_full)) 
@@ -10866,6 +10866,17 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                                 | ((IData)(vlSelf->top__DOT__idu__DOT___inst_slli) 
                                                                    | ((IData)(vlSelf->top__DOT__idu__DOT___inst_srai) 
                                                                       | (IData)(vlSelf->top__DOT__idu__DOT___inst_srli)))))))));
+    vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt 
+        = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
+           & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
+               >> 3U) & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg 
+                         >> 7U)));
+    vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt 
+        = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
+           & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
+               >> 1U) & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg 
+                          & vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg) 
+                         >> 5U)));
     vlSelf->top__DOT__idu__DOT___type_branch = ((IData)(vlSelf->top__DOT__idu__DOT___inst_beq) 
                                                 | ((IData)(vlSelf->top__DOT__idu__DOT___inst_bne) 
                                                    | ((IData)(vlSelf->top__DOT__idu__DOT___inst_blt) 
@@ -10893,17 +10904,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                                                 | ((IData)(vlSelf->top__DOT__idu__DOT___inst_divu) 
                                                                                 | ((IData)(vlSelf->top__DOT__idu__DOT___inst_rem) 
                                                                                 | (IData)(vlSelf->top__DOT__idu__DOT___inst_remu))))))))))))))))));
-    vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt 
-        = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
-           & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
-               >> 3U) & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mieReg 
-                         >> 7U)));
-    vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt 
-        = ((IData)(vlSelf->top__DOT__clint_u__DOT__mtime_ge_mtime) 
-           & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
-               >> 1U) & ((vlSelf->top__DOT__rv32_csr_regfile__DOT__sieReg 
-                          & vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg) 
-                         >> 5U)));
     vlSelf->top__DOT__idu__DOT___csr_write = ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrw) 
                                               | (IData)(vlSelf->top__DOT__idu__DOT___inst_csrrwi));
     vlSelf->top__DOT__idu__DOT____VdfgTmp_hc23742a8__0 

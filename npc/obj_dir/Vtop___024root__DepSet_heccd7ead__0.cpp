@@ -444,16 +444,16 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     __Vdlyvset__top__DOT__sram__DOT__SRAM4__DOT__ram__v0 = 0U;
     __Vdly__top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_state 
         = vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_div_top__DOT__u_alu_div_slow_32__DOT__div_state;
+    __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
+        = vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q;
+    __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
+        = vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q;
     vlSelf->__Vdly__top__DOT__u_icache_top__DOT___ram_rlen_icache_o 
         = vlSelf->top__DOT__u_icache_top__DOT___ram_rlen_icache_o;
     vlSelf->__Vdly__top__DOT__u_icache_top__DOT__icache_state 
         = vlSelf->top__DOT__u_icache_top__DOT__icache_state;
     vlSelf->__Vdly__top__DOT__u_icache_top__DOT__burst_count 
         = vlSelf->top__DOT__u_icache_top__DOT__burst_count;
-    __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q 
-        = vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_high_q;
-    __Vdly__top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q 
-        = vlSelf->top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q;
     vlSelf->__Vdly__top__DOT__u_icache_top__DOT__blk_addr_reg 
         = vlSelf->top__DOT__u_icache_top__DOT__blk_addr_reg;
     vlSelf->__Vdly__top__DOT__u_icache_top__DOT__line_tag_reg 
@@ -2032,9 +2032,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             [(0x7fU & (vlSelf->top__DOT__pc_next >> 6U))][3U];
     }
     if (vlSelf->top__DOT__ex2mem__DOT__reg_rst) {
+        vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___pc_op_ex_mem_q = 0U;
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                          >> 3U)))) {
+        vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q 
+            = vlSelf->top__DOT__exu__DOT___exc_trap_bus;
         vlSelf->top__DOT__ex2mem__DOT___pc_op_ex_mem_q 
             = vlSelf->top__DOT__id2ex__DOT___pc_op_id_ex_q;
     }
@@ -2114,15 +2117,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
             = vlSelf->top__DOT__pdt_res;
     }
     if (vlSelf->top__DOT__ex2mem__DOT__reg_rst) {
-        vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___csr_writevalid_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___rs2_data_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___rs1_data_ex_mem_q = 0U;
         vlSelf->top__DOT__ex2mem__DOT___imm_data_ex_mem_q = 0U;
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                          >> 3U)))) {
-        vlSelf->top__DOT__ex2mem__DOT___trap_bus_ex_mem_q 
-            = vlSelf->top__DOT__exu__DOT___exc_trap_bus;
         vlSelf->top__DOT__ex2mem__DOT___csr_writevalid_ex_mem_q 
             = (1U & (~ ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
                         | ((IData)(vlSelf->top__DOT__id2ex__DOT___csr_op_id_ex_q) 
