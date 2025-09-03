@@ -90,10 +90,12 @@ unsigned cmd_info(const std::vector<std::string>& input) {
     sscanf(input[1].c_str(), "%s", val);
     if (0 == strcmp(val, "r")) {
         mysim_p->printRegisterFile();
-        mysim_p->printCSRregisters();
     }
     else if (0 == strcmp(val, "w")) {
         mysim_p->u_wp.showAllwp();
+    }
+    else if (0 == strcmp(val, "itrace")) {
+        mysim_p->u_itrace.printRecentInst();
     }
     return 0;
 }
