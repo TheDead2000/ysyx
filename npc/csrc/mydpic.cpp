@@ -44,8 +44,7 @@ extern "C" void dcache_hit_count() {
 
 extern "C" void set_diffpc(int nextpc, int inst,svBit commit_valid) {
     // NOP 指令对于的 PC 为 0
-    commit_valid =1 ;
-    if (nextpc == 0) {
+    if (nextpc == 0 || commit_valid == 0) {
         return;
     }
     if(inst == 0x13)
@@ -53,6 +52,14 @@ extern "C" void set_diffpc(int nextpc, int inst,svBit commit_valid) {
         printf("nop!");
         return;
     }
+    /**
+     * 第一条指令特殊处理
+     * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
+     * 2. 第一条指令之前没有指令
+     * 3. nextpc 与 commited pc 一一对应，nextpc 为 commited pc 下一条所指令的指令
+     * 4. nextpc 为第一条指令时，没有对于的 commited pc
+     *
+     */
 #ifdef MTRACH
     printf("set_diffpc:%x\n", (void*)nextpc);
 #endif
