@@ -841,8 +841,8 @@ CSRs rv32_csr_regfile(
       .rs1_data_o        (rs1_data_gpr),
       .rs2_data_o        (rs2_data_gpr),
       /* 写入数据 */
-      .write_idx_i       (rd_addr_mem_wb),
-      .write_data_i      (mem_data_mem_wb),
+      .write_idx_i       (rd_idx_mem),
+      .write_data_i      (mem_data_mem),
       .write_data_valid_i(1'b1)
   );
 

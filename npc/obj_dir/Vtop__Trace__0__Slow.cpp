@@ -9813,8 +9813,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+51,"rs2_idx_i", false,-1, 4,0);
     tracep->declBus(c+140,"rs1_data_o", false,-1, 31,0);
     tracep->declBus(c+141,"rs2_data_o", false,-1, 31,0);
-    tracep->declBus(c+120,"write_idx_i", false,-1, 4,0);
-    tracep->declBus(c+121,"write_data_i", false,-1, 31,0);
+    tracep->declBus(c+94,"write_idx_i", false,-1, 4,0);
+    tracep->declBus(c+104,"write_data_i", false,-1, 31,0);
     tracep->declBit(c+5853,"write_data_valid_i", false,-1);
     for (int i = 0; i < 32; ++i) {
         tracep->declBus(c+5577+i*1,"rf", true,(i+0), 31,0);
@@ -10468,23 +10468,19 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                            >> 7U)) : 0U)),5);
     bufp->fullIData(oldp+53,(((IData)(vlSelf->top__DOT__idu__DOT___rs1_exc_bypass_valid)
                                ? vlSelf->top__DOT__exu__DOT___alu_out
-                               : ((((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
-                                    == (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q)) 
+                               : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid) 
                                    & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d)))
                                    ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
-                                   : (((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
-                                       == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
+                                   : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid)
                                        ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                        : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                       [vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d])))),32);
     bufp->fullIData(oldp+54,(((IData)(vlSelf->top__DOT__idu__DOT___rs2_exc_bypass_valid)
                                ? vlSelf->top__DOT__exu__DOT___alu_out
-                               : ((((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
-                                    == (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q)) 
+                               : (((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid) 
                                    & (0U != (IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d)))
                                    ? vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d
-                                   : (((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
-                                       == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
+                                   : ((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid)
                                        ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                        : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                       [vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d])))),32);
@@ -10825,13 +10821,11 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullIData(oldp+137,(vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg),32);
     bufp->fullIData(oldp+138,(vlSelf->top__DOT__rv32_csr_regfile__DOT__satpReg),32);
     bufp->fullCData(oldp+139,(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg),2);
-    bufp->fullIData(oldp+140,((((IData)(vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d) 
-                                == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
+    bufp->fullIData(oldp+140,(((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs1_bypass_valid)
                                 ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                 : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                [vlSelf->top__DOT__id2ex__DOT___rs1_idx_id_ex_d])),32);
-    bufp->fullIData(oldp+141,((((IData)(vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d) 
-                                == (IData)(vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q))
+    bufp->fullIData(oldp+141,(((IData)(vlSelf->top__DOT__rv32_gpr_regfile__DOT___rs2_bypass_valid)
                                 ? vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data
                                 : vlSelf->top__DOT__rv32_gpr_regfile__DOT__rf
                                [vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d])),32);
@@ -18394,4 +18388,12 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
                                             >> 0x23U)))));
     bufp->fullBit(oldp+2029,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
                                             >> 0x23U)))));
+    bufp->fullBit(oldp+2030,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
+                                            >> 0x23U)))));
+    bufp->fullBit(oldp+2031,((1U & ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__6__KET____DOT__u_regTemplate__dout 
+                                             >> 0x23U)) 
+                                    ^ ((IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__7__KET____DOT__u_regTemplate__dout 
+                                                >> 0x23U)) 
+                                       ^ (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT____Vcellout__genblk1__BRA__8__KET____DOT__u_regTemplate__dout 
+                                                  >> 0x23U)))))));
 }
