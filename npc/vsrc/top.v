@@ -645,24 +645,24 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   wire [             `XLEN-1:0 ] mem_data_mem_wb;  //访存阶段的数据
 
 
-  mem_wb mem2wb (
-      .clk                             (clk),
-      .rst                             (rst),
-      .flush_valid_i                   (flush_clint[`CTRLBUS_MEM_WB]),
-      .stall_valid_i                   (stall_clint[`CTRLBUS_MEM_WB]),
+  // mem_wb mem2wb (
+  //     .clk                             (clk),
+  //     .rst                             (rst),
+  //     .flush_valid_i                   (flush_clint[`CTRLBUS_MEM_WB]),
+  //     .stall_valid_i                   (stall_clint[`CTRLBUS_MEM_WB]),
   
 
-      .pc_mem_wb_i                     (pc_mem),
-      .inst_data_mem_wb_i              (inst_data_mem),
-      .rd_addr_mem_wb_i                (rd_idx_mem),
-      .mem_data_mem_wb_i               (mem_data_mem),
+  //     .pc_mem_wb_i                     (pc_mem),
+  //     .inst_data_mem_wb_i              (inst_data_mem),
+  //     .rd_addr_mem_wb_i                (rd_idx_mem),
+  //     .mem_data_mem_wb_i               (mem_data_mem),
 
-      /* trap 所需寄存器，来自于 (写)*/
-      .pc_mem_wb_o(pc_mem_wb),
-      .inst_data_mem_wb_o(inst_data_mem_wb),
-      .rd_addr_mem_wb_o(rd_addr_mem_wb),
-      .mem_data_mem_wb_o(mem_data_mem_wb)
-  );
+  //     /* trap 所需寄存器，来自于 (写)*/
+  //     .pc_mem_wb_o(pc_mem_wb),
+  //     .inst_data_mem_wb_o(inst_data_mem_wb),
+  //     .rd_addr_mem_wb_o(rd_addr_mem_wb),
+  //     .mem_data_mem_wb_o(mem_data_mem_wb)
+  // );
 
   // /***************************写回阶段***********************************/
   // writeback writeback (
@@ -690,14 +690,14 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   );
   always @(posedge clk) begin
     // 延时一个周期，让寄存器写入有效
-    inst_commit(pc_mem_wb, inst_data_mem_wb, commit_valid);
+    inst_commit(pc_mem, inst_data_mem, commit_valid);
   end
 
   /************************××××××向仿真环境传递 PC *****************************/
   import "DPI-C" function void set_nextpc(input int nextpc,    input int inst,   input bit commit_valid );
 
   always @(posedge clk) begin
-    set_nextpc(pc_mem_wb,inst_data_mem_wb,commit_valid);
+    set_nextpc(pc_mem,inst_data_mem,commit_valid);
   end
 
  /* 输出至取指阶段 */

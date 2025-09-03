@@ -4180,20 +4180,29 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                    & (3U == (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_state)))) 
           | (IData)(vlSelf->top__DOT__u_dcache_top__DOT__u_dcache_data__DOT__hit_CEN11)) 
          & (IData)(vlSelf->top__DOT__u_dcache_top__DOT__dcache_wwen));
-    vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d 
-        = (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___isload))) 
-            & (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls8byte))) 
-                & (((- (IData)(((vlSelf->top__DOT__lsu__DOT__rdata_switch 
-                                 >> 7U) & (IData)(vlSelf->top__DOT__lsu__DOT__ls_signed)))) 
-                    << 8U) | (0xffU & vlSelf->top__DOT__lsu__DOT__rdata_switch))) 
-               | (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls16byte))) 
-                   & (((- (IData)(((vlSelf->top__DOT__lsu__DOT__rdata_switch 
-                                    >> 0xfU) & (IData)(vlSelf->top__DOT__lsu__DOT__ls_signed)))) 
-                       << 0x10U) | (0xffffU & vlSelf->top__DOT__lsu__DOT__rdata_switch))) 
-                  | ((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls32byte))) 
-                     & vlSelf->top__DOT__lsu__DOT__rdata_switch)))) 
-           | ((- (IData)((0U == (IData)(vlSelf->top__DOT__ex2mem__DOT___mem_op_ex_mem_q)))) 
-              & vlSelf->top__DOT__ex2mem__DOT___alu_data_ex_mem_q));
+    vlSelf->top__DOT__mem_data_mem = (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___isload))) 
+                                       & (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls8byte))) 
+                                           & (((- (IData)(
+                                                          ((vlSelf->top__DOT__lsu__DOT__rdata_switch 
+                                                            >> 7U) 
+                                                           & (IData)(vlSelf->top__DOT__lsu__DOT__ls_signed)))) 
+                                               << 8U) 
+                                              | (0xffU 
+                                                 & vlSelf->top__DOT__lsu__DOT__rdata_switch))) 
+                                          | (((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls16byte))) 
+                                              & (((- (IData)(
+                                                             ((vlSelf->top__DOT__lsu__DOT__rdata_switch 
+                                                               >> 0xfU) 
+                                                              & (IData)(vlSelf->top__DOT__lsu__DOT__ls_signed)))) 
+                                                  << 0x10U) 
+                                                 | (0xffffU 
+                                                    & vlSelf->top__DOT__lsu__DOT__rdata_switch))) 
+                                             | ((- (IData)((IData)(vlSelf->top__DOT__lsu__DOT___ls32byte))) 
+                                                & vlSelf->top__DOT__lsu__DOT__rdata_switch)))) 
+                                      | ((- (IData)(
+                                                    (0U 
+                                                     == (IData)(vlSelf->top__DOT__ex2mem__DOT___mem_op_ex_mem_q)))) 
+                                         & vlSelf->top__DOT__ex2mem__DOT___alu_data_ex_mem_q));
     vlSelf->top__DOT__idu__DOT____VdfgTmp_h2ad227db__0 
         = ((IData)(vlSelf->top__DOT__idu__DOT___type_Reg) 
            | (IData)(vlSelf->top__DOT__idu__DOT___I_type));
@@ -9293,7 +9302,7 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
                      << 0x3fU));
     vlSelf->top__DOT__rv32_gpr_regfile__DOT___write_data 
         = ((0U == (IData)(vlSelf->top__DOT__ex2mem__DOT___rd_idx_ex_mem_q))
-            ? 0U : vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_d);
+            ? 0U : vlSelf->top__DOT__mem_data_mem);
     vlSelf->top__DOT__idu__DOT____VdfgTmp_h7e5e33d0__0 
         = ((IData)(vlSelf->top__DOT__idu__DOT____VdfgTmp_h2ad227db__0) 
            | (IData)(vlSelf->top__DOT__idu__DOT___type_store));
