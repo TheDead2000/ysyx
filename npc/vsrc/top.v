@@ -697,7 +697,7 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   import "DPI-C" function void set_nextpc(input int nextpc,    input int inst,   input bit commit_valid );
 
   always @(posedge clk) begin
-    set_nextpc(pc_mem_wb,inst_data_mem_wb,commit_valid);
+    set_nextpc(pc_mem,inst_data_mem,commit_valid);
   end
 
  /* 输出至取指阶段 */
