@@ -62,7 +62,7 @@ extern "C" void set_diffpc(int pc, int inst,svBit commit_valid) {
 
 extern "C" void set_mem_pc(int mem_pc) {
 #ifdef MTRACH
-    printf("DPIC:set_mem_pc:%p\n", (void*)mem_pc);
+    printf("DPIC:set_mem_pc:%x\n", (void*)mem_pc);
 #endif
     mysim_p->mem_pc = mem_pc;
 }
