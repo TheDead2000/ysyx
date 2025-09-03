@@ -42,9 +42,9 @@ extern "C" void dcache_hit_count() {
 
 
 
-extern "C" void set_diffpc(int nextpc, int inst,svBit commit_valid) {
+extern "C" void set_diffpc(int pc, int inst,svBit commit_valid) {
     // NOP 指令对于的 PC 为 0
-    if (nextpc == 0 || commit_valid == 0) {
+    if (pc == 0 || commit_valid == 0) {
         return;
     }
     if(inst == 0x13)
@@ -52,19 +52,19 @@ extern "C" void set_diffpc(int nextpc, int inst,svBit commit_valid) {
         printf("nop!");
         return;
     }
-    /**
-     * 第一条指令特殊处理
-     * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
-     * 2. 第一条指令之前没有指令
-     * 3. nextpc 与 commited pc 一一对应，nextpc 为 commited pc 下一条所指令的指令
-     * 4. nextpc 为第一条指令时，没有对于的 commited pc
-     *
-     */
+
+    if(pc == SERIAL_PORT || pc == KBD_ADDR)
+    {
+        printf("is device access!\n");
+        // mysim_p->u_difftest.difftest_skip_ref();
+        return;
+    }
+
 #ifdef MTRACH
-    printf("set_diffpc:%x\n", (void*)nextpc);
+    printf("set_diffpc:%x\n", (void*)pc);
 #endif
 
-    mysim_p->commited_list.nextpc.push_back(nextpc);
+    mysim_p->commited_list.nextpc.push_back(pc);
 }
 
 extern "C" void set_mem_pc(int mem_pc) {
