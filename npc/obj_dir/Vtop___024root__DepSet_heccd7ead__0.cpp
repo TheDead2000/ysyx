@@ -509,7 +509,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                                     >> 4U) 
                                                                    | (0U 
                                                                       == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q))))));
-    Vtop___024root____Vdpiimwrap_top__DOT__set_diffpc_TOP(vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q, vlSelf->top__DOT__id2ex__DOT___inst_data_id_ex_q, 
+    Vtop___024root____Vdpiimwrap_top__DOT__set_diffpc_TOP(vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q, vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q, 
                                                           (1U 
                                                            & (~ 
                                                               (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 

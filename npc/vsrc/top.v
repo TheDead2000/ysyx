@@ -701,7 +701,7 @@ wire [`INST_LEN-1:0] next_pc;
   import "DPI-C" function void set_diffpc(input int nextpc,    input int inst,   input bit commit_valid );
 
   always @(posedge clk) begin
-    set_diffpc(inst_addr_id_ex,inst_data_id_ex,commit_valid);
+    set_diffpc(inst_addr_if_id,inst_data_if_id,commit_valid);
   end
 
  /* 输出至取指阶段 */
