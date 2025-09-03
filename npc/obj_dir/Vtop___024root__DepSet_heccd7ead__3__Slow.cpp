@@ -4186,6 +4186,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__mem_write_valid = 0;
     vlSelf->top__DOT__mem_data_ready = 0;
     vlSelf->top__DOT__csr_write_valid_mem = 0;
+    vlSelf->top__DOT__next_pc = 0;
     vlSelf->top__DOT__clint_csr_write_en = 0;
     vlSelf->top__DOT__clint_csr_write_addr = 0;
     vlSelf->top__DOT__clint_csr_write_data = 0;
