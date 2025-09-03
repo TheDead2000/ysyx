@@ -140,6 +140,6 @@ size_t sbctl_read(void *buf, size_t offset, size_t len)
 
 void init_device() 
 {
-  Log("Initializing devices...");
+  // Log("Initializing devices...");
   ioe_init();
 }
