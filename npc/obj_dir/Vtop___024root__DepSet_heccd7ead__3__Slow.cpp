@@ -4187,10 +4187,6 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__mem_write_valid = 0;
     vlSelf->top__DOT__mem_data_ready = 0;
     vlSelf->top__DOT__csr_write_valid_mem = 0;
-    vlSelf->top__DOT__pc_mem_wb = 0;
-    vlSelf->top__DOT__inst_data_mem_wb = 0;
-    vlSelf->top__DOT__rd_addr_mem_wb = 0;
-    vlSelf->top__DOT__mem_data_mem_wb = 0;
     vlSelf->top__DOT__clint_csr_write_en = 0;
     vlSelf->top__DOT__clint_csr_write_addr = 0;
     vlSelf->top__DOT__clint_csr_write_data = 0;
@@ -4601,6 +4597,10 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__lsu__DOT___mem_trap_bus = 0;
     vlSelf->top__DOT__lsu__DOT____Vlvbound_hda221a3d__0 = 0;
     vlSelf->top__DOT__lsu__DOT____VdfgTmp_h7035a01d__0 = 0;
+    vlSelf->top__DOT__mem2wb__DOT___pc_mem_wb_q = 0;
+    vlSelf->top__DOT__mem2wb__DOT___inst_data_mem_wb_q = 0;
+    vlSelf->top__DOT__mem2wb__DOT___mem_data_mem_wb_q = 0;
+    vlSelf->top__DOT__mem2wb__DOT___rd_addr_mem_wb_q = 0;
     vlSelf->top__DOT__clint_u__DOT__trap_valid = 0;
     vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt = 0;
     vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt = 0;
