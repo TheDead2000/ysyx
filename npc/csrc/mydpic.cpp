@@ -42,16 +42,27 @@ extern "C" void dcache_hit_count() {
 
 
 
-extern "C" void set_nextpc(int nextpc, int inst, svBit commit_valid) {
+extern "C" void set_nextpc(int nextpc, int inst,svBit commit_valid) {
+    // NOP 指令对于的 PC 为 0
     if (nextpc == 0 || commit_valid == 0) {
         return;
     }
-    
-    // 不要特殊处理NOP指令，所有有效指令都应该提交
-    #ifdef MTRACE
-    printf("set_nextpc: %x, inst: %x\n", nextpc, inst);
-    #endif
-    
+    if(inst == 0x13)
+    {
+        printf("nop!");
+        return;
+    }
+    /**
+     * 第一条指令特殊处理
+     * 1. 当第一条指令位于 MEM 阶段时，WB 阶段的指令 为 NOP
+     * 2. 第一条指令之前没有指令
+     * 3. nextpc 与 commited pc 一一对应，nextpc 为 commited pc 下一条所指令的指令
+     * 4. nextpc 为第一条指令时，没有对于的 commited pc
+     *
+     */
+#ifdef MTRACH
+    printf("set_nextpc:%x\n", (void*)nextpc);
+#endif
     mysim_p->commited_list.nextpc.push_back(nextpc);
 }
 
