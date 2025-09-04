@@ -119,7 +119,7 @@ void Simtop::stepCycle(bool val) {
         uint32_t pc_value = commited_list.inst.back().inst_pc;
         setPC(pc_value);
         //setPC(  commited_list.inst.back());
-        printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.back());
+        //printf("commit pc:0x%08x, inst:0x%08x\n", commited_list.nextpc.front(), commited_list.inst.back());
         sdbRun();
         commited_list.inst.pop_front();
         commited_list.nextpc.pop_front();
