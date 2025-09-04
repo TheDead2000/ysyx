@@ -114,10 +114,6 @@ void SimMem::host_write(void* addr, int len, word_t data) {
 
 bool SimMem::in_pmem(paddr_t addr) {
 
-    if(addr == 0xa00080ec) {
-        printf("in_pmem addr:%x\n", addr);
-        return true;
-    }
     if(addr >= SERIAL_PORT && addr < SERIAL_PORT + 8) {
         return false;
     }
