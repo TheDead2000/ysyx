@@ -96,6 +96,8 @@ void SimAxi4::mmio_device_init() {
     assert(mmio.add_dev(MEM_BASE, 0x8000000, dram));
     // 外设
     mydevices = new Device2axi4();
+    
+    assert(mmio.add_dev(MMIO_BASE,0x2000,mydevices));
     // 串口
     assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
     // 键盘
@@ -111,7 +113,7 @@ void SimAxi4::mmio_device_init() {
     // 帧缓冲区
     assert(mmio.add_dev(FB_ADDR, 0x75300, mydevices));
 
-    assert(mmio.add_dev(MMIO_BASE,0x2000,mydevices));
+
     
     // 注意：DISK_ADDR 在代码中有定义但没有在这里添加，如果需要请添加
     // assert(mmio.add_dev(DISK_ADDR, 适当的大小, mydevices));
