@@ -9,7 +9,7 @@ void Vtop___024root__trace_chg_sub_2(Vtop___024root* vlSelf, VerilatedVcd::Buffe
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root__trace_chg_sub_2\n"); );
     // Init
-    uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode + 3561);
+    uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode + 3562);
     // Body
     if (VL_UNLIKELY(vlSelf->__Vm_traceActivity[2U])) {
         bufp->chgBit(oldp+0,((1U & (IData)((vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step1_carry
