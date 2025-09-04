@@ -25,7 +25,7 @@
  */
 #define MAX_INST_TO_PRINT 2001
 
-CPU_state cpu = { .csr[mstatus] = 0xa00001800 };
+CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
