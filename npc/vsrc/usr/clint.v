@@ -54,7 +54,7 @@ module clint (
     // 输出至取指阶段
     output [31:0] clint_pc_o,
     output        clint_pc_valid_o,
-    
+
     // 流水线控制
     output reg [5:0] stall_o,
     output reg [5:0] flush_o,
@@ -294,7 +294,7 @@ end
         end else begin
           csr_write_addr_o = 12'h341; // mepc
         end
-        csr_write_data_o = interrupt_pending ? pc_from_exe_i : pc_from_mem_i;
+        csr_write_data_o = interrupt_pending ? pc_from_exe_i : pc_from_exe_i;
       end
       
       SAVE_CAUSE: begin
@@ -387,7 +387,7 @@ end
   // 输出赋值
   assign clint_pc_o = handler_pc;
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei;
-  
+  wire trap_flush_condition = trap_valid || trap_mret || trap_sret || trap_fencei;
   // 特权级别更新
   always @(*) begin
     privilege_o = csr_privilege_i;
@@ -415,6 +415,7 @@ end
       .load_use_valid_id_i(load_use_valid_id_i),
       .jump_valid_ex_i(jump_valid_ex_i),
       .alu_mul_div_valid_ex_i(alu_mul_div_valid_ex_i),
+      .trap_flush_valid_wb_i(trap_flush_condition),
       .trap_stall_valid_wb_i(trap_stall_valid),
       .stall_o(stall_o),
       .flush_o(flush_o)

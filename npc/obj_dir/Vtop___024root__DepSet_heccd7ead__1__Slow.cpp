@@ -9464,60 +9464,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__mem_addr_valid = ((~ (IData)(vlSelf->top__DOT__mem_data_ready)) 
                                         & ((IData)(vlSelf->top__DOT__lsu__DOT___isload) 
                                            | (IData)(vlSelf->top__DOT__clint_u__DOT__mtime_write_valid_i)));
-    vlSelf->top__DOT__clint_csr_write_addr = 0U;
-    if ((1U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
-                                                   ? 0x141U
-                                                   : 0x341U);
-    } else if ((2U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
-                                                   ? 0x142U
-                                                   : 0x342U);
-    } else if ((3U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
-                                                   ? 0x143U
-                                                   : 0x343U);
-    } else if ((4U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
-                                                   ? 0x100U
-                                                   : 0x300U);
-    } else if ((5U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        if (vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) {
-            vlSelf->top__DOT__clint_csr_write_addr = 0x344U;
-        } else if (vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt) {
-            vlSelf->top__DOT__clint_csr_write_addr = 0x144U;
-        }
-    } else if ((6U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
-        if ((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
-            vlSelf->top__DOT__clint_csr_write_addr = 0x300U;
-        } else if ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
-            vlSelf->top__DOT__clint_csr_write_addr = 0x100U;
-        }
-    }
-    vlSelf->top__DOT__clint_u__DOT__interrupt_code = 0U;
-    vlSelf->top__DOT__clint_u__DOT__trap_valid = (1U 
-                                                  & (IData)(
-                                                            (((0U 
-                                                               != vlSelf->top__DOT__lsu__DOT___mem_trap_bus) 
-                                                              | (IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt)) 
-                                                             | (IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt))));
-    vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 0U;
-    vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 0U;
-    if (((IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) 
-         & ((~ (vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
-                >> 7U)) | (3U == (IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg))))) {
-        vlSelf->top__DOT__clint_u__DOT__interrupt_code = 7U;
-        vlSelf->top__DOT__clint_u__DOT__interrupt_delegated 
-            = ((vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
-                >> 7U) & (3U != (IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg)));
-        vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 1U;
-    } else if (((IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt) 
-                & (vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
-                   >> 5U))) {
-        vlSelf->top__DOT__clint_u__DOT__interrupt_code = 5U;
-        vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 1U;
-        vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 1U;
-    }
     vlSelf->top__DOT__id2ex__DOT___rs2_idx_id_ex_d 
         = (((IData)(vlSelf->top__DOT__idu__DOT___type_Reg) 
             | ((IData)(vlSelf->top__DOT__idu__DOT___type_store) 
@@ -9530,6 +9476,101 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
                                                | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrs) 
                                                   | ((IData)(vlSelf->top__DOT__idu__DOT___inst_csrrsi) 
                                                      | (IData)(vlSelf->top__DOT__idu__DOT___csr_write))));
+    vlSelf->top__DOT__clint_csr_write_addr = 0U;
+    vlSelf->top__DOT__clint_csr_write_data = 0U;
+    if ((1U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
+                                                   ? 0x141U
+                                                   : 0x341U);
+        vlSelf->top__DOT__clint_csr_write_data = vlSelf->top__DOT__id2ex__DOT___pc_id_ex_q;
+    } else if ((2U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
+                                                   ? 0x142U
+                                                   : 0x342U);
+        vlSelf->top__DOT__clint_csr_write_data = vlSelf->top__DOT__clint_u__DOT__cause_value_latched;
+    } else if ((3U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
+                                                   ? 0x143U
+                                                   : 0x343U);
+        vlSelf->top__DOT__clint_csr_write_data = vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q;
+    } else if ((4U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        if (vlSelf->top__DOT__clint_u__DOT__is_delegated_latched) {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x100U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = ((0xfffffe00U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+                   | ((0x100U & ((IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg) 
+                                 << 8U)) | ((0xc0U 
+                                             & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+                                            | ((0x20U 
+                                                & (vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
+                                                   << 4U)) 
+                                               | (0x1dU 
+                                                  & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)))));
+        } else {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x300U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = ((0xffffe000U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                   | (((IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg) 
+                       << 0xbU) | ((0x700U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                                   | ((0x80U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
+                                                << 4U)) 
+                                      | (0x77U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg)))));
+        }
+    } else if ((5U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        if (vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x344U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = (0x80U | (0xffffff7fU & vlSelf->top__DOT__rv32_csr_regfile__DOT__mipReg));
+        } else if (vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt) {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x144U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = (0x100U | (0xfffffeffU & vlSelf->top__DOT__rv32_csr_regfile__DOT__sipReg));
+        }
+    } else if ((6U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
+        if ((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x300U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = (0x80U | ((0xffffe000U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                            | ((0x700U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                               | ((0x70U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg) 
+                                  | ((8U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg 
+                                            >> 4U)) 
+                                     | (7U & vlSelf->top__DOT__rv32_csr_regfile__DOT__mstatusReg))))));
+        } else if ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) {
+            vlSelf->top__DOT__clint_csr_write_addr = 0x100U;
+            vlSelf->top__DOT__clint_csr_write_data 
+                = (0x20U | ((0xfffffe00U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+                            | ((0xc0U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+                               | ((0x1cU & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg) 
+                                  | ((2U & (vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg 
+                                            >> 4U)) 
+                                     | (1U & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg))))));
+        }
+    }
+    vlSelf->top__DOT__clint_u__DOT__interrupt_code = 0U;
+    vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 0U;
+    vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 0U;
+    if (((IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt) 
+         & ((~ (vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
+                >> 7U)) | (3U == (IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg))))) {
+        vlSelf->top__DOT__clint_u__DOT__interrupt_code = 7U;
+        vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 1U;
+        vlSelf->top__DOT__clint_u__DOT__interrupt_delegated 
+            = ((vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
+                >> 7U) & (3U != (IData)(vlSelf->top__DOT__rv32_csr_regfile__DOT__privilegeReg)));
+    } else if (((IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt) 
+                & (vlSelf->top__DOT__rv32_csr_regfile__DOT__midelegReg 
+                   >> 5U))) {
+        vlSelf->top__DOT__clint_u__DOT__interrupt_code = 5U;
+        vlSelf->top__DOT__clint_u__DOT__interrupt_pending = 1U;
+        vlSelf->top__DOT__clint_u__DOT__interrupt_delegated = 1U;
+    }
+    vlSelf->top__DOT__clint_u__DOT__trap_valid = (1U 
+                                                  & (IData)(
+                                                            (((0U 
+                                                               != vlSelf->top__DOT__lsu__DOT___mem_trap_bus) 
+                                                              | (IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt)) 
+                                                             | (IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt))));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__Partial_product[0U] 
         = (((QData)((IData)((0x3fffffffU & (- (IData)(
                                                       (1U 
@@ -10924,109 +10965,4 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
                                                           [1U] 
                                                           >> 0x24U))))))) 
                      << 0x24U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xffffffdfffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x25U)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x24U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x25U))))))) 
-                     << 0x25U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xffffffbfffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x26U)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x25U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x26U))))))) 
-                     << 0x26U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xffffff7fffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x27U)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x26U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x27U))))))) 
-                     << 0x27U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xfffffeffffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x28U)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x27U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x28U))))))) 
-                     << 0x28U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xfffffdffffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x29U)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x28U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x29U))))))) 
-                     << 0x29U));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xfffffbffffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x2aU)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x29U)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x2aU))))))) 
-                     << 0x2aU));
-    vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum[0U] 
-        = ((0xfffff7ffffffffffULL & vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step3_sum
-            [0U]) | ((QData)((IData)((1U & ((IData)(
-                                                    (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                     [0U] 
-                                                     >> 0x2bU)) 
-                                            ^ ((IData)(
-                                                       (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_carry
-                                                        [0U] 
-                                                        >> 0x2aU)) 
-                                               ^ (IData)(
-                                                         (vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step2_sum
-                                                          [1U] 
-                                                          >> 0x2bU))))))) 
-                     << 0x2bU));
 }
