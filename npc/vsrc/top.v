@@ -682,7 +682,8 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
   //     //   .exc_csr_data_o (exc_csr_data_o),
   //     //   .exc_csr_valid_o(exc_csr_valid_o)
   // );
-
+ wire commit_valid = (pc_mem != `XLEN'b0)&&(!stall_clint[`CTRLBUS_MEM_WB])&&(!flush_clint[`CTRLBUS_MEM_WB]);
+ 
   import "DPI-C" function void inst_commit(
     input int pc,
     input int inst,
@@ -830,7 +831,7 @@ CSRs rv32_csr_regfile(
 /***********************************gpr**********************/
   wire [`INST_LEN-1:0] rs1_data_gpr;
   wire [`INST_LEN-1:0] rs2_data_gpr;
-  wire commit_valid = (pc_mem != `XLEN'b0)&&(!stall_clint[`CTRLBUS_MEM_WB])&&(!flush_clint[`CTRLBUS_MEM_WB]);
+ 
 
   gpr_regfile rv32_gpr_regfile (
       .clk               (clk),

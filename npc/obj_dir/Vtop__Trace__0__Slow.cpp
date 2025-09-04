@@ -210,9 +210,10 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+119,"inst_data_mem_wb", false,-1, 31,0);
     tracep->declBus(c+120,"rd_addr_mem_wb", false,-1, 4,0);
     tracep->declBus(c+121,"mem_data_mem_wb", false,-1, 31,0);
+    tracep->declBit(c+5745,"commit_valid", false,-1);
     tracep->declBus(c+5762,"next_pc", false,-1, 31,0);
-    tracep->declBus(c+5745,"clint_pc", false,-1, 31,0);
-    tracep->declBit(c+5746,"clint_pc_valid", false,-1);
+    tracep->declBus(c+5746,"clint_pc", false,-1, 31,0);
+    tracep->declBit(c+5747,"clint_pc_valid", false,-1);
     tracep->declBus(c+4,"stall_clint", false,-1, 5,0);
     tracep->declBus(c+5,"flush_clint", false,-1, 5,0);
     tracep->declBit(c+5697,"clint_csr_write_en", false,-1);
@@ -239,7 +240,6 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+5703,"next_privilege", false,-1, 1,0);
     tracep->declBus(c+140,"rs1_data_gpr", false,-1, 31,0);
     tracep->declBus(c+141,"rs2_data_gpr", false,-1, 31,0);
-    tracep->declBit(c+5747,"commit_valid", false,-1);
     tracep->declBus(c+142,"ram_raddr_icache", false,-1, 31,0);
     tracep->declBit(c+143,"ram_raddr_valid_icache", false,-1);
     tracep->declBus(c+144,"ram_rmask_icache", false,-1, 3,0);
@@ -532,8 +532,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+137,"csr_sip_i", false,-1, 31,0);
     tracep->declBus(c+138,"csr_satp_i", false,-1, 31,0);
     tracep->declBus(c+139,"csr_privilege_i", false,-1, 1,0);
-    tracep->declBus(c+5745,"clint_pc_o", false,-1, 31,0);
-    tracep->declBit(c+5746,"clint_pc_valid_o", false,-1);
+    tracep->declBus(c+5746,"clint_pc_o", false,-1, 31,0);
+    tracep->declBit(c+5747,"clint_pc_valid_o", false,-1);
     tracep->declBus(c+4,"stall_o", false,-1, 5,0);
     tracep->declBus(c+5,"flush_o", false,-1, 5,0);
     tracep->declBus(c+5703,"privilege_o", false,-1, 1,0);
@@ -565,7 +565,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+5699,"is_delegated_latched", false,-1);
     tracep->declBit(c+5700,"interrupt_pending_latched", false,-1);
     tracep->declBus(c+264,"pc_from_exe_i_latch", false,-1, 31,0);
-    tracep->declBus(c+5745,"handler_pc", false,-1, 31,0);
+    tracep->declBus(c+5746,"handler_pc", false,-1, 31,0);
     tracep->declBus(c+5763,"IDLE", false,-1, 2,0);
     tracep->declBus(c+5772,"SAVE_PC", false,-1, 2,0);
     tracep->declBus(c+5773,"SAVE_CAUSE", false,-1, 2,0);
@@ -10237,8 +10237,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+25,"flush_valid_i", false,-1);
     tracep->declBus(c+87,"branch_pc_i", false,-1, 31,0);
     tracep->declBit(c+85,"branch_pc_valid_i", false,-1);
-    tracep->declBus(c+5745,"clint_pc_i", false,-1, 31,0);
-    tracep->declBit(c+5746,"clint_pc_valid_i", false,-1);
+    tracep->declBus(c+5746,"clint_pc_i", false,-1, 31,0);
+    tracep->declBit(c+5747,"clint_pc_valid_i", false,-1);
     tracep->declBus(c+5753,"bpu_pc_i", false,-1, 31,0);
     tracep->declBit(c+5754,"bpu_pc_valid_i", false,-1);
     tracep->declBus(c+2,"pc_next_o", false,-1, 31,0);

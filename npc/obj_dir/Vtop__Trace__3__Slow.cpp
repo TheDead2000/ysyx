@@ -3702,7 +3702,12 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_3(Vtop___024root* vlSelf, Veril
                                                 (0x1fU 
                                                  & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                                                     >> 7U)))))));
-    bufp->fullIData(oldp+5745,(((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
+    bufp->fullBit(oldp+5745,((1U & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                        >> 4U) | (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                                   >> 4U) 
+                                                  | (0U 
+                                                     == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))))));
+    bufp->fullIData(oldp+5746,(((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
                                  ? vlSelf->top__DOT__rv32_csr_regfile__DOT__mepcReg
                                  : ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
                                      ? vlSelf->top__DOT__rv32_csr_regfile__DOT__sepcReg
@@ -3737,13 +3742,8 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_3(Vtop___024root* vlSelf, Veril
                                                  (0xfffffffcU 
                                                   & vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvecReg)))
                                              : 0U))))),32);
-    bufp->fullBit(oldp+5746,(((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
+    bufp->fullBit(oldp+5747,(((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
                               | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)))));
-    bufp->fullBit(oldp+5747,((1U & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
-                                        >> 4U) | (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
-                                                   >> 4U) 
-                                                  | (0U 
-                                                     == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))))));
     bufp->fullBit(oldp+5748,(((IData)(vlSelf->io_master_arready) 
                               & (IData)(vlSelf->top__DOT__axi4_rw__DOT__ar_valid))));
     bufp->fullBit(oldp+5749,(vlSelf->top__DOT__axi4_rw__DOT__axi_aw_handshake));

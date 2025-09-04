@@ -4344,7 +4344,12 @@ void Vtop___024root__trace_chg_sub_3(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                               (0x1fU 
                                                & (vlSelf->top__DOT__if2id__DOT___inst_data_if_id_q 
                                                   >> 7U)))))));
-    bufp->chgIData(oldp+813,(((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
+    bufp->chgBit(oldp+813,((1U & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                      >> 4U) | (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                                 >> 4U) 
+                                                | (0U 
+                                                   == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))))));
+    bufp->chgIData(oldp+814,(((0x10000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
                                ? vlSelf->top__DOT__rv32_csr_regfile__DOT__mepcReg
                                : ((0x20000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
                                    ? vlSelf->top__DOT__rv32_csr_regfile__DOT__sepcReg
@@ -4377,13 +4382,8 @@ void Vtop___024root__trace_chg_sub_3(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                                                   (0xfffffffcU 
                                                    & vlSelf->top__DOT__rv32_csr_regfile__DOT__mtvecReg)))
                                            : 0U))))),32);
-    bufp->chgBit(oldp+814,(((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
+    bufp->chgBit(oldp+815,(((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
                             | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)))));
-    bufp->chgBit(oldp+815,((1U & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
-                                      >> 4U) | (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
-                                                 >> 4U) 
-                                                | (0U 
-                                                   == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))))));
     bufp->chgBit(oldp+816,(((IData)(vlSelf->io_master_arready) 
                             & (IData)(vlSelf->top__DOT__axi4_rw__DOT__ar_valid))));
     bufp->chgBit(oldp+817,(vlSelf->top__DOT__axi4_rw__DOT__axi_aw_handshake));

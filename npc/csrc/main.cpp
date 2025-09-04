@@ -69,8 +69,8 @@ int main(int argc, char* argv[]) {
   int retCode;
   // c.executeCommand("sdb on wp");
 #ifdef TOP_TRACE
-  mysim_p->u_difftest.init(nemu_so_path, file_size, 0);
-  c.executeCommand("sdb on difftest");
+  // mysim_p->u_difftest.init(nemu_so_path, file_size, 0);
+  // c.executeCommand("sdb on difftest");
 #endif
 
 #ifdef AUTO_RUN
