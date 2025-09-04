@@ -113,7 +113,34 @@ void SimMem::host_write(void* addr, int len, word_t data) {
 }
 
 bool SimMem::in_pmem(paddr_t addr) {
-    return (addr >= MEMBASE) && (addr - MEMSIZE < (paddr_t)MEMBASE);
+
+    if(addr >= SERIAL_PORT && addr < SERIAL_PORT + 8) {
+        return false;
+    }
+    else if(addr >= RTC_ADDR && addr < RTC_ADDR + 8) {
+        return false;
+    }
+    else if(addr >= KBD_ADDR && addr < KBD_ADDR + 4) {
+        return false;
+    }
+    else if(addr >= VGACTL_ADDR && addr < VGACTL_ADDR + 8) {
+        return false;
+    }
+    else if(addr >= FB_ADDR && addr < FB_ADDR + 0x75300) {
+                                                //48000
+        return false;
+    }
+    else if(addr >= AUDIO_ADDR && addr < AUDIO_ADDR + 0x18) {
+        return false;
+    }
+    else if(addr >= AUDIO_SBUF_ADDR && addr < AUDIO_SBUF_ADDR + 0x10000) {
+        return false;
+    }
+    // else if(addr >= DISK_ADDR && addr < DISK_ADDR + 8) {
+    //     return false;
+    // }
+    else 
+        return true;
 }
 
 void SimMem::out_of_bound(paddr_t addr) {
