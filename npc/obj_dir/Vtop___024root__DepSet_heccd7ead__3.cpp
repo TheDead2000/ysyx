@@ -7357,7 +7357,13 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
                                                    ? 0x141U
                                                    : 0x341U);
-        vlSelf->top__DOT__clint_csr_write_data = vlSelf->top__DOT__clint_u__DOT__pc_from_exe_i_latch;
+        vlSelf->top__DOT__clint_csr_write_data = ((IData)(vlSelf->top__DOT__clint_u__DOT__interrupt_pending)
+                                                   ? 
+                                                  (vlSelf->top__DOT__clint_u__DOT__pc_from_exe_i_latch 
+                                                   - (IData)(4U))
+                                                   : 
+                                                  (vlSelf->top__DOT__clint_u__DOT__pc_from_exe_i_latch 
+                                                   - (IData)(4U)));
     } else if ((2U == (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state))) {
         vlSelf->top__DOT__clint_csr_write_addr = ((IData)(vlSelf->top__DOT__clint_u__DOT__is_delegated_latched)
                                                    ? 0x142U

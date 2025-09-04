@@ -301,7 +301,7 @@ end
         end else begin
           csr_write_addr_o = 12'h341; // mepc
         end
-        csr_write_data_o = interrupt_pending ? pc_from_exe_i_latch : pc_from_exe_i_latch;
+        csr_write_data_o = interrupt_pending ? pc_from_exe_i_latch-4 : pc_from_exe_i_latch-4;
       end
       
       SAVE_CAUSE: begin
