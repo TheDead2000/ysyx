@@ -98,13 +98,13 @@ void SimAxi4::mmio_device_init() {
     mydevices = new Device2axi4();
 
     // 串口
-    assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
-    // 键盘
-    assert(mmio.add_dev(KBD_ADDR, 4, mydevices));
-    // 实时时钟
-    assert(mmio.add_dev(RTC_ADDR, 8, mydevices));
-    // 显示控制器
-    assert(mmio.add_dev(VGACTL_ADDR, 8, mydevices));
+    // assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
+    // // 键盘
+    // assert(mmio.add_dev(KBD_ADDR, 4, mydevices));
+    // // 实时时钟
+    // assert(mmio.add_dev(RTC_ADDR, 8, mydevices));
+    // // 显示控制器
+    // assert(mmio.add_dev(VGACTL_ADDR, 8, mydevices));
     // 音频控制器
     assert(mmio.add_dev(AUDIO_ADDR, 0x18, mydevices));
     // 音频缓冲区
