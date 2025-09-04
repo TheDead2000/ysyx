@@ -36,7 +36,7 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                   | (((0U 
                                                        != (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state)) 
                                                       << 3U) 
-                                                     | (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_flush_condition) 
+                                                     | (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
                                                          << 2U) 
                                                         | ((2U 
                                                             & (((~ 
@@ -187,7 +187,11 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                     & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
                                                     ? 0x80000000U
                                                     : 
-                                                   ((IData)(vlSelf->top__DOT__clint_u__DOT__trap_flush_condition)
+                                                   (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
+                                                     | (0U 
+                                                        != 
+                                                        (0xb0000U 
+                                                         & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)))
                                                      ? 
                                                     ((0x10000U 
                                                       & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)

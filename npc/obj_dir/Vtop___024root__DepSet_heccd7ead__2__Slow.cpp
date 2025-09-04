@@ -4344,9 +4344,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__2(Vtop___024root* vlSelf) {
         vlSelf->top__DOT__clint_u__DOT__is_delegated 
             = Vtop__ConstPool__TABLE_h0cd13ad7_0[vlSelf->__Vtableidx1];
     }
-    vlSelf->top__DOT__clint_u__DOT__trap_flush_condition 
-        = ((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
-           | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__Partial_product[1U] 
         = (((QData)((IData)((0xfffffffU & (- (IData)(
                                                      (1U 

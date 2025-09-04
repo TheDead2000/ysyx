@@ -7309,9 +7309,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__5(Vtop___024root* vlSelf) 
                                              & vlSelf->top__DOT__rv32_csr_regfile__DOT__sstatusReg)
                                              ? 1U : 0U);
     }
-    vlSelf->top__DOT__clint_u__DOT__trap_flush_condition 
-        = ((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
-           | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)));
     if (vlSelf->top__DOT__if2id__DOT__reg_rst) {
         vlSelf->top__DOT__if2id__DOT___inst_addr_if_id_q = 0x13U;
     } else if ((1U & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
@@ -7450,7 +7447,7 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                   | (((0U 
                                                        != (IData)(vlSelf->top__DOT__clint_u__DOT__csr_state)) 
                                                       << 3U) 
-                                                     | (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_flush_condition) 
+                                                     | (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
                                                          << 2U) 
                                                         | ((2U 
                                                             & (((~ 
@@ -7623,7 +7620,11 @@ VL_INLINE_OPT void Vtop___024root___nba_comb__TOP__0(Vtop___024root* vlSelf) {
                                                     & (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush))
                                                     ? 0x80000000U
                                                     : 
-                                                   ((IData)(vlSelf->top__DOT__clint_u__DOT__trap_flush_condition)
+                                                   (((IData)(vlSelf->top__DOT__clint_u__DOT__trap_valid) 
+                                                     | (0U 
+                                                        != 
+                                                        (0xb0000U 
+                                                         & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)))
                                                      ? 
                                                     ((0x10000U 
                                                       & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)
