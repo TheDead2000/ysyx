@@ -110,6 +110,8 @@ void SimAxi4::mmio_device_init() {
     assert(mmio.add_dev(AUDIO_SBUF_ADDR, 0x10000, mydevices));
     // 帧缓冲区
     assert(mmio.add_dev(FB_ADDR, 0x75300, mydevices));
+
+    assert(mmio.add_dev(MMIO_BASE,0x1000,mydevices));
     
     // 注意：DISK_ADDR 在代码中有定义但没有在这里添加，如果需要请添加
     // assert(mmio.add_dev(DISK_ADDR, 适当的大小, mydevices));
