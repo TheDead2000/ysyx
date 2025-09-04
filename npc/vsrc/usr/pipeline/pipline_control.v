@@ -27,8 +27,8 @@ module pipline_control (
   localparam trap_csr_flush = 6'b001110;
   localparam trap_csr_stall = 6'b111111;
 
-  localparam trap_ecall_stall = 6'b000000;
-  localparam trap_ecall_flush = 6'b111111;
+  localparam trap_ecall_stall = 6'b111000;
+  localparam trap_ecall_flush = 6'b000100;
 
   localparam ram_mem_flush = 6'b010000;
   localparam ram_mem_stall = 6'b001111;
