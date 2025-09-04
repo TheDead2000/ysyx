@@ -623,7 +623,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+5837,"trap_csr_flush", false,-1, 5,0);
     tracep->declBus(c+5838,"trap_csr_stall", false,-1, 5,0);
     tracep->declBus(c+5834,"trap_ecall_stall", false,-1, 5,0);
-    tracep->declBus(c+5833,"trap_ecall_flush", false,-1, 5,0);
+    tracep->declBus(c+5837,"trap_ecall_flush", false,-1, 5,0);
     tracep->declBus(c+5839,"ram_mem_flush", false,-1, 5,0);
     tracep->declBus(c+5840,"ram_mem_stall", false,-1, 5,0);
     tracep->declBit(c+276,"ram_stall_req", false,-1);
