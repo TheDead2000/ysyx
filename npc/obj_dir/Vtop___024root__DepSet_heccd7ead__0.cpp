@@ -8,7 +8,7 @@
 #include "Vtop___024root.h"
 
 extern const VlUnpacked<CData/*5:0*/, 128> Vtop__ConstPool__TABLE_h5f940727_0;
-extern const VlUnpacked<CData/*5:0*/, 128> Vtop__ConstPool__TABLE_hdc843460_0;
+extern const VlUnpacked<CData/*5:0*/, 128> Vtop__ConstPool__TABLE_h8ca6d235_0;
 void Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(CData/*0:0*/ bpu_ret);
 
 VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) {
@@ -48,7 +48,7 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
     vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall 
         = Vtop__ConstPool__TABLE_h5f940727_0[vlSelf->__Vtableidx2];
     vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush 
-        = Vtop__ConstPool__TABLE_hdc843460_0[vlSelf->__Vtableidx2];
+        = Vtop__ConstPool__TABLE_h8ca6d235_0[vlSelf->__Vtableidx2];
     vlSelf->top__DOT__id2ex__DOT__reg_rst = (1U & (
                                                    ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
                                                     >> 2U) 
@@ -64,9 +64,9 @@ VL_INLINE_OPT void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                          == vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
     if ((((7U == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
           | (IData)(vlSelf->top__DOT__exu__DOT___pc_4)) 
-         & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
-                | (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall)) 
-               >> 3U)))) {
+         & ((~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                >> 3U)) & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                              >> 3U))))) {
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(
                                                                        ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                                                                         == (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q)));
@@ -298,8 +298,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                                      >> 4U) 
                                                                     | (0U 
                                                                        == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))) 
-                                                               | (0x30200073U 
-                                                                  == vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q))));
+                                                               | ((~ 
+                                                                   ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                                                    >> 3U)) 
+                                                                  & (~ 
+                                                                     ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                                                      >> 3U))))));
     Vtop___024root____Vdpiimwrap_top__DOT__set_diffpc_TOP(vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q, vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q, 
                                                           (1U 
                                                            & ((~ 
@@ -309,8 +313,12 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                                                     >> 4U) 
                                                                    | (0U 
                                                                       == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))) 
-                                                              | (0x30200073U 
-                                                                 == vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q))));
+                                                              | ((~ 
+                                                                  ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                                                   >> 3U)) 
+                                                                 & (~ 
+                                                                    ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                                                     >> 3U))))));
     vlSelf->__Vdly__top__DOT__axi4_rw__DOT___arb_rlast_o 
         = vlSelf->top__DOT__axi4_rw__DOT___arb_rlast_o;
     __Vdly__top__DOT__axi4_rw__DOT__axi_rstate = vlSelf->top__DOT__axi4_rw__DOT__axi_rstate;

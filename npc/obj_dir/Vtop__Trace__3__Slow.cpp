@@ -3745,8 +3745,10 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_3(Vtop___024root* vlSelf, Veril
                                                     >> 4U) 
                                                    | (0U 
                                                       == vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q)))) 
-                                    | (0x30200073U 
-                                       == vlSelf->top__DOT__ex2mem__DOT___inst_data_ex_mem_q)))));
+                                    | ((~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                           >> 3U)) 
+                                       & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                             >> 3U)))))));
     bufp->fullBit(oldp+5748,(((IData)(vlSelf->io_master_arready) 
                               & (IData)(vlSelf->top__DOT__axi4_rw__DOT__ar_valid))));
     bufp->fullBit(oldp+5749,(vlSelf->top__DOT__axi4_rw__DOT__axi_aw_handshake));
@@ -3788,8 +3790,8 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_3(Vtop___024root* vlSelf, Veril
     bufp->fullCData(oldp+5784,(0U),6);
     bufp->fullCData(oldp+5785,(8U),6);
     bufp->fullCData(oldp+5786,(7U),6);
-    bufp->fullCData(oldp+5787,(0xeU),6);
-    bufp->fullCData(oldp+5788,(0x3fU),6);
+    bufp->fullCData(oldp+5787,(0x3fU),6);
+    bufp->fullCData(oldp+5788,(0xeU),6);
     bufp->fullCData(oldp+5789,(0x10U),6);
     bufp->fullCData(oldp+5790,(0xfU),6);
     bufp->fullIData(oldp+5791,(0U),32);

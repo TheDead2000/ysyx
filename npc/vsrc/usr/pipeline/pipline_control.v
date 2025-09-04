@@ -24,7 +24,7 @@ module pipline_control (
   localparam jump_stall = 6'b000000;
   localparam mul_div_flush = 6'b001000;
   localparam mul_div_stall = 6'b000111;
-  localparam trap_csr_flush = 6'b001110;
+  localparam trap_csr_flush = 6'b000000;
   localparam trap_csr_stall = 6'b111111;
 
   localparam trap_ecall_stall = 6'b000000;
