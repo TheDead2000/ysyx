@@ -106,7 +106,7 @@ void SimAxi4::mmio_device_init() {
     // // 显示控制器
     // assert(mmio.add_dev(VGACTL_ADDR, 8, mydevices));
     // 音频控制器
-    assert(mmio.add_dev(AUDIO_ADDR, 0x18, mydevices));
+    // assert(mmio.add_dev(AUDIO_ADDR, 0x18, mydevices));
     // 音频缓冲区
     assert(mmio.add_dev(AUDIO_SBUF_ADDR, 0x10000, mydevices));
     // 帧缓冲区
