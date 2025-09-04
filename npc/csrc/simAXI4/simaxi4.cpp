@@ -96,7 +96,7 @@ void SimAxi4::mmio_device_init() {
     assert(mmio.add_dev(MEM_BASE, 0x8000000, dram));
     // 外设
     mydevices = new Device2axi4();
-    assert(mmio.add_dev(MMIO_BASE, SERIAL_PORT-RTC_ADDR, dram));
+    assert(mmio.add_dev(MMIO_BASE, 0x48, dram));
     // 串口
     assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
     // 键盘
