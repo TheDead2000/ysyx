@@ -49,7 +49,7 @@ extern "C" void set_diffpc(int pc, int inst,svBit commit_valid) {
     }
     if(inst == 0x13)
     {
-        printf("nop!");
+        //printf("nop!");
         return;
     }
 
