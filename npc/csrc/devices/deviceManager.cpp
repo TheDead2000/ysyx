@@ -93,7 +93,7 @@ Devicebase* DeviceManager::findDevicebyaddr(paddr_t addr) {
             staraddr = dinfoiter.addr; //地址空间开始地址
             endaddr = staraddr + dinfoiter.len - 1;//结束地址
             if (atRange(staraddr, endaddr, addr)) {
-                printf("addr:%x,finddevice:%s\n", addr, dinfoiter.name.c_str());
+                //printf("addr:%x,finddevice:%s\n", addr, dinfoiter.name.c_str());
                 mysim_p->u_difftest.difftest_skip_ref(); // 访问外设时,跳过 difftest
                 return iter;
             }
