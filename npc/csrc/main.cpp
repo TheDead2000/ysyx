@@ -70,9 +70,7 @@ int main(int argc, char* argv[]) {
   // c.executeCommand("sdb on wp");
 #ifdef TOP_TRACE
   mysim_p->u_difftest.init(nemu_so_path, file_size, 0);
-  c.executeCommand("sdb on all");
-  c.executeCommand("sdb off itrace");
-  c.executeCommand("sdb off reg");
+  c.executeCommand("sdb on difftest");
 #endif
 
 #ifdef AUTO_RUN
