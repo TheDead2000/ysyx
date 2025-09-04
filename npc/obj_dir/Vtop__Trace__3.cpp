@@ -4381,8 +4381,12 @@ void Vtop___024root__trace_chg_sub_3(Vtop___024root* vlSelf, VerilatedVcd::Buffe
                             | (0U != (0xb0000U & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)))));
     bufp->chgBit(oldp+815,(((0U != vlSelf->top__DOT__ex2mem__DOT___pc_ex_mem_q) 
                             & ((~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
-                                   >> 3U)) & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
-                                                 >> 3U))))));
+                                   >> 3U)) & ((~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                                                  >> 3U)) 
+                                              & (~ 
+                                                 (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                                                   | (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush)) 
+                                                  >> 4U)))))));
     bufp->chgBit(oldp+816,(((IData)(vlSelf->io_master_arready) 
                             & (IData)(vlSelf->top__DOT__axi4_rw__DOT__ar_valid))));
     bufp->chgBit(oldp+817,(vlSelf->top__DOT__axi4_rw__DOT__axi_aw_handshake));
