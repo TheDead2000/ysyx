@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-
+#include "local-include/reg.h"
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
@@ -34,7 +34,7 @@ static void restart() {
   cpu.gpr[0] = 0;
 
   /* initialize mstatus */
-  // cpu.csr.mstatus = 0x00001800;
+  csr(MSTATUS) = 0x1800;
 }
 
 void init_isa() {
