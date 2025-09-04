@@ -530,6 +530,7 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__mem2wb__DOT___mem_data_mem_wb_q;
         IData/*31:0*/ top__DOT__clint_u__DOT__cause_value;
         IData/*31:0*/ top__DOT__clint_u__DOT__cause_value_latched;
+        IData/*31:0*/ top__DOT__clint_u__DOT__pc_from_exe_i_latch;
         IData/*31:0*/ top__DOT__clint_u__DOT__mtime_addr_i;
         IData/*31:0*/ top__DOT__clint_u__DOT__mtime_wdata_i;
         IData/*31:0*/ top__DOT__clint_u__DOT__u_mtime__DOT__mtime_low_q;
@@ -540,9 +541,9 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mtvecReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mepcReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mcauseReg;
-        IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mtvalReg;
     };
     struct {
+        IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mtvalReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mieReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__mipReg;
         IData/*31:0*/ top__DOT__rv32_csr_regfile__DOT__medelegReg;
@@ -606,9 +607,9 @@ class Vtop___024root final : public VerilatedModule {
         IData/*31:0*/ __Vfunc_match__23__inst;
         IData/*31:0*/ __Vfunc_match__24__inst;
         IData/*31:0*/ __Vfunc_match__25__inst;
-        IData/*31:0*/ __Vfunc_match__26__inst;
     };
     struct {
+        IData/*31:0*/ __Vfunc_match__26__inst;
         IData/*31:0*/ __Vfunc_match__27__inst;
         IData/*31:0*/ __Vfunc_match__28__inst;
         IData/*31:0*/ __Vfunc_match__29__inst;
@@ -672,9 +673,9 @@ class Vtop___024root final : public VerilatedModule {
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h9ed15e07__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h6568449b__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h8d75619e__0;
-        QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h518c77c4__0;
     };
     struct {
+        QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_h518c77c4__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hc9138a91__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_hfa98297c__0;
         QData/*33:0*/ top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__u_alu_mul_booth_r4_32__DOT____VdfgTmp_heedd88a8__0;
