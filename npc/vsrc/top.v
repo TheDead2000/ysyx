@@ -830,8 +830,8 @@ CSRs rv32_csr_regfile(
 /***********************************gpr**********************/
   wire [`INST_LEN-1:0] rs1_data_gpr;
   wire [`INST_LEN-1:0] rs2_data_gpr;
-  // wire commit_valid = (pc_mem != `XLEN'b0)&&(!stall_clint[`CTRLBUS_MEM_WB])&&(!flush_clint[`CTRLBUS_MEM_WB]);
-    wire commit_valid = (pc_mem != `XLEN'b0);
+  wire commit_valid = (pc_mem != `XLEN'b0)&&(!stall_clint[`CTRLBUS_MEM_WB])&&(!flush_clint[`CTRLBUS_MEM_WB]) 
+  || (inst_data_mem==32'h30200073);
 
   gpr_regfile rv32_gpr_regfile (
       .clk               (clk),
