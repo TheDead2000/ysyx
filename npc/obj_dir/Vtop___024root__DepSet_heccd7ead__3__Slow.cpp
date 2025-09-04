@@ -3703,9 +3703,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__3(Vtop___024root* vlSelf) {
                                                          == vlSelf->top__DOT__u_pc_reg__DOT___pc_current))));
     if ((((7U == (IData)(vlSelf->top__DOT__id2ex__DOT___exc_op_id_ex_q)) 
           | (IData)(vlSelf->top__DOT__exu__DOT___pc_4)) 
-         & (~ (((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
-                | (IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall)) 
-               >> 3U)))) {
+         & ((~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+                >> 3U)) & (~ ((IData)(vlSelf->top__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+                              >> 3U))))) {
         Vtop___024root____Vdpiimwrap_top__DOT__exu__DOT__bpu_count_TOP(
                                                                        ((IData)(vlSelf->top__DOT__exu__DOT__jump_taken) 
                                                                         == (IData)(vlSelf->top__DOT__id2ex__DOT___bpu_pdt_res_id_ex_q)));
