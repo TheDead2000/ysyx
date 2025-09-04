@@ -9527,7 +9527,9 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__1(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__clint_u__DOT__trap_valid = (1U 
                                                   & (IData)(
                                                             (((0U 
-                                                               != vlSelf->top__DOT__lsu__DOT___mem_trap_bus) 
+                                                               != 
+                                                               (0x80800U 
+                                                                & vlSelf->top__DOT__lsu__DOT___mem_trap_bus)) 
                                                               | (IData)(vlSelf->top__DOT__clint_u__DOT__machine_timer_interrupt)) 
                                                              | (IData)(vlSelf->top__DOT__clint_u__DOT__supervisor_timer_interrupt))));
     vlSelf->top__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__Partial_product[0U] 
