@@ -96,25 +96,25 @@ void SimAxi4::mmio_device_init() {
     assert(mmio.add_dev(MEM_BASE, 0x8000000, dram));
     // 外设
     mydevices = new Device2axi4();
-
-    // // 串口
-    // assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
-    // // 键盘
-    // assert(mmio.add_dev(KBD_ADDR, 4, mydevices));
-    // // 实时时钟
-    // assert(mmio.add_dev(RTC_ADDR, 8, mydevices));
-    // // 显示控制器
-    // assert(mmio.add_dev(VGACTL_ADDR, 8, mydevices));
-    // //音频控制器
-    // assert(mmio.add_dev(AUDIO_ADDR, 0x18, mydevices));
-    // //音频缓冲区
-    // assert(mmio.add_dev(AUDIO_SBUF_ADDR, 0x10000, mydevices));
-    // // 帧缓冲区
-    // assert(mmio.add_dev(FB_ADDR, 0x75300, mydevices));
+    assert(mmio.add_dev(MMIO_BASE, SERIAL_PORT-MMIO_BASE, dram));
+    // 串口
+    assert(mmio.add_dev(SERIAL_PORT, 8, mydevices));
+    // 键盘
+    assert(mmio.add_dev(KBD_ADDR, 4, mydevices));
+    // 实时时钟
+    assert(mmio.add_dev(RTC_ADDR, 8, mydevices));
+    // 显示控制器
+    assert(mmio.add_dev(VGACTL_ADDR, 8, mydevices));
+    //音频控制器
+    assert(mmio.add_dev(AUDIO_ADDR, 0x18, mydevices));
+    //音频缓冲区
+    assert(mmio.add_dev(AUDIO_SBUF_ADDR, 0x10000, mydevices));
+    // 帧缓冲区
+    assert(mmio.add_dev(FB_ADDR, 0x75300, mydevices));
     
     // assert(mmio.add_dev(MMIO_BASE,0x100000,mydevices));
 
-    assert(mmio.add_dev(MMIO_BASE, 0x2000000, mydevices));
+    // assert(mmio.add_dev(MMIO_BASE, 0x2000000, mydevices));
 
     // 注意：DISK_ADDR 在代码中有定义但没有在这里添加，如果需要请添加
     // assert(mmio.add_dev(DISK_ADDR, 适当的大小, mydevices));
