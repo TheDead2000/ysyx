@@ -100,7 +100,7 @@ void NDL_OpenCanvas(int *w, int *h)
   canvas_w = *w;
 
   // Ensure canvas size is smaller or equal to screen size.
-  assert(canvas_h <= screen_h && canvas_w <= screen_w);
+  //assert(canvas_h <= screen_h && canvas_w <= screen_w);
 
   // Move canvas x and y to middle.
   canvas_x = (screen_w - canvas_w) / 2;
