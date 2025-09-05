@@ -67,7 +67,9 @@ void do_syscall(Context *c) {
     case SYS_execve:
       printf("execve!!!\n");
       char *fname = (char *)c->GPR2;
+      printf("fname is%s!\n",fname);
       naive_uload(NULL, fname);
+      printf("execve finsih!\n");
       c->GPRx = 0;
       break;
 
