@@ -259,7 +259,8 @@ wire is_ret = is_jalr &&
              ((if_inst[19:15] == 5'b00001) || (if_inst[19:15] == 5'b00101)) && // rs1=x1(ra) or x5(t0)
              (if_inst[31:20] == 12'b0);  
 wire ex_is_ret = (ex_inst_i[6:0] == 7'b1100111) && 
-                 ((ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) );
+                 ((ex_inst_i[19:15] == 5'b00001) || (ex_inst_i[19:15] == 5'b00101) ) && // rs1=x1(ra) or x5(t0)
+                 (ex_inst_i[31:20] == 12'b0);
 
     // 分支偏移计算（当BTB未命中时使用）
     wire [31:0] branch_offset = {
