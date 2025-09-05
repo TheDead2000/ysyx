@@ -28,7 +28,7 @@ module bpu (
     output  pdt_res,
     output wire [`HISLEN-1:0] history_o       // 扩展历史位宽
 );
-`define MTRACE
+// `define MTRACE
     // ================== RAS参数 ==================
     localparam RAS_DEPTH = 64;          // RAS深度
     localparam RAS_PTR_WIDTH = 6;       // 栈指针位宽
@@ -307,64 +307,64 @@ assign ex_next_ras_top = (ex_next_ras_sp > 0) ? ras[ex_next_ras_sp - 1] : {`XLEN
             branch_or_not = 1'b1;
             
             //处理RET指令
-            if (is_ret) begin
+        //     if (is_ret) begin
 
-                pdt_res = 1'b1; // RET总是跳转
-                pdt_pc_tag = if_pc;
-               if (ras_conflict) begin
-                pdt_res = 1'b0;
-            // 冲突发生，使用前递过来的新状态进行预测！
-            //      if (ex_next_ras_sp > 0) begin
-            //     pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
-            //     `ifdef MTRACE
-            //     $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
-            //     `endif 
-            //      end else begin
-            //     // 如果新栈也是空的，回退到不跳转或其他策略
-            //     pdt_res = 1'b0;
-            //     pdt_pc = if_pc + 4;
-            //     $display("[RAS] CONFLICT: But forwarded RAS is empty.");
-            // end   
-        end 
-            else 
-                 if (ras_forward_valid) begin
-                  pdt_pc = ras_forward_data;
-                  pred_used_ras = 0; // 标记未使用实际RAS
-                  `ifdef MTRACE
-                $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
-                `endif 
-            end 
-            else 
-                if (id_ras_push_valid_i) begin
-                     pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
-                      pred_used_ras = 1'b0;
-                               `ifdef MTRACE
-                    $display("[RAS]  PC= %h PREDICT (from ID): target=0x%h",if_pc, pdt_pc);
-                    `endif 
-                 end 
-                else 
-                    if (ras_sp > 0) begin
-                    // 使用RAS栈顶地址
-                    pdt_pc = ras[ras_sp-1];
-                    pred_used_ras = 1; // 标记使用了RAS
-                             `ifdef MTRACE
-                    $display("[RAS] PC= %h PREDICT: ras_sp=%0d, target=0x%h",if_pc,ras_sp, pdt_pc);
-                              `endif 
-                end
-                // else if (btb_hit) begin
-                //     // RAS为空时使用BTB
-                //     pdt_pc = btb_target_val;
-                //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
-                // end
-                else begin
-                    // RAS和BTB都未命中，使用默认PC+4
+        //         pdt_res = 1'b1; // RET总是跳转
+        //         pdt_pc_tag = if_pc;
+        //        if (ras_conflict) begin
+        //         pdt_res = 1'b0;
+        //     // 冲突发生，使用前递过来的新状态进行预测！
+        //     //      if (ex_next_ras_sp > 0) begin
+        //     //     pdt_pc = ex_next_ras_top; // 使用前递的新栈顶地址
+        //     //     `ifdef MTRACE
+        //     //     $display("[RAS] CONFLICT RESOLVED: Using forwarded RAS top=0x%h", ex_next_ras_top);
+        //     //     `endif 
+        //     //      end else begin
+        //     //     // 如果新栈也是空的，回退到不跳转或其他策略
+        //     //     pdt_res = 1'b0;
+        //     //     pdt_pc = if_pc + 4;
+        //     //     $display("[RAS] CONFLICT: But forwarded RAS is empty.");
+        //     // end   
+        // end 
+        //     else 
+        //          if (ras_forward_valid) begin
+        //           pdt_pc = ras_forward_data;
+        //           pred_used_ras = 0; // 标记未使用实际RAS
+        //           `ifdef MTRACE
+        //         $display("[RAS] FORWARD: target=0x%h", ras_forward_data);
+        //         `endif 
+        //     end 
+        //     else 
+        //         if (id_ras_push_valid_i) begin
+        //              pdt_pc = id_ras_push_data_i;  // 使用CALL压入的地址
+        //               pred_used_ras = 1'b0;
+        //                        `ifdef MTRACE
+        //             $display("[RAS]  PC= %h PREDICT (from ID): target=0x%h",if_pc, pdt_pc);
+        //             `endif 
+        //          end 
+        //         else 
+        //             if (ras_sp > 0) begin
+        //             // 使用RAS栈顶地址
+        //             pdt_pc = ras[ras_sp-1];
+        //             pred_used_ras = 1; // 标记使用了RAS
+        //                      `ifdef MTRACE
+        //             $display("[RAS] PC= %h PREDICT: ras_sp=%0d, target=0x%h",if_pc,ras_sp, pdt_pc);
+        //                       `endif 
+        //         end
+        //         // else if (btb_hit) begin
+        //         //     // RAS为空时使用BTB
+        //         //     pdt_pc = btb_target_val;
+        //         //     $display("[BTB] PREDICT:  btb_target_val=0x%h", btb_target_val);
+        //         // end
+        //         else begin
+        //             // RAS和BTB都未命中，使用默认PC+4
 
-                    pdt_res = 1'b0; // 不跳转
-                    $display("ras miss\n");
-                end
-            end
-            // 处理JAL指令
-            else 
+        //             pdt_res = 1'b0; // 不跳转
+        //             $display("ras miss\n");
+        //         end
+        //     end
+        //     // 处理JAL指令
+        //     else 
             if (is_jal) begin
                 pdt_res = 1'b1;
                 pdt_pc_tag = if_pc;
