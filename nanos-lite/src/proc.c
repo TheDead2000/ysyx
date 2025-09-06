@@ -25,8 +25,9 @@ void init_proc() {
   
   char *argv[] = {NULL};
   char *envp[] = {NULL};
-  context_uload(&pcb[0], "/bin/menu", argv, envp);
-  context_uload(&pcb[1], "/bin/hello", argv, envp);
+  context_kload(&pcb[0], hello_fun, "first");
+  context_uload(&pcb[1], "/bin/menu", argv, envp);
+
   switch_boot_pcb();
 
   Log("Initializing processes...");
