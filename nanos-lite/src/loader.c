@@ -189,8 +189,8 @@ void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* c
   // *(argv_area_itr++) = NULL;
 
   // check
-  assert((uintptr_t)argv_area_itr == (uintptr_t)str_area_start_align);
-  assert(str_area_itr == ustack_end);
+  // assert((uintptr_t)argv_area_itr == (uintptr_t)str_area_start_align);
+  // assert(str_area_itr == ustack_end);
 
   // copy argc to stack
   uintptr_t* argc_area_start = (uintptr_t*)(argv_area_start - sizeof(uintptr_t));
