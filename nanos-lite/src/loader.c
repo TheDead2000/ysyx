@@ -193,8 +193,8 @@ void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* c
   // assert(str_area_itr == ustack_end);
 
   // copy argc to stack
-  uintptr_t* argc_area_start = (uintptr_t*)(argv_area_start - sizeof(uintptr_t));
-  *argc_area_start = argc;
+  // uintptr_t* argc_area_start = (uintptr_t*)(argv_area_start - sizeof(uintptr_t));
+  // *argc_area_start = argc;
 
 
   uintptr_t entry = loader(pcb_p, filename);
@@ -202,7 +202,7 @@ void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* c
   pcb_p->cp = ucontext(&pcb_p->as, RANGE(pcb_p->stack, pcb_p->stack + STACK_SIZE), (void*)entry);
 
 
-  pcb_p->cp->GPRx = (uintptr_t)argc_area_start;
+  // pcb_p->cp->GPRx = (uintptr_t)argc_area_start;
 
 
 
