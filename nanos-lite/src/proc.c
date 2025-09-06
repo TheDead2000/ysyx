@@ -20,6 +20,10 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
+
+
+  context_kload(&pcb[0], hello_fun, "a");
+  context_kload(&pcb[1], hello_fun, "b");
   switch_boot_pcb();
 
   Log("Initializing processes...");
