@@ -19,11 +19,23 @@ void hello_fun(void *arg) {
   }
 }
 
+char* pal_argv[] = {
+  NULL
+};
+
+char* pal_envp[] = {
+  // "home=pwd",
+  // "ARCH=riscv",
+  // "ARCH=riscv1",
+  // "ARCH=riscv2",
+NULL
+};
+
 void init_proc() {
 
 
   context_kload(&pcb[0], hello_fun, "hello_funa");
-  context_kload(&pcb[1], hello_fun, "hello_funb");
+  context_uload(&pcb[1], "/bin/pal", pal_argv, pal_envp);
   switch_boot_pcb();
 
   Log("Initializing processes...");
