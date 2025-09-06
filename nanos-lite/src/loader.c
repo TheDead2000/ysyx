@@ -172,21 +172,21 @@ void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* c
 
   str_area_itr = str_area_start;
   printf("str_area_start:%p,str_area_itr:%p\n", str_area_start, str_area_itr);
-  for (size_t argc_i = 0; argc_i < argc; argc_i++) {
-    *(argv_area_itr) = str_area_itr; // point to a string
-    Log("1%s", *argv_area_itr);
-    argv_area_itr++; // move to next
-    str_area_itr += strlen(argv[argc_i]) + 1;
-  }
-  *(argv_area_itr++) = NULL;
+  // for (size_t argc_i = 0; argc_i < argc; argc_i++) {
+  //   *(argv_area_itr) = str_area_itr; // point to a string
+  //   Log("1%s", *argv_area_itr);
+  //   argv_area_itr++; // move to next
+  //   str_area_itr += strlen(argv[argc_i]) + 1;
+  // }
+  // *(argv_area_itr++) = NULL;
 
-  for (size_t envc_i = 0; envc_i < envc; envc_i++) {
-    *(argv_area_itr) = str_area_itr;
-    Log("2%s", *argv_area_itr);
-    argv_area_itr++;
-    str_area_itr += strlen(envp[envc_i]) + 1;
-  }
-  *(argv_area_itr++) = NULL;
+  // for (size_t envc_i = 0; envc_i < envc; envc_i++) {
+  //   *(argv_area_itr) = str_area_itr;
+  //   Log("2%s", *argv_area_itr);
+  //   argv_area_itr++;
+  //   str_area_itr += strlen(envp[envc_i]) + 1;
+  // }
+  // *(argv_area_itr++) = NULL;
 
   // check
   assert((uintptr_t)argv_area_itr == (uintptr_t)str_area_start_align);
