@@ -22,14 +22,14 @@ void hello_fun(void *arg) {
 void init_proc() {
 
 
-  context_kload(&pcb[0], hello_fun, "a");
-  context_kload(&pcb[1], hello_fun, "b");
+  context_kload(&pcb[0], hello_fun, "hello_funa");
+  context_kload(&pcb[1], hello_fun, "hello_funb");
   switch_boot_pcb();
 
   Log("Initializing processes...");
 
   // load program here
-  naive_uload(NULL, "/bin/menu");
+  // naive_uload(NULL, "/bin/menu");
 }
 
 Context* schedule(Context *prev) {
