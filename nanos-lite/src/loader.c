@@ -171,6 +171,7 @@ void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* c
   char** argv_area_itr = (char**)argv_area_start;
 
   str_area_itr = str_area_start;
+  printf("str_area_start:%p,str_area_itr:%p\n", str_area_start, str_area_itr);
   for (size_t argc_i = 0; argc_i < argc; argc_i++) {
     *(argv_area_itr) = str_area_itr; // point to a string
     Log("1%s", *argv_area_itr);
