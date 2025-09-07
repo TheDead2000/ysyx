@@ -6,23 +6,14 @@ AM_SRCS := riscv/npc/start.S \
            riscv/npc/cte.c \
            riscv/npc/trap.S \
            platform/dummy/vme.c \
-           platform/dummy/mpe.c
+           platform/dummy/mpe.c \
+           riscv/npc/gpu.c \
 
 CFLAGS    += -fdata-sections -ffunction-sections
-LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
-
-ifeq ($(NAME),rtthread)
-LDFLAGS   += -T $(AM_HOME)/scripts/linker_rtt.ld
-else
-LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld 
-endif
-
+LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
+						 --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
-
-NPC_ARGS ?= -l $(shell dirname $(IMAGE).elf)/npc-log.txt -e $(IMAGE).elf -b
-NPC_GDB_ARGS ?= -l $(shell dirname $(IMAGE).elf)/npc-log.txt -e $(IMAGE).elf 
-
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
 image: $(IMAGE).elf
@@ -31,7 +22,4 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) simnpc ARGS="$(NPC_ARGS)" IMG=$(IMAGE).bin
-
-gdb: image
-	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) gdbnpc ARGS="$(NPC_GDB_ARGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME)  run  IMG=$(IMAGE).bin

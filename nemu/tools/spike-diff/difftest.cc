@@ -41,11 +41,6 @@ struct diff_context_t {
   word_t pc;
 };
 
-struct {
-  word_t num;
-  word_t csr_idx[4096];
-}csr_list;
-
 static sim_t* s = NULL;
 static processor_t *p = NULL;
 static state_t *state = NULL;
@@ -57,21 +52,6 @@ void sim_t::diff_init(int port) {
 
 void sim_t::diff_step(uint64_t n) {
   step(n);
-}
-
-void sim_t::diff_get_csrs(void* diff_context) {
-  word_t * csrs = (word_t*)diff_context;
-  for(int i=0;i<csr_list.num;i++){
-    csrs[i]=p->difftest_get_csr(csr_list.csr_idx[i]);
-  }
-}
-
-void sim_t::diff_init_csr_idx(uint32_t *idx_list) {
-  int idx=0;
-  for(;idx_list[idx]!=0;idx++){
-    csr_list.csr_idx[idx]=idx_list[idx];
-  }
-  csr_list.num=idx;
 }
 
 void sim_t::diff_get_regs(void* diff_context) {
@@ -97,8 +77,6 @@ void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
   }
 }
 
-extern bool difftest_dut_csr_notexist;
-
 extern "C" {
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
@@ -117,17 +95,13 @@ __EXPORT void difftest_regcpy(void* dut, bool direction) {
   }
 }
 
-__EXPORT void difftest_csrcpy(word_t* csr_array) {
-  s->diff_get_csrs(csr_array);
-}
-
 __EXPORT void difftest_exec(uint64_t n) {
   s->diff_step(n);
 }
 
-__EXPORT void difftest_init(int port,uint32_t* csr_idx) {
+__EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
-  const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MA";
+  const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
   cfg_t cfg(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
             /*default_isa=*/isa,
@@ -147,16 +121,11 @@ __EXPORT void difftest_init(int port,uint32_t* csr_idx) {
       NULL,
       true);
   s->diff_init(port);
-  s->diff_init_csr_idx(csr_idx);
 }
 
 __EXPORT void difftest_raise_intr(uint64_t NO) {
   trap_t t(NO);
   p->take_trap_public(t, state->pc);
-}
-
-__EXPORT void difftest_csr_notexist(void) {
-  difftest_dut_csr_notexist = true;
 }
 
 }

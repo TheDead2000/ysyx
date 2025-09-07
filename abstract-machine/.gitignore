@@ -11,7 +11,6 @@
 !Makefile
 !README
 !LICENSE
-!*.old
 .*
 _*
 *~

@@ -17,7 +17,6 @@
 #define __COMMON_H__
 
 #include <stdint.h>
-#include <stdio.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
@@ -25,7 +24,6 @@
 #include <generated/autoconf.h>
 #include <macro.h>
 #include "../src/isa/riscv32/include/csr-reg.h"
-
 #ifdef CONFIG_TARGET_AM
 #include <klib.h>
 #else
@@ -45,7 +43,7 @@ typedef word_t vaddr_t;
 typedef MUXDEF(PMEM64, uint64_t, uint32_t) paddr_t;
 #define FMT_PADDR MUXDEF(PMEM64, "0x%016" PRIx64, "0x%08" PRIx32)
 typedef uint16_t ioaddr_t;
-#ifndef __DEBUG_H__
-    #include <debug.h>
-#endif
+
+#include <debug.h>
+
 #endif

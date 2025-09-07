@@ -61,4 +61,33 @@ typedef uint64_t Uint64;
 #define SDLK_y   SDLK_Y
 #define SDLK_z   SDLK_Z
 
+/*
+ * SDL_PrintErr(fmt, ...)
+ *
+ * Prints to stderr with this prefix:
+ *   SDL_ERROR <func> <file>:<line>: <user message>
+ *
+ * Uses __func__ (C99), __FILE__ and __LINE__ automatically.
+ */
+#define SDL_PrintErr(fmt, ...)                                       \
+    do {                                                             \
+        fprintf(stderr,                                             \
+                "SDL_ERROR %s %s:%d: " fmt "\n",                    \
+                __func__, __FILE__, __LINE__,                       \
+                ##__VA_ARGS__                                        \
+        );                                                           \
+    } while (0)
+
+/* stringification helpers */
+#define _STR(x)    #x
+#define STR(x)     _STR(x)
+
+/* TODO(fmt, …): print a TODO message via SDL_PrintErr, then assert(0). */
+#define TODO(fmt, ...)                                                \
+    do {                                                              \
+        SDL_PrintErr("TODO: " fmt, ##__VA_ARGS__);                    \
+        assert(0);                                                    \
+    } while (0)
+
+
 #endif

@@ -18,49 +18,49 @@
 #include <difftest-def.h>
 #include <memory/paddr.h>
 
-void copy_reg(CPU_state* src,CPU_state* dst){
-  for(int i=0;i<MUXDEF(CONFIG_RVE,16,32);i++){
-    // printf("copying %d",src->gpr[i]);
-    dst->gpr[i]=src->gpr[i];
-  }
-  dst->pc=src->pc;
-    // printf("copying %d",src->pc);
-
-}
-
-
-// 在DUT host memory的`buf`和REF guest memory的`addr`之间拷贝`n`字节,
+// 在DUT host memory的`buf`和REF guest memory的`dest`之间拷贝`n`字节,
 // `direction`指定拷贝的方向, `DIFFTEST_TO_DUT`表示往DUT拷贝, `DIFFTEST_TO_REF`表示往REF拷贝
-__EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  // assert(0);
-  if(DIFFTEST_TO_DUT){//向npc拷贝
-    memcpy(buf,guest_to_host(addr),n);
-  }else{
-    memcpy(guest_to_host(addr),buf,n);
+__attribute__((visibility("default"))) void difftest_memcpy(paddr_t addr, void* buf, size_t n, bool direction) {
+  /* 一个一个字节拷贝,只需要实现 dut->ref 方向*/
+  if (direction == DIFFTEST_TO_REF) {
+    for (size_t i = 0; i < n; i++) {
+      paddr_write(addr + i, 1, *((uint8_t*)buf + i));
+    }
+  }
+  else {
+    assert(0);
   }
 }
 // `direction`为`DIFFTEST_TO_DUT`时, 获取REF的寄存器状态到`dut`;
-__EXPORT void difftest_regcpy(void *dut, bool direction) {
-  // assert(0);
-  if(direction==DIFFTEST_TO_DUT){
-    copy_reg(&cpu,(CPU_state*)dut);
-  }else{
-    copy_reg((CPU_state*)dut,&cpu);
+// `direction`为`DIFFTEST_TO_REF`时, 设置REF的寄存器状态为`dut`;
+//riscv64_CPU_state
+// dut 为一个指针
+__attribute__((visibility("default")))  void difftest_regcpy(void* dut, bool direction) {
+  CPU_state* reg_p = dut;
+  if (DIFFTEST_TO_REF == direction) {
+    for (int i = 0; i < 32; i++) {
+      cpu.gpr[i] = reg_p->gpr[i];
+    }
+    cpu.pc = reg_p->pc;
+  }
+  else {
+    for (int i = 0; i < 32; i++) {
+      reg_p->gpr[i] = cpu.gpr[i];
+    }
+    reg_p->pc = cpu.pc;
   }
 }
+
 // 让REF执行`n`条指令
-__EXPORT void difftest_exec(uint64_t n) {
-  // assert(0);
+__attribute__((visibility("default"))) void difftest_exec(uint64_t n) {
   cpu_exec(n);
 }
 
-//为中断准备
-__EXPORT void difftest_raise_intr(word_t NO) {
+__attribute__((visibility("default"))) void difftest_raise_intr(word_t NO) {
   assert(0);
 }
-// 初始化REF的DiffTest功能
-__EXPORT void difftest_init(int port) {
-  Log("FROM-NEMU:Initing difftest!");
+
+__attribute__((visibility("default"))) void difftest_init(int port) {
   void init_mem();
   init_mem();
   /* Perform ISA dependent initialization. */

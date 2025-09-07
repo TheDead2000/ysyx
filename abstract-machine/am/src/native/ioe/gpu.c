@@ -28,14 +28,6 @@ static Uint32 texture_sync(Uint32 interval, void *param) {
 }
 
 void __am_gpu_init() {
-  //added_func
-  // int i;
-  // int w = 0;  // TODO: get the correct width
-  // int h = 0;  // TODO: get the correct height
-  // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // for (i = 0; i < w * h; i ++) fb[i] = i;
-  // outl(SYNC_ADDR, 1);
-  //added_func
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
   window = SDL_CreateWindow("Native Application",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,

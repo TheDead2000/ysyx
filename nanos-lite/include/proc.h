@@ -3,7 +3,6 @@
 
 #include <common.h>
 #include <memory.h>
-#include <stdint.h>
 
 #define STACK_SIZE (8 * PGSIZE)
 
@@ -19,5 +18,9 @@ typedef union {
 } PCB;
 
 extern PCB *current;
-
+void naive_uload(PCB *pcb, const char *filename);
+void context_kload(PCB *pcb, void *func,void *args);
+Context* schedule(Context* prev);
+void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* const envp[]);
+void handle_execve(const char *filename, char *const argv[], char *const envp[]);
 #endif

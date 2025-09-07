@@ -20,34 +20,9 @@
 #include <stdio.h>
 #include <utils.h>
 
-void init_breakpoint();
-void add_breakpoint(size_t value);
-int delete_breakpoint(size_t value);
-bool check_breakpoint(size_t pc);
-void freebreakpoint();
-
-#ifdef CONFIG_LOG 
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
-        __FILE__, __LINE__, __func__, ## __VA_ARGS__) 
-#else
-#define Log(format, ...)
-#endif
-
-//自定义颜色
-#ifdef CONFIG_LOG 
-#define Info_N(fmt, ...) \
-    _Log(ANSI_FG_WHITE fmt , ##__VA_ARGS__) 
-#else
-#define Info_N(format, ...)
-#endif
-
-#ifdef CONFIG_LOG 
-#define Info_R(fmt, ...) \
-    _Log(ANSI_FG_MAGENTA fmt , ##__VA_ARGS__)
-#else
-#define Info_R(format, ...)
-#endif
+        __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 #define Assert(cond, format, ...) \
   do { \
