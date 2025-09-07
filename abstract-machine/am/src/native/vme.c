@@ -36,6 +36,7 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
 
 void protect(AddrSpace *as) {
   assert(as != NULL);
+  pgalloc(__am_pgsize);// make malloc in nanos-lite happy//TODO ：may be a better solution?
   VMHead *h = pgalloc(__am_pgsize); // used as head of the list
   assert(h != NULL);
   memset(h, 0, sizeof(*h));
@@ -132,7 +133,8 @@ Context* ucontext(AddrSpace *as, Area kstack, void *entry) {
   c->vm_head = as->ptr;
 
   c->ksp = (uintptr_t)kstack.end;
-
+  c->GPRx=(uintptr_t)pgalloc(__am_pgsize);//TODO:::pass the stack addr,seems OKEY for native--ARCH-spec
+  
   return c;
 }
 
