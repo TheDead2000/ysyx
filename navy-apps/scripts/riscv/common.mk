@@ -1,5 +1,5 @@
-# CROSS_COMPILE = riscv64-linux-gnu-
-CROSS_COMPILE = riscv64-unknown-linux-gnu-
+CROSS_COMPILE = riscv64-linux-gnu-
+# CROSS_COMPILE = riscv64-unknown-linux-gnu-
 LNK_ADDR = $(if $(VME), 0x40000000, 0x83000000)
-CFLAGS  += -fno-pic -march=rv64g -mcmodel=medany
+CFLAGS  += -fno-pic -march=rv64g -mcmodel=medany  -Wno-implicit-function-declaration -Wno-incompatible-pointer-types
 LDFLAGS += --no-relax -Ttext-segment $(LNK_ADDR)
