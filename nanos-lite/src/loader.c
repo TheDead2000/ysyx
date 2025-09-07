@@ -135,8 +135,9 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   assert(pcb);
   protect(&pcb->as); // create an space whitch inherits kernal mapping! WoW!
   pcb->max_brk=0;
-
+  printf("context_uload:%s\n",filename);
   uintptr_t entry = loader(pcb, filename);
+  printf("entry at %x\n", entry);
   uint8_t *stack = new_page(8);
   //map stack
   for (int i = 0; i < 8; i++) {
