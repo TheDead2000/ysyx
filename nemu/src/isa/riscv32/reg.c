@@ -16,7 +16,6 @@
 #include <isa.h>
 #include <stdint.h>
 #include <string.h>
-
 #define LENGTH(arr)         (sizeof(arr) / sizeof((arr)[0]))
 
 const char *regs[] = {

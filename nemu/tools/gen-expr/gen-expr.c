@@ -1,131 +1,144 @@
+/***************************************************************************************
+* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+*
+* NEMU is licensed under Mulan PSL v2.
+* You can use this software according to the terms and conditions of the Mulan PSL v2.
+* You may obtain a copy of Mulan PSL v2 at:
+*          http://license.coscl.org.cn/MulanPSL2
+*
+* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+*
+* See the Mulan PSL v2 for more details.
+***************************************************************************************/
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
 #include <string.h>
-
-typedef uint32_t word_t;
-
+#include<stdbool.h>
 // this should be enough
 static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
 "int main() { "
-"  signed result = %s; "
-"  printf(\"%%d\", result); "
+"  unsigned result = %s; "
+"  printf(\"%%u\", result); "
 "  return 0; "
 "}";
-
-typedef enum
-{
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-} Operator;
-
-Operator generate_operator()
-{
-    return rand() % 4;
+static int end=0;
+static int step=0;
+static int choose(int limit){
+  return rand()%limit;
 }
+static void gen_num(){
+  char* put=buf+end;
+  // char buf[50];
+  int rand_num=rand()%100;
+  sprintf(put,"%d",rand_num);
+  while(buf[end]!='\0')
+  end++;
 
-char *generate_operand()
-{
-    char *number = malloc(sizeof(char) * 4);
-    sprintf(number, "%d", rand() % 100);
-    return number;
 }
-
-void generate_expression(char *expression, int depth)
-{
-    if (depth == 0)
-    {
-        sprintf(expression, "%s", generate_operand());
-    }
-    else
-    {
-        Operator op = generate_operator();
-        char left_expression[100], right_expression[100];
-        generate_expression(left_expression, depth - 1);
-        generate_expression(right_expression, depth - 1);
-
-        switch (op)
-        {
-        case ADD:
-            sprintf(expression, "(%s + %s)", left_expression, right_expression);
-            break;
-        case SUB:
-            sprintf(expression, "(%s - %s)", left_expression, right_expression);
-            break;
-        case MUL:
-            sprintf(expression, "(%s * %s)", left_expression, right_expression);
-            break;
-        case DIV:
-            if (strcmp(right_expression, "0") == 0) // 避免除零
-            {
-                sprintf(expression, "%s", left_expression); // 如果右表达式是0，则使用左表达式替代
-            }
-            else
-            {
-                sprintf(expression, "(%s / %s)", left_expression, right_expression);
-            }
-            break;
-        }
-    }
+static void gen(char val){
+  buf[end++]=val;
+  buf[end]='\0';
 }
-
-// // 检查表达式中的除零行为
-// static int check_division_by_zero() {
-//   char *p = buf;
-//   while (*p) {
-//     if (*p == '/' && *(p + 1) == '0') {
-//       return 1; // 表达式中存在除零行为
-//     }
-//     p++;
-//   }
-//   return 0; // 表达式中不存在除零行为
-// }
+static void gen_rand_op()
+{
+  switch (choose(4))
+  {
+  case 0:
+    gen('+');
+    break;
+  case 1:
+    gen('-');
+    break;
+  case 2:
+    gen('*');
+    break;
+  default:
+    gen('/');
+    break;
+  }
+}
+static bool ok(){
+  if(end==0)
+    return true;
+  if(end>0&&(buf[end-1]=='+'||buf[end-1]=='-'||buf[end-1]=='*'||buf[end-1]=='/'||buf[end-1]=='('))
+    return true;
+  else
+    return false;
+}
+static void gen_rand_expr()
+{
+  if(end>=50000)
+    return;
+  // buf[0] = '\0';
+  int choo=choose(3);
+  if(++step>10)
+    choo=0;
+  switch (choo)
+  // switch (1)
+  {
+  case 0:
+    if(!ok())
+      gen_rand_op();
+    gen_num();
+    break;
+  case 1:
+    if(!ok())
+      gen_rand_op();
+    gen('(');
+    gen_rand_expr();
+    gen(')');
+    break;
+  default:
+    gen_rand_expr();
+    gen_rand_op();
+    gen_rand_expr();
+    break;
+  }
+}
 
 int main(int argc, char *argv[]) {
   int seed = time(0);
   srand(seed);
   int loop = 1;
   if (argc > 1) {
-    sscanf(argv[1], "%d", &loop);//如果命令行参数中指定了循环次数，则将其读取并存储到 loop 变量中。
+    sscanf(argv[1], "%d", &loop);
   }
-
-  FILE *output_fp = fopen("./results.txt", "w"); // 打开结果文件
-  assert(output_fp != NULL);
-
   int i;
-  for (i = 0; i < loop; i ++) 
-  {
-      memset(buf, '\0', sizeof(buf)); // 每次循环前清空缓冲区
-      generate_expression(buf, 4);
+  for (i = 0; i < loop; i ++) {
+    end=0;
+    step=0;
+    gen_rand_expr();
 
-      sprintf(code_buf, code_format, buf); // 使用生成的随机表达式按照之前format格式填充 code_buf 缓冲区
+    sprintf(code_buf, code_format, buf);
 
-      FILE *fp = fopen("/tmp/.code.c", "w");
-      assert(fp != NULL);
-      fputs(code_buf, fp);
-      fclose(fp);
+    FILE *fp = fopen("/tmp/.code.c", "w");
+    assert(fp != NULL);
+    fputs(code_buf, fp);
+    fclose(fp);
 
-      int ret = system("gcc -Werror /tmp/.code.c -o /tmp/.expr");
-      if (ret != 0) continue;
+    int ret = system("gcc -Werror /tmp/.code.c -o /tmp/.expr");
+    if (ret != 0) {
+      // printf("continue!");
+      continue;
+    }
 
-      fp = popen("/tmp/.expr", "r");
-      assert(fp != NULL);
+    fp = popen("/tmp/.expr", "r");
+    assert(fp != NULL);
 
-      int result;
-      ret = fscanf(fp, "%d", &result);
-      pclose(fp);
+    int result;
+    ret = fscanf(fp, "%d", &result);
+    pclose(fp);
 
-      printf("%d %s\n", result, buf); // 使用 %d 格式说明符打印有符号整数
-            // 将结果和表达式写入文件
-      fprintf(output_fp, "%d %s\n", result, buf);
+    printf("%u %s\n", result, buf);
   }
-  fclose(output_fp); // 关闭结果文件
   return 0;
 }
