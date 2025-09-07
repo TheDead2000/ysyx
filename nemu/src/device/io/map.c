@@ -18,6 +18,11 @@
 #include <memory/vaddr.h>
 #include <device/map.h>
 
+#pragma GCC diagnostic ignored "-Wpointer-arith"
+
+void dtrace_read(const char * name,paddr_t addr,int len);
+void dtrace_write(const char * name,paddr_t addr,int len,word_t data);
+
 #define IO_SPACE_MAX (2 * 1024 * 1024)
 
 static uint8_t *io_space = NULL;
@@ -47,12 +52,13 @@ static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_wr
 }
 
 void init_map() {
-  io_space = malloc(IO_SPACE_MAX);
+  io_space = (uint8_t*)malloc(IO_SPACE_MAX);
   assert(io_space);
   p_space = io_space;
 }
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
+  IFDEF(CONFIG_DTRACE,dtrace_read(map->name,addr,len););
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
   paddr_t offset = addr - map->low;
@@ -62,6 +68,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
 }
 
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
+  IFDEF(CONFIG_DTRACE,dtrace_write(map->name,addr,len,data););
   assert(len >= 1 && len <= 8);
   check_bound(map, addr);
   paddr_t offset = addr - map->low;

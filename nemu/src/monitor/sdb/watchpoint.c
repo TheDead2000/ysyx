@@ -1,11 +1,29 @@
+/***************************************************************************************
+* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+*
+* NEMU is licensed under Mulan PSL v2.
+* You can use this software according to the terms and conditions of the Mulan PSL v2.
+* You may obtain a copy of Mulan PSL v2 at:
+*          http://license.coscl.org.cn/MulanPSL2
+*
+* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+*
+* See the Mulan PSL v2 for more details.
+***************************************************************************************/
+
 #include "sdb.h"
 
 #define NR_WP 32
+
+//WatchPoint.c-管理监视点的数据池
 
 
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
+//head用于组织使用中的监视点结构, free_用于组织空闲的监视点结构
 
 void init_wp_pool() {
   int i;
@@ -17,104 +35,73 @@ void init_wp_pool() {
   head = NULL;
   free_ = wp_pool;
 }
-// head: 指向已使用的监视点链表
-// free_: 指向空闲监视点链表
 
-//    1. 从free_链表中取出第一个节点
-//    2. 将该节点插入到head链表的头部
+/* TODO: Implement the functionality of watchpoint */
 
-WP* new_wp() {
-    if (free_ == NULL) {
-        printf("No available watchpoints. Maximum of %d reached.\n", NR_WP);
-        return NULL;
+WP* new_wp(){
+  if(free_==NULL)
+    assert(0);//没有空闲了
+  WP* op=free_;
+  free_=(*free_).next;
+  op->next=NULL;
+  //放进队列
+  op->next=head;
+  head=op;
+  return op;
+}
+void free_wp(WP *wp){
+  WP* Head=(WP*)malloc(sizeof(WP));
+  Head->next=head;
+  for(WP *cur=Head;cur!=NULL;cur=cur->next){
+    if(cur->next==wp){
+      cur->next=wp->next;
+      wp->next=free_;
+      free_=wp;
+      head=Head->next;
+      return;
     }
-    
-    // 从空闲链表取一个节点
-    WP *new = free_;
-    free_ = free_->next;
-    
-    // 添加到已使用链表头部
-    new->next = head;
-    head = new;
-    new->flag = true;
-    
-    return new;
+  }
+  assert(0);//没找到
 }
 
-//    1. 从head链表中移除该节点。
-//    2. 将该节点插入free_链表的头部
-void free_wp(WP *wp) {
-    // 从已使用链表中移除
-    if (head == wp) {
-        head = head->next;
-    } else {
-        WP *prev = head;
-        while (prev != NULL && prev->next != wp) {
-            prev = prev->next;
-        }
-        if (prev == NULL) {
-            printf("Watchpoint %d not found in active list.\n", wp->NO);
-            return;
-        }
-        prev->next = wp->next;
+void print_watch_points(){
+  // printf("No\tLast_val\tExpression\n");
+  printf("%-3s\t%-10s  \t%-10s\n","No","Last_val","Expression");
+
+  for(WP* cur=head;cur!=NULL;cur=cur->next){
+    MUXDEF(CONFIG_RV64,printf("%-3d\t0x%-10lx\t%-10s\n",cur->NO,cur->last_result,cur->expr);,printf("%-3d\t0x%-10x\t%-10s\n",cur->NO,cur->last_result,cur->expr);)
+
+  }
+}
+bool check_watch_point(){
+  bool changed=false;
+  for(WP* cur=head;cur!=NULL;cur=cur->next){
+    bool succ=false;
+    word_t result=expr(cur->expr,&succ);
+    if(!succ){
+      changed=true;
+      printf("Failed to execute expression: %s\n",cur->expr);
     }
-    
-    // 添加到空闲链表头部
-    wp->next = free_;
-    free_ = wp;
-    wp->flag = false;
-    
-    printf("Deleted watchpoint %d.\n", wp->NO);
-}
+    if(succ&&result!=cur->last_result){
+      printf("Hit WatchPoint:%d %s \n",cur->NO,cur->expr);
+      
+      MUXDEF(CONFIG_RV64, printf("Old value = 0x%lx (%lu)\n",cur->last_result,cur->last_result);, printf("Old value = 0x%x (%u)\n",cur->last_result,cur->last_result););
 
-void sdb_watchpoint_display(){
-    bool flag = true;
-    for(int i = 0 ; i < NR_WP ; i ++){
-        if(wp_pool[i].flag){
-            printf("Watchpoint.No: %d, expr = \"%s\", old_value = %d, new_value = %d\n",
-                    wp_pool[i].NO, wp_pool[i].expr,wp_pool[i].old_value, wp_pool[i].new_value);
-                flag = false;
-        }
+      MUXDEF(CONFIG_RV64, printf("New value = 0x%lx (%lu)\n",result,result);, printf("New value = 0x%x (%u)\n",result,result););
+     
+      cur->last_result=result;
+      changed=true;
     }
-    if(flag) printf("No watchpoint now.\n");
+  }
+  return changed;
 }
-void delete_watchpoint(int no){
-    for(int i = 0 ; i < NR_WP ; i ++)
-        if(wp_pool[i].NO == no){
-            free_wp(&wp_pool[i]);
-            return ;
-        }
-}
-void create_watchpoint(char* args){
-    WP* p =  new_wp();
-    strcpy(p -> expr, args);
-    bool success = false;
-    int tmp = expr(p -> expr,&success);
-   if(success) p -> old_value = tmp;
-   else printf("创建watchpoint的时候expr求值出现问题\n");
-    printf("Create watchpoint No.%d success.\n", p -> NO);
-}
-
-void wp_diff()
-{
-  for(int i = 0 ; i < NR_WP; i ++){
-        if(wp_pool[i].flag)
-        {
-            bool success = false;
-            int tmp = expr(wp_pool[i].expr,&success);
-            if(success){
-                if(tmp != wp_pool[i].old_value)
-                {
-                    nemu_state.state = NEMU_STOP;
-                    printf("NO EQ\n");
-                    return ;
-                }
-            }
-            else{
-                printf("expr error.\n");
-                assert(0);
-            }
-        }
+//按照节点号删除监测点，false表示节点不纯在
+bool del_watch_point(int N){
+  for(WP* cur=head;cur!=NULL;cur=cur->next){
+    if(cur->NO==N){
+      free_wp(cur);
+      return true;
     }
+  }
+  return false;
 }
-

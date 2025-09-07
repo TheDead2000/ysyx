@@ -29,7 +29,7 @@ typedef struct {
   void *space;
   io_callback_t callback;
 } IOMap;
-
+//框架代码为映射定义了一个结构体类型IOMap
 static inline bool map_inside(IOMap *map, paddr_t addr) {
   return (addr >= map->low && addr <= map->high);
 }
@@ -49,7 +49,7 @@ void add_pio_map(const char *name, ioaddr_t addr,
         void *space, uint32_t len, io_callback_t callback);
 void add_mmio_map(const char *name, paddr_t addr,
         void *space, uint32_t len, io_callback_t callback);
-
+//map_read()和map_write()用于将地址addr映射到map所指示的目标空间, 并进行访问. 
 word_t map_read(paddr_t addr, int len, IOMap *map);
 void map_write(paddr_t addr, int len, word_t data, IOMap *map);
 

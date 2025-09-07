@@ -21,6 +21,9 @@
 static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
+//对端口映射I/O的模拟
+
+//为设备的初始化注册一个端口映射I/O的映射关系. 
 /* device interface */
 void add_pio_map(const char *name, ioaddr_t addr, void *space, uint32_t len, io_callback_t callback) {
   assert(nr_map < NR_MAP);
@@ -32,7 +35,7 @@ void add_pio_map(const char *name, ioaddr_t addr, void *space, uint32_t len, io_
 
   nr_map ++;
 }
-
+//pio_read()和pio_write()是面向CPU的端口I/O读写接口, 它们最终会调用map_read()和map_write(), 对通过add_pio_map()注册的I/O空间进行访问.
 /* CPU interface */
 uint32_t pio_read(ioaddr_t addr, int len) {
   assert(addr + len - 1 < PORT_IO_SPACE_MAX);

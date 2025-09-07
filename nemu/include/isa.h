@@ -53,6 +53,7 @@ word_t isa_query_intr();
 
 // difftest
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
+bool isa_difftest_checkcsrs(word_t *ref_csr,vaddr_t pc); //自定义函数用来检查csr寄存器
 void isa_difftest_attach();
 
 #endif

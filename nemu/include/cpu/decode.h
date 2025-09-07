@@ -20,8 +20,8 @@
 
 typedef struct Decode {
   vaddr_t pc;
-  vaddr_t snpc; // static next pc
-  vaddr_t dnpc; // dynamic next pc
+  vaddr_t snpc; // static next pc 内存上的下一条
+  vaddr_t dnpc; // dynamic next pc 逻辑上的下一条(非跳转指令时和snpc一样)
   ISADecodeInfo isa;
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;
@@ -85,7 +85,11 @@ finish:
   *shift = __shift;
 }
 
-
+// pattern_decode()函数将模式字符串中的0和1抽取到整型变量key中, mask表示key的掩码, 而shift则表示opcode距离最低位的比特数量
+// pattern_decode("??????? ????? ????? ??? ????? 00101 11", 38, &key, &mask, &shift);
+// key   = 0x17;
+// mask  = 0x7f;
+// shift = 0;
 // --- pattern matching wrappers for decode ---
 #define INSTPAT(pattern, ...) do { \
   uint64_t key, mask, shift; \

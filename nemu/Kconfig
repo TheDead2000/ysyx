@@ -126,6 +126,20 @@ endmenu
 
 menu "Testing and Debugging"
 
+choice
+  prompt "Debug support"
+  default DEBUG_SDB
+config DEBUG_SDB
+  bool "using SDB (Dimple Debugger)"
+config DEBUG_GDB
+  select BREAKPOINT
+  bool "using GDB"
+endchoice
+
+config LOG
+  depends on TARGET_NATIVE_ELF
+  bool "Enable log"
+  default y
 
 config TRACE
   bool "Enable tracer"
@@ -151,42 +165,57 @@ config ITRACE_COND
   string "Only trace instructions when the condition is true"
   default "true"
 
-config IRINGBUF
-  depends on TRACE
-  bool "Enable instruction ring buffer"
-  default n
+config WATCHPOINT
+  depends on TARGET_NATIVE_ELF 
+  depends on DEBUG_SDB
+  bool "Enable WatchPoint"
+  default y
+
+config BREAKPOINT
+  depends on TARGET_NATIVE_ELF
+  depends on DEBUG_GDB
+  bool "Enable BreakPoint"
+  default y
 
 config MTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
-  bool "Enable memory access tracer"
+  depends on TARGET_NATIVE_ELF
+  bool "Enable MemoryTrace"
   default n
 
-config MTRACE_START
-  depends on MTRACE
-  hex "Traced memory access start address"
-  default 0x80000000
-
-config MTRACE_SIZE
-  depends on MTRACE
-  hex "Traced memory access size"
-  default 0x8000000
-
 config FTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
-  bool "Enable function call-ret tracer(TODO)"
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Function call Trace"
   default n
 
 config DTRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
-  bool "Enable device tracer(TODO)"
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Device Trace"
   default n
 
 config ETRACE
-  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
-  bool "Enable exception tracer"
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Exception Trace"
   default n
 
+config IRING
+  depends on TARGET_NATIVE_ELF
+  bool "Emable iring buf"
+  default n
 
+config PC_TRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable PC Trace"
+  default n
+
+config MMU_TRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable MMU Trace"
+  default n
+
+config EXCEPTION_NEMU_STOP
+  depends on TARGET_NATIVE_ELF
+  bool "Stop NEMU when receved an exception"
+  default n
 
 
 config DIFFTEST
@@ -199,13 +228,13 @@ config DIFFTEST
 
 choice
   prompt "Reference design"
-  default DIFFTEST_REF_SPIKE if ISA_riscv64 || ISA_riscv32
+  default DIFFTEST_REF_SPIKE if ISA_riscv
   default DIFFTEST_REF_KVM if ISA_x86
   default DIFFTEST_REF_QEMU
   depends on DIFFTEST
 config DIFFTEST_REF_QEMU
   bool "QEMU, communicate with socket"
-if ISA_riscv64 || ISA_riscv32
+if ISA_riscv
 config DIFFTEST_REF_SPIKE
   bool "Spike"
 endif
@@ -228,15 +257,6 @@ config DIFFTEST_REF_NAME
   default "kvm" if DIFFTEST_REF_KVM
   default "spike" if DIFFTEST_REF_SPIKE
   default "none"
-
-config WATCHPOINT
-  depends on TARGET_NATIVE_ELF
-  bool "Enable watchpoint"
-  default y
-  help
-    Enable watchpoint with a reference design.
-    Note that this will significantly reduce the performance of NEMU.
-  
 endmenu
 
 if MODE_SYSTEM
