@@ -35,7 +35,7 @@ void init_proc() {
   context_uload(&pcb[0], "/bin/menu", argv, envp);
   context_uload(&pcb[1], "/bin/hello", argv, envp);
   switch_boot_pcb();
-  // yield();  
+  yield();  
   assert(0);
   // load program here
 }
