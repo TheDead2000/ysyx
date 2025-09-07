@@ -34,7 +34,7 @@ static void restart() {
   cpu.gpr[0] = 0;
 
   /* initialize mstatus */
-  csr(MSTATUS) = 0x1800;
+  csr(NEMU_CSR_V_MSTATUS) = 0x1800;
 }
 
 void init_isa() {
