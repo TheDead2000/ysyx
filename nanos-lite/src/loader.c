@@ -133,6 +133,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   assert(argv);
   assert(filename);
   assert(pcb);
+  printf("pcb->as.area.start:%x\n",pcb->as.area.start);
   protect(&pcb->as); // create an space whitch inherits kernal mapping! WoW!
   pcb->max_brk=0;
   printf("context_uload:%s\n",filename);
