@@ -26,7 +26,7 @@ void init_proc() {
   // char *test[] =  {"/bin/exec-test","--skip",NULL };
 
   Log("Initializing processes...");
-  switch_boot_pcb();
+
   // naive_uload(NULL, "/bin/float");
   // context_kload(&pcb[0], hello_fun, "aaa");
   // context_kload(&pcb[1], hello_fun, "BBB");
@@ -34,9 +34,9 @@ void init_proc() {
   char *envp[] = {NULL};
   context_uload(&pcb[0], "/bin/menu", argv, envp);
   context_uload(&pcb[1], "/bin/hello", argv, envp);
-
+  switch_boot_pcb();
   // yield();  
-  // assert(0);
+  assert(0);
   // load program here
 }
 void execue_menu() {
