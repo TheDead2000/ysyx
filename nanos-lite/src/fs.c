@@ -1,40 +1,22 @@
 #include <fs.h>
+#include <am.h>
+#include <stdint.h>
+#include <stdio.h>
 
-typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
-typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
+#define NAMEINIT(key) [AM_KEY_##key] = #key,
 
-// ramdisk.c
+
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
-
-// device.c
-size_t serial_write(const void *buf, size_t offset, size_t len);
-size_t events_read(void *buf, size_t offset, size_t len);
-size_t dispinfo_read(void *buf, size_t offset, size_t len);
-size_t fb_write(const void *buf, size_t offset, size_t len); 
-size_t sb_write(const void *buf, size_t offset, size_t len);
-size_t sbctl_write(const void *buf, size_t offset, size_t len);
-size_t sbctl_read(void *buf, size_t offset, size_t len);
-
-
-typedef struct {
-  char *name;
-  size_t size;
-  size_t disk_offset;
-  ReadFn read;
-  WriteFn write;
-} Finfo;
-
-enum {
-  FD_STDIN, 
-  FD_STDOUT, 
-  FD_STDERR, 
-  FD_FB, 
-  FD_EVENTS, 
-  FD_DISPINFO, 
-  FD_SB,
-  FD_SBCTL
-};
+extern int screen_w;
+// 把目录分隔符/也认为是文件名的一部分
+/*
+约定：
+ - 每个文件的大小是固定的
+ - 写文件时不允许超过原有文件的大小
+ - 文件的数量是固定的, 不能创建新文件
+ - 没有目录
+*/
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -46,151 +28,96 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
   return 0;
 }
 
+// in device.c
+size_t events_read(void *buf, size_t offset, size_t len);
+size_t serial_write(const void *buf, size_t offset, size_t len);
+size_t dispinfo_read(void *buf, size_t offset, size_t len);
+size_t fb_write(const void *buf, size_t offset, size_t len);
+
 /* This is the information about all files in disk. */
-static Finfo FILE_TABLE[] __attribute__((used)) = {
-  [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
-  [FD_FB] = {"/dev/fb", 0, 0, invalid_read, fb_write},
-  [FD_EVENTS] = {"/dev/events", 0, 0, events_read, invalid_write},
-  [FD_DISPINFO] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
-  [FD_SB] = {"/dev/sb", 0, 0, invalid_read, sb_write},
-  [FD_SBCTL] = {"/dev/sbctl", 0, 0, sbctl_read, sbctl_write},
+Finfo file_table[] __attribute__((used)) = {
+    [FD_STDIN] = {"stdin", 0, 0, invalid_read, invalid_write},
+    [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
+    [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
+    [FD_EVENTS] = {"/dev/events", 0, 0, events_read, invalid_write},
+    [FD_FB] = {"/dev/fb", 0, 0, invalid_read, fb_write},
+    [FD_DISPINFO] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
 
 #include "files.h"
 };
 
-// Number of entries in file_table
-enum { NR_FILES = sizeof(FILE_TABLE) / sizeof(FILE_TABLE[0]) };
+extern char ramdisk_start;
 
-// Array to track the current offset for each open file
-static size_t openOffset[NR_FILES] = {0};  // Initialized to 0 automatically
-
-void init_fs() 
-{
-  // Initialise the size of /dev/fb
-  const AM_GPU_CONFIG_T gpuConfig = io_read(AM_GPU_CONFIG);
-  // Must present
-  assert(gpuConfig.present);
-
-  // Set file size.
-  const int vmemsz = gpuConfig.vmemsz;
-  FILE_TABLE[FD_FB].size = (size_t)vmemsz;
-}
-
-// Open a file by pathname, return file descriptor (index in file_table)
-int fs_open(const char *pathname, int flags, int mode) 
-{
-  // Search for the file in the file table
-  for (int i = 0; i < NR_FILES; i++) 
-  {
-    if (strcmp(pathname, FILE_TABLE[i].name) == 0) 
-    {
-      // Reset offset and return descriptor
-      openOffset[i] = 0;
+//TODO:flags mode
+int fs_open(const char *pathname, int flags, int mode) {
+  for (int i = 0; i < sizeof(file_table) / sizeof(Finfo); i++) {
+    if (strcmp(file_table[i].name, pathname) == 0) {
+      file_table[i].open_offset = 0;
       return i;
     }
   }
-
-  // File not found: abort
-  Log("fs_open: Invalid pathname: %s\n", pathname);
-  assert(0);
+  Log("File Not Found-%s-\n",pathname);
+  // assert(0);
   return -1;
 }
-
-// Read up to len bytes from file descriptor into buf
-size_t fs_read(int fd, void *buf, size_t len) 
-{
-  assert(fd >= 0 && fd < NR_FILES);
-
-  Finfo *f = &FILE_TABLE[fd];
-
-  // Calculate available bytes
-  const size_t offset = openOffset[fd];
-
-  // If read is not supported, return 0 (e.g., stdin not implemented)
-  if (f->read != NULL) 
-  {
-    return f->read(buf, offset, len);
+// the simple fs assume no out-of bound so don't need to check
+size_t fs_read(int fd, void *buf, size_t len) {
+  if (file_table[fd].read != NULL) {
+    return ((size_t(*)(void *buf, size_t offset, size_t len))file_table[fd].read)(buf,file_table[fd].open_offset,len);
   }
-
-  // if we've already reached or passed the end, bail out
-  if (offset >= f->size) 
-  {
-    return 0;
-  }
-
-  // compute how many bytes we can actually read
-  const size_t avail = f->size - offset;
-  const size_t rlen  = (len < avail ? len : avail);
-
-  // perform the read
-  size_t ret = ramdisk_read(buf, f->disk_offset + offset, rlen);
-  openOffset[fd] += ret;
-  return ret;
+  if (file_table[fd].open_offset + len > file_table[fd].size)
+    len=file_table[fd].size-file_table[fd].open_offset;
+  ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
+  file_table[fd].open_offset += len;
+  return len;
 }
-
-// Write up to len bytes from buf to file descriptor
-size_t fs_write(int fd, const void *buf, size_t len) 
-{
-  assert(fd >= 0 && fd < NR_FILES);
-  Finfo *f = &FILE_TABLE[fd];
-
-  // If handle existed.
-  if (f->write != NULL) 
-  {
-    return f->write(buf, openOffset[fd], len);
+size_t fs_write(int fd, const void *buf, size_t len) {
+  if (file_table[fd].write != NULL) {
+        return ((size_t(*)(const void *buf, size_t offset, size_t len))file_table[fd].write)(buf,file_table[fd].open_offset,len);
   }
-
-  // Calculate available space
-  size_t offset = openOffset[fd];
-  assert(offset <= f->size);
-
-  const size_t avail = f->size - offset;
-  const size_t wlen = len < avail ? len : avail;
-
-  // Perform write and advance offset
-  size_t ret = ramdisk_write(buf, f->disk_offset + offset, wlen);
-  openOffset[fd] += ret;
-  return ret;
+  if (file_table[fd].open_offset + len > file_table[fd].size)
+    len=file_table[fd].size-file_table[fd].open_offset; 
+  ramdisk_write(buf, file_table[fd].disk_offset +file_table[fd].open_offset, len);
+  file_table[fd].open_offset += len;
+  return len;
 }
-
-// Adjust the file offset based on whence (SEEK_SET, SEEK_CUR, SEEK_END)
-size_t fs_lseek(int fd, size_t offset, int whence) 
-{
-  assert(fd >= 0 && fd < NR_FILES);
-
-  Finfo *f = &FILE_TABLE[fd];
-  size_t newOffset = -1;
-
+size_t fs_lseek(int fd, size_t offset, int whence) {
   switch (whence) {
-    case SEEK_SET: {
-      newOffset = offset;
-      break;
-    }
-    case SEEK_CUR: {
-      newOffset = openOffset[fd] + offset;
-      break;
-    }
-    case SEEK_END: {
-      newOffset = f->size + offset;
-      break;
-    }
-    default: {
-      panic("fs_lseek: invalid whence");
-      return (size_t)-1;
-    }
+  case SEEK_SET:
+    // if (offset > file_table[fd].size)
+    //   return -1;
+    file_table[fd].open_offset = offset;
+    break;
+  case SEEK_CUR:
+    // if (file_table[fd].open_offset + offset > file_table[fd].size)
+    //   return -1;
+    file_table[fd].open_offset += offset;
+    break;
+  case SEEK_END:
+    // if (offset > 0)
+    //   return -1;
+    file_table[fd].open_offset = file_table[fd].size + offset;
+    break;
+  default:
+    assert(0);
   }
-
-  // Ensure the new offset is within bounds
-  // assert(newOffset <= f->size);
-
-  openOffset[fd] = newOffset;
-  return newOffset;
+  return file_table[fd].open_offset;
+}
+int fs_close(int fd) {
+  file_table[fd].open_offset = 0;
+  return 0;
+}
+//func for trace
+const char *get_filename(int fd) {
+  return file_table[fd].name;
 }
 
-// Close a file descriptor (no-op for this simple FS)
-int fs_close(int fd) 
-{
-  return 0;
+//gets the fs info
+void init_fs() {
+  AM_GPU_CONFIG_T gpuconfig;
+  ioe_read(AM_GPU_CONFIG, &gpuconfig);
+  if (gpuconfig.present) {
+    file_table[FD_FB].size=gpuconfig.height*gpuconfig.width*sizeof(uint32_t);
+    screen_w=gpuconfig.width*sizeof(uint32_t);
+  }
 }
