@@ -66,10 +66,10 @@ void do_syscall(Context *c) {
       break;
     case SYS_execve:
       printf("execve!!!\n");
-      char *fname = (char *)c->GPR2;
-      printf("fname is%s!\n",fname);
-      naive_uload(NULL, fname);
-      printf("execve finsih!\n");
+     if (fs_open((const char *)a[1], 0, 0) == -1)
+      c->GPRx = -2;
+    else
+      handle_execve((const char *)a[1], (char *const*)a[2], (char * const *)a[3]);
       c->GPRx = 0;
       break;
 
