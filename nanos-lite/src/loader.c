@@ -109,6 +109,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   pcb->max_brk=0;
 
   uintptr_t entry = loader(pcb, filename);
+  printf("entry:%x\n", entry);
   uint8_t *stack = new_page(8);
   //map stack
   for (int i = 0; i < 8; i++) {
