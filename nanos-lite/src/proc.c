@@ -30,12 +30,13 @@ void init_proc() {
   // naive_uload(NULL, "/bin/float");
   // context_kload(&pcb[0], hello_fun, "aaa");
   // context_kload(&pcb[1], hello_fun, "BBB");
-  char *argv[] = {NULL};
-  char *envp[] = {NULL};
+  // char *argv[] = {NULL};
+  // char *envp[] = {NULL};
   // context_uload(&pcb[0], "/bin/menu", argv, envp);
   // context_uload(&pcb[2], "/bin/hello", argv, envp);
-  // context_kload(&pcb[0], hello_fun, "AAA");
-  context_uload(&pcb[0], "/bin/menu", argv, envp);
+  context_kload(&pcb[0], hello_fun, "AAA");
+  context_kload(&pcb[1], hello_fun, "bbb");
+  // context_uload(&pcb[2], "/bin/menu", argv, envp);
 
   // yield();  
   // assert(0);
