@@ -37,6 +37,7 @@ void init_proc() {
   context_kload(&pcb[0], hello_fun, "AAA");
   context_kload(&pcb[1], hello_fun, "bbb");
   switch_boot_pcb();
+  yield();
   // context_uload(&pcb[2], "/bin/menu", argv, envp);
 
   // yield();  
