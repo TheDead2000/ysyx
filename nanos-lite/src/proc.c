@@ -31,11 +31,11 @@ void init_proc() {
   // context_kload(&pcb[0], hello_fun, "aaa");
   // context_kload(&pcb[1], hello_fun, "BBB");
   char *argv[] = {NULL};
-  char *envp[] = {NULL};
-  context_uload(&pcb[0], "/bin/menu", argv, envp);
-  context_uload(&pcb[1], "/bin/hello", argv, envp);
+  // char *envp[] = {NULL};
+  context_kload(&pcb[0], hello_fun, argv  );
+  context_kload(&pcb[1], hello_fun, argv);
   switch_boot_pcb();
-  yield();  
+  // yield();  
   assert(0);
   // load program here
 }
