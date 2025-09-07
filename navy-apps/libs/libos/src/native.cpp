@@ -157,6 +157,10 @@ extern "C" int execve(const char *filename, char *const argv[], char *const envp
 
 FILE *fopen(const char *path, const char *mode) {
   char newpath[512];
+  if (glibc_fopen == NULL) {
+    glibc_fopen = (FILE*(*)(const char*, const char*))dlsym(RTLD_NEXT, "fopen");
+    assert(glibc_fopen != NULL);
+  }
   return glibc_fopen(redirect_path(newpath, path), mode);
 }
 
@@ -179,6 +183,8 @@ int open(const char *path, int flags, ...) {
 
 ssize_t read(int fd, void *buf, size_t count) {
   if (fd == dispinfo_fd) {
+    // This does not strictly conform to `navy-apps/README.md`.
+    // But it should be enough for real usage. Modify it if necessary.
     return snprintf((char *)buf, count, "WIDTH: %d\nHEIGHT: %d\n", disp_w, disp_h);
   } else if (fd == evt_fd) {
     int has_key = 0;
