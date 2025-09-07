@@ -23,6 +23,7 @@ void hello_fun(void *arg) {
 
 void init_proc() {
   
+  switch_boot_pcb();
   char *argv[] = {NULL};
   char *envp[] = {NULL};
   // context_uload(&pcb[0], "/bin/dummy", argv,envp);
@@ -30,7 +31,7 @@ void init_proc() {
   context_kload(&pcb[0], hello_fun, "A");
   // context_uload(&pcb[1], "/bin/menu", argv, envp);
   // context_kload(&pcb[1], hello_fun, "B");
-  switch_boot_pcb();
+
 
   Log("Initializing processes...");
 
