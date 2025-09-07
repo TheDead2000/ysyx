@@ -55,9 +55,9 @@ void naive_uload(PCB *pcb, const char *filename) {
   ((void(*)())entry) ();
 }
 
-void context_kload(PCB* pcb_p, void (*entry)(void*), void* arg) {
-
-  pcb_p->cp = kcontext(RANGE(pcb_p->stack, pcb_p->stack + STACK_SIZE), entry, arg);
+void context_kload(PCB *pcb, void *func,void *args) {
+  pcb->cp = kcontext((Area){.start=pcb->stack,.end=pcb->stack+STACK_SIZE}, func, args);
+  pcb->active=true;
 }
 
 char *copy_str(char *dst, const char *src) {
