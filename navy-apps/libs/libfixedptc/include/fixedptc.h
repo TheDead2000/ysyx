@@ -125,37 +125,63 @@ typedef	__uint128_t fixedptud;
  * Putting them only in macros will effectively make them optional. */
 #define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1L << FIXEDPT_FBITS))))
 
+/*
+1.2 * 2^8 = 307 = 0x133
++----+---------------------------+----------+
+| 0  |             1             |    33    |
++----+---------------------------+----------+
+
+
+5.6 * 2^8 = 1433 = 0x599
++----+---------------------------+----------+
+| 0  |             5             |    99    |
++----+---------------------------+----------+
+*/
+
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return (fixedpt)(A * B);
+  //   return (uint32_t)(((uint64_t)A * B) >> FIXEDPT_FBITS);
+    return A*B;
 }
 
 /* Divides a fixedpt number with an integer, returns the result. */
+// static inline fixedpt fixedpt_divi(fixedpt A, int B) {
+//   return (uint32_t)(((uint64_t)A / B) >> FIXEDPT_FBITS);
+// }
 static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return (fixedpt)(A / B);
+  //   return (uint32_t)(((uint64_t)A << FIXEDPT_FBITS) / B);
+  return A/B;
 }
 
 /* Multiplies two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	return (fixedpt)((((fixedptd)A) * ((fixedptd)B)) >> FIXEDPT_FBITS);
+  //loss of data?
+  return (uint32_t)(((uint64_t)A * B) >> FIXEDPT_FBITS);
 }
+
 
 /* Divides two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	return (fixedpt)((((fixedptd)A) / ((fixedptd)B)) << FIXEDPT_FBITS);
+  // return A/B;
+  return (uint32_t)((((uint64_t)A)<<FIXEDPT_FBITS)/B);
 }
 
 static inline fixedpt fixedpt_abs(fixedpt A) {
-	return (A >= 0) ? A : -A;
+	return (A < 0) ? -A : A;
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return A & (~FIXEDPT_FMASK);
+  return A & ~((1 << FIXEDPT_FBITS) - 1);
 }
 
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return ((A & FIXEDPT_FMASK) == 0) ? A : ((A & (~FIXEDPT_FMASK)) + FIXEDPT_ONE);
+  fixedpt fractional_mask = (1 << FIXEDPT_FBITS) - 1;
+  if (A & fractional_mask) {
+    return (A & ~fractional_mask) + FIXEDPT_ONE;
+  }
+  return A;
 }
+
 /*
  * Note: adding and substracting fixedpt numbers can be done by using
  * the regular integer operators + and -.

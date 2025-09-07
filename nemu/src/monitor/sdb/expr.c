@@ -1,100 +1,101 @@
+/***************************************************************************************
+* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+*
+* NEMU is licensed under Mulan PSL v2.
+* You can use this software according to the terms and conditions of the Mulan PSL v2.
+* You may obtain a copy of Mulan PSL v2 at:
+*          http://license.coscl.org.cn/MulanPSL2
+*
+* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+*
+* See the Mulan PSL v2 for more details.
+***************************************************************************************/
+//expr.c 解析表达式
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-#include <memory/vaddr.h>
 
-enum
-{
-  TK_NOTYPE = 256,
-  TK_EQ, //257
-  TK_AND, //258
-  TK_NOEQ,
-  TK_GE, //260
-  TK_LE,
-  TK_POINT, //262
-  TK_VARAY,
-  TK_NORMAL_NUM
+#include<string.h>
 
+// #include<stdio.h>
+//func declared by myself
+long eval(int p,int q);
+int get_main_op(int p,int q);
+bool check_parentheses(int p,int q);
+word_t warp_pmem_read(paddr_t addr);
+
+enum {
+  TK_NOTYPE = 256, TK_EQ,
+  TK_NUM,TK_HEX,TK_REG,TK_NOTEQ,TK_AND,TK_DEREFENCE
   /* TODO: Add more token types */
 
 };
 
-static struct rule
-{
+static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-    //非元字符可以不加转义符，元字符需要加转义符
-    /* TODO: Add more rules.
-     * Pay attention to the precedence level of different rules.
-     */
-    {"0[xX][0-9a-fA-F]+", TK_NORMAL_NUM},
-    {"[0-9]+", TK_NORMAL_NUM},
-    {"\\$[a-zA-Z_]+[a-zA-Z0-9_]*", TK_VARAY},
-    {"\\)", ')'},
-    {"\\(", '('},
-    {" +", TK_NOTYPE}, // spaces
-    {"\\+", '+'},      // plus
-    {"==", TK_EQ},     // equal
-    {"\\-", '-'},      // minus
-    {"\\/", '/'},      // slash
-    {"\\*", '*'},      // multiply or point,when make tokens ,we see all * as multiply
-    {"&&", TK_AND},    // and
-    {"!=", TK_NOEQ},
-    {">=", TK_GE}
 
+  /* TODO: Add more rules.
+   * Pay attention to the precedence level of different rules.
+   */
+  {"0x[0-9,a-f,A-F]+", TK_HEX}, // hex-TODO:怎么处理？
+  {"[0-9]+",TK_NUM},
+  {" +", TK_NOTYPE},    // spaces
+  {"\\$\\w+",TK_REG},     // reg-TODO:怎么处理？
+  {"\\(",'('},
+  {"\\)",')'},
+  {"\\+", '+'},         // +
+  {"-",'-'},
+  {"\\*",'*'},
+  {"/",'/'},
+  {"==", TK_EQ},        // ==
+  {"!=", TK_NOTEQ},     // !=
+  {"&&", TK_AND},       // &&
+  //指针解引用放在乘法一起处理
 };
 
 #define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
-int32_t evaluate_the_expression(int start, int end);
-bool check_parentheses(int a, int b);
-int find_the_main_character(int start, int end);
 
 /* Rules are used for many times.
  * Therefore we compile them only once before any usage.
  */
-void init_regex()
-{
+void init_regex() {
   int i;
   char error_msg[128];
   int ret;
-  for (i = 0; i < NR_REGEX; i++)
-  {
+
+  for (i = 0; i < NR_REGEX; i ++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
-    if (ret != 0)
-    {
+    if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
       panic("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
     }
   }
 }
 
-typedef struct token
-{
+typedef struct token {
   int type;
   char str[32];
 } Token;
+//__attribute__((used)) 是一个 GCC 编译器的扩展属性，表示这个变量即使在代码中没有显式使用，也不应被编译器优化掉。
+//tokens数组，存放处理好的Tokens
+static Token tokens[32] __attribute__((used)) = {};
+static int nr_token __attribute__((used))  = 0;
 
-static Token tokens[800000] __attribute__((used)) = {};
-static int nr_token __attribute__((used)) = 0;
-/***********
-// 参数说明：
-// e + position match the regular expression at position in the string e.
-// 1: the number of subexpressions to match.
-// position: the position in the string e to start matching.
-// pmatch: a pointer to an array of regmatch_t structures that will hold the results
-***********/
 static bool make_token(char *e)
 {
   int position = 0;
   int i;
   regmatch_t pmatch;
-  memset(&tokens, 0, 32 * sizeof(Token));
+
   nr_token = 0;
 
   while (e[position] != '\0')
@@ -102,265 +103,230 @@ static bool make_token(char *e)
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i++)
     {
-      // pmatch.rm_so to add full match
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0)
       {
         char *substr_start = e + position;
-        int substr_len = pmatch.rm_eo; // 匹配的结束偏移量
+        int substr_len = pmatch.rm_eo;
 
         // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
         //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
+        /* TODO: Now a new token is recognized with rules[i]. Add codes
+         * to record the token in the array `tokens'. For certain types
+         * of tokens, some extra actions should be performed.
+         */
+
         switch (rules[i].token_type)
         {
+        case TK_NUM:
+          if (substr_len >= 32) // 溢出！
+            assert(0);
+          tokens[nr_token].type = rules[i].token_type;
+          strncpy(tokens[nr_token].str, substr_start, substr_len);
+          (tokens[nr_token].str)[substr_len] = '\0';
+          nr_token++;
+          // printf("%s\n",tokens[nr_token-1].str);
+          break;
         case TK_NOTYPE:
           break;
-        default:
-        {
-          if (tokens[nr_token].type != TK_POINT)
-          {
-            tokens[nr_token].type = rules[i].token_type;
-          }
-          
-          if (tokens[nr_token].type == '*' && (nr_token == 0 ||
-                                               tokens[nr_token - 1].type == '+' ||
-                                               tokens[nr_token - 1].type == '-' ||
-                                               tokens[nr_token - 1].type == '*' ||
-                                               tokens[nr_token - 1].type == '/' ||
-                                               tokens[nr_token - 1].type == '(' ||
-                                               tokens[nr_token - 1].type == TK_EQ ||
-                                               tokens[nr_token - 1].type == TK_AND ||
-                                               tokens[nr_token - 1].type == TK_NOEQ))
-          {
-            tokens[nr_token].type = TK_POINT;
+        case TK_HEX:
+        if (substr_len >= 32) // 溢出！
+            assert(0);
+          tokens[nr_token].type = rules[i].token_type;
+          strncpy(tokens[nr_token].str, substr_start, substr_len);
+          (tokens[nr_token].str)[substr_len] = '\0';
+          nr_token++;
+            break;
+        case '*': // 单独处理乘法和解引用
+          if (tokens[nr_token - 1].type == TK_NUM || tokens[nr_token - 1].type == ')')
+          { // 当成乘法
+            tokens[nr_token++].type = '*';
           }
           else
           {
-            for (int num = 0; num < substr_len; num++)
-            {
-              tokens[nr_token].str[num] = substr_start[num];
-            }
-            tokens[nr_token].str[substr_len] = '\0';
-            // printf("nrtoken is %d\n and tokenstype is %d\n",nr_token,tokens[nr_token].type);
-            nr_token++;
+            tokens[nr_token++].type = TK_DEREFENCE;
           }
+          break;
+        case TK_REG:
+          tokens[nr_token].type = TK_REG;
+          strncpy(tokens[nr_token].str,substr_start,substr_len);
+          (tokens[nr_token].str)[substr_len] = '\0';
+          nr_token++;
+          break;
+        default:
+          tokens[nr_token++].type = rules[i].token_type;
         }
-        }
+
         break;
       }
     }
+
     if (i == NR_REGEX)
     {
       printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
       return false;
     }
   }
-  // for (i = 0; i < nr_token; i++)
-  // {
-  //   printf("token[%d] = %s, type = %d\n", i, tokens[i].str, tokens[i].type);
-  // }
+
   return true;
 }
 
-int32_t expr(char *e, bool *success)
-{
-  if (!make_token(e))
-  {
+//返回值word_t!
+
+word_t expr(char *e, bool *success) {
+  //TODO：要不要先检查括号是否匹配？
+  if (!make_token(e)) {
     *success = false;
     return 0;
   }
+
+  /* TODO: Insert codes to evaluate the expression. */
+  word_t result=eval(0,nr_token-1);
   *success = true;
-
-  int32_t temp = 0;
-  temp = evaluate_the_expression(0, nr_token - 1);
-  return temp;
+  return result;
 }
 
-int32_t evaluate_the_expression(int start, int end)
-{
-  if (start > end)
-  {
-    /* Bad expression */
-    printf("start = %d and end = %d\n", start, end);
-    panic("the expression tokens is wrong\n");
-  }
-  else if (start == end)
-  {
-    if (tokens[start].type == TK_NORMAL_NUM)
-    {
-      if (tokens[start].str[0] == '0' && (tokens[start].str[1] == 'x' || tokens[start].str[1] == 'X'))
-      {
 
-        return strtoul(tokens[start].str, NULL, 16);
-      }
-      else
-      {
-        // printf("value is %d\n",atoi(tokens[start].str));
-        return atol(tokens[start].str);
-      }
-    }
-    else if (tokens[start].type == TK_VARAY)
-    {
-      if (tokens[start].str[0] == '$')
-      {
-        bool reg_type;
-        int32_t temp_value = isa_reg_str2val((&tokens[start].str[1]), &reg_type);
-        if (reg_type == false)
-        {
-          printf("%s not reg!!! ", &tokens[start].str[1]);
+int get_main_op(int p,int q){
+  //逐个扫描(+ -)>(* /)
+  //遇到括号要处理
+  int pos=-1;
+  char stack[32];
+  int top=0;
+  int priority=-1;//运算符优先级,参考 https://en.cppreference.com/w/c/language/operator_precedence
+  while(p<=q){
+    switch(tokens[p].type){
+      case TK_DEREFENCE:
+        if(top==0&&priority<2){
+          pos=p;
+          priority=2;
         }
+      break;
+      case '+':
+      case '-':
+      if(top==0&&priority<=4){
+          pos=p;
+          priority=4;
+      }
+      break;
+      case '*':
+      case '/':
+        // if(top==0&&(pos==-1||!(tokens[pos].type=='+'||tokens[pos].type=='-'))){
+        if(top==0&&priority<=3){
+          pos=p;
+          priority=3;
+        }
+      break;
+      case TK_EQ:
+      case TK_NOTEQ:
+        if(top==0&&priority<7){
+          pos=p;
+          priority=7;
+        }
+      break;
+      case TK_AND:
+        if(top==0&&priority<11){
+          pos=p;
+          priority=11;
+        }
+      break;
+      case '(':
+        stack[top++]='(';
+      break;
+      case ')':
+        if(stack[top-1]=='(')
+          top--;
         else
-        {
-          printf("reg %s is %x  %d\n", &tokens[start].str[1], temp_value, temp_value);
-          return temp_value;
-        }
+          assert(0);//括号不匹配！
+      break;
+      // default:
+    }
+  p++;
+  }
+  return pos;
+}
+
+bool check_parentheses(int p,int q){
+  if(tokens[p].type=='('){
+  // char stack1[32]={};
+  int top=0;
+  while(p<q){
+    if(tokens[p].type=='('){
+      // stack1[top++]='(';
+      top++;
+    }
+    if(tokens[p].type==')'){
+      top--;
+    }
+    if(top==0)
+      return false;
+    p++;
+  }
+  return true;
+}
+return false;
+}
+
+long eval(int p,int q) {
+  if (p > q) {
+    /* Bad expression */
+    assert(0);
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+    if(tokens[p].type==TK_REG){
+      bool success=false;
+      word_t result=isa_reg_str2val(tokens[p].str,&success);
+      if(success){
+        return result;
+      }else{
+        assert(0);
       }
     }
-    else if (tokens[start].type == TK_POINT)
-    {
-      int32_t temp_t = strtoul(tokens[start].str, NULL, 16);
-      return vaddr_read(temp_t, 1);
+    if(tokens[p].type==TK_HEX){
+      long val;
+      sscanf(tokens[p].str,"%lx",&val);
+      return val;
     }
-  }
-  else if (check_parentheses(start, end) == true)
-  {
-    // printf("start = %d and end = %d\n",start,end);
-    return evaluate_the_expression(start + 1, end - 1);
-  }
-  else
-  {
-    int op = find_the_main_character(start, end);
-    // printf("start = %d and end = %d\n",start,end);printf("main is %d\n",op);
-    int32_t a = evaluate_the_expression(start, op - 1);
-    int32_t b = evaluate_the_expression(op + 1, end);
-    // printf("start = %d and end = %d\n",start,end);
-    // printf("a = %d && b = %d && type = %d\n",a,b,tokens[op].type);
-    switch (tokens[op].type)
-    {
-    case '+':
-      return a + b;
-    case '-':
-      return a - b;
-    case '*':
-      return a * b;
-    case '/':
-    {
-      if (b == 0)
-      {
-        panic("cannot evaluate expression,the denominator is zero \n");
-      }
-      return a / b;
-    };
-    break;
-    case TK_EQ:
-      return a == b;
-    case TK_AND:
-      return a && b;
-    case TK_NOEQ:
-      return a != b;
-    default:
-      printf("wrong char here %d\n", tokens[op].type);
+    if(tokens[p].type!=TK_NUM)
       assert(0);
-    }
+    long val;
+    // char* str;
+    //TODO:溢出怎么办？
+    sscanf(tokens[p].str,"%lu",&val);
+    return val;
   }
-  return 0;
-}
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    //先计算主运算符
+    int op=get_main_op(p,q);
+    int op_type = tokens[op].type;
+    long val1 =0;
+    if(op_type!=TK_DEREFENCE)
+      val1= eval(p, op - 1);
+    long val2 = eval(op + 1, q);
 
-bool check_parentheses(int a, int b)
-{
-  int i = a;
-  int kuohao_num = 0;
-  if (tokens[a].type == '(')
-  {
-    for (; i <= b; i++)
-    {
-      if (tokens[i].type == '(')
-      {
-        kuohao_num++;
-      }
-      else if (tokens[i].type == ')')
-      {
-        kuohao_num--;
-      }
-      // printf("kuohaonum = %d\n",kuohao_num);
-      if (kuohao_num == 0 && i != b)
-      {
-        return false;
-      }
+    switch (op_type) {
+      case '+': return val1 + val2;
+      case '-': return val1-val2;
+      case '*': return val1*val2;
+      case '/': return val1/val2;
+      case TK_EQ :return val1==val2;
+      case TK_NOTEQ :return val1!=val2;
+      case TK_AND: return val1&&val2;
+      case TK_DEREFENCE: return warp_pmem_read(val2);//TODO!-读出一个整数
+      // case 
+      default: assert(0);
     }
-    return true;
   }
-  return false;
-}
-
-int find_the_main_character(int start, int end)
-{
-  int value = start;
-  int temp_type = tokens[start].type; // may be num,so be careful
-  int i = start;
-  int kuohao_num = 0;
-  //  printf("value = %d ,end = %d\n",value ,end);
-  //   for(int h = start; h <= end; h++) {
-  //     printf("%d\n",tokens[h].type);
-  //   }
-  for (i = start; i <= end; i++)
-  {
-    if (tokens[i].type == '(')
-    {
-      kuohao_num++;
-    }
-    else if (tokens[i].type == ')')
-    {
-      kuohao_num--;
-    }
-    // printf("kuohao_num = %d i =%d value = %d\n",kuohao_num,i,value);
-    if (tokens[i].type != TK_NORMAL_NUM && tokens[i].type != TK_POINT)
-    {
-      if (kuohao_num != 0)
-      {
-        value = value;
-      }
-      else if (tokens[i].type == TK_AND)
-      {
-        temp_type = tokens[i].type;
-        value = i;
-      }
-      else if (temp_type == TK_AND)
-      {
-        value = value;
-      }
-      else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NOEQ)
-      {
-        temp_type = tokens[i].type;
-        value = i;
-      }
-      else if (temp_type == TK_EQ || temp_type == TK_NOEQ)
-      {
-        value = value;
-      }
-      else if (tokens[i].type == '+' || tokens[i].type == '-')
-      {
-        temp_type = tokens[i].type;
-        value = i;
-      }
-      else if (temp_type == '+' || temp_type == '-')
-      {
-        value = value;
-      }
-      else if (tokens[i].type == '*' || tokens[i].type == '/')
-      {
-        temp_type = tokens[i].type;
-        value = i;
-      }
-    }
-    // printf("i = %d and value =%d\n",i,value);//printf("i = %d, type = %d value =%d kuohao_num = %d\n",i,temp_type,value,kuohao_num);
-  }
-  if (kuohao_num != 0)
-  {
-    return -1;
-  }
-  // printf("start = %dand end =%d and value = %d\n", start, end, value);
-  return value;
 }

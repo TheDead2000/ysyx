@@ -1,161 +1,86 @@
+#include "fcntl.h"
+#include "sdl-event.h"
+#include "unistd.h"
 #include <NDL.h>
 #include <SDL.h>
-#include <assert.h>
 #include <string.h>
 
-#define keyname(k) #k,
+// #define keynames(k) #k,
+static uint8_t keystate[255]={};
 
-static const char *keyname[] = {
-  "NONE",
-  _KEYS(keyname)
-};
-#define KEANAME_COUNT (sizeof(keyname) / sizeof(keyname[0]))
-
-static uint8_t keyStates[KEANAME_COUNT] = { 0 };
-
-
-/* ring buffer for outgoing SDL_Events */
-#define EVENT_QUEUE_SIZE 128
-static SDL_Event  eventQueue[EVENT_QUEUE_SIZE];
-static int queueHead = 0;
-static int queueTail = 0;
-
-/* enqueue, dropping oldest if full */
-static void enqueueEvent(const SDL_Event *ev) 
-{
-  const int next = (queueTail + 1) % EVENT_QUEUE_SIZE;
-  if (next == queueHead) 
-  {
-      /* buffer full → overwrite oldest */
-      queueHead = (queueHead + 1) % EVENT_QUEUE_SIZE;
-  }
-
-  eventQueue[queueTail] = *ev;
-  queueTail = next;
+int SDL_PushEvent(SDL_Event *ev) {
+  return 0;
 }
 
-/* dequeue one, return 1 if success */
-static int dequeueEvent(SDL_Event *ev) 
-{
-  if (queueHead == queueTail) 
-  {
-    // Empty
-    return 0;
-  }
-
-  *ev = eventQueue[queueHead];
-  queueHead = (queueHead + 1) % EVENT_QUEUE_SIZE;
-  return 1;
-}
-
-
-// Helper: find the index of 'name' in keyname[], or -1 if not found
-static int lookupKeycode(const char *name) 
-{
-  for (int i = 0; i < KEANAME_COUNT; i++) 
-  {
-      if (strcmp(name, keyname[i]) == 0) 
-      {
-          return i;
-      }
-  }
-
-  return -1;
-}
-
-/* centralized: read every raw NDL event, update keyStates, enqueue */
-static void pumpKeyboardEvents(void) 
-{
-  char buf[64];
-
-  while (true) 
-  {
-      const int n = NDL_PollEvent(buf, sizeof(buf));
-      if (n <= 0) 
-      {
-        // No event.
+int SDL_PollEvent(SDL_Event *ev) {
+  char buffer[100];
+  ev->key.keysym.sym = SDLK_NONE;
+  ev->type = SDL_USEREVENT;
+  int fd = open("/dev/events", O_RDONLY);
+  if (read(fd, buffer, 100)) {
+    if (strncmp(buffer, "kd", 2)) {
+      ev->type = SDL_KEYDOWN;
+    }
+    if (strncmp(buffer, "ku", 2)) {
+      ev->type = SDL_KEYUP;
+    }
+    for (int i = 0; i < 256; i++) {
+      if (keyname[i] && strcmp(buffer + 3, keyname[i]) == 0) {
+        ev->key.keysym.sym = i;
+        if (ev->type == SDL_KEYDOWN) {
+          keystate[i] = 1;
+        } else {
+          keystate[i] = 0;
+        }
         break;
       }
-
-      buf[(n < (int)sizeof(buf) ? n : sizeof(buf)-1)] = '\0';
-
-      char prefix[3], name[32];
-      if (sscanf(buf, "%2s %31s", prefix, name) != 2) 
-      {
-        // malformed  
-        continue;
-      }
-
-      int kc = lookupKeycode(name);
-      if (kc < 0) 
-      {
-        // unknown key
-        continue;
-      }
-
-      SDL_Event ev = {0};
-      if (strcmp(prefix, "kd") == 0) 
-      {
-          ev.type = SDL_KEYDOWN;
-          // Set keystate in here.
-          keyStates[kc] = 1;
-      }
-      else if (strcmp(prefix, "ku") == 0) 
-      {
-          ev.type = SDL_KEYUP;
-          keyStates[kc] = 0;
-      }
-      else 
-      {
-        SDL_PrintErr("Should not reach here.\n");
-      }
-
-      ev.key.keysym.sym = kc;
-      enqueueEvent(&ev);
+    }
+    return 1;
   }
-}
-
-int SDL_PushEvent(SDL_Event *ev) 
-{
-  TODO("SDL_PushEvent");
   return 0;
 }
 
-void SDL_PumpEvents(void) 
-{
-  pumpKeyboardEvents();
+int SDL_WaitEvent(SDL_Event *event) {
+  // return 1;
+  char buffer[100];
+  event->key.keysym.sym = SDLK_NONE;
+  event->type = SDL_USEREVENT;
+  while (1) {
+    int fd = open("/dev/events", O_RDONLY);
+    if (read(fd, buffer, 100)) {
+      if (strncmp(buffer, "kd", 2)) {
+        event->type = SDL_KEYDOWN;
+      }
+      if (strncmp(buffer, "ku", 2)) {
+        event->type = SDL_KEYUP;
+      }
+      for (int i = 0; i < 256; i++) {
+        if (keyname[i] &&strcmp(buffer + 3, keyname[i]) == 0) {
+          event->key.keysym.sym = i;
+          if (event->type == SDL_KEYDOWN) {
+            keystate[i] = 1;
+          } else {
+            keystate[i]=0;
+          }
+          break;
+        }
+      }
+      return 1;
+      // event->key.keysym.sym = SDLK_J;
+    }
+    return 1;
+  }
 }
 
-// One thing need to notice:
-// 
-int SDL_PollEvent(SDL_Event *ev) 
-{
-  SDL_PumpEvents();
-  return dequeueEvent(ev);
-}
-
-int SDL_WaitEvent(SDL_Event *event) 
-{
-  while (!SDL_PollEvent(event)) { /* busy-wait */ }
-  return 1;
-}
-
-int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) 
-{
-  TODO("SDL_PeepEvents");
+int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
   return 0;
 }
 
-uint8_t* SDL_GetKeyState(int *numkeys) 
-{
-  pumpKeyboardEvents();
-
-  // Return size of our array
-  if (numkeys) 
-  {
-    *numkeys = KEANAME_COUNT;
-  }
-
-  // Caller must NOT free this pointer.
-  return keyStates;
+uint8_t *SDL_GetKeyState(int *numkeys) {
+  SDL_Event sdle;
+  // while (SDL_PollEvent(&sdle));
+  if (numkeys) {
+      *numkeys = 255;
+    }
+  return keystate;
 }
