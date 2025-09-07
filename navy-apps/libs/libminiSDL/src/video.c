@@ -1,290 +1,101 @@
 #include <NDL.h>
 #include <sdl-video.h>
 #include <assert.h>
+#include <stdint.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
-// Performs a fast blit from the source surface to the destination surface.
-// 
-// Copy from https://wiki.libsdl.org/SDL2/SDL_BlitSurface
-// 
-// This assumes that the source and destination rectangles are the same size. 
-// If either srcrect or dstrect are NULL, the entire surface 
-// (src or dst) is copied. The final blit rectangle is saved in 
-// dstrect after all clipping is performed.
-void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, 
-                     SDL_Surface *dst, SDL_Rect *dstrect) 
-{
-    assert(src && dst);
-    assert(src->format->BitsPerPixel == dst->format->BitsPerPixel);
-
-    /* 1) Initialize the src/dst coords and size */
-    int src_x = srcrect ? srcrect->x : 0;
-    int src_y = srcrect ? srcrect->y : 0;
-    int w     = srcrect ? srcrect->w : src->w;
-    int h     = srcrect ? srcrect->h : src->h;
-
-    int dst_x = dstrect ? dstrect->x : 0;
-    int dst_y = dstrect ? dstrect->y : 0;
-
-    /* 2) Clip against the source surface bounds */
-    if (src_x < 0) 
-    {
-        /* shift right */
-        w     += src_x;      /* src_x is negative */
-        dst_x -= src_x;      /* move dst origin right by same amount */
-        src_x  = 0;
-    }
-
-    if (src_y < 0) 
-    {
-        h     += src_y;
-        dst_y -= src_y;
-        src_y  = 0;
-    }
-
-    if (src_x + w > src->w) 
-    {
-        w = src->w - src_x;
-    }
-
-    if (src_y + h > src->h) 
-    {
-        h = src->h - src_y;
-    }
-
-    /* 3) Clip against the destination surface bounds */
-    if (dst_x < 0) 
-    {
-        /* source must shift right now */
-        w     += dst_x;      /* dst_x is negative */
-        src_x -= dst_x;
-        dst_x  = 0;
-    }
-
-    if (dst_y < 0) 
-    {
-        h     += dst_y;
-        src_y -= dst_y;
-        dst_y  = 0;
-    }
-
-    if (dst_x + w > dst->w) 
-    {
-        w = dst->w - dst_x;
-    }
-
-    if (dst_y + h > dst->h) 
-    {
-        h = dst->h - dst_y;
-    }
-
-    /* 4) If nothing to blit, set dstrect to empty and return */
-    if (w <= 0 || h <= 0) 
-    {
-        if (dstrect) 
-        {
-            dstrect->x = dst_x;
-            dstrect->y = dst_y;
-            dstrect->w = 0;
-            dstrect->h = 0;
-        }
-
-        return;
-    }
-
-    /* 5) Write back the final blit rectangle */
-    if (dstrect) 
-    {
-        dstrect->x = dst_x;
-        dstrect->y = dst_y;
-        dstrect->w = w;
-        dstrect->h = h;
-    }
-
-    /* 6) The actual memcpy loop */
-    const uint8_t  bpp    = src->format->BytesPerPixel;
-    const uint16_t pitchS = src->pitch;
-    const uint16_t pitchD = dst->pitch;
-    uint8_t       *pixelsS = (uint8_t *)src->pixels;
-    uint8_t       *pixelsD = (uint8_t *)dst->pixels;
-
-    for (int row = 0; row < h; row++) 
-    {
-        uint8_t *rowS = pixelsS + (src_y + row) * pitchS + src_x * bpp;
-        uint8_t *rowD = pixelsD + (dst_y + row) * pitchD + dst_x * bpp;
-        memcpy(rowD, rowS, w * bpp);
-    }
+// sdl-srcect->rectangle to be copied,NULL to be entire;
+// sdl->dstrect get x and y
+void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
+  assert(dst && src);
+  assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  SDL_Rect src_area = srcrect ? *srcrect : (SDL_Rect){0, 0, src->w, src->h};
+  SDL_Rect dst_area = dstrect ? *dstrect : (SDL_Rect){0, 0, src_area.w, src_area.h};
+  // need clip?
+  assert(dst_area.x >= 0 && dst_area.y >= 0);
+  assert(dst_area.x+dst_area.w<=dst->w&&dst_area.y+dst_area.h<=dst->h);
+  int bpp = src->format->BytesPerPixel;
+  for (int y = 0; y < src_area.h; y++) {
+    // calc the source and destination row pointers
+    uint8_t *src_row = (uint8_t *)src->pixels + ((src_area.y + y) * src->w + src_area.x)*bpp ;
+    uint8_t *dst_row = (uint8_t *)dst->pixels + ((dst_area.y + y) * dst->w + dst_area.x)*bpp ;
+    memcpy(dst_row, src_row, src_area.w * bpp);
+  }
 }
 
-// Perform a fast fill of a rectangle with a specific color.
-// dst: The SDL_Surface structure that is the drawing target.
-// dstrect: The SDL_Rect structure representing the rectangle to fill, or NULL to fill the entire surface.
-// color:	The color to fill with.
-void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
-{
-    // 1) sanity check
-    assert(dst);
-    assert(dst->pixels);
-
-    // 2) figure out the rectangle to fill (or whole surface)
-    SDL_Rect fill = dstrect
-      ? *dstrect
-      : (SDL_Rect){ .x = 0, .y = 0, .w = (uint16_t)dst->w, .h = (uint16_t)dst->h };
-
-    // 3) clip to [0..w) × [0..h)
-    if (fill.x < 0) 
-    {
-        fill.w += fill.x;
-        fill.x = 0;
-    }
-
-    if (fill.y < 0) 
-    {
-        fill.h += fill.y;
-        fill.y = 0;
-    }
-
-    // Clip again.
-    if (fill.x + fill.w > dst->w) 
-    {
-        fill.w = dst->w - fill.x;
-    }
-
-    if (fill.y + fill.h > dst->h) 
-    {
-        fill.h = dst->h - fill.y;
-    }
-
-    // nothing to do?
-    if (fill.w <= 0 || fill.h <= 0) 
-    {
-        return;
-    }
-
-    // 4) get format info
-    const int bpp = dst->format->BytesPerPixel;
-    
-    // Bytes per row, including any padding.
-    const int pitch = dst->pitch;     
-    uint8_t *pixels = dst->pixels;
-
-    // 5) fill each row
-    for (int row = 0; row < fill.h; row++) 
-    {
-        // pointer to the first byte of this scanline
-        uint8_t *rowp = pixels
-                      + (fill.y + row) * pitch
-                      +  fill.x * bpp;
-
-        for (int col = 0; col < fill.w; col++) 
-        {
-            uint8_t *pixelp = rowp + col * bpp;
-
-            switch (bpp) {
-                case 1: {
-                    // 8-bit surface
-                    pixelp[0] = (uint8_t)(color & 0xFF);
-                    break;
-                }
-
-                case 2: {
-                    // 16-bit surface
-                    *(uint16_t *)pixelp = (uint16_t)color;
-                    break;
-                }
-
-                case 3: {
-                  // 24-bit surface, copy the lowest 3 bytes of color
-                  memcpy(pixelp, &color, 3);
-                  break;
-                }
-                    
-                case 4: {
-                  // 32-bit surface
-                  *(uint32_t *)pixelp = color;
-                  break;
-                }
-
-                default: {
-                    // Unsupported bpp.
-                    assert(0);
-                    break;
-                }
-            }
-        }
-    }
-}
-
-void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  assert(s);
-
-  // If w or h is zero, update the entire surface
-  if (w == 0 || h == 0) 
-  {
-      x = 0; 
-      y = 0;
-      w = s->w; 
-      h = s->h;
-  }
-
-  if (s->format->BitsPerPixel == 32) 
-  {
-      // 32-bit path, direct draw.
-      uint32_t *pixels = (uint32_t *)s->pixels + y * s->w + x;
-      NDL_DrawRect(pixels, x, y, w, h);
-  }
-  // For The Legend of Sword and Fairy.
-  else if (s->format->BitsPerPixel == 8) 
-  {
-      // 8-bit palette path
-      const int pitch = s->pitch;
-      uint8_t *src = (uint8_t *)s->pixels + y * pitch + x;
-      uint32_t *buf = malloc(sizeof(uint32_t) * w * h);
-      assert(buf);
-
-      // The actual ARGB color array.
-      SDL_Color *palette = s->format->palette->colors;
-      for (int row = 0; row < h; ++row) 
-      {
-          uint8_t *rowp = src + row * pitch;
-          uint32_t *dstp = buf + row * w;
-          for (int col = 0; col < w; ++col) 
-          {
-              const uint8_t idx = rowp[col];
-              SDL_Color c = palette[idx];
-              // Pack into 0xAARRGGBB.
-              dstp[col] = (c.a << 24) | (c.r << 16) | (c.g << 8) | c.b;
-          }
+void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  SDL_Rect rect = dstrect ? *dstrect : (SDL_Rect){0, 0, dst->w, dst->h};
+  uint8_t *pixels = (uint8_t *)dst->pixels;
+  int bpp = dst->format->BytesPerPixel;
+  for (int y = 0; y < rect.h; y++)
+    for (int x = 0; x < rect.w; x++) {
+      // Calculate the position in the pixel array
+      uint8_t *p = pixels + ((rect.y + y) * dst->pitch) + ((rect.x + x) * bpp);
+      // *(uint32_t *)p = color;
+      // TODO:Necessary?
+      // assert(bpp==4);
+      // // Set the pixel color
+      switch (bpp) {
+      case 1:
+        *p = color;
+        break;
+      case 2:
+        *(uint16_t *)p = color;
+        break;
+      case 3:
+        p[0] = (color >> 16) & 0xff;
+        p[1] = (color >> 8) & 0xff;
+        p[2] = color & 0xff;
+        break;
+      case 4:
+        *(uint32_t *)p = color;
+        break;
       }
-
-      // Draw it.
-      NDL_DrawRect(buf, x, y, w, h);
-
-      // Don't forget to free the buffer.
-      // Maybe cache the buffer???
-      free(buf);
-  }
-  else 
-  {
-      // Unsupported format
-      assert(0);
+    }
+}
+void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+  // TODO??
+  if (s->format->BytesPerPixel == 1) {
+    int totalPixels = s->w * s->h;
+    uint32_t *pixels = malloc(totalPixels * sizeof(uint32_t));
+    uint8_t *pixels8 = (uint8_t *)s->pixels;
+    SDL_Color *colors = s->format->palette->colors;
+    for (int i = 0; i < totalPixels; ++i) {
+      uint8_t index = pixels8[i];
+      SDL_Color color = colors[index];
+      pixels[i] = (255 << 24) | (color.r << 16) | (color.g << 8) | color.b;
+    }
+    if (x == 0 && y == 0 && w == 0 && h == 0)
+      NDL_DrawRect(pixels, 0, 0, s->w, s->h);
+    else
+      NDL_DrawRect(pixels, x, y, w, h);
+    free(pixels);
+  } else {
+    // printf("UPDATE:%d,%d,%d,%d----%d,%d,%d\n",x,y,w,h,s->w,s->h,s->format->BytesPerPixel);
+    if (x == 0 && y == 0 && w == 0 && h == 0)
+      NDL_DrawRect(s->pixels, 0, 0, s->w, s->h);
+    else
+      NDL_DrawRect(s->pixels, x, y, w, h);
   }
 }
-
-
 
 // APIs below are already implemented.
 
 static inline int maskToShift(uint32_t mask) {
   switch (mask) {
-    case 0x000000ff: return 0;
-    case 0x0000ff00: return 8;
-    case 0x00ff0000: return 16;
-    case 0xff000000: return 24;
-    case 0x00000000: return 24; // hack
-    default: assert(0);
+  case 0x000000ff:
+    return 0;
+  case 0x0000ff00:
+    return 8;
+  case 0x00ff0000:
+    return 16;
+  case 0xff000000:
+    return 24;
+  case 0x00000000:
+    return 24; // hack
+  default:
+    assert(0);
   }
 }
 
@@ -399,7 +210,6 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, int firstcolor
       uint8_t g = colors[i].g;
       uint8_t b = colors[i].b;
     }
-
     SDL_UpdateRect(s, 0, 0, 0, 0);
   }
 }

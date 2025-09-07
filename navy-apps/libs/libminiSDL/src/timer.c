@@ -1,35 +1,24 @@
 #include <NDL.h>
 #include <sdl-timer.h>
+#include <stdint.h>
 #include <stdio.h>
-#include <assert.h>
 
-SDL_TimerID SDL_AddTimer(uint32_t interval, SDL_NewTimerCallback callback, void *param) 
-{
-  assert(0);
+uint32_t sdl_init_time=0;
 
+SDL_TimerID SDL_AddTimer(uint32_t interval, SDL_NewTimerCallback callback, void *param) {
   return NULL;
 }
 
-int SDL_RemoveTimer(SDL_TimerID id) 
-{
-  assert(0);
-
+int SDL_RemoveTimer(SDL_TimerID id) {
   return 1;
 }
 
-uint32_t SDL_GetTicks() 
-{
-  return NDL_GetTicks();
+//Returns an unsigned 32-bit value representing the number of milliseconds since the SDL library initialized.
+uint32_t SDL_GetTicks() {
+  return NDL_GetTicks()-sdl_init_time;
 }
 
-void SDL_Delay(uint32_t ms) 
-{
-  // Record starting tick.
-  const uint32_t start = SDL_GetTicks();
-
-  // Loop until the requested delay has elapsed
-  while ((SDL_GetTicks() - start) < ms) 
-  {
-      // nothing; just spin
-  }
+void SDL_Delay(uint32_t ms) {
+  uint32_t now_time = NDL_GetTicks();
+  while(now_time-NDL_GetTicks()<=0);
 }

@@ -1,8 +1,9 @@
 #include <NDL.h>
-#include <assert.h>
 
-int SDL_Init(uint32_t flags) 
-{
+extern uint32_t sdl_init_time;
+
+int SDL_Init(uint32_t flags) {
+  sdl_init_time=NDL_GetTicks();
   return NDL_Init(flags);
 }
 
@@ -14,17 +15,13 @@ char *SDL_GetError() {
   return "Navy does not support SDL_GetError()";
 }
 
-int SDL_SetError(const char* fmt, ...) 
-{
+int SDL_SetError(const char* fmt, ...) {
   return -1;
 }
 
-int SDL_ShowCursor(int toggle) 
-{
+int SDL_ShowCursor(int toggle) {
   return 0;
 }
 
-void SDL_WM_SetCaption(const char *title, const char *icon) 
-{
-  // Do nothing.
+void SDL_WM_SetCaption(const char *title, const char *icon) {
 }
