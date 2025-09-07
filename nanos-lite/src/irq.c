@@ -1,39 +1,20 @@
-#include "am.h"
 #include <common.h>
+#include <proc.h>
 
-char *syscall_names[] = {
-    "EVENT_NULL",  "EVENT_YIELD",     "EVENT_SYSCALL",   "EVENT_PAGEFAULT",
-    "EVENT_ERROR", "EVENT_IRQ_TIMER", "EVENT_IRQ_IODEV"
-};
 
-void do_syscall(Context *c);
-Context* schedule(Context *prev);
-void trace_event(Event e) {
-  Log("Event Type: %s Cause: %x Reference: %x Message: %s",syscall_names[e.event] , e.cause,
-      e.ref, e.msg ? e.msg : "NULL");
-}
+extern void do_syscall(Context* c);
 
-static Context *do_event(Event e, Context *c) {
-  // IFDEF(STRACE_ENABLE, trace_event(e););
-#ifdef STRACE_ENABLE
-  trace_event(e);
-#endif
+static Context* do_event(Event e, Context* c) {
   switch (e.event) {
   case EVENT_YIELD:
-    // printf("YIELD!\n");
-    c = schedule(c);
+    return schedule(c);
     break;
   case EVENT_SYSCALL:
-    // printf("syscall!");
+    // printf("do_event:EVENT_SYSCALL\n");
     do_syscall(c);
     break;
-  case EVENT_IRQ_TIMER:
-    // printf("IRQ_TIMER_EVENT!\n");
-    c = schedule(c);
-    break;
-    default: panic("Unhandled event ID = %d", e.event);
+  default: panic("Unhandled event ID = %d", e.event);
   }
-
   return c;
 }
 

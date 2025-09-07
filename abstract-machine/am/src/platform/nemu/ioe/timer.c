@@ -1,22 +1,13 @@
 #include <am.h>
 #include <nemu.h>
-// #include <sys/time.h>
-// #include <time.h>
-
-// struct timeval start, now;
-// time_t currentTime;
 
 void __am_timer_init() {
-  // gettimeofday(&start, NULL);
-  // time(&currentTime);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  // uptime->us += 100;
-  // gettimeofday(&now, NULL);
-  // uptime->us=now.tv_usec - start.tv_usec;
-  uptime->us=((uint64_t)inl(RTC_ADDR+4))<<32;
-  uptime->us+=inl(RTC_ADDR);
+  uint32_t h = inl(RTC_ADDR + 4);
+  uint32_t l = inl(RTC_ADDR);
+  uptime->us = (uint64_t)l + ((uint64_t)h << 32);
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {

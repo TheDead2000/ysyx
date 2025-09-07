@@ -1,70 +1,53 @@
 #include <am.h>
-#include <klib.h>
 #include <riscv/riscv.h>
+#include <klib.h>
 
-// func in vme.c ,切换地址空间描述符指针
-// TODO:为什么不直接在Context切换中切换?
-void __am_get_cur_as(Context *c);
-void __am_switch(Context *c);
+// /*为了代码提示*/
+// #include "riscv64-nemu.h"
+// typedef struct Context Context;
 
-#define IRQ_TIMER 0x80000007 // for riscv32 TODO:WHY?
+static Context* (*user_handler)(Event, Context*) = NULL;
 
-static Context *(*user_handler)(Event, Context *) = NULL;
-// AM的Wrapper-Func,根据mcause 选择event
-Context *__am_irq_handle(Context *c) {
-  __am_get_cur_as(c);
+Context* __am_irq_handle(Context* c) {
+  //printf("__am_irq_handle code:%d\n", c->mcause);
   if (user_handler) {
-    Event ev = {0};
+    Event ev = { 0 };
     switch (c->mcause) {
-      // default: ; ev.event = EVENT_YIELD; break;
-      // TODO:: case 0x0: EVENT_SYSCALL
-    case 0xb:
-    case 0x8:
+      // case  11: ev.event = EVENT_SYSCALL;c->mepc += 4; break; // yield
+    case 11:
+      if (c->GPR1 == -1) {
+        ev.event = EVENT_YIELD;
+      }
+      else {
+        ev.event = EVENT_SYSCALL;
+      }
       c->mepc += 4;
-#ifdef __riscv_e
-      ev.event = c->gpr[15] == -1 ? EVENT_YIELD : EVENT_SYSCALL;
-#else
-      ev.event = c->gpr[17] == -1 ? EVENT_YIELD : EVENT_SYSCALL;
-#endif
       break;
-    case IRQ_TIMER:
-      // c->mepc += 4;
-      ev.event = EVENT_IRQ_TIMER;
-      break;
-    default:
-      ev.event = EVENT_ERROR;
-      break;
+
+    default: ev.event = EVENT_ERROR; break;
     }
 
+    // for (size_t i = 0; i < 32; i++) {
+    //   printf("%d: %x\n", i, c->gpr[i]);
+    // }
     c = user_handler(ev, c);
     assert(c != NULL);
   }
-  __am_switch(c);
+
   return c;
 }
 
 extern void __am_asm_trap(void);
-
-bool cte_init(Context *(*handler)(Event, Context *)) {
+/**
+ * @brief 设置异常入口函数地址,在本项目中采用的是 direct 模式
+ *
+ * @param handler 函数指针
+ * @return true
+ * @return false
+ */
+bool cte_init(Context* (*handler)(Event, Context*)) {
   // initialize exception entry
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));
-  // 这里是将变量__am_asm_trap的值写入RISC-V处理器的mtvec寄存器. "r"表示使用一个通用寄存器
-  // mtvec(Machine Trap
-  // Vector)寄存器用于存储陷阱向量的基地址，当处理器发生异常或中断时，会跳转到这个地址去执行相应的处理程序。
-
-  // 在Trap.S中，会跳转到__am_irq_handle
-
-  // enable interrupt
-  // uint32_t mie = 0x8;
-  // asm volatile(
-  //     "csrr t0, mstatus  \n\t"  // 从 mtvec 读取值到 t0
-  //     "or t0,t0, %0      \n\t"  // 对 t0 和输入操作数进行按位与操作
-  //     "csrw mstatus, t0 \n\t" // 将 t0 的值写入 mstatus
-  //     : 
-  //     : "r" (mie)             // 输入操作数
-  //     : "t0"                  // 破坏描述符，表示 t0 寄存器被修改
-  // );
-
 
   // register event handler
   user_handler = handler;
@@ -72,25 +55,35 @@ bool cte_init(Context *(*handler)(Event, Context *)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  // store data and args as Context Struct on top of the stack
-  Context *top = (Context *)(((void *)kstack.end) - sizeof(Context));
-  top->gpr[10] = (uint32_t)arg;
-  top->mepc = (uintptr_t)entry;
-  top->mstatus = 0x1800;
-  top->mcause = 0xb;
-  return top;
-  // return NULL;
-}
+Context* kcontext(Area kstack, void (*entry)(void*), void* arg) {
 
+  printf("kstack.end:%p,kstack.start:%p,size:%d\n", kstack.end, kstack.start, kstack.end - kstack.start);
+  Context* p = (Context*)(kstack.end - sizeof(Context));
+  memset(p, 0, sizeof(Context));
+
+  printf("Context size:%d\n", (kstack.end - (void*)p));
+  assert((kstack.end - (void*)p) == sizeof(Context));
+
+  printf("entry:%p\n", entry);
+  p->mepc = (uintptr_t)entry;   // mret 后，进入 entry
+  p->gpr[10] = (uintptr_t)arg; // a0 传惨,暂定为一个字符串
+
+
+  p->mstatus = 0x1800; // for difftest
+
+  return p;
+}
+/**
+ * @brief 自陷指令,通过 $a7 寄存器来传递系统调用编号
+ *
+ */
 void yield() {
-#ifdef __riscv_e
-  asm volatile("li a5, -1; ecall");
-#else
   asm volatile("li a7, -1; ecall");
-#endif
 }
 
-bool ienabled() { return false; }
+bool ienabled() {
+  return false;
+}
 
-void iset(bool enable) {}
+void iset(bool enable) {
+}

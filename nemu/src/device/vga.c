@@ -46,7 +46,6 @@ static void init_screen() {
   char title[128];
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
   SDL_CreateWindowAndRenderer(
       SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       SCREEN_H * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
@@ -75,10 +74,10 @@ static inline void update_screen() {
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
-  if(vgactl_port_base[1]){
-  update_screen();
-  vgactl_port_base[1] = 0;
-  // io_write(AM_GPU_FBDRAW 0, 0, vmem, screen_width(), screen_height(), false);
+    uint32_t sync = vgactl_port_base[1];
+  if (sync) {
+    update_screen();
+    vgactl_port_base[1] = 0;
   }
 }
 

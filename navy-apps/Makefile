@@ -5,10 +5,7 @@ html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
-VME=1
-
 ## 1. Basic Setup and Checks
-CFLAGS +=-I${AM_HOME}/include #不想修改，直接创建了一个空文件，参见https://ysyx.oscc.cc/docs/ics-pa/2.2.html#%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AAc%E7%A8%8B%E5%BA%8F
 
 ### Default to build an application
 ifeq ($(MAKECMDGOALS),)
@@ -52,7 +49,6 @@ ARCHIVE  = $(WORK_DIR)/build/$(NAME)-$(ISA).a
 ifneq ($(ISA), native)
 LIBS += libc libos libndl
 CFLAGS += -U_FORTIFY_SOURCE  # fix compile error in Newlib on ubuntu
-CFLAGS += -save-temps #fordebug
 else
 WL = -Wl,
 endif
@@ -170,8 +166,10 @@ $(CLEAN_ALL):
 .PHONY: clean-all $(CLEAN_ALL)
 
 ### Build fsimg and ramdisk for Nanos-lite
-APPS = pal nterm menu bird 
-TESTS = dummy time-test hello file-test
+# APPS = nslider menu nterm bird pal
+APPS = menu nterm bird pal nslider
+# APPS =  menu bird pal nterm nslider
+# TESTS = hello bmp-test
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
 	-for t in $^; do $(MAKE) -s -C $(NAVY_HOME)/$$t install; done

@@ -12,17 +12,14 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-//sdb.c-主要处理与用户的交互
+
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <utils.h>
 #include "sdb.h"
-#include <memory/host.h>
-word_t expr(char *e, bool *success);
-word_t warp_pmem_read(paddr_t addr) ;
-void print_iringbuf();
+#include "../../nemu/include/memory/vaddr.h"
 
 static int is_batch_mode = false;
 
@@ -54,167 +51,132 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-  nemu_state.state=NEMU_QUIT;
+  nemu_state.state = NEMU_END;
   return -1;
 }
-//my_func start!
-static int cmd_step(char *args){
-  int time=1;
-  if(args)
-    sscanf(args,"%d",&time);
-  cpu_exec(time);
-  // printf("cmd_step :%d",time);
+
+static int cmd_si(char *args) {
+  int n = 0;
+  char *param = strtok(args, " ");
+
+  if (param == NULL) {
+    n = 1;
+  } else {
+    sscanf(param, "%d", &n);
+  }
+
+  cpu_exec(n);
   return 0;
 }
-static int cmd_print_status(char *args){
-  char op;
-  if(!args){
-    printf("Please enter a operation(w/r)!\n");
-    return 0;
+
+static int cmd_info(char *args) {
+  char *parma = strtok(args, " ");
+
+  if (strcmp(parma, "r") == 0) {
+    isa_reg_display();
+  } else if (strcmp(parma, "w") == 0) {
+    sdb_watchpoint_display();
+  } else {
+    printf("Unknow parma\n");
   }
-  if(sscanf(args,"%c",&op)!=1){
-    printf("Format Error: Expected:: info SUBCMD\n");
-    return 0;
-  };
-  switch(op){
-    case 'r':
-      isa_reg_display();
-    break;
-    case 'w':
-      print_watch_points();
-    break;
-    case 'i':
-      print_iringbuf();
-    break;
-    default:
-    printf("Please enter a operation(w/r/i)!\n");
-    return 0;
-  }
-  // printf("cmd_print_status :%s",args);
+
   return 0;
 }
-static int cmd_scan_mem(char *args){
-  if(!args){
-    printf("Format Error: Expected:: x N EXPR\n");
-    return 0;
+
+static int cmd_x(char *args) {
+  char *parma1 = strtok(args, " ");
+  args = parma1 + strlen(parma1) + 1;
+  char *parma2 = strtok(args, " ");
+
+  if (parma1 == NULL || parma2 == NULL) {
+    printf("Unknow parma\n");
+  } else {
+    int n = 0;
+    uint32_t addr = 0;
+    bool success = false; 
+    // 解析参数
+    sscanf(parma1, "%d", &n);
+    addr = expr(parma2, &success);
+    // 扫描内存
+    for (int i = 0; i < 4 * n; i++) {
+      uint8_t val= vaddr_read(addr + i, 1);
+      printf("%02x ",val);
+    }
+    printf("\n");
   }
-  int n;
-  paddr_t addr;
-  //要分成time exp
-  if(sscanf(args,"%d",&n)!=1){
-    printf("Format Error: Expected:: x N EXPR\n");
-    return 0;
-  }
-  char *expression=args;
-  while(*expression!='\0'&&*expression!=' '){
-    expression++;
-  }
-  bool success=false;
-  addr=expr(expression,&success);
-  if(!success){
-    printf("Format Error: Expected:: x N EXPR\n");
-    return 0;
-  }
-  for(;n>0;n--){
-    //这个似乎有问题！！
-    // 进制问题（^-^）
-    // printf("readMem %lu %lu %lu %lu" ,warp_pmem_read(addr,1),warp_pmem_read(addr+1,1),warp_pmem_read(addr+2,1),warp_pmem_read(addr+3,1));
-    #ifdef RV64
-    printf("<0x%010x>    0x%08lx\n",addr,warp_pmem_read(addr));
-    #else
-    printf("<0x%010x>    0x%08x\n",addr,warp_pmem_read(addr));
-    #endif
-    addr+=4;
-  }
-  // printf("cmd_scan_mem :%s",args);
+
   return 0;
 }
-static int test_pr()
-{
-  FILE *fp = fopen("/ysyx-workbench/nemu/tools/gen-expr/build/input", "r");
-  int result;
-  char *exp =(char*) malloc(700 * sizeof(char));
-  int time=0;
-  while (fscanf(fp, "%d %s\n", &result, exp) != -1)
+
+static int cmd_p(char *args){
+  bool success=true;
+  int32_t res = expr(args, &success);
+  if (!success) 
   {
-    // printf("%s\n",exp);
-    bool ok = true;
-    int res = (int)expr(exp, &ok);
-    if (ok && result != res){
-      printf("fail! %d/%d %s\n", res, result, exp);
-      assert(0);
-      }
-    else
-      printf("OK:%d\n",time++);
+    printf("invalid expression\n");
+  } else 
+  {
+    printf("%d\n", res);
   }
-  return 0;
+  return 0; 
 }
-static int cmd_eval(char *args){
-  if(!args){
-    printf("Error: Empty Expression!\n");
-    return 0;
-  }
-  bool success;
-  word_t result=expr(args,&success);
 
-  if (success){
-    // printf("cmd_eval :%s, result=%d\n",args,(int)result);
-    printf("Dec: %ld \t Hex: 0x%lx\n",(long)result,(long)result);
-  }else{
-    printf("Error\n");
+static int cmd_w(char* args){
+    create_watchpoint(args);
+    return 0;
+}
 
-  }
-  return 0;
+static int cmd_d (char *args){
+    if(args == NULL)
+        printf("No args.\n");
+    else{
+        delete_watchpoint(atoi(args));
+    }
+    return 0;
 }
-void statistic();
-static int cmd_kill(char *args){
-  set_nemu_state(NEMU_STOP, cpu.pc, cpu.gpr[10]);
-  Log("nemu: %s at pc = " FMT_WORD,
-    (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
-     (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
-      ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-    nemu_state.halt_pc);
-  statistic();
-  return 0;
-}
-static int cmd_watch(char *args){
-  if(!args){
-    printf("Error: Empty Expression!\n");
+
+static int cmd_test(char *args) {
+  FILE *fp = fopen("/home/zy/ysyx-workbench/nemu/tools/gen-expr/build/results.txt", "r");
+  if (fp == NULL) {
+    printf("File not found: results.txt\n");
     return 0;
   }
-  bool succ=false;
-  word_t result=expr(args,&succ);
-  if(!succ){
-    printf("Error Occured When Exec Expression!\n");
-    return 0;
+  char line[1024];
+  int total = 0;
+  int correct = 0;
+  while (fgets(line, sizeof(line), fp)) {
+    // 去除换行符
+    char *pos;
+    if ((pos = strchr(line, '\n')) != NULL) {
+      *pos = '\0';
+    }
+    // 分割结果和表达式
+    char *expected_str = strtok(line, " ");
+    char *expr_str = strtok(NULL, ""); // 剩余部分
+    if (expected_str == NULL || expr_str == NULL) {
+      printf("Invalid line: %s\n", line);
+      continue;
+    }
+    // 将预期结果转换为整数
+    long expected = atol(expected_str);
+    bool success = false;
+    int32_t result = expr(expr_str, &success);
+    if (!success) {
+      printf("Expression evaluation failed: %s\n", expr_str);
+      continue;
+    }
+    if (result != expected) {
+      printf("Error: expr=\"%s\", expected=%ld, got=%u\n", expr_str, expected, result);
+    } else {
+      correct++;
+    }
+    total++;
   }
-  WP* wp=new_wp();
-  strncpy(wp->expr,args,499);//复制表达式
-  // strcpy(wp->expr,args);//复制表达式
-  wp->last_result=succ?result:0;
-  printf("Added watch_point :%s\n",args);
+  fclose(fp);
+  printf("Test result: %d/%d passed\n", correct, total);
   return 0;
 }
-static int cmd_del_watch(char *args){
-  if(!args){
-    printf("Error: Empty Expression!\n");
-    return 0;
-  }
-  //args=N
-  // printf("cmd_del_watch :%s",args); 
-  int N=-1;
-  if(sscanf(args,"%d",&N)!=1){
-    printf("Format Error: Expected:: d N\n");
-    return 0;
-  };
-  if(del_watch_point(N)){
-    printf("Success!\n");
-  }else{
-    printf("Error!\n");
-  }
-  return 0;
-}
-//my_func end!
+
 
 static int cmd_help(char *args);
 
@@ -226,14 +188,13 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "Single-step execution", cmd_step },
-  { "info", "Print the status of the program.(reg,watchpoint..etc)", cmd_print_status },
-  { "x", "Scan mem", cmd_scan_mem },
-  { "p", "Eval expression", cmd_eval },
-  { "w", "Set WatchPoint", cmd_watch },
-  { "d", "Delete WatchPoint", cmd_del_watch },
-  { "k", "Kill Process", cmd_kill },
-  { "t", "t", (int (*)(char*))test_pr },
+  { "si","single step",cmd_si},
+  { "info", "info reg watch", cmd_info},
+  { "x", "show memory", cmd_x},
+  { "p", "expr", cmd_p},
+  { "w", "cmd_w",cmd_w},
+  { "d", "cmd_d",cmd_d},
+  { "test", "test expr", cmd_test },
   /* TODO: Add more commands */
 
 };
@@ -264,10 +225,11 @@ static int cmd_help(char *args) {
 }
 
 void sdb_set_batch_mode() {
-  is_batch_mode = true;
+  is_batch_mode = false;
 }
 
 void sdb_mainloop() {
+  sdb_set_batch_mode();
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
