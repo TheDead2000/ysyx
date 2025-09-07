@@ -23,4 +23,5 @@ void context_kload(PCB *pcb, void *func,void *args);
 Context* schedule(Context* prev);
 void context_uload(PCB* pcb_p, const char* filename, char* const argv[], char* const envp[]);
 void handle_execve(const char *filename, char *const argv[], char *const envp[]);
+void *new_page(size_t nr_page);
 #endif

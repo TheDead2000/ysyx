@@ -30,8 +30,8 @@ void init_proc() {
   // context_uload(&pcb[0], "/bin/dummy", argv,envp);
   // context_uload(&pcb[1], "/bin/menu", argv, envp);
   context_kload(&pcb[0], hello_fun, "A");
-  context_kload(&pcb[1], hello_fun, "b");
-  // context_uload(&pcb[1], "/bin/menu", argv, envp);
+  // context_kload(&pcb[1], hello_fun, "b");
+  context_uload(&pcb[1], "/bin/menu", argv, envp);
   // context_kload(&pcb[1], hello_fun, "B");
 
 
