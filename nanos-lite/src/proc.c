@@ -35,7 +35,7 @@ void init_proc() {
   // context_uload(&pcb[0], "/bin/menu", argv, envp);
   // context_uload(&pcb[2], "/bin/hello", argv, envp);
   context_kload(&pcb[0], hello_fun, "AAA");
-  context_uload(&pcb[1], "/bin/exec-test", argv, envp);
+  context_uload(&pcb[1], "/bin/menu", argv, envp);
 
   // yield();  
   // assert(0);
