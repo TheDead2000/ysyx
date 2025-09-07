@@ -33,7 +33,7 @@ void init_proc() {
   char *argv[] = {NULL};
   char *envp[] = {NULL};
   context_uload(&pcb[0], "/bin/menu", argv, envp);
-  context_uload(&pcb[2], "/bin/hello", argv, envp);
+  context_uload(&pcb[1], "/bin/hello", argv, envp);
 
   // yield();  
   // assert(0);
