@@ -79,7 +79,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
  
     // 调用 loader 函数加载用户程序，获取入口地址
     uintptr_t entry = loader(pcb, filename);
- 
+    printf("program entry = %x\n", entry);
     // 计算 argc、envc 的值
     int argc = 0;
     while (argv[argc] != NULL) argc++;
