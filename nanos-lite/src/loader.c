@@ -145,7 +145,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     map(&pcb->as,(void*)pcb->as.area.end-(8-i)*PGSIZE,stack+PGSIZE*i,0b1101111);//TODO!
   }
 
-
+  printf("stack at %x-%x\n", pcb->as.area.end - 8 * PGSIZE, pcb->as.area.end);
   // uint8_t *stack = pcb->stack;
   // init an Context struct on top of stack
   //the cp pointer stores at the bottom of stack
@@ -199,6 +199,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   table_base += 1;
   // set the active tag here,making sure the process is finished
   pcb->active = true;
+  printf("finish context_uload\n");
 }
 void context_kload(PCB *pcb, void *func,void *args) {
   pcb->cp = kcontext((Area){.start=pcb->stack,.end=pcb->stack+STACK_SIZE}, func, args);
