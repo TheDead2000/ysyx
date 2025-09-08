@@ -7,6 +7,7 @@
 //#define MULTIPROGRAM
 //#define TIME_SHARING
 
+
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
@@ -28,4 +29,6 @@ size_t sbctl_read(void *buf, size_t offset, size_t len) ;
 size_t sbctl_write(const void *buf, size_t offset, size_t len) ;
 size_t ramdisk_write(const void *buf, size_t offset, size_t len) ;
 void do_syscall(Context *c);
+Context* schedule(Context *prev);
+
 #endif

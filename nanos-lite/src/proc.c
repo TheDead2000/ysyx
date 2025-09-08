@@ -1,5 +1,5 @@
 #include <proc.h>
-
+#include <common.h>
 #define MAX_NR_PROC 4
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
@@ -22,12 +22,24 @@ void hello_fun(void *arg) {
 void init_proc() {
   switch_boot_pcb();
 
-  Log("Initializing processes...");
 
+  Log("Initializing processes...");
+  context_kload(&pcb[0], hello_fun, "A");
+  context_kload(&pcb[1], hello_fun, "B");
   // load program here
-  naive_uload(NULL, "/bin/menu");
+  // naive_uload(NULL, "/bin/menu");
 }
 
 Context* schedule(Context *prev) {
-  return NULL;
+  // save the context pointer 
+  current->cp = prev;
+
+  static uint32_t turn = 1;
+  if(turn %3 == 0) {
+    current = &pcb[0];
+  } else 
+    current = &pcb[1];
+  turn ++;
+  return current->cp;
+
 }
