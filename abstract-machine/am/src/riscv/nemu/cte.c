@@ -55,15 +55,23 @@ bool cte_init(Context* (*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  // store data and args as Context Struct on top of the stack
-  Context *top = (Context *)(((void *)kstack.end) - sizeof(Context));
-  top->gpr[10] = (uint32_t)arg;
-  top->mepc = (uintptr_t)entry;
-  top->mstatus = 0x1800;
-  top->mcause = 0xb;
-  return top;
-  // return NULL;
+Context* kcontext(Area kstack, void (*entry)(void*), void* arg) {
+
+  printf("kstack.end:%p,kstack.start:%p,size:%d\n", kstack.end, kstack.start, kstack.end - kstack.start);
+  Context* p = (Context*)(kstack.end - sizeof(Context));
+  memset(p, 0, sizeof(Context));
+
+  printf("Context size:%d\n", (kstack.end - (void*)p));
+  assert((kstack.end - (void*)p) == sizeof(Context));
+
+  printf("entry:%p\n", entry);
+  p->mepc = (uintptr_t)entry;   // mret 后，进入 entry
+  p->gpr[10] = (uintptr_t)arg; // a0 传惨,暂定为一个字符串
+
+
+  p->mstatus = 0x1800; // for difftest
+
+  return p;
 }
 /**
  * @brief 自陷指令,通过 $a7 寄存器来传递系统调用编号

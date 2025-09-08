@@ -69,7 +69,7 @@ Context* kcontext(Area kstack, void (*entry)(void*), void* arg) {
   p->gpr[10] = (uintptr_t)arg; // a0 传惨,暂定为一个字符串
 
 
-  p->mstatus = 0x1800; // for difftest
+  p->mstatus = 0xa00001800; // for difftest
 
   return p;
 }
