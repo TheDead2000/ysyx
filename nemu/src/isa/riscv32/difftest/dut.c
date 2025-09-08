@@ -18,12 +18,13 @@
 #include "../local-include/reg.h"
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  if (ref_r->pc != cpu.pc) return false;
-  for (int i = 0; i < 32; i++) {
-    if (ref_r->gpr[i] != cpu.gpr[i])
-      return false;
+  bool ret = true;
+  for(int i=0; i<32; i++) {
+    ret = difftest_check_reg(reg_name(i, 32), pc, ref_r->gpr[i] , cpu.gpr[i]);
+    if(!ret) return ret;
   }
-  return true;
+  ret = difftest_check_reg("pc", pc, ref_r->pc, cpu.pc);
+  return ret;
 }
 
 void isa_difftest_attach() {

@@ -14,10 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-#include <stdint.h>
-#include <string.h>
-
-#define LENGTH(arr)         (sizeof(arr) / sizeof((arr)[0]))
+#include "local-include/reg.h"
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -26,93 +23,39 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
-const char *csr_regs[] = {"mtvec",     "mcause",  "mstatus", "mepc",
-                          "mvendorid", "marchid", "satp",   "mscratch" , "dscratch0", "sstatus"};
-const uint32_t csr_num = LENGTH(csr_regs);
-void print_csr_reg() {
-//#ifdef CONFIG_RV64
-//  printf("================================================csrs================================================\n");
-//  printf("%-4s      \t%-20s\t%-10s\n", "Name", "Dec", "Hex");
-//#else
-//  printf("========================================csrs========================================\n");
-//  printf("%-12s\t%-10s\t%-8s\n", "Name", "Dec", "Hex");
-//#endif
-//  for(int i=0;i<csr_num;i++){
-//    MUXDEF(CONFIG_RV64, printf("%-12s      \t%-20ld\t%-10lx\n", csr_regs[i],
-//                               cpu.csr[i], cpu.csr[i]);
-//           , printf("%-12s\t%-10d\t%-8x\n", csr_regs[i], cpu.csr[i],
-//                    cpu.csr[i]););
-//  }
-  printf("========================================csrs========================================\n");
-  printf("%-12s\t%-10s\t%-8s\n", "Name", "Dec", "Hex");
-#define GenCSR(name,paddr) \
-  printf("%-12s\t%-10d\t%-8x\n", #name , cpu.csr[paddr] , cpu.csr[paddr]);
-CSR_LIST
-#undef GenCSR
+const char *csrs[] = {
+  "mstatus", "mtvec", "mepc", "mcause"
+};
 
-}
 void isa_reg_display() {
-#ifndef CONFIG_RVE
-#ifdef CONFIG_RV64
-  printf("================================================regs================================================\n");
-  printf("%-4s \t%-20s\t%-10s\t","Name","Dec","Hex");  
-  printf(" | ");
-  printf("%-4s \t%-20s\t%-10s\t\n", "Name", "Dec", "Hex");
-#else
-  printf("========================================regs========================================\n");
-  printf("%-4s \t%-10s\t%-8s\t","Name","Dec","Hex");  
-  printf(" | ");
-  printf("%-4s \t%-10s\t%-8s\t\n", "Name", "Dec", "Hex");
-#endif
-  for(int i=0;i<16;i++){
-    MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t",regs[i],cpu.gpr[i],cpu.gpr[i]);,printf("%-4s \t%-10d\t%-8x\t",regs[i],cpu.gpr[i],cpu.gpr[i]););
-      
-      printf(" | ");
-    MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t",regs[i+16],cpu.gpr[i+16],cpu.gpr[i+16]);,printf("%-4s \t%-10d\t%-8x\t",regs[i+16],cpu.gpr[i+16],cpu.gpr[i+16]););
-
-      
+  printf("32 General Registers:\n");
+  for(int i = 0; i < 32; i++) {
+    printf(ANSI_FG_GREEN"%-3s: "ANSI_FG_MAGENTA FMT_WORD" "ANSI_NONE, regs[i], cpu.gpr[i]);
+    if(i%4 == 3) {
       printf("\n");
+    }
   }
-  MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t\n","pc",cpu.pc,cpu.pc);,printf("%-4s \t%-10d\t%-8x\t\n","pc",cpu.pc,cpu.pc););
-  #else
-   printf("================================================regs================================================\n");
-  printf("%-4s \t%-20s\t%-10s\t","Name","Dec","Hex");  
-  printf(" | ");
-  printf("%-4s \t%-20s\t%-10s\t\n","Name","Dec","Hex");
-  for(int i=0;i<8;i++){
-    MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t",regs[i],cpu.gpr[i],cpu.gpr[i]);,printf("%-4s \t%-20d\t%-10x\t",regs[i],cpu.gpr[i],cpu.gpr[i]););
-      
-      printf(" | ");
-    MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t",regs[i+8],cpu.gpr[i+8],cpu.gpr[i+8]);,printf("%-4s \t%-20d\t%-10x\t",regs[i+8],cpu.gpr[i+8],cpu.gpr[i+8]););
-
-      
-      printf("\n");
+  printf("Program Counter:\n");
+  printf(ANSI_FG_RED"%-3s: "ANSI_FG_MAGENTA FMT_WORD ANSI_NONE"\n", "$pc", cpu.pc);
+  printf("CSRs:\n");
+  for(int i = 0; i < ARRLEN(csrs); i++){
+    printf(ANSI_FG_GREEN"%-8s: "ANSI_FG_MAGENTA FMT_WORD" "ANSI_NONE"\n",csrs[i],cpu.csr[i]);
   }
-  MUXDEF(CONFIG_RV64,printf("%-4s \t%-20ld\t%-10lx\t\n","pc",cpu.pc,cpu.pc);,printf("%-4s \t%-20d\t%-10x\t\n","pc",cpu.pc,cpu.pc););
-  #endif
-  print_csr_reg();
 }
-//获取寄存器的值，s应该传入$xx
+
 word_t isa_reg_str2val(const char *s, bool *success) {
-  *success=false;
-  // printf("%lu",cpu.pc);
-  if(s[0]=='$')
-    s+=1;
-  if(strcmp(s,"pc")==0){
-    *success=true;
-    return cpu.pc;
-  }
-  for(int i=0;i<32;i++){
-    if(strcmp(regs[i],s)==0){
-      *success=true;
+    char tmp[3] = {s[1], s[2]};
+  for (int i = 0; i < 32; i++) {
+    if(!strcmp(tmp, regs[i])) {
+      *success = true;
       return cpu.gpr[i];
     }
   }
-  for (int i = 0; i < csr_num; i++) {
-    if (strcmp(csr_regs[i], s) == 0) {
-      *success = true;
-      return cpu.csr[i];
-    }
+  if(!strcmp(tmp, "pc")) {
+    *success = true;
+    return cpu.pc;
   }
+  Log("Register not found!");
+  *success = false;
   return 0;
 }
