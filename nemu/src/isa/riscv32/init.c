@@ -42,5 +42,6 @@ void init_isa() {
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
+  cpu.PRIV = NEMU_PRIV_M;
   restart();
 }
