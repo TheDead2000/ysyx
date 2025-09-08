@@ -27,15 +27,15 @@ void init_proc() {
   // char *envp[] = {NULL};
   // context_uload(&pcb[0], "/bin/dummy", argv,envp);
   // context_uload(&pcb[1], "/bin/menu", argv, envp);
-  context_kload(&pcb[0], (void *)hello_fun, "A");
-  context_kload(&pcb[1], (void *)hello_fun, "B");
+  // context_kload(&pcb[0], (void *)hello_fun, "A");
+  // context_kload(&pcb[1], (void *)hello_fun, "B");
 
   switch_boot_pcb();
 
   Log("Initializing processes...");
 
   // load program here
-  // naive_uload(NULL, "/bin/menu");
+  naive_uload(NULL, "/bin/menu");
 }
 
 Context* schedule(Context* prev) {
