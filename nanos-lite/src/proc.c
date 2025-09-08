@@ -32,15 +32,11 @@ void init_proc() {
 }
 
 Context* schedule(Context *prev) {
-  // save the context pointer 
+  // save the context pointer
   current->cp = prev;
-
-  static uint32_t turn = 1;
-  if(turn %3 == 0) {
-    current = &pcb[0];
-  } else 
-    current = &pcb[1];
-  turn ++;
+ 
+  current = ((current == &pcb[0]) ? &pcb[1] : &pcb[0]);
+ 
+  // then return the new context
   return current->cp;
-
 }
