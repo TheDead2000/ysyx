@@ -21,13 +21,11 @@ size_t serial_write(const void *buf, size_t offset, size_t len)
   {
     putch(buff[i]);
   }
-
   return len;
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) 
 {
-
   // Get keyborad ouput.
   AM_INPUT_KEYBRD_T keyboard = io_read(AM_INPUT_KEYBRD);
 
@@ -53,12 +51,7 @@ size_t events_read(void *buf, size_t offset, size_t len)
     return 0;
   }
 
-  // Only write up to len bytes into the user’s buffer.
-  const size_t writeLen = (formatLen > (int)len) ? len : (size_t)formatLen;
-  memcpy(buf, event, writeLen);
-
-  // Return the actual number of bytes written
-  return writeLen;
+  return 1;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) 
@@ -133,14 +126,7 @@ size_t sbctl_write(const void *buf, size_t offset, size_t len)
   // return len;
 }
 
-size_t sbctl_read(void *buf, size_t offset, size_t len)
-{
-  // return (size_t)(io_read(AM_AUDIO_CONFIG).bufsize - io_read(AM_AUDIO_STATUS).count);
-  return 0;
-}
-
-void init_device() 
-{
+void init_device() {
   Log("Initializing devices...");
   ioe_init();
 }

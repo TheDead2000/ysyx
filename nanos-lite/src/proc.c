@@ -4,38 +4,53 @@
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
 static PCB pcb_boot = {};
-PCB *current = NULL;
+PCB* current = NULL;
 
 void switch_boot_pcb() {
   current = &pcb_boot;
 }
 
-void hello_fun(void *arg) {
+void hello_fun(void* arg) {
   int j = 1;
   while (1) {
+    if (j==1000)
+    {
     Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", arg, j);
-    j ++;
+    j=0;
+    }
+    j++;
     yield();
   }
 }
 
 
 
+
+char* pal_argv[] = {
+  NULL
+};
+
+char* pal_envp[] = {
+  // "home=pwd",
+  // "ARCH=riscv",
+  // "ARCH=riscv1",
+  // "ARCH=riscv2",
+NULL
+};
+
 void init_proc() {
-  
-  // char *argv[] = {NULL};
-  // char *envp[] = {NULL};
-  // context_uload(&pcb[0], "/bin/dummy", argv,envp);
-  // context_uload(&pcb[1], "/bin/menu", argv, envp);
-  // context_kload(&pcb[0], (void *)hello_fun, "A");
-  // context_kload(&pcb[1], (void *)hello_fun, "B");
-
-  // switch_boot_pcb();
-
   Log("Initializing processes...");
 
-  // load program here
-  naive_uload(NULL, "/bin/menu");
+  context_kload(&pcb[0], hello_fun, "first");
+  context_uload(&pcb[1], "/bin/nterm", pal_argv, pal_envp);
+
+
+  switch_boot_pcb();
+
+
+
+  // // load program here
+  // naive_uload(NULL, "/bin/menu");
 }
 
 Context* schedule(Context* prev) {
@@ -50,13 +65,3 @@ Context* schedule(Context* prev) {
   return current->cp;
 
 }
-
-
-// 创建B的上下文之后, 通过switch_boot_pcb()修改当前的current指针,
-// 然后调用yield()来强制触发进程调度.
-// 这样以后, A的执行流就不会再被调度, 等到下一次调度的时候, 就可以恢复并执行B了.
-// void handle_execve(const char *filename, char *const argv[], char *const envp[]) {
-//   context_uload(current, filename, argv, envp);
-//   switch_boot_pcb();
-//   yield();
-// }
