@@ -45,7 +45,7 @@ void init_proc() {
   // context_uload(&pcb[1], "/bin/nterm", pal_argv, pal_envp);
 
 
-  switch_boot_pcb();
+ // switch_boot_pcb();
 
 
 
