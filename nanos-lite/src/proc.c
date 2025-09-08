@@ -29,7 +29,7 @@ void init_proc() {
   // context_uload(&pcb[1], "/bin/menu", argv, envp);
   context_kload(&pcb[0], (void *)hello_fun, "A");
   context_kload(&pcb[1], (void *)hello_fun, "B");
-  
+
   switch_boot_pcb();
 
   Log("Initializing processes...");
@@ -55,8 +55,8 @@ Context* schedule(Context* prev) {
 // 创建B的上下文之后, 通过switch_boot_pcb()修改当前的current指针,
 // 然后调用yield()来强制触发进程调度.
 // 这样以后, A的执行流就不会再被调度, 等到下一次调度的时候, 就可以恢复并执行B了.
-void handle_execve(const char *filename, char *const argv[], char *const envp[]) {
-  context_uload(current, filename, argv, envp);
-  switch_boot_pcb();
-  yield();
-}
+// void handle_execve(const char *filename, char *const argv[], char *const envp[]) {
+//   context_uload(current, filename, argv, envp);
+//   switch_boot_pcb();
+//   yield();
+// }
