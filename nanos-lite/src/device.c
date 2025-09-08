@@ -16,6 +16,7 @@ static const char *keyname[256] __attribute__((used)) = {
 
 size_t serial_write(const void *buf, size_t offset, size_t len) 
 {
+   yield();
   const char* buff = (const char*)buf;
   for (size_t i = 0; i < len; i++)
   {
@@ -27,6 +28,7 @@ size_t serial_write(const void *buf, size_t offset, size_t len)
 
 size_t events_read(void *buf, size_t offset, size_t len) 
 {
+   yield();
   // Get keyborad ouput.
   AM_INPUT_KEYBRD_T keyboard = io_read(AM_INPUT_KEYBRD);
 
@@ -87,6 +89,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len)
 
 size_t fb_write(const void *buf, size_t offset, size_t len) 
 {
+   yield();
   const AM_GPU_CONFIG_T cfg = io_read(AM_GPU_CONFIG);
   assert(cfg.present);
 
@@ -128,6 +131,8 @@ size_t sbctl_write(const void *buf, size_t offset, size_t len)
   //   return -1;
   // }
   return 0;
+  
+  // return len;
 }
 
 size_t sbctl_read(void *buf, size_t offset, size_t len)
