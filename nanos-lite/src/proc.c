@@ -20,12 +20,13 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  switch_boot_pcb();
+
 
 
   Log("Initializing processes...");
   context_kload(&pcb[0], hello_fun, "A");
   context_kload(&pcb[1], hello_fun, "B");
+  switch_boot_pcb();
   // load program here
   // naive_uload(NULL, "/bin/menu");
 }
