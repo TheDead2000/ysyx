@@ -7,13 +7,8 @@ _start:
   // (rsp + 8) should be multiple of 16 when
   // control is transfered to the function entry point.
   // See amd64 ABI manual for more details
-
-  #no point to set the first argument!!
-  movq %rax,%rsp# set stack pointer
-
-  movq %rdx,%rdi # set the argument for call_main(argc addr) 
   andq $0xfffffffffffffff0, %rsp
-
+  movq %rax, %rdi
   call call_main
 
 #elif defined(__ISA_X86_64__)
@@ -34,8 +29,6 @@ _start:
   jal call_main
 
 #elif defined(__riscv)
-  mv sp, a0 #set stack pointe
-  mv a0,a1 #firstargument
   mv s0, zero
   jal call_main
 
