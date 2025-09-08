@@ -42,7 +42,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   context_kload(&pcb[0], hello_fun, "first");
-  context_uload(&pcb[1], "/bin/nterm", pal_argv, pal_envp);
+  // context_uload(&pcb[1], "/bin/nterm", pal_argv, pal_envp);
 
 
   switch_boot_pcb();
@@ -50,7 +50,7 @@ void init_proc() {
 
 
   // // load program here
-  // naive_uload(NULL, "/bin/menu");
+   naive_uload(NULL, "/bin/menu");
 }
 
 Context* schedule(Context* prev) {
