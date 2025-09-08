@@ -16,14 +16,15 @@
 #ifndef __ISA_H__
 #define __ISA_H__
 
+#define CONFIG_ISA_riscv
 #if defined(CONFIG_ISA_mips32)
 #define ISA_QEMU_BIN "qemu-system-mipsel"
 #define ISA_QEMU_ARGS "-machine", "mipssim",\
   "-kernel", NEMU_HOME "/resource/mips-elf/mips.dummy",
-#elif defined(CONFIG_ISA_riscv32)
+#elif defined(CONFIG_ISA_riscv) && !defined(CONFIG_RV64)
 #define ISA_QEMU_BIN "qemu-system-riscv32"
 #define ISA_QEMU_ARGS "-bios", "none",
-#elif defined(CONFIG_ISA_riscv64)
+#elif defined(CONFIG_ISA_riscv) && defined(CONFIG_RV64)
 #define ISA_QEMU_BIN "qemu-system-riscv64"
 #define ISA_QEMU_ARGS 
 #elif defined(CONFIG_ISA_x86)
@@ -38,10 +39,10 @@ union isa_gdb_regs {
 #if defined(CONFIG_ISA_mips32)
     uint32_t gpr[32];
     uint32_t status, lo, hi, badvaddr, cause, pc;
-#elif defined(CONFIG_ISA_riscv32)
+#elif defined(CONFIG_ISA_riscv) && !defined(CONFIG_RV64)
     uint32_t gpr[32];
     uint32_t pc;
-#elif defined(CONFIG_ISA_riscv64)
+#elif defined(CONFIG_ISA_riscv) &&  defined(CONFIG_RV64)
     uint64_t gpr[32];
     uint64_t fpr[32];
     uint64_t pc;

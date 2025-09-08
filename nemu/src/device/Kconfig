@@ -149,6 +149,21 @@ config SDCARD_IMG_PATH
   string "The path of sdcard image"
   default ""
 endif # HAS_SDCARD
+
+menuconfig HAS_PLIC
+  bool "Enable PLIC (Platform-Level Interrupt Controller)"
+  default y
+
+if HAS_PLIC
+config PLIC_MEM_BASE 
+  hex "MMIO address of the plic"
+  default 0xc000000
+
+config PLIC_MEM_SIZE
+  hex "The size of plic mem addrspace"
+  default 0x4000000
+endif # HAS_SDCARD
+
 endif
 
 endif # DEVICE
