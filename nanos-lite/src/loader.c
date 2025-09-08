@@ -56,5 +56,6 @@ void naive_uload(PCB *pcb, const char *filename) {
 
 void context_kload (PCB *pcb, void (*entry)(void*),void *arg) {
   Area kstack = RANGE(pcb,(char*)pcb+STACK_SIZE);
+  printf("kstack area [%p, %p)\n", kstack.start, kstack.end);
   pcb->cp = kcontext(kstack, entry, arg);
 }
