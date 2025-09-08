@@ -1,4 +1,2 @@
 repo/
 !difftest.cc
-!*.patch
-!*.md

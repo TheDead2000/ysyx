@@ -33,7 +33,6 @@ void init_alarm();
 void send_key(uint8_t, bool);
 void vga_update_screen();
 
-//首先会检查距离上次设备更新是否已经超过一定时间, 若是, 则会尝试刷新屏幕, 并进一步检查是否有按键按下/释放, 以及是否点击了窗口的X按钮; 否则则直接返回, 避免检查过于频繁, 因为上述事件发生的频率是很低的.
 void device_update() {
   static uint64_t last = 0;
   uint64_t now = get_time();
@@ -58,7 +57,6 @@ void device_update() {
         uint8_t k = event.key.keysym.scancode;
         bool is_keydown = (event.key.type == SDL_KEYDOWN);
         send_key(k, is_keydown);
-        // send_key(k, is_keydown);//DONE:一开始是因为读取错误
         break;
       }
 #endif
@@ -74,7 +72,7 @@ void sdl_clear_event_queue() {
   while (SDL_PollEvent(&event));
 #endif
 }
-//初始化
+
 void init_device() {
   IFDEF(CONFIG_TARGET_AM, ioe_init());
   init_map();

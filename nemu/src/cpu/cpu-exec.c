@@ -13,24 +13,17 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "common.h"
-#include "isa.h"
-#include "utils.h"
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-
-//myfunc
-bool check_watch_point();
-void print_iringbuf();
-
+#include "../monitor/sdb/sdb.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
-#define MAX_INST_TO_PRINT 10
+#define MAX_INST_TO_PRINT 2001
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -38,27 +31,17 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
 void device_update();
+bool wp_diff();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-#ifdef CONFIG_ITRACE_COND //在condition为true的时候记录！
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }  //把缓冲区数据打印出来
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-
-//watchpoint功能
-#ifdef CONFIG_WATCHPOINT
-if(check_watch_point()&&nemu_state.state==NEMU_RUNNING){
-  nemu_state.state=NEMU_STOP;
-}
-#endif
-#ifdef CONFIG_BREAKPOINT
-if(check_breakpoint(cpu.pc))
-  nemu_state.state=NEMU_STOP;
-#endif
+  wp_diff();
 }
 
-//执行一条指令，其中包含使用snprintf打印Log！
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
@@ -66,7 +49,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//打印地址
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
@@ -83,7 +66,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);//反编译？
+      MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
 #else
   p[0] = '\0'; // the upstream llvm does not support loongarch32r
 #endif
@@ -92,21 +75,16 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
 static void execute(uint64_t n) {
   Decode s;
-  for (; n > 0; n--) {
+  for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
-    g_nr_guest_inst++;
+    g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
-    word_t intr = isa_query_intr();
-    if (intr != INTR_EMPTY) {
-      cpu.pc = isa_raise_intr(intr, cpu.pc);
-    }
-    if (nemu_state.state != NEMU_RUNNING)
-      break;
-    IFDEF(CONFIG_DEVICE, device_update()); // 设备更新
+    if (nemu_state.state != NEMU_RUNNING) break;
+    IFDEF(CONFIG_DEVICE, device_update());
   }
 }
 
-void statistic() {
+static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
@@ -115,11 +93,8 @@ void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-//使用Assert宏的时候输出信息
 void assert_fail_msg() {
   isa_reg_display();
-  //打印iringbuf！
-  IFDEF(CONFIG_IRING, print_iringbuf());
   statistic();
 }
 

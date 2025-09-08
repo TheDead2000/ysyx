@@ -13,7 +13,7 @@
 # See the Mulan PSL v2 for more details.
 #**************************************************************************************/
 
-ifneq ($(CONFIG_ITRACE)$(CONFIG_IRING)$(CONFIG_FTRACE),)
+ifneq ($(CONFIG_ITRACE)$(CONFIG_IQUEUE),)
 CXXSRC = src/utils/disasm.cc
 CXXFLAGS += $(shell llvm-config-11 --cxxflags) -fPIE
 LIBS += $(shell llvm-config-11 --libs)
