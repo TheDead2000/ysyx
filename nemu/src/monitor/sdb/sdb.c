@@ -17,14 +17,14 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <utils.h>
 #include "sdb.h"
-#include "watchpoint.h"
+#include "../../nemu/include/memory/vaddr.h"
 
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
-word_t vaddr_read(vaddr_t addr, int len);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -51,110 +51,132 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-  nemu_state.state = NEMU_QUIT;
+  nemu_state.state = NEMU_END;
   return -1;
 }
 
-static int cmd_si(char* args) {
-  char* arg = strtok(NULL, " ");
-  int steps;
+static int cmd_si(char *args) {
+  int n = 0;
+  char *param = strtok(args, " ");
 
-  if (arg == NULL) {
-      cpu_exec(1);
-      return 0;
-  }
-  sscanf(arg, "%d", &steps);
-
-  cpu_exec(steps);
-  return 0;
-}
-
-static int cmd_info(char* args) {
-  char* arg = strtok(NULL, " ");
-  if (arg == NULL) {
-      Log("Missing parameter r or w");
-      return 0;
-  }
-  if (strcmp(arg, "r") == 0) {
-      isa_reg_display();
-  }
-  if (strcmp(arg, "w") == 0) {
-      print_wp();
-  }
-  return 0;
-}
-
-static int cmd_x(char* args) {
-  char* N = strtok(NULL, " ");
-  char* EXPR = strtok(NULL, " ");
-  int num;
-  bool success = true;
-  vaddr_t addr;
-  if (N == NULL || EXPR == NULL) {
-      Log("Need two parameters N and EXPR");
-      return 0;
-  }
-  sscanf(N, "%d", &num);
-  // sscanf(EXPR, "%x", &addr);
-  addr = expr(EXPR, &success);
-  if(success) {
-    for (int i = 0; i < num; i++) {
-        word_t data = vaddr_read(addr + i * 4, 4);
-        printf("addr: " FMT_PADDR, addr + i * 4);
-        printf("\tdata: " FMT_WORD, data);
-        printf("\n");
-    }
-  }
-  else
-    Log(ANSI_FG_RED"EXPR is illegal!"ANSI_NONE);
-  return 0;
-}
-
-static int cmd_p(char* args) {
-  bool success = true;
-  if (args == NULL) {
-      Log("Need parameter EXPR");
-      return 0;
-  }
-  word_t ans = expr(args, &success);
-  if (success) {
-      Log(ANSI_FG_GREEN"Successfully evaluate the EXPR!"ANSI_NONE);
-      Log(ANSI_FG_MAGENTA"EXPR: %s"ANSI_NONE, args);
-      Log(ANSI_FG_MAGENTA"ANSWER:\n[Dec] unsigned: %u signed: %d\n[Hex]"FMT_WORD ANSI_NONE, ans, ans, ans);
-  } else
-      Log(ANSI_FG_RED"EXPR is illegal!"ANSI_NONE);
-  return 0;
-}
-
-static int cmd_w(char* args) {
-  if (args == NULL) {
-      Log(ANSI_FG_RED"Missing parameter EXPR"ANSI_NONE);
-      return 0;
-  }
-  WP* wp = new_wp(args);
-  Log("watchpoint %d: %s is set!", wp->NO, wp->e);
-  return 0;
-}
-
-static int cmd_d(char* args) {
-  if (args == NULL) {
-      Log(ANSI_FG_RED"Missing parameter N"ANSI_NONE);
-      return 0;
-  }
-  int N;
-  bool search = true;
-  sscanf(args, "%d", &N);
-  WP* wp = delete_wp(N, &search);
-  if (search) {
-      Log("Delete watchpoint %d: %s", wp->NO, wp->e);
-      free_wp(wp);
-      return 0;
+  if (param == NULL) {
+    n = 1;
   } else {
-      Log(ANSI_FG_RED"Can't find watchpoint %d"ANSI_NONE, N);
-      return 0;
+    sscanf(param, "%d", &n);
   }
+
+  cpu_exec(n);
   return 0;
 }
+
+static int cmd_info(char *args) {
+  char *parma = strtok(args, " ");
+
+  if (strcmp(parma, "r") == 0) {
+    isa_reg_display();
+  } else if (strcmp(parma, "w") == 0) {
+    sdb_watchpoint_display();
+  } else {
+    printf("Unknow parma\n");
+  }
+
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  char *parma1 = strtok(args, " ");
+  args = parma1 + strlen(parma1) + 1;
+  char *parma2 = strtok(args, " ");
+
+  if (parma1 == NULL || parma2 == NULL) {
+    printf("Unknow parma\n");
+  } else {
+    int n = 0;
+    uint32_t addr = 0;
+    bool success = false; 
+    // 解析参数
+    sscanf(parma1, "%d", &n);
+    addr = expr(parma2, &success);
+    // 扫描内存
+    for (int i = 0; i < 4 * n; i++) {
+      uint8_t val= vaddr_read(addr + i, 1);
+      printf("%02x ",val);
+    }
+    printf("\n");
+  }
+
+  return 0;
+}
+
+static int cmd_p(char *args){
+  bool success=true;
+  int32_t res = expr(args, &success);
+  if (!success) 
+  {
+    printf("invalid expression\n");
+  } else 
+  {
+    printf("%d\n", res);
+  }
+  return 0; 
+}
+
+static int cmd_w(char* args){
+    create_watchpoint(args);
+    return 0;
+}
+
+static int cmd_d (char *args){
+    if(args == NULL)
+        printf("No args.\n");
+    else{
+        delete_watchpoint(atoi(args));
+    }
+    return 0;
+}
+
+static int cmd_test(char *args) {
+  FILE *fp = fopen("/home/zy/ysyx-workbench/nemu/tools/gen-expr/build/results.txt", "r");
+  if (fp == NULL) {
+    printf("File not found: results.txt\n");
+    return 0;
+  }
+  char line[1024];
+  int total = 0;
+  int correct = 0;
+  while (fgets(line, sizeof(line), fp)) {
+    // 去除换行符
+    char *pos;
+    if ((pos = strchr(line, '\n')) != NULL) {
+      *pos = '\0';
+    }
+    // 分割结果和表达式
+    char *expected_str = strtok(line, " ");
+    char *expr_str = strtok(NULL, ""); // 剩余部分
+    if (expected_str == NULL || expr_str == NULL) {
+      printf("Invalid line: %s\n", line);
+      continue;
+    }
+    // 将预期结果转换为整数
+    long expected = atol(expected_str);
+    bool success = false;
+    int32_t result = expr(expr_str, &success);
+    if (!success) {
+      printf("Expression evaluation failed: %s\n", expr_str);
+      continue;
+    }
+    if (result != expected) {
+      printf("Error: expr=\"%s\", expected=%ld, got=%u\n", expr_str, expected, result);
+    } else {
+      correct++;
+    }
+    total++;
+  }
+  fclose(fp);
+  printf("Test result: %d/%d passed\n", correct, total);
+  return 0;
+}
+
 
 static int cmd_help(char *args);
 
@@ -166,13 +188,13 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  {"si", "Step over, default N=1", cmd_si},
-  {"info", "info r: print register info; info w: print watchpoint info", cmd_info},
-  {"x", "x N EXPR: print N * 4 bytes info in mem from addr=EXPR", cmd_x},
-  {"p", "p EXPR: evaluate the expression", cmd_p},
-  {"w", "w EXPR: set a watchpoint on the value of EXPR", cmd_w},
-  {"d", "d N: delete the watchpoint with N", cmd_d},
-
+  { "si","single step",cmd_si},
+  { "info", "info reg watch", cmd_info},
+  { "x", "show memory", cmd_x},
+  { "p", "expr", cmd_p},
+  { "w", "cmd_w",cmd_w},
+  { "d", "cmd_d",cmd_d},
+  { "test", "test expr", cmd_test },
   /* TODO: Add more commands */
 
 };
@@ -203,10 +225,11 @@ static int cmd_help(char *args) {
 }
 
 void sdb_set_batch_mode() {
-  is_batch_mode = true;
+  is_batch_mode = false;
 }
 
 void sdb_mainloop() {
+  sdb_set_batch_mode();
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
