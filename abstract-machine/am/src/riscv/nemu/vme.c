@@ -94,5 +94,6 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *uctx = (Context *)(kstack.end-sizeof(Context));
   uctx->mepc=(uintptr_t) entry;
+  printf("===========user entry=%x==========\n", uctx->mepc);
   return uctx;
 }
