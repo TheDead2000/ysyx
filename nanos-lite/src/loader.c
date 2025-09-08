@@ -136,7 +136,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     user_stack[argc + 3 + envc] = 0;
  
     // 调用 ucontext 函数创建用户上下文，传入入口地址和用户栈
-    pcb->cp = ucontext(NULL, stack, (void*)entry);
+    pcb->cp = ucontext(&pcb->as, stack, (void*)entry);
  
     // 将用户栈的顶部地址赋给 GPRx 寄存器
     pcb->cp->GPRx = (uintptr_t)user_stack;
