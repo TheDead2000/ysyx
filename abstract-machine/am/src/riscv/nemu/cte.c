@@ -4,14 +4,28 @@
 
 static Context* (*user_handler)(Event, Context*) = NULL;
 
-Context* __am_irq_handle(Context *c) {
+Context* __am_irq_handle(Context* c) {
+  //printf("__am_irq_handle code:%d\n", c->mcause);
   if (user_handler) {
-    Event ev = {0};
+    Event ev = { 0 };
     switch (c->mcause) {
-      case 0x0b: ev.event = EVENT_YIELD; c->mepc += 0x4; break;
-      default: ev.event = EVENT_ERROR; break;
+      // case  11: ev.event = EVENT_SYSCALL;c->mepc += 4; break; // yield
+    case 11:
+      if (c->GPR1 == -1) {
+        ev.event = EVENT_YIELD;
+      }
+      else {
+        ev.event = EVENT_SYSCALL;
+      }
+      c->mepc += 4;
+      break;
+
+    default: ev.event = EVENT_ERROR; break;
     }
 
+    // for (size_t i = 0; i < 32; i++) {
+    //   printf("%d: %x\n", i, c->gpr[i]);
+    // }
     c = user_handler(ev, c);
     assert(c != NULL);
   }
