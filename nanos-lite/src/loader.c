@@ -70,102 +70,74 @@ char *copy_str(char *dst, const char *src) {
   return dst+1;
 }
 
-/*
-Data Locations,see ABI at
-https://ysyx.oscc.cc/docs/ics-pa/4.1.html#%E7%94%A8%E6%88%B7%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8F%82%E6%95%B0
-#####################<-stack.end
-Context
-####################
-Empty......
-####################
-Str.......
-####################
-NULL
-####################
-char *envp []
-(Pointer Array)
-###################
-NULL
-###################
-char *argv[]
-(Pointer Array)
-##################
-argc
-##################
-(union)
-context* max_brk
-AddrSpace as
-uintptr_t cp
-##################<-stack.start
-*/
-// _start之后会调用call_main()，在如果要传递参数，应该把参数相关信息传递给call_main,然后由call_main传递给目标main函数
+
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-  assert(envp);
-  assert(argv);
-  assert(filename);
-  assert(pcb);
-  protect(&pcb->as); // create an space whitch inherits kernal mapping! WoW!
-  pcb->max_brk=0;
-
-  uintptr_t entry = loader(pcb, filename);
-  uint8_t *stack = new_page(8);
-  //map stack
-  for (int i = 0; i < 8; i++) {
-    map(&pcb->as,(void*)pcb->as.area.end-(8-i)*PGSIZE,stack+PGSIZE*i,0b1101111);//TODO!
-  }
-
-
-  // uint8_t *stack = pcb->stack;
-  // init an Context struct on top of stack
-  //the cp pointer stores at the bottom of stack
-  pcb->cp =
-      ucontext(&pcb->as, (Area){.start = pcb->stack, .end = pcb->stack + STACK_SIZE},
-               (void *)entry);
-  // pcb->active = true;
-  // Log("NEW_PAGE:%x-%x-%x\n", stack,pcb->cp,pcb->cp->mepc);
-
-  //calc addr and num
-  uintptr_t base_offseted = (uintptr_t)(stack+ sizeof(AddrSpace)+sizeof(Context*)+sizeof(uintptr_t)*2);
-  // 这里的GPR3设置的有问题
-  // pcb->cp->GPR3 = base_offseted; //这是nanos-lite直接访问的物理地址!不是虚拟地址!
-  pcb->cp->GPR3 = (uintptr_t)((void*)pcb->as.area.end-8*PGSIZE + sizeof(AddrSpace)+sizeof(Context*)+sizeof(uintptr_t)*2); //这是nanos-lite直接访问的物理地址!不是虚拟地址!
-  int argc = 0; // TODO need to contain exec_name?
-  int envp_num=0;
-  for (int i = 0; argv[i] != NULL; i++)
-    argc++;
-  //seems execvp fails to trans envp
-  // for (int i = 0; envp[i] != NULL; i++)
-  //   envp_num++;
-
-  // Log("%d-%d",argc,envp_num);
-  // get the a,ddr
-  // don't assume pointer of size 4Bytes
-  *(intptr_t *)(base_offseted) = (intptr_t)argc;
-  char* *table_base = (char* *)base_offseted + 1;
-  char * string_base = (char*)((char* *)base_offseted + envp_num + argc + 3);
-
-  // Log("%d,%d",argc,envp_num);
-  //copy argvs
-  for (int i = 0; i < argc; i++) {
-    *table_base = (char*)string_base;
-    table_base += 1;
-    string_base = copy_str(string_base, argv[i]);
-    // string_base=stpcpy(string_base,argv[i])+1;
-  }
-  // set NULL
-  *table_base = 0;
-  table_base += 1;
-
-  // copy envp
-  for (int i = 0; i < envp_num; i++) {
-    *table_base = (char*)string_base;
-    table_base += 1;
-    string_base = copy_str(string_base, envp[i]);
-    // string_base = stpcpy(string_base, envp[i]) + 1;
-  }
-  // set NULL
-  *table_base = 0;
-  table_base += 1;
-  // set the active tag here,making sure the process is finished
-  pcb->active = true;
+    // 定义用户栈的区域
+    Area stack;
+    stack.start = pcb->stack;
+    stack.end = pcb->stack + STACK_SIZE;
+ 
+    // 调用 loader 函数加载用户程序，获取入口地址
+    uintptr_t entry = loader(pcb, filename);
+ 
+    // 计算 argc、envc 的值
+    int argc = 0;
+    while (argv[argc] != NULL) argc++;
+    int envc = 0;
+    while (envp[envc] != NULL) envc++;
+ 
+    // 分配用户栈空间，用于存储 argv 和 envp 指针
+    uintptr_t* user_stack = (uintptr_t*)heap.end;
+ 
+    // 将 argv 字符串逆序拷贝到用户栈
+    for (int i = argc - 1; i >= 0; i--) {
+        size_t len = strlen(argv[i]) + 1;  // 包括 null 终止符
+        user_stack -= len;
+        strncpy((char*)user_stack, argv[i], len);
+    }
+ 
+    // 对齐到 uintptr_t 边界
+    user_stack = (uintptr_t*)((uintptr_t)user_stack & ~(sizeof(uintptr_t) - 1));
+ 
+    // 将 envp 字符串逆序拷贝到用户栈
+    for (int i = envc - 1; i >= 0; i--) {
+        size_t len = strlen(envp[i]) + 1;  // 包括 null 终止符
+        user_stack -= len;
+        strncpy((char*)user_stack, envp[i], len);
+    }
+ 
+    // 对齐到 uintptr_t 边界
+    user_stack = (uintptr_t*)((uintptr_t)user_stack & ~(sizeof(uintptr_t) - 1));
+ 
+    // 将 argv 和 envp 指针拷贝到用户栈
+    user_stack -= (argc + envc + 4);  // +4 为 NULL 结尾和 argc/envc 的值
+    uintptr_t* user_argv = user_stack;
+ 
+    // 设置 argc 的值
+    user_stack[0] = argc;
+ 
+    // 设置 argv 指针
+    for (int i = 0; i < argc; i++) {
+        user_stack[i + 1] = (uintptr_t)heap.end - (argc - i - 1) * sizeof(uintptr_t);
+    }
+ 
+    // 设置 argv 的 NULL 终止符
+    user_stack[argc + 1] = 0;
+ 
+    // 设置 envc 的值
+    user_stack[argc + 2] = envc;
+ 
+    // 设置 envp 指针
+    for (int i = 0; i < envc; i++) {
+        user_stack[argc + 3 + i] = (uintptr_t)heap.end - (argc + 3 + envc - i - 1) * sizeof(uintptr_t);
+    }
+ 
+    // 设置 envp 的 NULL 终止符
+    user_stack[argc + 3 + envc] = 0;
+ 
+    // 调用 ucontext 函数创建用户上下文，传入入口地址和用户栈
+    pcb->cp = ucontext(NULL, stack, (void*)entry);
+ 
+    // 将用户栈的顶部地址赋给 GPRx 寄存器
+    pcb->cp->GPRx = (uintptr_t)user_stack;
 }
