@@ -33,6 +33,7 @@ void init_proc() {
 
 Context* schedule(Context *prev) {
 // save the context pointer
+printf("schedule prev:%p\n", prev);
 current->cp = prev;
 
 // switch between pcb[0] and pcb[1]
