@@ -59,10 +59,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged Exception!, No=%x Epc=%x",NO,epc););
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
-    printf("isa_raise_intr go to S_Mod\n");
     return riscv_intr_gotos(NO,epc);
   }else{
-    printf("isa_raise_intr go to M_Mod\n");
     return riscv_intr_gotom(NO,epc);
   }
 }
@@ -70,17 +68,14 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged ECALL!, No=%x Epc=%x",NO,epc););
   if(cpu.PRIV==NEMU_PRIV_M||cpu.PRIV==NEMU_PRIV_HS) {
-    printf("riscv_do_ecall go to M_Mod\n");
     return riscv_intr_gotom(NO, epc);
   }else{
-    printf("riscv_do_ecall go to S_Mod\n");
     return riscv_intr_gotos(NO,epc);
   }
 }
 
 
 paddr_t isa_call_mret() {
-  printf("isa_call_mret\n");
   cpu.PRIV = NEMU_mstatus->bits.MPP;
   NEMU_mstatus->bits.MIE = NEMU_mstatus->bits.MPIE;
   NEMU_mstatus->bits.MPP = 0;
