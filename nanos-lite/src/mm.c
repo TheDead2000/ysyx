@@ -1,15 +1,9 @@
 #include <memory.h>
 
-static void* pf = NULL;
+static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-
-  void* last_pf = pf;
-  uintptr_t pf_temp = (uintptr_t)pf;
-  pf = (void*)(pf_temp + nr_page * PGSIZE);
-
-  assert((uintptr_t)pf == (pf_temp + nr_page * PGSIZE));
-  return last_pf;
+  return NULL;
 }
 
 #ifdef HAS_VME
@@ -18,7 +12,7 @@ static void* pg_alloc(int n) {
 }
 #endif
 
-void free_page(void* p) {
+void free_page(void *p) {
   panic("not implement yet");
 }
 
@@ -28,7 +22,7 @@ int mm_brk(uintptr_t brk) {
 }
 
 void init_mm() {
-  pf = (void*)ROUNDUP(heap.start, PGSIZE);
+  pf = (void *)ROUNDUP(heap.start, PGSIZE);
   Log("free physical pages starting from %p", pf);
 
 #ifdef HAS_VME
