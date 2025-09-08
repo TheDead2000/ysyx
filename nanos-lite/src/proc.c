@@ -25,7 +25,7 @@ void init_proc() {
 
   Log("Initializing processes...");
   context_kload(&pcb[0], hello_fun, "A");
-  context_kload(&pcb[1], hello_fun, "B");
+  // context_kload(&pcb[1], hello_fun, "B");
 
   // load program here
   // naive_uload(NULL, "/bin/menu");
