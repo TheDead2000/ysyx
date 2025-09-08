@@ -139,14 +139,14 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   printf("context_uload:%s\n",filename);
   uintptr_t entry = loader(pcb, filename);
   
-  printf("entry at %s\n", entry);
+  printf("entry at %x\n", entry);
   uint8_t *stack = new_page(8);
   //map stack
   for (int i = 0; i < 8; i++) {
     map(&pcb->as,(void*)pcb->as.area.end-(8-i)*PGSIZE,stack+PGSIZE*i,0b1101111);//TODO!
   }
 
-  printf("stack at %s-%s\n", pcb->as.area.end - 8 * PGSIZE, pcb->as.area.end);
+  printf("stack at %x-%x\n", pcb->as.area.end - 8 * PGSIZE, pcb->as.area.end);
   // uint8_t *stack = pcb->stack;
   // init an Context struct on top of stack
   //the cp pointer stores at the bottom of stack
