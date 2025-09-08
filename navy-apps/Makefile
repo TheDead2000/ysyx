@@ -169,7 +169,7 @@ $(CLEAN_ALL):
 # APPS = nslider menu nterm bird pal
 APPS = menu nterm bird pal nslider
 # APPS =  menu bird pal nterm nslider
-# TESTS = hello bmp-test
+TESTS = dummy hello bmp-test
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
 	-for t in $^; do $(MAKE) -s -C $(NAVY_HOME)/$$t install; done
