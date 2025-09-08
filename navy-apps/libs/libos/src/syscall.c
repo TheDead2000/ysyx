@@ -62,52 +62,58 @@ void _exit(int status) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  _syscall_(SYS_open, (intptr_t)path, flags, mode);
+  return _syscall_(SYS_open, (intptr_t)path, (intptr_t)flags, (intptr_t)mode);
 }
-/*
-from Linux manual page:
-  write() writes up to count bytes from the buffer starting at buf
-       to the file referred to by the file descriptor fd.
-*/
+
 int _write(int fd, void *buf, size_t count) {
-  _syscall_(SYS_write, fd, (intptr_t)buf, count);
-  // return 0; 不是哥们，居然往代码里面下毒
-  // 当时return 0 没有删掉导致真正的返回值被覆盖，newlib无法获取返回值，导致一直输出第一个字符
+  return _syscall_(SYS_write, (intptr_t)fd, (intptr_t)buf, (intptr_t)count);
 }
-extern char end;
-intptr_t end_pos = (intptr_t)&end; 
-void *_sbrk(intptr_t increment) {
-  int ret = _syscall_(SYS_brk, end_pos+increment, 0, 0);
-  if (ret != 0)
-    return (void *)-1;
-  intptr_t prev_pos=end_pos;
-  end_pos+=increment;
-  return (void*)prev_pos;
+
+void *_sbrk(intptr_t increment) 
+{
+  extern char _end;
+  static char *program_break = NULL;
+  // First call, set to _end;
+  if (program_break == NULL) 
+  {
+      program_break = &_end;
+  }
+
+  char *old_break = program_break;
+  char *new_break = old_break + increment;
+
+  // Call SYS_brk
+  if (_syscall_(SYS_brk, (intptr_t)new_break, 0, 0) == 0) 
+  {
+      // Success
+      program_break = new_break;
+      return (void*)old_break;
+  } 
+  else 
+  {
+      // Fail
+      return (void*)-1;
+  }
 }
 
 int _read(int fd, void *buf, size_t count) {
-  return _syscall_(SYS_read, fd, (intptr_t)buf, count);
+  return _syscall_(SYS_read, (intptr_t)fd, (intptr_t)buf, (intptr_t)count);
 }
 
 int _close(int fd) {
-  return _syscall_(SYS_close, fd, 0, 0);
+  return _syscall_(SYS_close, (intptr_t)fd, (intptr_t)0, (intptr_t)0);
 }
 
 off_t _lseek(int fd, off_t offset, int whence) {
-  return _syscall_(SYS_lseek, fd, offset, whence);
+  return _syscall_(SYS_lseek, (intptr_t)fd, (intptr_t)offset, (intptr_t)whence);
 }
 
 int _gettimeofday(struct timeval *tv, struct timezone *tz) {
-  return _syscall_(SYS_time, (intptr_t)tv, (intptr_t)tz, 0);
+  return _syscall_(SYS_gettimeofday, (intptr_t)tv, (intptr_t)tz, (intptr_t)0);
 }
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
-  int ret = _syscall_(SYS_execve, (intptr_t)fname, (intptr_t)argv, (intptr_t)envp);
-  if (ret < 0) {
-    errno = -ret;
-    return -1;
-  }
-  return 0;
+  return _syscall_(SYS_execve, (intptr_t)fname, (intptr_t)argv, (intptr_t)envp);
 }
 
 // Syscalls below are not used in Nanos-lite.
