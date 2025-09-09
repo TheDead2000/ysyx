@@ -56,8 +56,7 @@ save_context:
   csrr t1, mstatus
   csrr t2, mepc
   csrr t3, mscratch
-  csrr t4, sepc
-
+  
   # 压入控制与状态寄存器
   STORE t0, OFFSET_CAUSE(sp)
   STORE t1, OFFSET_STATUS(sp)
@@ -86,7 +85,7 @@ save_context:
   csrw mstatus, t1
   csrw mepc, t2
   csrw mscratch, t3
-  csrw sepc,t4
+
   MAP(REGS, POP)
 
   addi sp, sp, CONTEXT_SIZE

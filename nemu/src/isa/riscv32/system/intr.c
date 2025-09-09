@@ -70,10 +70,8 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged ECALL!, No=%x Epc=%x",NO,epc););
   if(cpu.PRIV==NEMU_PRIV_M||cpu.PRIV==NEMU_PRIV_HS) {
-    printf("ecall from M or HS mode\n");
     return riscv_intr_gotom(NO, epc);
   }else{
-    printf("ecall from S or U mode\n");
     return riscv_intr_gotos(NO,epc);
   }
 }
@@ -81,7 +79,6 @@ word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
 
 paddr_t isa_call_mret() {
   cpu.PRIV = NEMU_mstatus->bits.MPP;
-  printf("mret to %s mode\n", cpu.PRIV==3?"M":cpu.PRIV==1?"HS":"U");
   NEMU_mstatus->bits.MIE = NEMU_mstatus->bits.MPIE;
   NEMU_mstatus->bits.MPP = 0;
   NEMU_mstatus->bits.MPIE=1;
