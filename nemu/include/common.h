@@ -23,7 +23,7 @@
 
 #include <generated/autoconf.h>
 #include <macro.h>
-#include "../src/isa/riscv32/include/csr-reg.h"
+//#include "../src/isa/riscv32/include/csr-reg.h"
 #ifdef CONFIG_TARGET_AM
 #include <klib.h>
 #else

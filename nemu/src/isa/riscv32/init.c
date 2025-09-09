@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-#include "local-include/reg.h"
+
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
@@ -33,8 +33,8 @@ static void restart() {
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
 
-  /* initialize mstatus */
-  csr(NEMU_CSR_V_MSTATUS) = 0x1800;
+  // pa3-1: DiffTest机制正确工作
+  cpu.mstatus.value = 0x1800;
 }
 
 void init_isa() {
@@ -42,6 +42,5 @@ void init_isa() {
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
-  cpu.PRIV=NEMU_PRIV_M;
   restart();
 }
