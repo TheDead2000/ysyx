@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <stdio.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -23,6 +24,7 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
+void init_elf(char **elf_file, int elf_file_num);
 
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
@@ -32,7 +34,8 @@ static void welcome() {
   Log("Build time: %s, %s", __TIME__, __DATE__);
   printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
-  // assert(0);
+  /*Log("Exercise: Please remove me in the source code and compile NEMU again.");
+   *assert(0);*/
 }
 
 #ifndef CONFIG_TARGET_AM
@@ -41,9 +44,10 @@ static void welcome() {
 void sdb_set_batch_mode();
 
 static char *log_file = NULL;
+static char *elf_file[2];
+static int elf_file_num = 0;
 static char *diff_so_file = NULL;
-static char *img_file = "/home/zy/ysyx-workbench/nanos-lite/build/nanos-lite-riscv32-npc.bin";
-// static char *img_file = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/mul-longlong-riscv32-npc.bin";
+static char *img_file = NULL;
 static int difftest_port = 1234;
 
 static long load_img() {
@@ -71,6 +75,7 @@ static long load_img() {
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
+    {"elf"      , required_argument, NULL, 'e'},
     {"log"      , required_argument, NULL, 'l'},
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
@@ -78,9 +83,12 @@ static int parse_args(int argc, char *argv[]) {
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+  // - 表示开启无 - 匹配，即某个参数不需要 - 或 -- 来表示这是一个参数，可以直接通过字符串。此类无提示符号的参数的解析返回值是 1
+  // 如果 getopt_long返回 0，表示那些没有设置短选项的长选项参数, 并且会自动设置 flag。flag 是 option 的第三个参数，如果不为 NULL，能够自动保存参数的 val。 
+  while ( (o = getopt_long(argc, argv, "-bhe:l:d:p:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
+      case 'e': assert(elf_file_num < 2); elf_file[elf_file_num++] = optarg; break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
@@ -88,6 +96,7 @@ static int parse_args(int argc, char *argv[]) {
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
+        printf("\t-b,--elf                run with function trace\n");
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
@@ -110,6 +119,9 @@ void init_monitor(int argc, char *argv[]) {
   /* Open the log file. */
   init_log(log_file);
 
+  /* Open the elf file and get functions infos */
+  init_elf(elf_file, elf_file_num);
+
   /* Initialize memory. */
   init_mem();
 
@@ -124,6 +136,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
+
   /* Initialize the simple debugger. */
   init_sdb();
 

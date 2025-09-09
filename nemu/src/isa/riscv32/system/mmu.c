@@ -14,26 +14,6 @@
 ***************************************************************************************/
 
 #include "common.h"
-#include <isa.h>
-#include <memory/vaddr.h>
-#include <memory/paddr.h>
-
-/***************************************************************************************
-* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
-*
-* NEMU is licensed under Mulan PSL v2.
-* You can use this software according to the terms and conditions of the Mulan PSL v2.
-* You may obtain a copy of Mulan PSL v2 at:
-*          http://license.coscl.org.cn/MulanPSL2
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the Mulan PSL v2 for more details.
-***************************************************************************************/
-
-#include "common.h"
 #include "debug.h"
 #include <isa.h>
 #include <memory/vaddr.h>
@@ -55,7 +35,7 @@ typedef uint32_t PTE;
 #define OFFSET(val) (val & 0xfff)
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-    paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP]<< 12) + PGT1_ID(vaddr) * 4;   // 每个表项占 4 个字节，计算得到虚拟地址的一级页面表项地址
+    paddr_t pte_1_addr = (cpu.satp << 12) + PGT1_ID(vaddr) * 4;   // 每个表项占 4 个字节，计算得到虚拟地址的一级页面表项地址
     PTE pte_1 = paddr_read(pte_1_addr, sizeof(PTE));
     Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%#x", vaddr);
 
@@ -70,4 +50,3 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     //Assert(pa == vaddr, "get physical address wrong, pa=%#x, va=%#x", pa, vaddr);
     return pa;
 }
-
