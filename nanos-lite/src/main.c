@@ -14,7 +14,7 @@ int main() {
   Log("Build time: %s, %s", __TIME__, __DATE__);
 
   init_mm();
-  Log("Memory management initialized");
+
   init_device();
 
   init_ramdisk();

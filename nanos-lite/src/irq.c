@@ -1,8 +1,9 @@
+#include "am.h"
+#include "debug.h"
 #include <common.h>
 #include <proc.h>
 
-
-extern void do_syscall(Context* c);
+void do_syscall(Context *c);
 
 static Context* do_event(Event e, Context* c) {
   switch (e.event) {

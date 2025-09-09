@@ -13,14 +13,10 @@ typedef union {
     AddrSpace as;
     // we do not free memory, so use `max_brk' to determine when to call _map()
     uintptr_t max_brk;
-    uintptr_t active;//wheather the thread alive
   };
 } PCB;
 
 extern PCB *current;
-void naive_uload(PCB *pcb, const char *filename);
-void context_kload(PCB *pcb, void (*entry)(void *), void *arg);
-Context* schedule(Context* prev);
-void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
-void handle_execve(const char *filename, char *const argv[], char *const envp[]);
+Context * schedule(Context * c);
+int execve(const char *path, char *const argv[], char *const envp[]);
 #endif
