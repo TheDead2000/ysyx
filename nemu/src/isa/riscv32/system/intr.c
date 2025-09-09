@@ -74,13 +74,14 @@ word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
     return riscv_intr_gotom(NO, epc);
   }else{
     printf("ecall from S or U mode\n");
-    return riscv_intr_gotom(NO,epc);
+    return riscv_intr_gotos(NO,epc);
   }
 }
 
 
 paddr_t isa_call_mret() {
   cpu.PRIV = NEMU_mstatus->bits.MPP;
+  printf("mret to %s mode\n", cpu.PRIV==3?"M":cpu.PRIV==1?"HS":"U");
   NEMU_mstatus->bits.MIE = NEMU_mstatus->bits.MPIE;
   NEMU_mstatus->bits.MPP = 0;
   NEMU_mstatus->bits.MPIE=1;
