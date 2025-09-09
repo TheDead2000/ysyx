@@ -1,12 +1,10 @@
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
+#include <stdint.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
-// #if defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
-
-void *addr=NULL;
 
 int rand(void) {
   // RAND_MAX assumed to be 32767
@@ -33,20 +31,20 @@ int atoi(const char* nptr) {
 }
 
 void *malloc(size_t size) {
-  // printf("call malloc!");
-  if(!addr)
-    addr=heap.start;
-  void* ret=addr;
-  addr+=size;
-
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:
   //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-
-  // panic("Not implemented");
-#endif
+  static uint8_t *p = NULL;
+  if (p == NULL) p = heap.start;
+  if (p > (uint8_t *)heap.end || size > (uint8_t *)heap.end - p) return NULL;
+  void *ret = p;
+  p += size;
+  p = (uint8_t *)(((uintptr_t)p + 7) & ~((uintptr_t)7));
   return ret;
+
+#endif
+  return NULL;
 }
 
 void free(void *ptr) {
