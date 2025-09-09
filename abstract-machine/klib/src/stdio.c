@@ -2,182 +2,149 @@
 #include <klib.h>
 #include <klib-macros.h>
 #include <stdarg.h>
+// TODO: stdarg是如何实现的?
+// TODO:
+// 也许应该修改逻辑了，写入到一个缓冲区中，当有回车或者结束或者缓冲区满的时候刷新缓冲区，不要开3k个字符了!!!!!!
+#define BUFFER_LENGH 3000
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
-
-static char HEX_CHARACTERS[] = "0123456789abcdef";
-
-static int int2str(char *buffer, int num) {
-    int neg = 0;
-    if (num == 0) {
-        buffer[0] = '0';
-        return 1;
-    } else if (num < 0)
-        neg = 1;
-    int i = 0;
-    // 当 num 是负数时，直接给 num 取相反数可能会导致溢出，例如[-256,255] 中的 -256.
-    // 因此，求模之后根据余数是否为负数，调整符号
-    int remainder;
-    for (; num; num /= 10) {
-        remainder = num % 10;
-        if (neg)
-            remainder = -remainder;
-        buffer[i++] = HEX_CHARACTERS[remainder % 10];
-    }
-    if (neg) {
-        buffer[i++] = '-';
-    }
-    return i;
-}
-
-static int uint2str(char *buffer, unsigned int num) {
-    
-    if (num == 0) {
-        buffer[0] = '0';
-        return 1;
-    }
-    int i = 0;
-    int remainder;
-    for (; num; num /= 10) {
-        remainder = num % 10;
-        buffer[i++] = HEX_CHARACTERS[remainder % 10];
-    }
-    return i;
-}
-
-static int pointer2hex(char *buffer, void *ptr) {
-    int remainder;
-    int i = 0;
-    size_t p = (size_t)ptr;
-    if (p == 0) {
-        strcpy(buffer, ")lin(");        // (nil) 反过来写
-        return 5;
-    }
-    do {
-        remainder = p % 16;
-        buffer[i++] = HEX_CHARACTERS[remainder % 16];
-    } while (p /= 16);
-    // 补 0
-    /*for (int k = i; k <= sizeof(size_t) * 2; k++) {
-     *    buffer[i++] = '0';
-     *}*/
-    buffer[i++] = 'x';
-    buffer[i++] = '0';
-
-    return i;
-}
-
-static int uint2hex(char *buffer, unsigned int u) {
-    int remainder;
-    int i = 0;
-    do {
-        remainder = u % 16;
-        buffer[i++] = HEX_CHARACTERS[remainder % 16];
-    } while (u /= 16);
-/*    buffer[i++] = 'x';*/
-    /*buffer[i++] = '0';*/
-    return i;
-}
+// #if defined(__NATIVE_USE_KLIB__)
+int print_num(char *out, size_t out_offset, int val);
+int print_str(char *out, size_t out_offset, char *val);
+int sprintf(char *out, const char *fmt, ...);
+int vsprintf(char *out, const char *fmt, va_list args);
+int print_num_hex(char *out, size_t out_offset, int unsigned val);
+int print_num_long(char *out, size_t out_offset, long val);
 
 int printf(const char *fmt, ...) {
-    char buffer[4096];
-    va_list ap;
-    va_start(ap, fmt);
-    int done = vsprintf(buffer, fmt, ap);
-    putstr(buffer);
-    return done;
+  //TODO
+  char out[BUFFER_LENGH];
+  va_list args;
+  va_start(args, fmt);
+  int len = vsprintf(out, fmt, args);
+  va_end(args);
+  putstr(out);
+  return len;
 }
 
-int vsprintf(char *out, const char *fmt, va_list ap) {
-    return vsnprintf(out, -1, fmt, ap);
+int vsprintf(char *out, const char *fmt, va_list args)
+{
+  size_t out_offset = 0;
+  const char *p = fmt;
+  while (*p != '\0')
+  {
+    switch (*p)
+    {
+    case '\\':
+      break;
+    case '%':
+      p++;
+      switch (*(p))
+      {
+        case 'd':
+          out_offset = print_num(out, out_offset, va_arg(args, int));
+          break;
+        case 's':
+          out_offset = print_str(out, out_offset, va_arg(args, char *));
+          break;
+        case 'c':
+          out[out_offset++] = va_arg(args, int);
+          break;
+        case 'x':
+        case 'p':
+          out_offset = print_num_hex(out, out_offset, va_arg(args, int));
+          break;
+        case 'l':
+          p++;
+          if(*(p)=='d'){//%ld
+            out_offset=print_num_long(out, out_offset, va_arg(args, long));
+          }
+      }
+      break;
+    default:
+      out[out_offset++] = *p;
+      break;
+    }
+    p++;
+  }
+  out[out_offset] = '\0';
+  return out_offset;
 }
+// TOW Helper Func Defined By Myself
+// 递归打印val
+int print_num(char *out, size_t out_offset, int val)
+{
+  if (val < 0)
+  {
+    out[out_offset++] = '-';
+    val = -val;
+  }
+  int append = val % 10;
+  if (val / 10 != 0)
+    out_offset = print_num(out, out_offset, val / 10);
+  out[out_offset] = append + '0';
+  return out_offset + 1;
+}
+int print_num_hex(char *out, size_t out_offset, unsigned int val)
+{
 
-int sprintf(char *out, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    return vsnprintf(out, -1, fmt, ap);
+  int append = val % 16;
+  if (val / 16 != 0)
+    out_offset = print_num_hex(out, out_offset, val / 16);
+  out[out_offset] = append <= 9 ? append + '0' : append - 10 + 'a';
+  return out_offset + 1;
+}
+int print_num_long(char *out, size_t out_offset, long val)
+{
+  if (val < 0)
+  {
+    out[out_offset++] = '-';
+    val = -val;
+  }
+  long append = val % 10;
+  if (val / 10 != 0)
+    out_offset = print_num(out, out_offset, val / 10);
+  out[out_offset] = append + '0';
+  return out_offset + 1;
+}
+// 打印字符串
+int print_str(char *out, size_t out_offset, char *val)
+{
+  size_t i = 0;
+  while (val[i] != '\0')
+  {
+    out[out_offset++] = val[i++];
+  }
+  return out_offset;
+}
+int sprintf(char *out, const char *fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  int len = vsprintf(out, fmt, args);
+  va_end(args);
+  return len;
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    return vsnprintf(out, n, fmt, ap);
+
+  char buffer[BUFFER_LENGH];
+  va_list args;
+  va_start(args, fmt);
+  vsprintf(buffer, fmt, args);
+  va_end(args);
+  strncpy(out, buffer, n);
+  return n;
+  // panic("Not implemented1");
 }
 
-#define append(x) do {out[j++]=x; } while(0)
-int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-    int state = 0;
-    int j = 0, num;
-    unsigned int u_num;
-    char c, ch;
-    char *s;
-    void *p;
-    char buffer[50];
-    unsigned int length;
-    unsigned int u;
-    while (c = *fmt++, c && n > 0 && j < n - 1) {
-        switch (state) {
-            case 0:
-                if (c == '%')
-                    state = 1;
-                else
-                    append(c);
-                break;
-            case 1:
-                switch (c) {
-                    case '%':
-                        append(c);
-                        break;
-                    case 'd':
-                        num = va_arg(ap, int);
-                        length = int2str(buffer, num);
-                        for (int i = length - 1; i >= 0; i--) {
-                            append(buffer[i]);
-                        }
-                        break;
-                    case 'u':
-                        u_num = va_arg(ap, unsigned int);
-                        length = uint2str(buffer, u_num);
-                        for (int i = length - 1; i >= 0; i--) {
-                            append(buffer[i]);
-                        }
-                        break;
-                    case 'c':
-                        // char type promote to int
-                        ch = va_arg(ap, int);
-                        append(ch);
-                        break;
-                    case 's':
-                        s = va_arg(ap, char*);
-                        for (int i = 0; s[i] != '\0'; i++) {
-                            append(s[i]);
-                        }
-                        break;
-                    case 'p':
-                        p = va_arg(ap, void*);
-                        length = pointer2hex(buffer, p); 
-                        for (int i = length - 1; i >= 0; i--) {
-                            append(buffer[i]);
-                        }
-                        break;
-                    case 'x':
-                        u = va_arg(ap, unsigned int);
-                        length = uint2hex(buffer, u); 
-                        for (int i = length - 1; i >= 0; i--) {
-                            append(buffer[i]);
-                        }
-                        break;
-                    default:
-                        ;
-                        //Log("Type %%%c doesn't be supported ", c);
-                }
-                state = 0;
-                break;
-        }
-    }
-    va_end(ap);
-    out[j] = '\0';
-    return j;
+int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
+{
+  // panic("Not implemented2");
+  char buffer[BUFFER_LENGH];
+  vsprintf(buffer, fmt, ap);
+  strncpy(out, buffer, n);
+  return n;
 }
-#undef append
+
 #endif
