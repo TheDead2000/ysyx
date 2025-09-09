@@ -42,17 +42,23 @@ void init_proc() {
   // naive_uload(NULL, "/bin/menu");
 }
 
-Context* schedule(Context* prev) {
-  // save the context pointer
-  current->cp = prev;
+Context* schedule(Context *prev) {
+    // save the context pointer
+    current->cp = prev;
 
-  // always select pcb[0] as the new process
-  // current = &pcb[0];
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-
-  // then return the new context
-  return current->cp;
-
+    // always select pcb[0] as the new process
+    //current = &pcb[0];
+    static int turn = 1;
+    if (turn % 3 == 0) {
+        current = &pcb[0];
+        turn = 0;
+    } else 
+        current = &pcb[1];
+    //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+    //printf("pcb address = %p, context address = %p\n", current, current->cp);
+    // then return the new context
+    turn++;
+    return current->cp;
 }
 
 
