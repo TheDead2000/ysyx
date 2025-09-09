@@ -74,7 +74,7 @@ word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
     return riscv_intr_gotom(NO, epc);
   }else{
     printf("ecall from S or U mode\n");
-    return riscv_intr_gotos(NO,epc);
+    return riscv_intr_gotom(NO,epc);
   }
 }
 
