@@ -69,7 +69,7 @@ Context* schedule(Context *prev) {
     // always select pcb[0] as the new process
     //current = &pcb[0];
     static uint turn = 1;
-    if (turn % 3 == 0) {
+    if (turn % 5 == 0) {
         current = &pcb[0];
         turn = 0;
     } else 
