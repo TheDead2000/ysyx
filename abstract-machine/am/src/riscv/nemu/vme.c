@@ -95,6 +95,7 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   Context *c = (Context *)kstack.end - 1;
   c->mepc = (uintptr_t)entry;
   //c->mstatus = 0xC0000 | MSTATUS_MPIE;          // difftest  需要，创建用户进程时，设置成 U 模式,  且MXR=1 SUM=1
+  c->mstatus = 0x1800 | MSTATUS_MPIE;         // 0x80 是MPIE，现在还不能添加，过不了 difftest 
   c->pdir = as->ptr;
   printf("=============user context pdir=%p=============\n", c->pdir);
   c->mscratch = (uintptr_t)kstack.end;
