@@ -17,19 +17,13 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-#include <stdio.h>
 #include "../monitor/sdb/sdb.h"
-#include "debug.h"
-#include "macro.h"
-#include "utils.h"
-#include "../utils/ftrace.h"
-
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
-#define MAX_INST_TO_PRINT 10
+#define MAX_INST_TO_PRINT 2001
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -37,58 +31,38 @@ static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
 void device_update();
-void display_inst();
+bool wp_diff();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-// ITRACE_COND 就是由 CONFIG_ITRACE_COND 推断而来。这个宏的定义在 nemu/Makefile 中。因为 sdb.h common.h stdbool .h 最终 宏定义中的 true 和 false 都能正常被解释成 0 1
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
-  // 打印指令地址、指令二进制码、反汇编结果
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-#ifdef CONFIG_WATCHPOINT
-  bool changed = check_wp();
-  if (changed) {
-      Log("hit watchpoint, pc is 0x%x, next pc is 0x%x", _this->pc, dnpc);
-      if (nemu_state.state == NEMU_RUNNING)
-        nemu_state.state = NEMU_STOP;
-  }
-#endif
+  wp_diff();
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
-  // 匹配并执行指令，更新 snpc 和 dnpc
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  
-  // 如果定义了追踪，还会记录每次执行的指令的二进制以及其反汇编代码
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
- 
-  // 第一步先获取地址，加一个英文冒号，将其写入到 p
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
- 
-  // 计算指令长度, 对于 riscv32 而言，ilen 通常都是 4
   int ilen = s->snpc - s->pc;
   int i;
- 
-  // s->isa.inst is an union,  val 是 uint32_t
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
-  // 每次写入 1 个 uint8 类型的变量，即 1 个字节，重复 4 次，刚好是一个 riscv32 指令的长度。用 2 位 16 进制数表示一个 uint8 类型的变量
   for (i = ilen - 1; i >= 0; i --) {
-    // 一个空格，两个 16 进制字符,位宽不够时用 0 填充
     p += snprintf(p, 4, " %02x", inst[i]);
   }
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0) space_len = 0;
-  // 添加空格的数量，保持格式对齐。x86 架构的指令长度是变长的，每个字节需要占用三个字符位置，包括十六进制 2 位和一个空格。此外，反汇编代码和指令二进制之间需要一个空格，所以有额外的 + 1
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
+
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
@@ -102,19 +76,11 @@ static void exec_once(Decode *s, vaddr_t pc) {
 static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
-    // 执行指令，同时更新 pc snpc dnpc
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
-    // 检测中断
-    word_t intr = isa_query_intr();
-    if (intr != INTR_EMPTY) {
-        //Log("before raise timer intr, mstatus=%x", cpu.mstatus.value);
-        cpu.pc = isa_raise_intr(intr, cpu.pc);          // 返回的 pc 就是异常处理程序的 pc，强行进入异常处理
-        //Log("after raise timer intr, mstatus=%x", cpu.mstatus.value);
-    }
   }
 }
 
@@ -128,8 +94,6 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  IFDEF(CONFIG_ITRACE, display_inst());
-  IFDEF(CONFIG_FTRACE, print_func_stack());
   isa_reg_display();
   statistic();
 }
@@ -155,16 +119,11 @@ void cpu_exec(uint64_t n) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
     case NEMU_END: case NEMU_ABORT:
-      if (nemu_state.halt_ret != 0) {
-          IFDEF(CONFIG_ITRACE, display_inst());
-          IFDEF(CONFIG_FTRACE, print_func_stack());
-      }
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
-
       // fall through
     case NEMU_QUIT: statistic();
   }
