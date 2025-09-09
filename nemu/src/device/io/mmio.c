@@ -15,22 +15,15 @@
 
 #include <device/map.h>
 #include <memory/paddr.h>
-#include <stdio.h>
 
 #define NR_MAP 16
 
 static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
-#ifdef CONFIG_DTRACE
-static const char *action[] = {"read", "write"};
-#endif
-
-static IOMap* fetch_mmio_map(paddr_t addr, int action_type) {
+static IOMap* fetch_mmio_map(paddr_t addr) {
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
-  IOMap *m = (mapid == -1 ? NULL : &maps[mapid]);
-  IFDEF(CONFIG_DTRACE, log_write("%s device %s", action[action_type], maps[mapid].name));
-  return m;
+  return (mapid == -1 ? NULL : &maps[mapid]);
 }
 
 static void report_mmio_overlap(const char *name1, paddr_t l1, paddr_t r1,
@@ -62,9 +55,9 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
-  return map_read(addr, len, fetch_mmio_map(addr, 0));
+  return map_read(addr, len, fetch_mmio_map(addr));
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
-  map_write(addr, len, data, fetch_mmio_map(addr, 1));
+  map_write(addr, len, data, fetch_mmio_map(addr));
 }
