@@ -22,7 +22,7 @@ CXX := g++
 endif
 LD := $(CXX)
 INCLUDES = $(addprefix -I, $(INC_PATH))
-CFLAGS  := -O2 -MMD -g -Wall  $(INCLUDES) $(CFLAGS)
+CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS)
 LDFLAGS := -O2 $(LDFLAGS)
 
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
@@ -51,12 +51,8 @@ app: $(BINARY)
 
 $(BINARY):: $(OBJS) $(ARCHIVES)
 	@echo + LD $@
+	@echo "NEMU linking flags: $(LDFLAGS)"
 	@$(LD) -o $@ $(OBJS) $(LDFLAGS) $(ARCHIVES) $(LIBS)
-
-gdb:
-	@echo + GDB $@
-	@$(CXX) $(CFLAGS) -g -o $(BINARY) $(OBJS) $(LDFLAGS) $(ARCHIVES) $(LIBS)
-	@echo "Run gdb with: gdb --args $(BINARY)"
 
 clean:
 	-rm -rf $(BUILD_DIR)

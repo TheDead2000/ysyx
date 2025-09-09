@@ -18,21 +18,9 @@
 
 #include <common.h>
 
-typedef struct watchpoint {
-    int NO;
-    struct watchpoint *next;
-    //  TODO: Add more members if necessary 
-    bool flag; // use / unuse
-    char expr[100];
-    int new_value;
-    int old_value;
-} WP;
-
-// WP* new_wp(char *str);
-// void free_wp(int number);
-// void show_watchpoint();
-void sdb_watchpoint_display();
-void create_watchpoint(char*);
-void delete_watchpoint(int);
 word_t expr(char *e, bool *success);
+void new_wp(char *exp);
+void free_wp(int NO);
+void display_wp();
+bool check_wp();
 #endif

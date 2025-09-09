@@ -12,17 +12,21 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
+/* sdb.h 不在 include 目录下，它的引入得是 ""，而不能用 <> */
+#include <inttypes.h>
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <utils.h>
 #include "sdb.h"
-#include "../../nemu/include/memory/vaddr.h"
+#include <stdio.h>
+#include <string.h>
+#include <utils.h>
+#include <memory/vaddr.h>
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
-
+static int qflag = 0;
 void init_regex();
 void init_wp_pool();
 
@@ -38,7 +42,8 @@ static char* rl_gets() {
   line_read = readline("(nemu) ");
 
   if (line_read && *line_read) {
-    add_history(line_read);
+      // add_history 也是 realdline 库的函数，为 readline 函数读取方向键提供历史记录
+      add_history(line_read);
   }
 
   return line_read;
@@ -51,134 +56,19 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
-  nemu_state.state = NEMU_END;
+  set_nemu_state(NEMU_QUIT, 0, 0);
   return -1;
 }
 
-static int cmd_si(char *args) {
-  int n = 0;
-  char *param = strtok(args, " ");
-
-  if (param == NULL) {
-    n = 1;
-  } else {
-    sscanf(param, "%d", &n);
-  }
-
-  cpu_exec(n);
-  return 0;
-}
-
-static int cmd_info(char *args) {
-  char *parma = strtok(args, " ");
-
-  if (strcmp(parma, "r") == 0) {
-    isa_reg_display();
-  } else if (strcmp(parma, "w") == 0) {
-    sdb_watchpoint_display();
-  } else {
-    printf("Unknow parma\n");
-  }
-
-  return 0;
-}
-
-static int cmd_x(char *args) {
-  char *parma1 = strtok(args, " ");
-  args = parma1 + strlen(parma1) + 1;
-  char *parma2 = strtok(args, " ");
-
-  if (parma1 == NULL || parma2 == NULL) {
-    printf("Unknow parma\n");
-  } else {
-    int n = 0;
-    uint32_t addr = 0;
-    bool success = false; 
-    // 解析参数
-    sscanf(parma1, "%d", &n);
-    addr = expr(parma2, &success);
-    // 扫描内存
-    for (int i = 0; i < 4 * n; i++) {
-      uint8_t val= vaddr_read(addr + i, 1);
-      printf("%02x ",val);
-    }
-    printf("\n");
-  }
-
-  return 0;
-}
-
-static int cmd_p(char *args){
-  bool success=true;
-  int32_t res = expr(args, &success);
-  if (!success) 
-  {
-    printf("invalid expression\n");
-  } else 
-  {
-    printf("%d\n", res);
-  }
-  return 0; 
-}
-
-static int cmd_w(char* args){
-    create_watchpoint(args);
-    return 0;
-}
-
-static int cmd_d (char *args){
-    if(args == NULL)
-        printf("No args.\n");
-    else{
-        delete_watchpoint(atoi(args));
-    }
-    return 0;
-}
-
-static int cmd_test(char *args) {
-  FILE *fp = fopen("/home/zy/ysyx-workbench/nemu/tools/gen-expr/build/results.txt", "r");
-  if (fp == NULL) {
-    printf("File not found: results.txt\n");
-    return 0;
-  }
-  char line[1024];
-  int total = 0;
-  int correct = 0;
-  while (fgets(line, sizeof(line), fp)) {
-    // 去除换行符
-    char *pos;
-    if ((pos = strchr(line, '\n')) != NULL) {
-      *pos = '\0';
-    }
-    // 分割结果和表达式
-    char *expected_str = strtok(line, " ");
-    char *expr_str = strtok(NULL, ""); // 剩余部分
-    if (expected_str == NULL || expr_str == NULL) {
-      printf("Invalid line: %s\n", line);
-      continue;
-    }
-    // 将预期结果转换为整数
-    long expected = atol(expected_str);
-    bool success = false;
-    int32_t result = expr(expr_str, &success);
-    if (!success) {
-      printf("Expression evaluation failed: %s\n", expr_str);
-      continue;
-    }
-    if (result != expected) {
-      printf("Error: expr=\"%s\", expected=%ld, got=%u\n", expr_str, expected, result);
-    } else {
-      correct++;
-    }
-    total++;
-  }
-  fclose(fp);
-  printf("Test result: %d/%d passed\n", correct, total);
-  return 0;
-}
-
-
 static int cmd_help(char *args);
+static int cmd_si(char *args);
+static int cmd_info(char *args);
+static int cmd_x(char *args);
+static int cmd_p(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
+static int cmd_save(char *args);
+static int cmd_load(char *args);
 
 static struct {
   const char *name;
@@ -188,15 +78,16 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si","single step",cmd_si},
-  { "info", "info reg watch", cmd_info},
-  { "x", "show memory", cmd_x},
-  { "p", "expr", cmd_p},
-  { "w", "cmd_w",cmd_w},
-  { "d", "cmd_d",cmd_d},
-  { "test", "test expr", cmd_test },
-  /* TODO: Add more commands */
 
+  /* TODO: Add more commands */
+  { "si", "Step N instruction", cmd_si },
+  { "info", "print register or watchpoint", cmd_info },
+  { "x", "print memory", cmd_x },
+  { "p", "compute expression", cmd_p },
+  { "w", "add new watchpoint", cmd_w },
+  { "d", "delete watchpoint by number", cmd_d },
+  { "load", "load nemu state, including mem and regs", cmd_load },
+  { "save", "save nemu state, including mem and regs", cmd_save },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -224,12 +115,121 @@ static int cmd_help(char *args) {
   return 0;
 }
 
+static int cmd_si(char *args) {
+  char *arg = strtok(NULL, " ");
+  uint64_t num;
+
+  if (arg == NULL) {num = 1; }
+  else {sscanf(arg, "%" SCNu64, &num); }
+  // execute(num);
+  cpu_exec(num);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+    char *arg = strtok(NULL, " ");
+    if (*arg == 'r') {
+        isa_reg_display();
+    } else if (*arg == 'w') {
+        display_wp();
+    }
+    return 0;
+}
+
+static int cmd_x(char *args) {
+    unsigned int num = 1;
+    vaddr_t addr;
+    word_t mem;
+    int ret;
+    ret = sscanf(args, "%u %x", &num, &addr);
+    if (ret < 2) {
+        // 如果第一次读取失败，则尝试只读取十六进制数
+        sscanf(args, "%x", &addr);
+    }
+    /*sscanf(args, "%u %x", &num, &addr);*/
+    for (int i = 1; i <= num; i++) {
+        if (i % 8 == 1) {
+            printf("0x%08x :", addr);
+        }
+        mem = vaddr_read(addr, 1);
+        printf("\t0x%02x", mem);
+        if (i % 8 == 0 || i == num) {printf("\n"); };
+        addr += 1;
+    }
+    return 0;
+}
+
+static int cmd_p(char *args) {
+    bool success = true;
+    word_t res = expr(args, &success);
+    if (success) {
+        printf("%u/0x%x\n", res, res);
+    } else {
+        printf("the expression is wrong, check it\n");
+    }
+    return 0;
+}
+
+static int cmd_w(char *args) {
+    new_wp(args);
+    return 0;
+}
+
+static int cmd_d(char *args) {
+    int NO;
+    sscanf(args, "%d", &NO);
+    free_wp(NO);
+    return 0;
+}
+
+#define FILE_PATH_LENGTH 128
+static int cmd_save(char *args) {
+    size_t len = strlen(args);
+    char filepath[FILE_PATH_LENGTH ];
+    strcpy(filepath, getenv("NEMU_HOME"));
+    strcat(filepath, "/src/monitor/nemu_history");
+
+    if (len > 128 - strlen(filepath)) {
+        printf("filename too long!\n");
+        return 0;
+    }
+    strcat(filepath, args);
+    FILE *fp = fopen(filepath, "w");
+    save_mem(fp);
+    save_regs(fp);
+    //save_mem(fp);
+    printf("snapshot saved\n");
+    fclose(fp);
+    return 0;
+}
+
+#define FILE_PATH_LENGTH 128
+static int cmd_load(char *args) {
+    size_t len = strlen(args);
+    char filepath[FILE_PATH_LENGTH ];
+    strcpy(filepath, getenv("NEMU_HOME"));
+    strcat(filepath, "/src/monitor/nemu_history");
+
+    if (len > 128 - strlen(filepath)) {
+        printf("filename too long!\n");
+        return 0;
+    }
+
+    strcat(filepath, args);
+    FILE *fp = fopen(filepath, "r");
+    load_mem(fp);
+    load_regs(fp);
+    //load_mem(fp);
+    printf("snapshot loaded\n");
+    fclose(fp);
+    return 0;
+}
+
 void sdb_set_batch_mode() {
-  is_batch_mode = false;
+  is_batch_mode = true;
 }
 
 void sdb_mainloop() {
-  sdb_set_batch_mode();
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
@@ -262,7 +262,7 @@ void sdb_mainloop() {
         break;
       }
     }
-
+    if (qflag == 1) {break; }
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 }
