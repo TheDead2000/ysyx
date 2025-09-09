@@ -16,7 +16,7 @@ LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -b
 # IMAGE 是绝对路径，定义在 abstract-machine/Makefile. 因此 run 目标执行时切换到 NEMU_HOME 也不会影响后续程序读取 elf 文件
-NEMUFLAGS += -e $(IMAGE).elf 
+# NEMUFLAGS += -e $(IMAGE).elf 
 #-e /home/jasper/ics2023/nanos-lite/build/ramdisk.img 
 #当 ramdisk 包含多个文件时，不能直接用 ramdisk 代替程序的原始 elf 文件
 
