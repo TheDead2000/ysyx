@@ -27,7 +27,7 @@ typedef struct {
   vaddr_t halt_pc;
   uint32_t halt_ret;
 } NEMUState;
-// nemu_state 实际的定义和初始化在 state.c 
+
 extern NEMUState nemu_state;
 
 // ----------- timer -----------
@@ -61,18 +61,6 @@ uint64_t get_time();
     extern FILE* log_fp; \
     extern bool log_enable(); \
     if (log_enable()) { \
-      fprintf(log_fp, __VA_ARGS__); \
-      fflush(log_fp); \
-    } \
-  } while (0) \
-)
-
-#define log_write_test(...) IFDEF(CONFIG_TARGET_NATIVE_ELF, \
-  do { \
-    extern FILE* log_fp; \
-    extern bool log_enable(); \
-    if (log_enable()) { \
-      Log("okayyyyyyyyyyyyyyyyyy"); \
       fprintf(log_fp, __VA_ARGS__); \
       fflush(log_fp); \
     } \
