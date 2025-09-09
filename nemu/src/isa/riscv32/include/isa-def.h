@@ -38,5 +38,5 @@ typedef struct {
 enum {NEMU_PRIV_U,NEMU_PRIV_HS,NEMU_PRIV_RESERVED,NEMU_PRIV_M,NEMU_PRIV_ERROR};
 
 // #define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
-
+#define isa_mmu_check(vaddr, len, type) (BITS(cpu.csr[NEMU_CSR_SATP], 31, 31) ? MMU_TRANSLATE : MMU_DIRECT)
 #endif
