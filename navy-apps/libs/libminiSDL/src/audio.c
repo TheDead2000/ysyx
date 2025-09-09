@@ -5,7 +5,9 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
   return 0;
 }
 
-void SDL_CloseAudio() {
+void SDL_CloseAudio() 
+{
+
 }
 
 void SDL_PauseAudio(int pause_on) 
@@ -28,7 +30,9 @@ void SDL_FreeWAV(uint8_t *audio_buf)
 
 }
 
-void SDL_LockAudio() {
+void SDL_LockAudio() 
+{
+
 }
 
 void SDL_UnlockAudio() 

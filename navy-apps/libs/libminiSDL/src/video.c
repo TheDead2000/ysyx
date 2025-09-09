@@ -191,11 +191,11 @@ SDL_Surface* SDL_CreateRGBSurface(uint32_t flags, int width, int height, int dep
   s->w = width;
   s->h = height;
   s->pitch = width * depth / 8;
-  //assert(s->pitch == width * s->format->BytesPerPixel);
+  assert(s->pitch == width * s->format->BytesPerPixel);
 
   if (!(flags & SDL_PREALLOC)) {
     s->pixels = malloc(s->pitch * height);
-    //assert(s->pixels);
+    assert(s->pixels);
   }
 
   return s;
@@ -273,7 +273,6 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, int firstcolor
       uint8_t g = colors[i].g;
       uint8_t b = colors[i].b;
     }
-
     SDL_UpdateRect(s, 0, 0, 0, 0);
   }
 }
