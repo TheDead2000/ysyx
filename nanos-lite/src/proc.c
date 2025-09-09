@@ -33,7 +33,7 @@ void init_proc() {
   // context_kload(&pcb[0], hello_fun, "Kthread");
   // context_kload(&pcb[1], hello_fun, "Kthread2");
   context_uload(&pcb[0], "/bin/hello", argv, envp);
-  context_uload(&pcb[1], "/bin/menu", argv, envp);
+  // context_uload(&pcb[1], "/bin/menu", argv, envp);
 
 
   Log("Initializing processes...");
@@ -53,7 +53,7 @@ Context* schedule(Context *prev) {
         current = &pcb[0];
         turn = 0;
     } else 
-        current = &pcb[1];
+        current = &pcb[0];
     //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
     //printf("pcb address = %p, context address = %p\n", current, current->cp);
     // then return the new context
