@@ -25,7 +25,8 @@ static const uint32_t img [] = {
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data
 };
-static uint8_t scratch_space[1024] __attribute__((aligned(16)));
+#define SBI_SCRATCH_SIZE 1024
+
 static void restart() {
   /* Set the initial program counter. */
   cpu.pc = RESET_VECTOR;
@@ -35,7 +36,7 @@ static void restart() {
 
   /* initialize mstatus */
   csr(NEMU_CSR_V_MSTATUS) = 0x1800;
-  cpu.PRIV=NEMU_PRIV_M;
+
   csr(NEMU_CSR_V_MISA) = (1 << 30) | // MXL = 1 (32-bit)
                          (1 << 8)  | // I extension
                          (1 << 12) | // M extension  
@@ -43,7 +44,7 @@ static void restart() {
                          //(1 << 2)  | // C extension
                          //(1 << 18) | // S extension
                          //(1 << 20);  // U extension
-  csr(NEMU_CSR_V_MSCRATCH) = (uintptr_t)scratch_space;
+  cpu.PRIV=NEMU_PRIV_M;
 }
 
 void init_isa() {
