@@ -286,10 +286,10 @@ int exception_exec(int id,Decode *s){
 }
 
 int isa_exec_once(Decode *s) {
-  // int jump_value = setjmp(memerr_jump_buffer);
-  // if(jump_value!=0){
-  //   return exception_exec(jump_value,s);
-  // }
+  int jump_value = setjmp(memerr_jump_buffer);
+  if(jump_value!=0){
+    return exception_exec(jump_value,s);
+  }
   // for(volatile int i=0;i<1000;i++);//故意拖慢速度
   //取指 物理机大端小端问题？
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
