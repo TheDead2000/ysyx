@@ -25,7 +25,7 @@ static const uint32_t img [] = {
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data
 };
-
+static uint8_t scratch_space[1024] __attribute__((aligned(16)));
 static void restart() {
   /* Set the initial program counter. */
   cpu.pc = RESET_VECTOR;
@@ -43,6 +43,7 @@ static void restart() {
                          //(1 << 2)  | // C extension
                          //(1 << 18) | // S extension
                          //(1 << 20);  // U extension
+  csr(NEMU_CSR_V_MSCRATCH) = (uintptr_t)scratch_space;
 }
 
 void init_isa() {
