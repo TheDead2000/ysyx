@@ -119,7 +119,7 @@ void do_ecall(Decode *s){
 // decode_operand译码工作， 这个函数将会根据传入的指令类型type来进行操作数的译码, 译码结果将记录到函数参数rd, src1, src2和imm中
 static int decode_exec(Decode *s) {
   int rd = 0;
-  word_t src1 = 0, src2 = 0, imm = 0;
+  int32_t src1 = 0, src2 = 0, imm = 0;
   int rs1 = BITS(s->isa.inst.val, 19, 15);
   // int rs2 = BITS(s->isa.inst.val, 24, 20);
   s->dnpc = s->snpc;
