@@ -35,6 +35,14 @@ static void restart() {
 
   /* initialize mstatus */
   csr(NEMU_CSR_V_MSTATUS) = 0x1800;
+  cpu.PRIV=NEMU_PRIV_M;
+  csr(NEMU_CSR_V_MISA) = (1 << 30) | // MXL = 1 (32-bit)
+                         (1 << 8)  | // I extension
+                         (1 << 12) | // M extension  
+                         (1 << 0)  ; // A extension
+                         //(1 << 2)  | // C extension
+                         //(1 << 18) | // S extension
+                         //(1 << 20);  // U extension
 }
 
 void init_isa() {
@@ -42,6 +50,5 @@ void init_isa() {
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
-  cpu.PRIV=NEMU_PRIV_M;
   restart();
 }
