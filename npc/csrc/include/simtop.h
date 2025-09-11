@@ -1,11 +1,17 @@
 #ifndef  __SIMTOP_H__
 #define  __SIMTOP_H__
 
+#define USE_YSYX_SOC
+
 #include <iostream>
 #include <list>
 #include <verilated_vcd_c.h>
 #include <verilated.h>
+#ifdef USE_YSYX_SOC
+#include <VysyxSoCFull.h>
+#else
 #include <Vtop.h>
+#endif
 #include <iomanip>
 #include "verilated_dpi.h"
 #include "simMem.h"
@@ -16,9 +22,18 @@
 #include "ringbuff.hpp"
 #include "simAXI4/simaxi4.h"
 
+#ifdef USE_YSYX_SOC
+#include "VysyxSoCFull.h"
+#define TOP_CLASS VysyxSoCFull
+#else
+#include "Vtop.h"
+#define TOP_CLASS Vtop
+#endif
+
+
 class Simtop {
 private:
-    Vtop* top;
+    TOP_CLASS* top;
     VerilatedContext* contextp;
     VerilatedVcdC* tfp;
     uint32_t* registerfile;
@@ -103,7 +118,15 @@ public:
 
     Simtop();
     ~Simtop();
+
+
+#ifdef USE_YSYX_SOC
+    VysyxSoCFull* getTop();
+#else
     Vtop* getTop();
+#endif                       // 这里不需要 typedef，因为 Vtop 已经存在
+
+
     void reset();
     bool npcHitGood();
     uint32_t getRegVal(int idx);

@@ -1,11 +1,15 @@
 #include <iostream>
 #include <verilated_vcd_c.h>
 #include <verilated.h>
-#include <Vtop.h>
 #include "verilated_dpi.h"
 #include "simtop.h"
 #include "simconf.h"
 
+#ifdef USE_YSYX_SOC
+#include <VysyxSoCFull.h>
+#else
+#include <Vtop.h>
+#endif
 extern Simtop* mysim_p;
 
 

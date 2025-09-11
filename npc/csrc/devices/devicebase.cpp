@@ -1,5 +1,5 @@
 #include "devicebase.h"
-
+#include <cassert>
 
 using namespace Topdevice;
 
@@ -19,3 +19,6 @@ bool Devicebase::atRange(paddr_t s, paddr_t e, paddr_t val) {
     }
     return false;
 }
+
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }

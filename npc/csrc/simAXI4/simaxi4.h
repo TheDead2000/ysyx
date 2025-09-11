@@ -3,14 +3,18 @@
 
 #include <iostream>
 #include <verilated.h>
-#include <Vtop.h>
 #include "axi4.hpp"
 #include "axi4_mem.hpp"
 #include "axi4_xbar.hpp"
 #include "mmio_mem.hpp"
 #include "mmio_device2axi4.hpp"
+#define USE_YSYX_SOC
 
-
+#ifdef USE_YSYX_SOC
+#include <VysyxSoCFull.h>
+#else
+#include <Vtop.h>
+#endif
 using namespace std;
 
 
@@ -36,9 +40,21 @@ public:
     mmio_mem* dram;
     Device2axi4* mydevices;
 public:
+
+#ifdef USE_YSYX_SOC
+    SimAxi4(VysyxSoCFull* top);
+#else
     SimAxi4(Vtop* top);
+#endif
+
     ~SimAxi4();
+
+    #ifdef USE_YSYX_SOC
+    void connect_wire(axi4_ptr <32, 32, 4>& mmio_ptr, VysyxSoCFull* top);
+#else
     void connect_wire(axi4_ptr <32, 32, 4>& mmio_ptr, Vtop* top);
+#endif
+    
     void mmio_device_init();
     void update_input();
     void beat();

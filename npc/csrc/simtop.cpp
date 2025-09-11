@@ -29,7 +29,7 @@ Simtop::Simtop() {
     contextp->traceEverOn(true);
 #endif
 
-    top = new Vtop;
+    top = new TOP_CLASS();
     mem = new SimMem;
     u_axi4 = new SimAxi4(top);
 #ifdef TOP_WAVE
@@ -293,10 +293,18 @@ void Simtop::excute() {
         stepCycle(false);
     }
 }
+#ifdef USE_YSYX_SOC
+VysyxSoCFull* Simtop::getTop() {
+
+    return this->top;
+}
+#else
 Vtop* Simtop::getTop() {
 
     return this->top;
 }
+#endif
+
 
 /**
  * @brief 打开sdb调试工具

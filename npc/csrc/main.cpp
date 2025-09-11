@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <verilated.h>
-#include <Vtop.h>
 #include "verilated_vcd_c.h"
 #include "simtop.h"
 #include "cppreadline/Console.hpp"
@@ -11,6 +10,11 @@
 #include "simconf.h"
 #include <SDL2/SDL.h>
 
+#ifdef USE_YSYX_SOC
+#include <VysyxSoCFull.h>
+#else
+#include <Vtop.h>
+#endif
 namespace cr = CppReadline;
 using ret = cr::Console::ReturnCode;
 
@@ -28,7 +32,6 @@ Simtop* mysim_p;
 
 int main(int argc, char* argv[]) {
 
-  Verilated::commandArgs(argc, argv);
   /* 解析参数 获取镜像路径*/
   for (int i = 0;i < argc;i++) {
     printf("argv:%s\n", argv[i]);

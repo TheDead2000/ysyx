@@ -56,7 +56,7 @@ module top (
   output         io_slave_wready,
   input          io_slave_wvalid,
   input  [31:0]  io_slave_wdata,
-  input  [7:0]   io_slave_wstrb,
+  input  [3:0]   io_slave_wstrb,
   input          io_slave_wlast,
   input          io_slave_bready,
   output         io_slave_bvalid,

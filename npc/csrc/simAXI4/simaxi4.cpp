@@ -21,6 +21,20 @@
 
 
 // extern Simtop* mysim_p;
+
+
+    #ifdef USE_YSYX_SOC
+SimAxi4::SimAxi4(VysyxSoCFull* top) {
+    cout << "2" << endl;
+    assert(top);
+    cout << "2" << endl;
+    connect_wire(mmio_ptr, top);// 链接端口
+    cout << "1" << endl;
+    assert(mmio_ptr.check());
+    mmio_device_init();
+    cout << COLOR_BLUE "axi4 init success" COLOR_END << endl;
+}
+#else
 SimAxi4::SimAxi4(Vtop* top) {
     cout << "2" << endl;
     assert(top);
@@ -31,6 +45,8 @@ SimAxi4::SimAxi4(Vtop* top) {
     mmio_device_init();
     cout << COLOR_BLUE "axi4 init success" COLOR_END << endl;
 }
+#endif
+
 
 SimAxi4::~SimAxi4() {
     delete dram;
@@ -39,6 +55,48 @@ SimAxi4::~SimAxi4() {
 }
 
 
+    #ifdef USE_YSYX_SOC
+void SimAxi4::connect_wire(axi4_ptr <32, 32, 4>& mmio_ptr, VysyxSoCFull* top) {
+    // connect
+    // mmio
+    // aw   
+    // mmio_ptr.awaddr = &(top->io_master_awaddr);
+    // mmio_ptr.awburst = &(top->io_master_awburst);
+    // mmio_ptr.awid = &(top->io_master_awid);
+    // mmio_ptr.awlen = &(top->io_master_awlen);
+    // mmio_ptr.awready = &(top->io_master_awready);
+    // mmio_ptr.awsize = &(top->io_master_awsize);
+    // mmio_ptr.awvalid = &(top->io_master_awvalid);
+
+    // // w
+    // mmio_ptr.wdata = &(top->io_master_wdata);
+    // mmio_ptr.wlast = &(top->io_master_wlast);
+    // mmio_ptr.wready = &(top->io_master_wready);
+    // mmio_ptr.wstrb = &(top->io_master_wstrb);
+    // mmio_ptr.wvalid = &(top->io_master_wvalid);
+    // // b
+    // mmio_ptr.bid = &(top->io_master_bid);
+    // mmio_ptr.bready = &(top->io_master_bready);
+    // mmio_ptr.bresp = &(top->io_master_bresp);
+    // mmio_ptr.bvalid = &(top->io_master_bvalid);
+    // // ar
+    // mmio_ptr.araddr = &(top->io_master_araddr);
+    // mmio_ptr.arburst = &(top->io_master_arburst);
+    // mmio_ptr.arid = &(top->io_master_arid);
+    // mmio_ptr.arlen = &(top->io_master_arlen);
+    // mmio_ptr.arready = &(top->io_master_arready);
+    // mmio_ptr.arsize = &(top->io_master_arsize);
+    // mmio_ptr.arvalid = &(top->io_master_arvalid);
+    // // r
+    // mmio_ptr.rdata = &(top->io_master_rdata);
+    // mmio_ptr.rid = &(top->io_master_rid);
+    // mmio_ptr.rlast = &(top->io_master_rlast);
+    // mmio_ptr.rready = &(top->io_master_rready);
+    // mmio_ptr.rresp = &(top->io_master_rresp);
+    // mmio_ptr.rvalid = &(top->io_master_rvalid);
+}
+
+#else
 void SimAxi4::connect_wire(axi4_ptr <32, 32, 4>& mmio_ptr, Vtop* top) {
     // connect
     // mmio
@@ -78,6 +136,9 @@ void SimAxi4::connect_wire(axi4_ptr <32, 32, 4>& mmio_ptr, Vtop* top) {
     mmio_ptr.rresp = &(top->io_master_rresp);
     mmio_ptr.rvalid = &(top->io_master_rvalid);
 }
+
+#endif
+
 
 
 void SimAxi4::mmio_device_init() {

@@ -1,6 +1,5 @@
 
-
-TOP_MODULE := top
+TOP_MODULE := ysyxSoCFull
 
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 
@@ -12,11 +11,12 @@ VSRC += $(shell find $(abspath ./vsrc) -name "*.v" -o -name "*.sv")
 PERIP_DIR := $(abspath $(SOC_HOME)/perip)
 PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
 VSRC += $(PERIP_SRC)
-VSRCS += $(SOC_HOME)/build/ysyxSoCFull.v
+VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
 
 # 分别收集外设源文件 - 使用绝对路径
 UART_RTL_DIR := $(abspath $(SOC_HOME)/perip/uart16550/rtl)
 SPI_RTL_DIR := $(abspath $(SOC_HOME)/perip/spi/rtl)
+
 
 # UART_SRC := $(wildcard $(UART_RTL_DIR)/*.v) $(wildcard $(UART_RTL_DIR)/*.sv)
 # SPI_SRC := $(wildcard $(SPI_RTL_DIR)/*.v) $(wildcard $(SPI_RTL_DIR)/*.sv)
@@ -34,7 +34,7 @@ VERILATOR_INC_PATH := -I./vsrc \
 # 添加调试信息，查看找到了哪些文件
 # $(info Found UART sources: $(UART_SRC))
 # $(info Found SPI sources: $(SPI_SRC))
-$(info Found PERIP sources: $(PERIP_SRC))
+# $(info Found PERIP sources: $(PERIP_SRC))
 
 # verilator flags: 
 VERILATOR_FLAGS +=  --trace
@@ -42,7 +42,7 @@ VERILATOR_FLAGS +=  -O3 -noassert --x-assign fast --x-initial fast --compiler cl
 VERILATOR_FLAGS +=  -cc --exe  --build  --clk clk  --timescale-override 1ns
 VERILATOR_FLAGS += ${VERILATOR_INC_PATH}
 VERILATOR_FLAGS += --top ${TOP_MODULE}
-
+VERILATOR_FLAGS += --timescale "1ns/1ns" --no-timing
 
 # gcc flags 
 GCC_INC_PATH = -I$(NPC_HOME)/csrc/include  \
@@ -68,7 +68,11 @@ GCC_LIB += ${LLVM_LIB} -flto -fuse-ld=gold
 GCC_LDFLAGS := $(addprefix -LDFLAGS ,${GCC_LIB})
 GCC_CFLAGS :=  $(addprefix -CFLAGS ,${GCC_INC_PATH})
 GCC_CFLAGS += $(addprefix -CFLAGS ,${LLVM_FLAGS})
-GCC_FLAGS := ${GCC_CFLAGS} ${GCC_LDFLAGS}
+ifeq ($(TOP_MODULE),ysyxSoCFull)
+    GCC_CFLAGS += -DUSE_YSYX_SOC
+    $(info Using YSYX SoC mode)
+endif
+GCC_FLAGS := ${GCC_CFLAGS}  -DUSE_YSYX_SOC ${GCC_LDFLAGS}
 
 # run info:
 OBJ_DIR := ./obj_dir
