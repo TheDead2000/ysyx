@@ -1,0 +1,144 @@
+# Verilated -*- Makefile -*-
+# DESCRIPTION: Verilator output: Makefile for building Verilated archive or executable
+#
+# Execute this makefile from the object directory:
+#    make -f Vtop.mk
+
+default: Vtop
+
+### Constants...
+# Perl executable (from $PERL)
+PERL = perl
+# Path to Verilator kit (from $VERILATOR_ROOT)
+VERILATOR_ROOT = /usr/local/share/verilator
+# SystemC include directory with systemc.h (from $SYSTEMC_INCLUDE)
+SYSTEMC_INCLUDE ?= 
+# SystemC library directory with libsystemc.a (from $SYSTEMC_LIBDIR)
+SYSTEMC_LIBDIR ?= 
+
+### Switches...
+# C++ code coverage  0/1 (from --prof-c)
+VM_PROFC = 0
+# SystemC output mode?  0/1 (from --sc)
+VM_SC = 0
+# Legacy or SystemC output mode?  0/1 (from --sc)
+VM_SP_OR_SC = $(VM_SC)
+# Deprecated
+VM_PCLI = 1
+# Deprecated: SystemC architecture to find link library path (from $SYSTEMC_ARCH)
+VM_SC_TARGET_ARCH = linux
+
+### Vars...
+# Design prefix (from --prefix)
+VM_PREFIX = Vtop
+# Module prefix (from --prefix)
+VM_MODPREFIX = Vtop
+# User CFLAGS (from -CFLAGS on Verilator command line)
+VM_USER_CFLAGS = \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4/include \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4 \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4/devices/include \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4/ringbuff \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4/simAXI4 \
+	-I/home/zy/ysyx-workbench/npc/csrc_axi4/soc-simulator \
+	-I/usr/include/SDL2 \
+	-I/usr/lib/llvm-11/include \
+	-std=c++14 \
+	-fno-exceptions \
+	-D_GNU_SOURCE \
+	-D__STDC_CONSTANT_MACROS \
+	-D__STDC_LIMIT_MACROS \
+	-Ofast \
+	-fexceptions \
+
+# User LDLIBS (from -LDFLAGS on Verilator command line)
+VM_USER_LDLIBS = \
+	-lreadline \
+	-ldl \
+	-lSDL2 \
+	-lLLVM-11 \
+	-flto \
+	-fuse-ld=gold \
+
+# User .cpp files (from .cpp's on Verilator command line)
+VM_USER_CLASSES = \
+	Console \
+	deviceManager \
+	devicebase \
+	devicekb \
+	devicetimer \
+	deviceuart \
+	devicevga \
+	main \
+	mydpic \
+	difftest \
+	expr \
+	exprinternal \
+	itrace \
+	mysdb \
+	watchpoint \
+	simaxi4 \
+	simMem \
+	simtop \
+
+# User .cpp directories (from .cpp's on Verilator command line)
+VM_USER_DIR = \
+	/home/zy/ysyx-workbench/npc/csrc_axi4 \
+	/home/zy/ysyx-workbench/npc/csrc_axi4/cppreadline \
+	/home/zy/ysyx-workbench/npc/csrc_axi4/devices \
+	/home/zy/ysyx-workbench/npc/csrc_axi4/sdb \
+	/home/zy/ysyx-workbench/npc/csrc_axi4/simAXI4 \
+
+
+### Default rules...
+# Include list of all generated classes
+include Vtop_classes.mk
+# Include global rules
+include $(VERILATOR_ROOT)/include/verilated.mk
+
+### Executable rules... (from --exe)
+VPATH += $(VM_USER_DIR)
+
+Console.o: /home/zy/ysyx-workbench/npc/csrc_axi4/cppreadline/Console.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+deviceManager.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/deviceManager.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+devicebase.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/devicebase.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+devicekb.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/devicekb.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+devicetimer.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/devicetimer.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+deviceuart.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/deviceuart.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+devicevga.o: /home/zy/ysyx-workbench/npc/csrc_axi4/devices/devicevga.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+main.o: /home/zy/ysyx-workbench/npc/csrc_axi4/main.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+mydpic.o: /home/zy/ysyx-workbench/npc/csrc_axi4/mydpic.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+difftest.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/difftest.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+expr.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/expr.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+exprinternal.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/exprinternal.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+itrace.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/itrace.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+mysdb.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/mysdb.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+watchpoint.o: /home/zy/ysyx-workbench/npc/csrc_axi4/sdb/watchpoint.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+simaxi4.o: /home/zy/ysyx-workbench/npc/csrc_axi4/simAXI4/simaxi4.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+simMem.o: /home/zy/ysyx-workbench/npc/csrc_axi4/simMem.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+simtop.o: /home/zy/ysyx-workbench/npc/csrc_axi4/simtop.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+
+### Link rules... (from --exe)
+Vtop: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a $(VM_HIER_LIBS)
+	$(LINK) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(LIBS) $(SC_LIBS) -o $@
+
+
+# Verilated -*- Makefile -*-

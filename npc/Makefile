@@ -1,10 +1,19 @@
 
-TOP_MODULE := ysyxSoCFull
-
+# TOP_MODULE := ysyxSoCFull
+TOP_MODULE := top
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 
 # 收集源文件
-CSRC += $(shell find $(abspath ./csrc) -name "*.cpp")
+ifeq ($(TOP_MODULE),ysyxSoCFull)
+	CSRC += $(shell find $(abspath ./csrc) -name "*.cpp")
+    $(info Using YSYX SoC mode)
+endif
+
+ifeq ($(TOP_MODULE),top)
+    CSRC += $(shell find $(abspath ./csrc_axi4) -name "*.cpp")
+    $(info  module is top)
+endif
+
 VSRC += $(shell find $(abspath ./vsrc) -name "*.v" -o -name "*.sv")
 
 # 收集所有perip目录下的Verilog文件
@@ -45,13 +54,17 @@ VERILATOR_FLAGS += --top ${TOP_MODULE}
 VERILATOR_FLAGS += --timescale "1ns/1ns" --no-timing
 
 # gcc flags 
-GCC_INC_PATH = -I$(NPC_HOME)/csrc/include  \
-			   -I$(NPC_HOME)/csrc  \
-			   -I$(NPC_HOME)/csrc/devices/include \
-			   -I$(NPC_HOME)/csrc/ringbuff \
-			   -I$(NPC_HOME)/csrc/simAXI4 \
-			   -I$(NPC_HOME)/csrc/soc-simulator \
-			   -I/usr/include/SDL2 \
+
+ifeq ($(TOP_MODULE),top)
+GCC_INC_PATH = -I$(NPC_HOME)/csrc_axi4/include  \
+			   -I$(NPC_HOME)/csrc_axi4  \
+			   -I$(NPC_HOME)/csrc_axi4/devices/include \
+			   -I$(NPC_HOME)/csrc_axi4/ringbuff \
+			   -I$(NPC_HOME)/csrc_axi4/simAXI4 \
+			   -I$(NPC_HOME)/csrc_axi4/soc-simulator \
+			   -I/usr/include/SDL2 
+endif
+
 
 # llvm
 LLVM_LIB = $(shell llvm-config-11 --libs)
@@ -68,11 +81,7 @@ GCC_LIB += ${LLVM_LIB} -flto -fuse-ld=gold
 GCC_LDFLAGS := $(addprefix -LDFLAGS ,${GCC_LIB})
 GCC_CFLAGS :=  $(addprefix -CFLAGS ,${GCC_INC_PATH})
 GCC_CFLAGS += $(addprefix -CFLAGS ,${LLVM_FLAGS})
-ifeq ($(TOP_MODULE),ysyxSoCFull)
-    GCC_CFLAGS += -DUSE_YSYX_SOC
-    $(info Using YSYX SoC mode)
-endif
-GCC_FLAGS := ${GCC_CFLAGS}  -DUSE_YSYX_SOC ${GCC_LDFLAGS}
+GCC_FLAGS := ${GCC_CFLAGS} ${GCC_LDFLAGS}
 
 # run info:
 OBJ_DIR := ./obj_dir

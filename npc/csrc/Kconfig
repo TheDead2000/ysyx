@@ -1,0 +1,85 @@
+mainmenu "YDB Configuration Menu"
+
+choice
+  prompt "Base ISA"
+  default ISA_riscv
+config ISA_riscv
+  bool "riscv"
+endchoice
+
+config ISA
+  string
+  default "riscv32" if ISA_riscv && !RV64
+  default "riscv64" if ISA_riscv &&  RV64
+  default "none"
+
+config ISA64
+  depends on ISA_riscv && RV64
+  bool
+  default y
+
+menu "ISA-dependent Options for riscv"
+
+config RV64
+  bool "64-bit RISC-V architecture"
+  default n
+
+config RVE
+  bool "Use E extension"
+  default n
+
+endmenu
+
+menu "Testing and Debugging"
+
+config WAVE_FORM
+  bool "Enable waveform"
+  default n
+
+config TRACE
+  bool "Enable tracer"
+  default y
+
+config TRACE_START
+  depends on TRACE
+  int "When tracing is enabled (unit: number of instructions)"
+  default 0
+
+config TRACE_END
+  depends on TRACE
+  int "When tracing is disabled (unit: number of instructions)"
+  default 10000
+
+config ITRACE
+  depends on TRACE
+  bool "Enable instruction tracer"
+  default y
+
+config ITRACE_COND
+  depends on ITRACE
+  string "Only trace instructions when the condition is true"
+  default "true"
+
+config WATCHPOINT
+  bool "Enable WatchPoint"
+  default y
+
+config MTRACE
+  bool "Enable MemoryTrace"
+  default n
+
+config FTRACE
+  bool "Emable Function call Trace"
+  default n
+
+  config IRINGBUF
+  bool "Emable iringbuf"
+  default n
+config DIFFTEST
+  bool "Enable differential testing"
+  default n
+  help
+    Enable differential testing with NEMU.
+    Note that this will significantly reduce the performance of YDB.
+
+endmenu
