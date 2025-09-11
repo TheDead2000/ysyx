@@ -31,7 +31,7 @@ Simtop::Simtop() {
 
     top = new TOP_CLASS();
     mem = new SimMem;
-    u_axi4 = new SimAxi4(top);
+    //u_axi4 = new SimAxi4(top);
 #ifdef TOP_WAVE
     top->trace(tfp, 0);
     tfp->open("sim.vcd");
@@ -68,10 +68,10 @@ void Simtop::changeCLK() {
 
 void Simtop::posedgeCLK() {
     top->clock = 1;
-    u_axi4->update_input(); // 上升沿采集到的是之前的值
+    //u_axi4->update_input(); // 上升沿采集到的是之前的值
     top->eval();
-    u_axi4->beat();
-    u_axi4->update_output();
+    //u_axi4->beat();
+    //u_axi4->update_output();
 
     clk_count++; // 记录时钟数
 }
@@ -256,7 +256,7 @@ void Simtop::scanMem(paddr_t addr, uint32_t len) {
     /* 每次读取 4byte soc-simulator 总线模型  */
     static uint8_t rbuff[4];
     for (size_t i = 0; i < len; i++) {
-        u_axi4->dram->do_read(addr - MEM_BASE, 4, rbuff);
+        //u_axi4->dram->do_read(addr - MEM_BASE, 4, rbuff);
         printf("addr:0x%08x\tData: %08lx\n", addr,
             *(uint32_t*)rbuff);
         addr += 4;
