@@ -1,7 +1,7 @@
 `include "sysconfig.v"
 
 /* 需要设为为input熟悉才能才仿真中改变值 */
-module top (
+module top_core (
     input clk,
     input rst,
 

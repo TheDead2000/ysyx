@@ -28,6 +28,7 @@ Simtop* mysim_p;
 
 int main(int argc, char* argv[]) {
 
+  Verilated::commandArgs(argc, argv);
   /* 解析参数 获取镜像路径*/
   for (int i = 0;i < argc;i++) {
     printf("argv:%s\n", argv[i]);
