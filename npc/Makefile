@@ -1,6 +1,7 @@
+
+
 TOP_MODULE := top
 
-# 原文件
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 
 # 收集源文件
@@ -11,6 +12,7 @@ VSRC += $(shell find $(abspath ./vsrc) -name "*.v" -o -name "*.sv")
 PERIP_DIR := $(abspath $(SOC_HOME)/perip)
 PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
 VSRC += $(PERIP_SRC)
+VSRCS += $(SOC_HOME)/build/ysyxSoCFull.v
 
 # 分别收集外设源文件 - 使用绝对路径
 UART_RTL_DIR := $(abspath $(SOC_HOME)/perip/uart16550/rtl)
@@ -30,8 +32,8 @@ VERILATOR_INC_PATH := -I./vsrc \
 			-I$(SPI_RTL_DIR)
 
 # 添加调试信息，查看找到了哪些文件
-$(info Found UART sources: $(UART_SRC))
-$(info Found SPI sources: $(SPI_SRC))
+# $(info Found UART sources: $(UART_SRC))
+# $(info Found SPI sources: $(SPI_SRC))
 $(info Found PERIP sources: $(PERIP_SRC))
 
 # verilator flags: 
