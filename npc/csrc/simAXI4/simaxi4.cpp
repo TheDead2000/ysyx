@@ -25,14 +25,14 @@
 
     #ifdef USE_YSYX_SOC
 SimAxi4::SimAxi4(VysyxSoCFull* top) {
-    cout << "2" << endl;
-    assert(top);
-    cout << "2" << endl;
-    connect_wire(mmio_ptr, top);// 链接端口
-    cout << "1" << endl;
-    assert(mmio_ptr.check());
-    mmio_device_init();
-    cout << COLOR_BLUE "axi4 init success" COLOR_END << endl;
+    // cout << "2" << endl;
+    // assert(top);
+    // cout << "2" << endl;
+    // connect_wire(mmio_ptr, top);// 链接端口
+    // cout << "1" << endl;
+    // assert(mmio_ptr.check());
+    // mmio_device_init();
+    // cout << COLOR_BLUE "axi4 init success" COLOR_END << endl;
 }
 #else
 SimAxi4::SimAxi4(Vtop* top) {
