@@ -8,9 +8,13 @@
 #include "verilated.h"
 
 class Vtop__Syms;
+class Vtop___024unit;
+
 
 class Vtop___024root final : public VerilatedModule {
   public:
+    // CELLS
+    Vtop___024unit* __PVT____024unit;
 
     // DESIGN SPECIFIC STATE
     // Anonymous structures to workaround compiler member-count bugs

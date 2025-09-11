@@ -7,15 +7,20 @@ SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 CSRC += $(shell find $(abspath ./csrc) -name "*.cpp")
 VSRC += $(shell find $(abspath ./vsrc) -name "*.v" -o -name "*.sv")
 
+# 收集所有perip目录下的Verilog文件
+PERIP_DIR := $(abspath $(SOC_HOME)/perip)
+PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
+VSRC += $(PERIP_SRC)
+
 # 分别收集外设源文件 - 使用绝对路径
 UART_RTL_DIR := $(abspath $(SOC_HOME)/perip/uart16550/rtl)
 SPI_RTL_DIR := $(abspath $(SOC_HOME)/perip/spi/rtl)
 
-UART_SRC := $(wildcard $(UART_RTL_DIR)/*.v) $(wildcard $(UART_RTL_DIR)/*.sv)
-SPI_SRC := $(wildcard $(SPI_RTL_DIR)/*.v) $(wildcard $(SPI_RTL_DIR)/*.sv)
+# UART_SRC := $(wildcard $(UART_RTL_DIR)/*.v) $(wildcard $(UART_RTL_DIR)/*.sv)
+# SPI_SRC := $(wildcard $(SPI_RTL_DIR)/*.v) $(wildcard $(SPI_RTL_DIR)/*.sv)
 
-VSRC += $(UART_SRC)
-VSRC += $(SPI_SRC)
+# VSRC += $(UART_SRC)
+# VSRC += $(SPI_SRC)
 
 # 设置包含路径
 VERILATOR_INC_PATH := -I./vsrc \
@@ -27,8 +32,7 @@ VERILATOR_INC_PATH := -I./vsrc \
 # 添加调试信息，查看找到了哪些文件
 $(info Found UART sources: $(UART_SRC))
 $(info Found SPI sources: $(SPI_SRC))
-
-
+$(info Found PERIP sources: $(PERIP_SRC))
 
 # verilator flags: 
 VERILATOR_FLAGS +=  --trace

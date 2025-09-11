@@ -22,6 +22,8 @@ extern "C" {
     extern void dcache_hit_count();
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/dcache_top.v:77:32
     extern void dcache_unhit_count();
+    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/flash/flash.v:84:30
+    extern void flash_read(int addr, int* data);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/icache_top.v:61:32
     extern void icache_hit_count(int last_pc, int now_pc);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/Cache/icache_top.v:65:32

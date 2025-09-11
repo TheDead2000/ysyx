@@ -73,6 +73,7 @@ Vtop::Vtop(VerilatedContext* _vcontextp__, const char* _vcname__)
     , io_slave_rdata{vlSymsp->TOP.io_slave_rdata}
     , io_slave_awaddr{vlSymsp->TOP.io_slave_awaddr}
     , io_slave_wdata{vlSymsp->TOP.io_slave_wdata}
+    , __PVT____024unit{vlSymsp->TOP.__PVT____024unit}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context
