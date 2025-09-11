@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
    // mysim_p->mem->loadImage();
   mysim_p->reset();
 
-  size_t file_size = mysim_p->u_axi4->dram->load_binary(0, img_path);
+  //size_t file_size = mysim_p->u_axi4->dram->load_binary(0, img_path);
 
-  cout << "file_size " << file_size << endl;
+  //cout << "file_size " << file_size << endl;
 
 
   /* 注册命令 */

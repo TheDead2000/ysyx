@@ -29,7 +29,7 @@ Simtop::Simtop() {
     contextp->traceEverOn(true);
 #endif
 
-    top = new TOP_CLASS();
+    top = new TOP_CLASS;
     mem = new SimMem;
     //u_axi4 = new SimAxi4(top);
 #ifdef TOP_WAVE
