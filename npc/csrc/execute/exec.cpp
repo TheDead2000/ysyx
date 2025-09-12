@@ -75,10 +75,10 @@ void single_inst() {
     printf("run cycle %d\n", i++);
     update_reg_state();
     printf("finish cycle %d\n", i);
-    #ifdef CONFIG_WATCHPOINT
-  if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
-    nemu_state.state = NEMU_STOP;
-  #endif
+  //   #ifdef CONFIG_WATCHPOINT
+  // if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
+  //   nemu_state.state = NEMU_STOP;
+  // #endif
   printf("finish");
   } while (0); // need to check next cycle of wbu
                                         // valid!
