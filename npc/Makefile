@@ -1,12 +1,19 @@
 
-# TOP_MODULE := ysyxSoCFull
-TOP_MODULE := top
+TOP_MODULE := ysyxSoCFull
+# TOP_MODULE := top
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 
 # 收集源文件
 ifeq ($(TOP_MODULE),ysyxSoCFull)
-	CSRC += $(shell find $(abspath ./csrc) -name "*.cpp")
+    CSRC += $(shell find $(abspath ./csrc) -name "*.c" -o -name "*.cpp")
     $(info Using YSYX SoC mode)
+    # 收集所有perip目录下的Verilog文件
+    PERIP_DIR := $(abspath $(SOC_HOME)/perip)
+    PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
+    VSRC += $(PERIP_SRC)
+    VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
+
+
 endif
 
 ifeq ($(TOP_MODULE),top)
@@ -16,16 +23,10 @@ endif
 
 VSRC += $(shell find $(abspath ./vsrc) -name "*.v" -o -name "*.sv")
 
-# 收集所有perip目录下的Verilog文件
-PERIP_DIR := $(abspath $(SOC_HOME)/perip)
-PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
-VSRC += $(PERIP_SRC)
-VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
 
 # 分别收集外设源文件 - 使用绝对路径
 UART_RTL_DIR := $(abspath $(SOC_HOME)/perip/uart16550/rtl)
 SPI_RTL_DIR := $(abspath $(SOC_HOME)/perip/spi/rtl)
-
 
 # UART_SRC := $(wildcard $(UART_RTL_DIR)/*.v) $(wildcard $(UART_RTL_DIR)/*.sv)
 # SPI_SRC := $(wildcard $(SPI_RTL_DIR)/*.v) $(wildcard $(SPI_RTL_DIR)/*.sv)
@@ -66,6 +67,13 @@ GCC_INC_PATH = -I$(NPC_HOME)/csrc_axi4/include  \
 endif
 
 
+ifeq ($(TOP_MODULE),ysyxSoCFull)
+GCC_INC_PATH = -I$(NPC_HOME)/csrc/include  \
+			   -I$(NPC_HOME)/csrc/generated  \
+			   -I/usr/include/SDL2 \
+			   -I$(NVBOARD_HOME)/usr/include
+endif
+
 # llvm
 LLVM_LIB = $(shell llvm-config-11 --libs)
 LLVM_FLAGS = $(filter-out -D__STDC_FORMAT_MACROS, $(shell llvm-config-11 --cxxflags))
@@ -74,7 +82,11 @@ LLVM_FLAGS += -Ofast  -fexceptions
 #-lasan(内存检查)
 GCC_LIB = -lreadline \
 		  -ldl \
-		  -lSDL2 
+		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
+		  ${NVBOARD_HOME}/build/nvboard.a \
+		  -lSDL2 \
+		  -lSDL2_image \
+		  -lSDL2_ttf
 GCC_LIB += ${LLVM_LIB} -flto -fuse-ld=gold
 
 
@@ -105,5 +117,10 @@ clean:
 	$(RM) ./obj_dir/*
 	rm -rf $(BUILD_DIR)
 	rm *.vcd
+# 配置目标
+menuconfig:
+	kconfig-mconf ./csrc/Kconfig
+
+		
 
 include ./../Makefile

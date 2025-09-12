@@ -113,3 +113,100 @@ extern "C" void trace_wbu(unsigned int pc,unsigned int n_pc) {
   dpic_n_pc = n_pc;
   inst = find_inst(pc);
 }
+
+static const svOpenArrayHandle* csr_array_ptr = nullptr;
+
+static svOpenArrayHandle global_csr_array = nullptr;
+
+// 实现set_csr_ptr函数 - 注意参数类型是 svOpenArrayHandle
+extern "C" void set_csr_ptr(const svOpenArrayHandle csr_array) {
+    global_csr_array = csr_array;
+    printf("CSR pointer set: %p\n", csr_array);
+    
+    // 如果需要，您可以在这里读取CSR寄存器的初始值
+    if (csr_array) {
+        // 获取数组大小
+        int array_size = svSize(csr_array, 1); // 第二维的大小
+        printf("CSR array size: %d\n", array_size);
+        
+        for (int i = 0; i < array_size; i++) {
+            // 获取数组元素指针
+            void* elem_ptr = svGetArrElemPtr1(csr_array, i);
+            if (elem_ptr) {
+                uint32_t csr_value = *reinterpret_cast<uint32_t*>(elem_ptr);
+                printf("CSR[%d] = 0x%08x\n", i, csr_value);
+            }
+        }
+    }
+}
+
+// 辅助函数：获取CSR寄存器值
+uint32_t get_csr_value(int csr_index) {
+    if (!global_csr_array || csr_index < 0) {
+        return 0;
+    }
+    
+    int array_size = svSize(global_csr_array, 1);
+    if (csr_index >= array_size) {
+        return 0;
+    }
+    
+    void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
+    if (!elem_ptr) {
+        return 0;
+    }
+    
+    return *reinterpret_cast<uint32_t*>(elem_ptr);
+}
+
+// 辅助函数：设置CSR寄存器值
+void set_csr_value(int csr_index, uint32_t value) {
+    if (!global_csr_array || csr_index < 0) {
+        return;
+    }
+    
+    int array_size = svSize(global_csr_array, 1);
+    if (csr_index >= array_size) {
+        return;
+    }
+    
+    void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
+    if (elem_ptr) {
+        *reinterpret_cast<uint32_t*>(elem_ptr) = value;
+    }
+}
+
+extern "C" void set_gpr_ptr(const svOpenArrayHandle gpr_array) {
+    // 这里可以实现类似的逻辑来处理GPR寄存器数组
+    // 例如，保存指针，打印信息等
+    printf("GPR pointer set: %p\n", gpr_array);
+}
+
+extern "C" void inst_commit(int pc, int inst, svBit commit_valid) {
+
+}
+
+extern "C" void set_diffpc(int nextpc, int inst, svBit commit_valid) {
+
+}
+
+extern "C" void bpu_count(svBit bpu_ret){
+
+}
+
+extern "C" void set_mem_pc(int mem_pc){
+
+}
+
+extern "C" void icache_hit_count(int last_pc, int now_pc){
+
+}
+extern "C" void icache_unhit_count(){
+
+}
+extern "C" void dcache_hit_count(){
+
+}
+extern "C" void dcache_unhit_count(){
+
+}

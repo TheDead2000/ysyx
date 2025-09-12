@@ -74,6 +74,7 @@ void init_monitor(int argc, char *argv[]){
     init_log(log_file);//OKEY????
     init_sdb();
     init_reg();
+    printf("img_file:%s\n", img_file);
     init_img(img_file);
     init_runtime();
     init_reg_state();

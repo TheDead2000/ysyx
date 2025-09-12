@@ -21,17 +21,17 @@ void print_inst_asm(paddr_t pc, word_t inst) {
               8); // 反编译
   printf("%s\n", buf); 
 }
-int prev_state = 0;
-static bool state_valid() //检测从状态valid->fetching
-{
-  bool ret = false;
-  if (prev_state == 3 && IFU_STATE == 1)
-    ret = true;
-  prev_state = IFU_STATE;
-  return ret;
-  // if(dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__ifu__DOT__state==2)
-  //     return true;
-}
+// int prev_state = 0;
+// static bool state_valid() //检测从状态valid->fetching
+// {
+//   bool ret = false;
+//   if (prev_state == 3 && IFU_STATE == 1)
+//     ret = true;
+//   prev_state = IFU_STATE;
+//   return ret;
+//   // if(dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__ifu__DOT__state==2)
+//   //     return true;
+// }
 int update_reg_state() {
   cpu->pc = dpic_n_pc;
   cpu->gpr[0] = REG_0_STRUCT;
