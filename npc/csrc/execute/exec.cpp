@@ -113,7 +113,7 @@ void init_runtime() {
   nvboard_bind_all_pins(dut);
   nvboard_init();
 #endif
-  reset(1);
+  reset(5);
 }
 
 word_t inst=0;
