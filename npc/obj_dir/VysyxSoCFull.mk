@@ -77,12 +77,14 @@ VM_USER_CLASSES = \
 	icache_trace \
 	pref_trace \
 	difftest \
+	disasm \
 	ftrace \
 	iringbuf \
 	log \
 	mtrace \
 	state \
 	time_local \
+	bind \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
@@ -94,6 +96,7 @@ VM_USER_DIR = \
 	/home/zy/ysyx-workbench/npc/csrc/monitor/sdb \
 	/home/zy/ysyx-workbench/npc/csrc/trace \
 	/home/zy/ysyx-workbench/npc/csrc/utils \
+	/home/zy/ysyx-workbench/npc/nvboardbind \
 
 
 ### Default rules...
@@ -133,6 +136,8 @@ pref_trace.o: /home/zy/ysyx-workbench/npc/csrc/trace/pref_trace.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 difftest.o: /home/zy/ysyx-workbench/npc/csrc/utils/difftest.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+disasm.o: /home/zy/ysyx-workbench/npc/csrc/utils/disasm.cc
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 ftrace.o: /home/zy/ysyx-workbench/npc/csrc/utils/ftrace.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 iringbuf.o: /home/zy/ysyx-workbench/npc/csrc/utils/iringbuf.cpp
@@ -144,6 +149,8 @@ mtrace.o: /home/zy/ysyx-workbench/npc/csrc/utils/mtrace.c
 state.o: /home/zy/ysyx-workbench/npc/csrc/utils/state.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 time_local.o: /home/zy/ysyx-workbench/npc/csrc/utils/time_local.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+bind.o: /home/zy/ysyx-workbench/npc/nvboardbind/bind.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 
 ### Link rules... (from --exe)

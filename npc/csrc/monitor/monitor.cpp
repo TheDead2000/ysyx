@@ -10,7 +10,7 @@ int run();
 void init_log(const char *log_file);
 void init_sdb();
 void init_reg();
-extern "C" void init_disasm(const char *triple);
+void init_disasm(const char *triple);
 void sdb_set_batch_mode();
 void read_func_info(char *filepath);
 void difftest_init_all();
@@ -80,7 +80,7 @@ void init_monitor(int argc, char *argv[]){
     init_reg_state();
 
     // 初始化反汇编
-    init_disasm((MUXDEF(CONFIG_RV64, "riscv64","riscv32")"-pc-linux-gnu"));
+    //init_disasm((MUXDEF(CONFIG_RV64, "riscv64","riscv32")"-pc-linux-gnu"));
     IFDEF(CONFIG_FTRACE,read_func_info(elf_file););
     IFDEF(CONFIG_DIFFTEST,difftest_init_all(););
     welcome();

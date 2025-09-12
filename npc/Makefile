@@ -5,16 +5,20 @@ SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
 
 # 收集源文件
 ifeq ($(TOP_MODULE),ysyxSoCFull)
-    CSRC += $(shell find $(abspath ./csrc) -name "*.c" -o -name "*.cpp")
+    CSRC += $(shell find $(abspath ./csrc) -name "*.c" -o -name "*.cpp" -o -name "*.cc")
     $(info Using YSYX SoC mode)
     # 收集所有perip目录下的Verilog文件
     PERIP_DIR := $(abspath $(SOC_HOME)/perip)
     PERIP_SRC := $(shell find $(PERIP_DIR) -name "*.v" -o -name "*.sv")
     VSRC += $(PERIP_SRC)
     VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
+    SRC_AUTO_BIND = ${NPC_HOME}/nvboardbind/bind.cpp
+    NXDC_FILE = ${NPC_HOME}/nvboardbind/soc.nxdc
 
-
+$(SRC_AUTO_BIND): $(NXDC_FILE)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 endif
+
 
 ifeq ($(TOP_MODULE),top)
     CSRC += $(shell find $(abspath ./csrc_axi4) -name "*.cpp")
@@ -80,6 +84,7 @@ LLVM_FLAGS = $(filter-out -D__STDC_FORMAT_MACROS, $(shell llvm-config-11 --cxxfl
 
 LLVM_FLAGS += -Ofast  -fexceptions
 #-lasan(内存检查)
+
 GCC_LIB = -lreadline \
 		  -ldl \
 		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
@@ -99,8 +104,8 @@ GCC_FLAGS := ${GCC_CFLAGS} ${GCC_LDFLAGS}
 OBJ_DIR := ./obj_dir
 BIN := ${OBJ_DIR}/V${TOP_MODULE}
 
-com:${CSRC} ${VSRC}
-	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}  
+com:${CSRC} ${VSRC} $(SRC_AUTO_BIND)
+	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}  ${SRC_AUTO_BIND}
 
 all: default
 	@echo "Write this Makefile by your self."
