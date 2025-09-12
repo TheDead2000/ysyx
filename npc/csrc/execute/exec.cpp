@@ -72,22 +72,18 @@ void single_inst() {
   do {
     g_cycles++;
     single_cycle();
-    // if (unlikely(i % 20000 == 0)) {
-    //   nemu_state.state = NEMU_STOP;
-    //   Info_R("WARN: PC didn't change for 20000 Cycles!\n");
-    //   nemu_state.halt_ret = -1;
-    //   break;
-    // }
-  } while (likely(wbu_valid == false)); // need to check next cycle of wbu
-                                        // valid!
-  wbu_valid = false;
-  single_cycle();
-  update_reg_state();
-
-#ifdef CONFIG_WATCHPOINT
+    update_reg_state();
+    #ifdef CONFIG_WATCHPOINT
   if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
     nemu_state.state = NEMU_STOP;
-#endif
+  #endif
+  } while (0); // need to check next cycle of wbu
+                                        // valid!
+  // wbu_valid = false;
+  // single_cycle();
+
+
+
 }
 
 void reset(int n) {
