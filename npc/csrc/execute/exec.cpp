@@ -71,8 +71,6 @@ void single_inst() {
   int i = 0;
   do {
     g_cycles++;
-    i++;
-    printf("single_cycle:%d\n",i);
     single_cycle();
     // if (unlikely(i % 20000 == 0)) {
     //   nemu_state.state = NEMU_STOP;
@@ -137,7 +135,8 @@ int run(int step) {
     default:
       nemu_state.state = NEMU_RUNNING;
     }
-    // uint32_t pc = PC_STRUCT;
+    uint32_t pc = PC_STRUCT;
+    printf("pc=%x\n",pc);
     single_inst();
     tfp->flush();
     g_nr_guest_inst++;
