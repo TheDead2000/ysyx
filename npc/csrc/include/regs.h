@@ -38,7 +38,7 @@
 
 #else
 #define PC_STRUCT                                                              \
-  dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__if2id__DOT___inst_addr_if_id_q
+  dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT___pc_current
 // 寄存器访问宏
 #define GET_REG(dut, regnum) (dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__rv32_gpr_regfile__DOT__rf[regnum])
 
