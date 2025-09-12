@@ -72,6 +72,7 @@ void single_inst() {
   do {
     g_cycles++;
     i++;
+    printf("single_cycle:%d\n",i);
     single_cycle();
     // if (unlikely(i % 20000 == 0)) {
     //   nemu_state.state = NEMU_STOP;
