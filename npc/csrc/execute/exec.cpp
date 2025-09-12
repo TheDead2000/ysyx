@@ -72,6 +72,7 @@ void single_inst() {
   do {
     g_cycles++;
     single_cycle();
+    printf("run cycle %d\n", i++);
     update_reg_state();
     #ifdef CONFIG_WATCHPOINT
   if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
