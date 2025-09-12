@@ -53,7 +53,7 @@ symbols: $(TARGET).elf
 
 # 清理
 clean:
-	rm -f $(TARGET).elf $(TARGET).bin $(TARGET).disasm *.o link.ld
+	rm -f $(TARGET).elf $(TARGET).bin $(TARGET).disasm *.o
 
 # 运行仿真（需要根据你的仿真环境修改）
 run: $(TARGET).bin
