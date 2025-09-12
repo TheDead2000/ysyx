@@ -13,6 +13,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   //  *data = 0x00100073;  // ebreak的机器码
   *data = mrom[(addr - 0x20000000) / 4];
+  printf("data=%x\n",*data);
 }
 
 extern "C" void psram_read(int32_t addr, int32_t *data) {
