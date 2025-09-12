@@ -138,8 +138,8 @@ int run(int step) {
     printf("after inst\n");
     tfp->flush();
     g_nr_guest_inst++;
-    if (unlikely(step < PRINT_INST_MIN && step >= 0))
-      print_inst_asm(dpic_pc, inst);
+    // if (unlikely(step < PRINT_INST_MIN && step >= 0))
+    //   print_inst_asm(dpic_pc, inst);
     
       printf("inst=%x\n",inst);
     
