@@ -143,7 +143,7 @@ int run(int step) {
     
       printf("inst=%x\n",inst);
     
-      trace_and_difftest(dpic_pc, inst);
+      //trace_and_difftest(dpic_pc, inst);
 #ifdef CONFIG_WAVE_FORM
     if (unlikely(g_nr_guest_inst == 800000)) {
       Warn("Waveform Enabled!May result in a very large file!");
