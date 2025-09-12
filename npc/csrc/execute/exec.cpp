@@ -105,6 +105,7 @@ void init_runtime() {
   Verilated::traceEverOn(true); // 启用波形追踪
   tfp = new VerilatedVcdC;
   dut->trace(tfp, 99); // 跟踪99级信号
+  printf("Trace file is generated at ./build/waveform.vcd\n");
   MUXDEF(CONFIG_WAVE_FORM, tfp->open("./build/waveform.vcd");
          , tfp->open("/dev/null");) // 打开VCD文件
 #ifndef NPC
@@ -138,10 +139,7 @@ int run(int step) {
     // if (unlikely(step < PRINT_INST_MIN && step >= 0))
     //   print_inst_asm(dpic_pc, inst);
     
-      printf("inst=%x\n",inst);
-    
       //trace_and_difftest(dpic_pc, inst);
-      printf("step=%d\n",step);
 #ifdef CONFIG_WAVE_FORM
     if (unlikely(g_nr_guest_inst == 800000)) {
       Warn("Waveform Enabled!May result in a very large file!");
