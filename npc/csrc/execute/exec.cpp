@@ -75,16 +75,14 @@ void single_inst() {
     printf("run cycle %d\n", i++);
     update_reg_state();
     printf("finish cycle %d\n", i);
-  //   #ifdef CONFIG_WATCHPOINT
-  // if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
-  //   nemu_state.state = NEMU_STOP;
-  // #endif
-  printf("finish");
   } while (0); // need to check next cycle of wbu
                                         // valid!
   // wbu_valid = false;
   // single_cycle();
-
+  //   #ifdef CONFIG_WATCHPOINT
+  // if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
+  //   nemu_state.state = NEMU_STOP;
+  // #endif
 
 
 }
@@ -137,6 +135,7 @@ int run(int step) {
     uint32_t pc = PC_STRUCT;
     printf("pc=%x\n",pc);
     single_inst();
+    printf("after inst\n");
     tfp->flush();
     g_nr_guest_inst++;
     if (unlikely(step < PRINT_INST_MIN && step >= 0))
