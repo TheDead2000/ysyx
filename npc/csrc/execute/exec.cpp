@@ -74,10 +74,12 @@ void single_inst() {
     single_cycle();
     printf("run cycle %d\n", i++);
     update_reg_state();
+    printf("finish cycle %d\n", i);
     #ifdef CONFIG_WATCHPOINT
   if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
     nemu_state.state = NEMU_STOP;
   #endif
+  printf("finish");
   } while (0); // need to check next cycle of wbu
                                         // valid!
   // wbu_valid = false;
@@ -139,7 +141,10 @@ int run(int step) {
     g_nr_guest_inst++;
     if (unlikely(step < PRINT_INST_MIN && step >= 0))
       print_inst_asm(dpic_pc, inst);
-    trace_and_difftest(dpic_pc, inst);
+    
+      printf("inst=%x\n",inst);
+    
+      trace_and_difftest(dpic_pc, inst);
 #ifdef CONFIG_WAVE_FORM
     if (unlikely(g_nr_guest_inst == 800000)) {
       Warn("Waveform Enabled!May result in a very large file!");
