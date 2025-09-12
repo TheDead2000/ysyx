@@ -33,7 +33,7 @@ void print_inst_asm(paddr_t pc, word_t inst) {
 //   //     return true;
 // }
 int update_reg_state() {
-  cpu->pc = dpic_n_pc;
+  cpu->pc = PC_STRUCT;
   cpu->gpr[0] = REG_0_STRUCT;
   cpu->gpr[1] = REG_1_STRUCT;
   cpu->gpr[2] = REG_2_STRUCT;
