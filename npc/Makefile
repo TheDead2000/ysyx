@@ -14,7 +14,7 @@ ifeq ($(TOP_MODULE),ysyxSoCFull)
     VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
     SRC_AUTO_BIND = ${NPC_HOME}/nvboardbind/bind.cpp
     NXDC_FILE = ${NPC_HOME}/nvboardbind/soc.nxdc
-
+$(info Found UART sources: PERIP_SRC)
 $(SRC_AUTO_BIND): $(NXDC_FILE)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 endif
