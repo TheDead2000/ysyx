@@ -34,6 +34,7 @@ void print_inst_asm(paddr_t pc, word_t inst) {
 // }
 int update_reg_state() {
   cpu->pc = PC_STRUCT;
+  printf("update pc=%x\n",cpu->pc);
   cpu->gpr[0] = REG_0_STRUCT;
   cpu->gpr[1] = REG_1_STRUCT;
   cpu->gpr[2] = REG_2_STRUCT;
