@@ -73,12 +73,12 @@ void single_inst() {
     g_cycles++;
     i++;
     single_cycle();
-    if (unlikely(i % 20000 == 0)) {
-      nemu_state.state = NEMU_STOP;
-      Info_R("WARN: PC didn't change for 20000 Cycles!\n");
-      nemu_state.halt_ret = -1;
-      break;
-    }
+    // if (unlikely(i % 20000 == 0)) {
+    //   nemu_state.state = NEMU_STOP;
+    //   Info_R("WARN: PC didn't change for 20000 Cycles!\n");
+    //   nemu_state.halt_ret = -1;
+    //   break;
+    // }
   } while (likely(wbu_valid == false)); // need to check next cycle of wbu
                                         // valid!
   wbu_valid = false;
