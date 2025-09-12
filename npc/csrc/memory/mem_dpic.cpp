@@ -11,7 +11,8 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
   *data = flash[addr / 4];
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
-  *data = mrom[(addr - 0x20000000) / 4];
+   *data = 0x00100073;  // ebreak的机器码
+  // *data = mrom[(addr - 0x20000000) / 4];
 }
 
 extern "C" void psram_read(int32_t addr, int32_t *data) {

@@ -72,9 +72,7 @@ void single_inst() {
   do {
     g_cycles++;
     single_cycle();
-    printf("run cycle %d\n", i++);
     update_reg_state();
-    printf("finish cycle %d\n", i);
   } while (0); // need to check next cycle of wbu
                                         // valid!
   // wbu_valid = false;
@@ -135,7 +133,6 @@ int run(int step) {
     uint32_t pc = PC_STRUCT;
     printf("pc=%x\n",pc);
     single_inst();
-    printf("after inst\n");
     tfp->flush();
     g_nr_guest_inst++;
     // if (unlikely(step < PRINT_INST_MIN && step >= 0))
