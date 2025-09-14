@@ -20,7 +20,7 @@ SRAM_SIZE := 0x00002000  # 8KB
 
 # 目标文件
 TARGET := char-test
-# ASM_SRCS := start.S
+ASM_SRCS := start.S
 C_SRCS := char-test.c
 OBJS := $(ASM_SRCS:.S=.o) $(C_SRCS:.c=.o)
 
@@ -28,8 +28,8 @@ OBJS := $(ASM_SRCS:.S=.o) $(C_SRCS:.c=.o)
 all: $(TARGET).bin $(TARGET).elf
 
 # 编译汇编文件
-# %.o: %.S
-# 	$(CC) $(ASFLAGS) -c -o $@ $<
+%.o: %.S
+	$(CC) $(ASFLAGS) -c -o $@ $<
 
 # 编译C文件
 %.o: %.c
