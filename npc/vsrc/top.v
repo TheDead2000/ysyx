@@ -1179,8 +1179,6 @@ axi4_arb axi_arb (
 );
 
 
-
-
 wire [`XLEN-1:0] dcache_arb_awaddr;
 wire dcache_arb_awvalid;
 wire dcache_arb_awready;

@@ -183,7 +183,7 @@ module dcache_top (
     arb_araddr = uncache ? mem_addr_i : sram_addr;
     arb_wdata = mem_wdata_i;
     arb_wmask = mem_mask_i;
-    arb_wsize = 4'b0100; // 32位
+    arb_wsize = 4'b0000; // 32位
     arb_rsize = 4'b0100; // 32位
     arb_wlen = 8'd0;     // 单次传输
     arb_rlen = 8'd0;     // 单次传输
