@@ -30,7 +30,7 @@ extern "C" {
     extern void set_diffpc(int nextpc, int inst, svBit commit_valid);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:228:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:229:32
     extern void set_mem_pc(int mem_pc);
 
 #ifdef __cplusplus
