@@ -104,6 +104,7 @@ void init_img(char *img_file) {
   // init_flash_img("/ysyx-workbench/npc/char-test.bin");
   // init_flash_img(img_file);
   // init_pmem_img(img_file);
+  printf("ready to init mrom\n");
   init_mrom(img_file);
 
 }
