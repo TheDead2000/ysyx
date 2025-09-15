@@ -17,37 +17,36 @@ module dcache_top (
     input rst,
 
     /* cpu<-->cache 端口 */
-    input [`XLEN-1:0] mem_addr_i,  // CPU 的访存信息 
+    input [31:0] mem_addr_i,  // CPU 的访存信息 
     input [3:0] mem_mask_i,  // 访存掩码
-    input [3:0] mem_size_i,
     input mem_addr_valid_i,  // 地址是否有效，无效时，停止访问 cache
     input mem_write_valid_i,  // 1'b1,表示写;1'b0 表示读 
-    input [`XLEN-1:0] mem_wdata_i,  // 写数据
-    output [`XLEN-1:0] mem_rdata_o,  // dcache 返回读数据
+    input [31:0] mem_wdata_i,  // 写数据
+    output [31:0] mem_rdata_o,  // dcache 返回读数据
     output mem_data_ready_o,  // dcache 读数据是否准备好
 
     // axi4_arb 接口 - 连接到 axi4_arb 模块
-    output reg [`XLEN-1:0] arb_awaddr,
+    output reg [31:0] arb_awaddr,
     output reg arb_awvalid,
     input arb_awready,
-    output reg [127:0] arb_wdata,
+    output reg [31:0] arb_wdata,
     output reg [3:0] arb_wmask,
     output reg arb_wvalid,
     input arb_wready,
     output reg arb_wlast,
     input arb_bvalid,
     output reg arb_bready,
-    output reg [`XLEN-1:0] arb_araddr,
+    output reg [31:0] arb_araddr,
     output reg arb_arvalid,
     input arb_arready,
-    input [`XLEN-1:0] arb_rdata,
+    input [31:0] arb_rdata,
     input arb_rvalid,
     output reg arb_rready,
-    input arb_rlast,
     output reg [3:0] arb_wsize,
     output reg [7:0] arb_wlen,
     output reg [3:0] arb_rsize,
-    output reg [7:0] arb_rlen
+    output reg [7:0] arb_rlen,
+    input arb_rlast
 );
 
   // uncache 检查
@@ -63,46 +62,30 @@ module dcache_top (
   assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mem_addr_i;
 
   wire dcache_hit;
-  wire [31:0] wmask_bit;
   wire dirty_bit_read;
   wire [18:0] dcache_tag_read;
-  wire [`XLEN-1:0] dcache_writeback_data;
 
   /* cache 状态 */
   localparam CACHE_RST = 4'd0;
   localparam CACHE_IDLE = 4'd1;
   localparam CACHE_MISS_ALLOCATE = 4'd2;
   localparam CACHE_WRITE_BACK = 4'd3;
-  localparam CACHE_WRITE_MISS = 4'd4;
-  localparam UNCACHE_READ = 4'd5;
-  localparam UNCACHE_WRITE = 4'd6;
-  localparam CACHE_READ_DATA = 4'd7;      // 新增：从 SoC SRAM 读取数据
-  localparam CACHE_WRITE_DATA = 4'd8;     // 新增：向 SoC SRAM 写入数据
+  localparam UNCACHE_READ = 4'd4;
+  localparam UNCACHE_WRITE = 4'd5;
 
   reg [3:0] dcache_state;
   reg [5:0] blk_addr_reg;
   reg dcache_tag_wen;
   reg dcache_data_ready;
-  reg [`XLEN-1:0] uncache_rdata;
-  reg dcache_data_wen;
+  reg [31:0] uncache_rdata;
   reg _dirty_bit_write;
-  reg dcache_write_hit_valid;
-  reg [3:0] burst_count;
-  reg [127:0] cache_line_buffer;  // 缓存从内存读取的数据
-  reg [127:0] writeback_buffer;   // 缓存要写回的数据
 
   // SoC SRAM 基地址
   localparam SRAM_BASE = 32'h0f00_0000;
 
-  // 计算 SRAM 地址 - 修复位宽扩展问题
-  wire [31:0] sram_addr = SRAM_BASE + {{21{1'b0}}, cache_line_idx, 4'b0};
-
-  wire [31:0] wmask_bit = {
-    {8{mem_mask_i[3]}},
-    {8{mem_mask_i[2]}},
-    {8{mem_mask_i[1]}},
-    {8{mem_mask_i[0]}}
-  };
+  // 计算 SRAM 地址
+  /* verilator lint_off WIDTHEXPAND */
+  wire [31:0] sram_addr = SRAM_BASE + {cache_line_idx, 4'b0};
 
   always @(posedge clk or posedge rst) begin
     if (rst) begin
@@ -111,13 +94,7 @@ module dcache_top (
       dcache_tag_wen <= 0;
       dcache_data_ready <= 0;
       uncache_rdata <= 0;
-      dcache_data_wen <= 0;
       _dirty_bit_write <= 0;
-      dcache_write_hit_valid <= 0;
-      burst_count <= 0;
-      cache_line_buffer <= 128'b0;
-      writeback_buffer <= 128'b0;
-      
     end else begin
       case (dcache_state)
         CACHE_RST: begin
@@ -129,26 +106,23 @@ module dcache_top (
           
           if (mem_addr_valid_i && ~uncache) begin
             case ({dcache_hit, mem_write_valid_i})
-              2'b11: begin : write_hit
+              2'b11: begin // write_hit
                 // 写命中，更新 SoC SRAM
-                dcache_state <= CACHE_WRITE_DATA;
-                writeback_buffer <= {96'b0, mem_wdata_i} << (mem_addr_i[3:2] * 32);
                 dcache_tag_wen <= 1;
                 _dirty_bit_write <= 1;
+                dcache_data_ready <= 1;
               end
-              2'b10: begin : read_hit
+              2'b10: begin // read_hit
                 // 读命中，从 SoC SRAM 读取
-                dcache_state <= CACHE_READ_DATA;
+                dcache_data_ready <= 1;
               end
-              2'b00, 2'b01: begin : miss_allocate
+              2'b00, 2'b01: begin // miss_allocate
                 if (dirty_bit_read) begin
                   // 需要写回
                   dcache_state <= CACHE_WRITE_BACK;
-                  burst_count <= 0;
                 end else begin
                   // 直接从内存读取
                   dcache_state <= CACHE_MISS_ALLOCATE;
-                  burst_count <= 0;
                 end
               end
             endcase
@@ -162,44 +136,17 @@ module dcache_top (
           end
         end
         CACHE_MISS_ALLOCATE: begin
-          // 从内存读取数据到缓存
+          // 从内存读取数据
           if (arb_rvalid && arb_rready) begin
-            cache_line_buffer <= {cache_line_buffer[95:0], arb_rdata};
-            burst_count <= burst_count + 1;
-            
-            if (burst_count == 3) begin
-              // 读取完整个 cache line，写入 SoC SRAM
-              dcache_state <= CACHE_WRITE_DATA;
-              burst_count <= 0;
-            end
-          end
-        end
-        CACHE_WRITE_BACK: begin
-          // 从 SoC SRAM 读取脏数据
-          if (arb_rvalid && arb_rready) begin
-            writeback_buffer <= {writeback_buffer[95:0], arb_rdata};
-            burst_count <= burst_count + 1;
-            
-            if (burst_count == 3) begin
-              // 读取完整个 cache line，写回内存
-              dcache_state <= CACHE_WRITE_DATA;
-              burst_count <= 0;
-            end
-          end
-        end
-        CACHE_WRITE_DATA: begin
-          // 写入数据到 SoC SRAM
-          if (arb_bvalid && arb_bready) begin
             dcache_tag_wen <= 1;
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
           end
         end
-        CACHE_READ_DATA: begin
-          // 从 SoC SRAM 读取数据
-          if (arb_rvalid && arb_rready) begin
-            dcache_data_ready <= 1;
-            dcache_state <= CACHE_IDLE;
+        CACHE_WRITE_BACK: begin
+          // 写回脏数据到内存
+          if (arb_bvalid && arb_bready) begin
+            dcache_state <= CACHE_MISS_ALLOCATE;
           end
         end
         UNCACHE_READ: begin
@@ -234,34 +181,24 @@ module dcache_top (
     
     arb_awaddr = sram_addr;
     arb_araddr = uncache ? mem_addr_i : sram_addr;
-    arb_wdata = (dcache_state == CACHE_WRITE_DATA) ? writeback_buffer : cache_line_buffer;
-    arb_wmask = 4'b1111;
+    arb_wdata = mem_wdata_i;
+    arb_wmask = mem_mask_i;
     arb_wsize = 4'b0100; // 32位
     arb_rsize = 4'b0100; // 32位
     arb_wlen = 8'd0;     // 单次传输
     arb_rlen = 8'd0;     // 单次传输
-
     case (dcache_state)
       CACHE_MISS_ALLOCATE: begin
         // 从内存读取数据
         arb_arvalid = 1'b1;
         arb_araddr = {cache_line_tag, cache_line_idx, 6'b0};
-        arb_rlen = 8'd3; // 突发4次
       end
       CACHE_WRITE_BACK: begin
-        // 从 SoC SRAM 读取脏数据
-        arb_arvalid = 1'b1;
-        arb_rlen = 8'd3; // 突发4次
-      end
-      CACHE_WRITE_DATA: begin
-        // 写入数据到 SoC SRAM
+        // 写回脏数据到内存
         arb_awvalid = 1'b1;
         arb_wvalid = 1'b1;
         arb_wlast = 1'b1;
-      end
-      CACHE_READ_DATA: begin
-        // 从 SoC SRAM 读取数据
-        arb_arvalid = 1'b1;
+        arb_awaddr = {dcache_tag_read, cache_line_idx, 6'b0};
       end
       UNCACHE_READ: begin
         // Uncache 读取
@@ -272,7 +209,6 @@ module dcache_top (
         arb_awvalid = 1'b1;
         arb_wvalid = 1'b1;
         arb_wlast = 1'b1;
-        arb_wdata = {96'b0, mem_wdata_i};
         arb_awaddr = mem_addr_i;
       end
       default: begin
@@ -299,8 +235,6 @@ module dcache_top (
   assign mem_data_ready_o = dcache_data_ready;
 
 endmodule
-
-
 
 
 

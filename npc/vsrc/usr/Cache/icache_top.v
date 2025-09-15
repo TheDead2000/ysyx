@@ -11,38 +11,33 @@
 // 6. 组号: 7bit（2^7==128）
 // 6. tag: 32-6-7 == 19 bit 
 
-
-`include "sysconfig.v"
-
 module icache_top (
     input clk,
     input rst,
     /* cpu<-->cache 端口 */
-    input [`XLEN-1:0] preif_raddr_i,  // CPU 的访存信息 
+    input [31:0] preif_raddr_i,  // CPU 的访存信息 
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
-    output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
+    output [31:0] if_rdata_o,  // icache 返回读数据
     output if_rdata_valid_o,   // icache 读数据是否准备好
 
     // axi4_arb 接口 - 连接到 axi4_arb 模块
-    output reg [`XLEN-1:0] arb_awaddr,
+    output reg [31:0] arb_awaddr,
     output reg arb_awvalid,
     input arb_awready,
-    output reg [127:0] arb_wdata,
+    output reg [31:0] arb_wdata,
     output reg [3:0] arb_wmask,
     output reg arb_wvalid,
     input arb_wready,
     output reg arb_wlast,
     input arb_bvalid,
     output reg arb_bready,
-    output reg [`XLEN-1:0] arb_araddr,
+    output reg [31:0] arb_araddr,
     output reg arb_arvalid,
     input arb_arready,
-    input [`XLEN-1:0] arb_rdata,
+    input [31:0] arb_rdata,
     input arb_rvalid,
     output reg arb_rready,
     input arb_rlast,
-    output reg [3:0] arb_wsize,
-    output reg [7:0] arb_wlen,
     output reg [3:0] arb_rsize,
     output reg [7:0] arb_rlen
 );
@@ -61,9 +56,8 @@ module icache_top (
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
-  localparam CACHE_WRITE_DATA = 4'd5;  // 新增：写数据到 SoC SRAM
 
-  reg [`XLEN-1:0] uncache_rdata;
+  reg [31:0] uncache_rdata;
   reg [3:0] icache_state;
 
   reg [5:0] blk_addr_reg;
@@ -71,15 +65,13 @@ module icache_top (
   reg [18:0] line_tag_reg;
   reg icache_tag_write_valid;
   reg uncache_data_ready;
-  reg [3:0] burst_count;
-  reg [127:0] cache_line_buffer;  // 缓存从内存读取的数据
 
   // SoC SRAM 基地址
   localparam SRAM_BASE = 32'h0f00_0000;
 
-  // 计算 SRAM 地址 (将 cache 数据映射到 SoC SRAM)
-  // 修复位宽扩展问题
-  wire [31:0] sram_addr = SRAM_BASE + {{21{1'b0}}, line_idx_reg, 4'b0};
+  // 计算 SRAM 地址
+  /* verilator lint_off WIDTHEXPAND */
+  wire [31:0] sram_addr = SRAM_BASE + {line_idx_reg, 4'b0};
 
   uncache_check u_uncache_check (
       .addr_check_i({line_tag_reg, line_idx_reg, blk_addr_reg}),
@@ -94,10 +86,9 @@ module icache_top (
       line_tag_reg <= 0;
       icache_tag_write_valid <= 0;
       uncache_data_ready <= 0;
-      burst_count <= 0;
       uncache_rdata <= 0;
-      cache_line_buffer <= 128'b0;
-      
+      arb_rsize = 4'b0100; // 32位
+      arb_rlen = 8'd0;     // 单次传输
     end else begin
       case (icache_state)
         CACHE_RST: begin
@@ -118,7 +109,6 @@ module icache_top (
           if (~icache_hit && ~uncache) begin
             // Cache miss，需要从内存读取数据到 SoC SRAM
             icache_state <= CACHE_MISS;
-            burst_count <= 0;
           end else if (~icache_hit && uncache) begin
             // Uncache 访问，直接从内存读取
             icache_state <= UNCACHE_READ;
@@ -127,19 +117,6 @@ module icache_top (
         CACHE_MISS: begin
           // 通过 axi4_arb 从内存读取数据
           if (arb_rvalid && arb_rready) begin
-            // 缓存读取的数据
-            cache_line_buffer <= {cache_line_buffer[95:0], arb_rdata};
-            burst_count <= burst_count + 1;
-            
-            if (burst_count == 3) begin  // 读取完4个32位数据=128位
-              icache_state <= CACHE_WRITE_DATA;
-              burst_count <= 0;
-            end
-          end
-        end
-        CACHE_WRITE_DATA: begin
-          // 将数据写入 SoC SRAM
-          if (arb_bvalid && arb_bready) begin
             icache_tag_write_valid <= 1;
             icache_state <= CACHE_IDLE;
           end
@@ -171,24 +148,14 @@ module icache_top (
     
     arb_awaddr = sram_addr;
     arb_araddr = uncache ? {line_tag_reg, line_idx_reg, blk_addr_reg} : sram_addr;
-    arb_wdata = cache_line_buffer;
+    arb_wdata = 32'b0;
     arb_wmask = 4'b1111;
-    arb_wsize = 4'b0100; // 32位
-    arb_rsize = 4'b0100; // 32位
-    arb_wlen = 8'd0;     // 单次传输
-    arb_rlen = 8'd0;     // 单次传输
 
     case (icache_state)
       CACHE_MISS: begin
         // 从内存读取数据
         arb_arvalid = 1'b1;
         arb_rready = 1'b1;
-      end
-      CACHE_WRITE_DATA: begin
-        // 写入数据到 SoC SRAM
-        arb_awvalid = 1'b1;
-        arb_wvalid = 1'b1;
-        arb_wlast = 1'b1;
       end
       UNCACHE_READ: begin
         // Uncache 读取
@@ -210,13 +177,9 @@ module icache_top (
       .icache_hit_o(icache_hit)
   );
 
-  // 从 SoC SRAM 读取数据
-  wire [`XLEN-1:0] icache_rdata;
-  assign icache_rdata = arb_rdata;  // 直接从 axi4_arb 接口读取
-
   // 数据输出选择
   assign if_rdata_valid_o = (icache_hit && !uncache) | uncache_data_ready;
-  assign if_rdata_o = uncache ? uncache_rdata : icache_rdata;
+  assign if_rdata_o = uncache ? uncache_rdata : arb_rdata;
 
 endmodule
 

@@ -863,7 +863,7 @@ CSRs rv32_csr_regfile(
 wire [`XLEN-1:0] icache_arb_awaddr;
 wire icache_arb_awvalid;
 wire icache_arb_awready;
-wire [127:0] icache_arb_wdata;
+wire [31:0] icache_arb_wdata;
 wire [3:0] icache_arb_wmask;
 wire icache_arb_wvalid;
 wire icache_arb_wready;
@@ -911,8 +911,8 @@ wire [7:0] icache_arb_rlen;
     .arb_rvalid(icache_arb_rvalid),
     .arb_rready(icache_arb_rready),
     .arb_rlast(icache_arb_rlast),
-    .arb_wsize(icache_arb_wsize),
-    .arb_wlen(icache_arb_wlen),
+    // .arb_wsize(icache_arb_wsize),
+    // .arb_wlen(icache_arb_wlen),
     .arb_rsize(icache_arb_rsize),
     .arb_rlen(icache_arb_rlen)
 );
@@ -1004,9 +1004,8 @@ wire [7:0] icache_arb_rlen;
       .mem_wdata_i(mem_wdata),  // 写数据
       .mem_rdata_o(mem_rdata),  // dcache 返回读数据
       .mem_data_ready_o(mem_data_ready),
-      .mem_size_i(mem_size),
+      // .mem_size_i(mem_size),
       // dcache 读数据是否准备好(未准备好需要暂停流水线)
-
 
     // axi4_arb 接口
     .arb_awaddr(dcache_arb_awaddr),
@@ -1185,7 +1184,7 @@ axi4_arb axi_arb (
 wire [`XLEN-1:0] dcache_arb_awaddr;
 wire dcache_arb_awvalid;
 wire dcache_arb_awready;
-wire [127:0] dcache_arb_wdata;
+wire [31:0] dcache_arb_wdata;
 wire [3:0] dcache_arb_wmask;
 wire dcache_arb_wvalid;
 wire dcache_arb_wready;
