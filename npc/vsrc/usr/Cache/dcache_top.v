@@ -145,9 +145,10 @@ module dcache_top (
         end
         CACHE_WRITE_BACK: begin
           // 写回脏数据到内存
-          if (arb_bvalid && arb_bready) begin
+          // if (arb_bvalid && arb_bready) begin
+          //   dcache_state <= CACHE_MISS_ALLOCATE;
+          // end
             dcache_state <= CACHE_MISS_ALLOCATE;
-          end
         end
         UNCACHE_READ: begin
           if (arb_rvalid && arb_rready) begin
@@ -157,10 +158,12 @@ module dcache_top (
           end
         end
         UNCACHE_WRITE: begin
-          if (arb_bvalid && arb_bready) begin
+          // if (arb_bvalid && arb_bready) begin
+          //   dcache_data_ready <= 1;
+          //   dcache_state <= CACHE_IDLE;
+          // end
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
-          end
         end
         default: begin
           dcache_state <= CACHE_IDLE;
