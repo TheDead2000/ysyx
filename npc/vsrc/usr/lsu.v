@@ -175,7 +175,7 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
     (addr_last2 == 2'b10) ? {_mem_write[15:0], 16'b0} :
     {_mem_write[7:0], 24'b0};
 
-  // 添加写请求发送标志寄存器
+
   reg write_request_sent;
 
   // 写请求发送控制逻辑
@@ -183,13 +183,18 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
     if (rst) begin
       write_request_sent <= 0;
     end else begin
-      if (mem_data_ready_i) begin
-        write_request_sent <= 0;  // 写完成时清零
+      if (mem_data_ready_i && _isstore) begin
+        // 写完成时清零
+        write_request_sent <= 0;
       end else if (_isstore && mem_addr_valid_o && !write_request_sent) begin
-        write_request_sent <= 1;  // 写请求已发送
+        // 写请求已发送
+        write_request_sent <= 1;
       end
     end
   end
+
+
+
 
   assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
   assign mem_write_valid_o = _isstore & mem_addr_valid_o & ~write_request_sent;
