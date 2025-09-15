@@ -40,7 +40,6 @@ void init_mrom(char *img_file) {
     return;
   int size = 0;
   FILE *fp = fopen(img_file, "rb");
-  printf("fp=%p\n", fp);
   fseek(fp, 0, SEEK_END);
   size = ftell(fp);
   fseek(fp, 0, SEEK_SET);
@@ -99,13 +98,11 @@ void init_pmem_img(char *img_file) {
 }
 
 void init_img(char *img_file) {
-  printf("ready to init mem\n");
   init_mem();
   // init_flash();
   // init_flash_img("/ysyx-workbench/npc/char-test.bin");
   // init_flash_img(img_file);
   // init_pmem_img(img_file);
-  printf("ready to init mrom\n");
   init_mrom(img_file);
 
 }
