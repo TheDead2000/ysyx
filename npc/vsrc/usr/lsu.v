@@ -177,10 +177,8 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
 
 
 
-  // assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
   assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
-  // assign mem_write_valid_o = _isstore & mem_addr_valid_o;
-  assign mem_write_valid_o = _isstore ;
+  assign mem_write_valid_o = _isstore & mem_addr_valid_o;
   assign mem_size_o = ls_size;
   assign mem_data_o = 
     ({32{_isload}} & mem_rdata_ext) |  // 使用直接返回的读数据
