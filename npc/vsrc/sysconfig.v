@@ -13,6 +13,7 @@
 `define FALSE 1'b0
 `define HISLEN 16
 
+`define YSYX_SOC
 
 `define TRAP_INST_ADDR_MISALIGNED 0
 `define TRAP_INST_ACCESS_FAULT 1

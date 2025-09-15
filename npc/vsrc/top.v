@@ -860,8 +860,71 @@ CSRs rv32_csr_regfile(
   wire ram_rdata_ready_icache;
   wire [`XLEN-1:0] ram_rdata_icache;
   
+wire [`XLEN-1:0] icache_arb_awaddr;
+wire icache_arb_awvalid;
+wire icache_arb_awready;
+wire [127:0] icache_arb_wdata;
+wire [3:0] icache_arb_wmask;
+wire icache_arb_wvalid;
+wire icache_arb_wready;
+wire icache_arb_wlast;
+wire icache_arb_bvalid;
+wire icache_arb_bready;
+wire [`XLEN-1:0] icache_arb_araddr;
+wire icache_arb_arvalid;
+wire icache_arb_arready;
+wire [`XLEN-1:0] icache_arb_rdata;
+wire icache_arb_rvalid;
+wire icache_arb_rready;
+wire icache_arb_rlast;
+wire [3:0] icache_arb_wsize;
+wire [7:0] icache_arb_wlen;
+wire [3:0] icache_arb_rsize;
+wire [7:0] icache_arb_rlen;
+ 
+ 
+ icache_top u_icache_top (
+      .clk(clk),
+      .rst(rst),
+      /* cpu<-->cache 端口 */
+      .preif_raddr_i(pc_next),  // CPU 的访存信息 
+      .preif_raddr_valid_i(read_req),  // 地址是否有效，无效时，停止访问 cache
+      .if_rdata_o(if_rdata),  // icache 返回读数据
+      .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
 
-
+    
+    // axi4_arb 接口
+    .arb_awaddr(icache_arb_awaddr),
+    .arb_awvalid(icache_arb_awvalid),
+    .arb_awready(icache_arb_awready),
+    .arb_wdata(icache_arb_wdata),
+    .arb_wmask(icache_arb_wmask),
+    .arb_wvalid(icache_arb_wvalid),
+    .arb_wready(icache_arb_wready),
+    .arb_wlast(icache_arb_wlast),
+    .arb_bvalid(icache_arb_bvalid),
+    .arb_bready(icache_arb_bready),
+    .arb_araddr(icache_arb_araddr),
+    .arb_arvalid(icache_arb_arvalid),
+    .arb_arready(icache_arb_arready),
+    .arb_rdata(icache_arb_rdata),
+    .arb_rvalid(icache_arb_rvalid),
+    .arb_rready(icache_arb_rready),
+    .arb_rlast(icache_arb_rlast),
+    .arb_wsize(icache_arb_wsize),
+    .arb_wlen(icache_arb_wlen),
+    .arb_rsize(icache_arb_rsize),
+    .arb_rlen(icache_arb_rlen)
+);
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ `ifndef YSYX_SOC
   icache_top u_icache_top (
       .clk(clk),
       .rst(rst),
@@ -879,6 +942,8 @@ CSRs rv32_csr_regfile(
       .ram_rlen_icache_o(ram_rlen_icache),
       .ram_rdata_ready_icache_i(ram_rdata_ready_icache),
       .ram_rdata_icache_i(ram_rdata_icache),
+
+
       /* sram */
       .io_sram4_addr(io_sram4_addr),
       .io_sram4_cen(io_sram4_cen),
@@ -904,8 +969,9 @@ CSRs rv32_csr_regfile(
       .io_sram7_wmask(io_sram7_wmask),
       .io_sram7_wdata(io_sram7_wdata),
       .io_sram7_rdata(io_sram7_rdata)
+ 
   );
-
+  `endif
 
 
   /* dcache<-->mem 端口 */
@@ -941,6 +1007,55 @@ CSRs rv32_csr_regfile(
       .mem_size_i(mem_size),
       // dcache 读数据是否准备好(未准备好需要暂停流水线)
 
+
+    // axi4_arb 接口
+    .arb_awaddr(dcache_arb_awaddr),
+    .arb_awvalid(dcache_arb_awvalid),
+    .arb_awready(dcache_arb_awready),
+    .arb_wdata(dcache_arb_wdata),
+    .arb_wmask(dcache_arb_wmask),
+    .arb_wvalid(dcache_arb_wvalid),
+    .arb_wready(dcache_arb_wready),
+    .arb_wlast(dcache_arb_wlast),
+    .arb_bvalid(dcache_arb_bvalid),
+    .arb_bready(dcache_arb_bready),
+    .arb_araddr(dcache_arb_araddr),
+    .arb_arvalid(dcache_arb_arvalid),
+    .arb_arready(dcache_arb_arready),
+    .arb_rdata(dcache_arb_rdata),
+    .arb_rvalid(dcache_arb_rvalid),
+    .arb_rready(dcache_arb_rready),
+    .arb_rlast(dcache_arb_rlast),
+    .arb_wsize(dcache_arb_wsize),
+    .arb_wlen(dcache_arb_wlen),
+    .arb_rsize(dcache_arb_rsize),
+    .arb_rlen(dcache_arb_rlen)
+  );
+
+
+
+
+
+
+
+
+
+`ifndef YSYX_SOC
+  dcache_top u_dcache_top (
+      .clk(clk),
+      .rst(rst),
+      /* cpu<-->cache 端口 */
+      .mem_addr_i(mem_addr),  // CPU 的访存信息 
+      .mem_mask_i(mem_mask),  // 访存掩码
+      .mem_addr_valid_i  (mem_addr_valid),    // 地址是否有效，无效时，���止访问 cache
+      .mem_write_valid_i(mem_write_valid),  // 1'b1,表示写;1'b0 表示读 
+      .mem_wdata_i(mem_wdata),  // 写数据
+      .mem_rdata_o(mem_rdata),  // dcache 返回读数据
+      .mem_data_ready_o(mem_data_ready),
+      .mem_size_i(mem_size),
+      // dcache 读数据是否准备好(未准备好需要暂停流水线)
+
+
       /* cache<-->mem 端口 */
       // 读端口
       .ram_raddr_dcache_o(ram_raddr_dcache),
@@ -959,6 +1074,7 @@ CSRs rv32_csr_regfile(
       .ram_wdata_ready_dcache_i(ram_wdata_ready_dcache),// 数据是否已经写入// 写入的数据
       .ram_wdata_dcache_o(ram_wdata_dcache),
 
+      `ifndef YSYX_SOC
       /* sram */
       .io_sram0_addr (io_sram0_addr),
       .io_sram0_cen  (io_sram0_cen),
@@ -984,9 +1100,10 @@ CSRs rv32_csr_regfile(
       .io_sram3_wmask(io_sram3_wmask),
       .io_sram3_wdata(io_sram3_wdata),
       .io_sram3_rdata(io_sram3_rdata)
+      `endif 
   );
 
-
+`endif
 
   /****************************************axi4 arbiter****************************************/
   wire [`XLEN-1:0] arb_read_addr;
@@ -1006,6 +1123,89 @@ CSRs rv32_csr_regfile(
   wire [7:0] arb_wlen;
   wire arb_wdata_ready;  // 数据是否已经写入
 
+
+
+
+
+axi4_arb axi_arb (
+    .clk(clk),
+    .rst(rst),
+
+    // if 访存请求端口（读）- 连接到 icache
+    .if_read_addr_i(icache_arb_araddr),
+    .if_raddr_valid_i(icache_arb_arvalid),
+    .if_rmask_i(4'b1111), // 全使能
+    .if_rsize_i(icache_arb_rsize),
+    .if_rlen_i(icache_arb_rlen),
+    .if_rdata_o(icache_arb_rdata),
+    .if_rdata_ready_o(icache_arb_rvalid),
+
+    // dcache 访存请求端口（读）
+    .mem_read_addr_i(dcache_arb_araddr),
+    .mem_raddr_valid_i(dcache_arb_arvalid),
+    .mem_rmask_i(4'b1111), // 全使能
+    .mem_rsize_i(dcache_arb_rsize),
+    .mem_rlen_i(dcache_arb_rlen),
+    .mem_rdata_o(dcache_arb_rdata),
+    .mem_rdata_ready_o(dcache_arb_rvalid),
+    
+    // dcache 访存请求端口（写）
+    .mem_write_addr_i(dcache_arb_awaddr),
+    .mem_write_valid_i(dcache_arb_awvalid),
+    .mem_wmask_i(dcache_arb_wmask),
+    .mem_wdata_i(dcache_arb_wdata[31:0]), // 取低32位
+    .mem_wsize_i(dcache_arb_wsize),
+    .mem_wlen_i(dcache_arb_wlen),
+    .mem_wdata_ready_o(dcache_arb_wready),
+
+    /* arb<-->axi */
+    // 读通道
+    .arb_read_addr_o(arb_read_addr),
+    .arb_raddr_valid_o(arb_raddr_valid),
+    .arb_rmask_o(arb_rmask),
+    .arb_rsize_o(arb_rsize),
+    .arb_rlen_o(arb_rlen),
+    .arb_rdata_i(arb_rdata),
+    .arb_rdata_ready_i(arb_rdata_ready),
+    .arb_rlast_i(arb_rlast),  // 这是输入信号，从 axi4_rw 模块来
+    
+    // 写通道
+    .arb_write_addr_o(arb_write_addr),
+    .arb_write_valid_o(arb_write_valid),
+    .arb_wmask_o(arb_wmask),
+    .arb_wdata_o(arb_wdata),
+    .arb_wsize_o(arb_wsize),
+    .arb_wlen_o(arb_wlen),
+    .arb_wdata_ready_i(arb_wdata_ready)
+);
+
+
+
+
+wire [`XLEN-1:0] dcache_arb_awaddr;
+wire dcache_arb_awvalid;
+wire dcache_arb_awready;
+wire [127:0] dcache_arb_wdata;
+wire [3:0] dcache_arb_wmask;
+wire dcache_arb_wvalid;
+wire dcache_arb_wready;
+wire dcache_arb_wlast;
+wire dcache_arb_bvalid;
+wire dcache_arb_bready;
+wire [`XLEN-1:0] dcache_arb_araddr;
+wire dcache_arb_arvalid;
+wire dcache_arb_arready;
+wire [`XLEN-1:0] dcache_arb_rdata;
+wire dcache_arb_rvalid;
+wire dcache_arb_rready;
+wire dcache_arb_rlast;
+wire [3:0] dcache_arb_wsize;
+wire [7:0] dcache_arb_wlen;
+wire [3:0] dcache_arb_rsize;
+wire [7:0] dcache_arb_rlen;
+
+
+`ifndef YSYX_SOC
    axi4_arb axi_arb (
       .clk(clk),
       .rst(rst),
@@ -1054,7 +1254,7 @@ CSRs rv32_csr_regfile(
       .arb_wlen_o       (arb_wlen),
       .arb_wdata_ready_i(arb_wdata_ready)
   );
-
+`endif
 
   /* 未使用到的信号 */
   wire [2:0] io_master_awprot;
@@ -1156,6 +1356,8 @@ CSRs rv32_csr_regfile(
       .axi_r_user_i   (io_master_ruser)
   );
 
+
+`ifndef YSYX_SOC
 
 /* sram 接口 测试使用 */
 
@@ -1266,6 +1468,6 @@ CSRs rv32_csr_regfile(
       .io_sram7_wdata(io_sram7_wdata),
       .io_sram7_rdata(io_sram7_rdata)
 );
-
+`endif 
 
 endmodule
