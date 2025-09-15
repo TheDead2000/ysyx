@@ -137,7 +137,7 @@ module dcache_top (
         end
         CACHE_MISS_ALLOCATE: begin
           // 从内存读取数据
-          if (arb_rvalid && arb_rready) begin
+          if (arb_rvalid) begin
             dcache_tag_wen <= 1;
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
@@ -145,25 +145,22 @@ module dcache_top (
         end
         CACHE_WRITE_BACK: begin
           // 写回脏数据到内存
-          // if (arb_bvalid && arb_bready) begin
-          //   dcache_state <= CACHE_MISS_ALLOCATE;
-          // end
+          if (arb_wready) begin
             dcache_state <= CACHE_MISS_ALLOCATE;
+          end
         end
         UNCACHE_READ: begin
-          if (arb_rvalid && arb_rready) begin
+          if (arb_rvalid) begin
             uncache_rdata <= arb_rdata;
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
           end
         end
         UNCACHE_WRITE: begin
-          // if (arb_bvalid && arb_bready) begin
-          //   dcache_data_ready <= 1;
-          //   dcache_state <= CACHE_IDLE;
-          // end
+          if (arb_wready) begin
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
+          end
         end
         default: begin
           dcache_state <= CACHE_IDLE;

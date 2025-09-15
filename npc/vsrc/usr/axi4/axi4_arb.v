@@ -49,8 +49,6 @@ module axi4_arb (
     output [3:0] arb_wsize_o,  // 数据大小
     output [7:0] arb_wlen_o,
     input arb_wdata_ready_i  // 数据是否已经写入
-
-
 );
 // 寄存器已复位
 
