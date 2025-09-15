@@ -40,6 +40,7 @@ void init_mrom(char *img_file) {
     return;
   int size = 0;
   FILE *fp = fopen(img_file, "rb");
+  printf("fp=%p\n", fp);
   fseek(fp, 0, SEEK_END);
   size = ftell(fp);
   fseek(fp, 0, SEEK_SET);
