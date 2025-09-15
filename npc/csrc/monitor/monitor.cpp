@@ -77,6 +77,7 @@ void init_monitor(int argc, char *argv[]){
     printf("img_file:%s\n", img_file);
     init_img(img_file);
     init_runtime();
+    printf("ready to init reg state\n");
     init_reg_state();
 
     // 初始化反汇编
