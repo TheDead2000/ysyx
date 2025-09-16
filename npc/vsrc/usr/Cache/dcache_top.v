@@ -79,7 +79,7 @@ module dcache_top (
   reg dcache_data_ready;
   reg [31:0] uncache_rdata;
   reg _dirty_bit_write;
-
+  reg _arb_awvalid;
   // SoC SRAM 基地址
   localparam SRAM_BASE = 32'h0f00_0000;
 
@@ -129,6 +129,8 @@ module dcache_top (
           end else if (mem_addr_valid_i && uncache) begin
             // Uncache 访问
             if (mem_write_valid_i) begin
+              _arb_awvalid = 1'b1;
+              dcache_data_ready         <= 0;
               dcache_state <= UNCACHE_WRITE;
             end else begin
               dcache_state <= UNCACHE_READ;
@@ -145,7 +147,7 @@ module dcache_top (
         end
         CACHE_WRITE_BACK: begin
           // 写回脏数据到内存
-          if (arb_wready) begin
+          if (_arb_awvalid & arb_wready) begin
             dcache_state <= CACHE_MISS_ALLOCATE;
           end
         end
@@ -157,8 +159,8 @@ module dcache_top (
           end
         end
         UNCACHE_WRITE: begin
-          if (arb_wready) begin
-            arb_awvalid = 1'b0;
+          if (_arb_awvalid & arb_wready) begin
+            _arb_awvalid = 1'b0;
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
           end
@@ -173,7 +175,7 @@ module dcache_top (
   // axi4_arb 接口控制逻辑
   always @(*) begin
     // 默认值
-    arb_awvalid = 1'b0;
+    _arb_awvalid = 1'b0;
     arb_wvalid = 1'b0;
     arb_wlast = 1'b0;
     arb_arvalid = 1'b0;
@@ -196,7 +198,7 @@ module dcache_top (
       end
       CACHE_WRITE_BACK: begin
         // 写回脏数据到内存
-        arb_awvalid = 1'b1;
+        _arb_awvalid = 1'b1;
         arb_wvalid = 1'b1;
         arb_wlast = 1'b1;
         arb_awaddr = {dcache_tag_read, cache_line_idx, 6'b0};
@@ -207,7 +209,6 @@ module dcache_top (
       end
       UNCACHE_WRITE: begin
         // Uncache 写入
-        arb_awvalid = 1'b1;
         arb_wvalid = 1'b1;
         arb_wlast = 1'b1;
         arb_awaddr = mem_addr_i;
@@ -234,7 +235,7 @@ module dcache_top (
   // 数据输出
   assign mem_rdata_o = uncache ? uncache_rdata : arb_rdata;
   assign mem_data_ready_o = dcache_data_ready;
-
+  assign arb_awvalid = _arb_awvalid;
 endmodule
 
 
