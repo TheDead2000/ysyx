@@ -209,6 +209,7 @@ module dcache_top (
       end
       UNCACHE_WRITE: begin
         // Uncache 写入
+        _arb_awvalid = 1'b1;
         arb_wvalid = 1'b1;
         arb_wlast = 1'b1;
         arb_awaddr = mem_addr_i;
