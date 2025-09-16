@@ -33,7 +33,11 @@ module pipline_control (
   localparam ram_mem_flush = 6'b010000;
   localparam ram_mem_stall = 6'b001111;
 
-  wire ram_stall_req = ram_stall_valid_mem_i | ram_stall_valid_if_i;
+  localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
+  localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
+
+  wire ram_stall_req_mem = ram_stall_valid_mem_i ;
+  wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
 
   reg [5:0] _flush;
@@ -44,12 +48,16 @@ module pipline_control (
       _stall = 6'b000000;
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
-    end else if (ram_stall_req) begin  // TODO ,if mem 访存合并
+    end else if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
-
+    end
+    else if( ram_stall_req_if) begin
+      _stall = ram_if_stall;
+      _flush = ram_if_flush;
+    end
       // 中断|异常,(发生在 mem 阶段)
-    end else if(trap_flush_valid_wb_i) begin
+    else if(trap_flush_valid_wb_i) begin
       _stall = trap_ecall_stall;
       _flush = trap_ecall_flush;
 
