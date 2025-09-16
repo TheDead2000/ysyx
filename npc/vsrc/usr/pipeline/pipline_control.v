@@ -36,8 +36,9 @@ module pipline_control (
   localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
   localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
 
-  wire ram_stall_req_mem = ram_stall_valid_mem_i ;
-  wire ram_stall_req_if = ram_stall_valid_if_i ;
+  wire if_stall_only = ram_stall_valid_if_i && !ram_stall_valid_mem_i;
+  wire mem_stall_only = ram_stall_valid_mem_i && !ram_stall_valid_if_i;
+  wire both_stall = ram_stall_valid_if_i && ram_stall_valid_mem_i;
   wire trap_stall_req = trap_stall_valid_wb_i;
 
   reg [5:0] _flush;
@@ -48,14 +49,19 @@ module pipline_control (
       _stall = 6'b000000;
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
-    end else if (ram_stall_req_mem) begin 
+    end else  if (both_stall) begin
+      // IF和MEM同时有stall请求，优先处理MEM的stall
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
-    end
-    else if( ram_stall_req_if) begin
+    end else if (mem_stall_only) begin
+      // 只有MEM阶段有stall请求
+      _stall = ram_mem_stall;
+      _flush = ram_mem_flush;
+    end else if (if_stall_only) begin
+      // 只有IF阶段有stall请求
       _stall = ram_if_stall;
       _flush = ram_if_flush;
-    end
+    end 
       // 中断|异常,(发生在 mem 阶段)
     else if(trap_flush_valid_wb_i) begin
       _stall = trap_ecall_stall;
