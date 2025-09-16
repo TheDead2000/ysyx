@@ -155,8 +155,8 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
           axi_wstate <= AXI_WIDLE;
         end
         AXI_WIDLE: begin
+          _arb_wdata_ready_o <= 0;
           if (arb_write_valid_i & ~_arb_wdata_ready_o) begin : arb_write
-             _arb_wdata_ready_o <= 0;
             if (arb_wlen_i == 8'b0) begin  // 不是突发传输，地址和数据一起到
               // 同时写数据和地址
               /* aw 通道 */

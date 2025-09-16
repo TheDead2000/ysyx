@@ -176,28 +176,9 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
     {_mem_write[7:0], 24'b0};
 
 
-  reg write_request_sent;
-
-  // 写请求发送控制逻辑
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      write_request_sent <= 0;
-    end else begin
-      if (mem_data_ready_i && _isstore) begin
-        // 写完成时清零
-        write_request_sent <= 0;
-      end else if (_isstore && mem_addr_valid_o && !write_request_sent) begin
-        // 写请求已发送
-        write_request_sent <= 1;
-      end
-    end
-  end
-
-
-
 
   assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
-  assign mem_write_valid_o = _isstore & mem_addr_valid_o & ~write_request_sent;
+  assign mem_write_valid_o = _isstore & mem_addr_valid_o;
   assign mem_size_o = ls_size;
   assign mem_data_o = 
     ({32{_isload}} & mem_rdata_ext) |  // 使用直接返回的读数据

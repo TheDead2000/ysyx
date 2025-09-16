@@ -158,6 +158,7 @@ module dcache_top (
         end
         UNCACHE_WRITE: begin
           if (arb_wready) begin
+            arb_awvalid = 1'b0;
             dcache_data_ready <= 1;
             dcache_state <= CACHE_IDLE;
           end
