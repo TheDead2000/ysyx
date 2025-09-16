@@ -918,7 +918,43 @@ wire [7:0] icache_arb_rlen;
 );
  
  
- 
+  dcache_top u_dcache_top (
+      .clk(clk),
+      .rst(rst),
+      /* cpu<-->cache 端口 */
+      .mem_addr_i(mem_addr),  // CPU 的访存信息 
+      .mem_mask_i(mem_mask),  // 访存掩码
+      .mem_addr_valid_i  (mem_addr_valid),    // 地址是否有效，无效时，���止访问 cache
+      .mem_write_valid_i(mem_write_valid),  // 1'b1,表示写;1'b0 表示读 
+      .mem_wdata_i(mem_wdata),  // 写数据
+      .mem_rdata_o(mem_rdata),  // dcache 返回读数据
+      .mem_data_ready_o(mem_data_ready),
+      .mem_size_i(mem_size),
+      // dcache 读数据是否准备好(未准备好需要暂停流水线)
+
+    // axi4_arb 接口
+    .arb_awaddr(dcache_arb_awaddr),
+    .arb_awvalid(dcache_arb_awvalid),
+    // .arb_awready(dcache_arb_awready),
+    .arb_wdata(dcache_arb_wdata),
+    .arb_wmask(dcache_arb_wmask),
+    // .arb_wvalid(dcache_arb_wvalid),
+    .arb_wready(dcache_arb_wready),
+    // .arb_wlast(dcache_arb_wlast),
+    // .arb_bvalid(dcache_arb_bvalid),
+    // .arb_bready(dcache_arb_bready),
+    .arb_araddr(dcache_arb_araddr),
+    .arb_arvalid(dcache_arb_arvalid),
+    // .arb_arready(dcache_arb_arready),
+    .arb_rdata(dcache_arb_rdata),
+    .arb_rvalid(dcache_arb_rvalid),
+    // .arb_rready(dcache_arb_rready),
+    // .arb_rlast(dcache_arb_rlast),
+    .arb_wsize(dcache_arb_wsize),
+    .arb_wlen(dcache_arb_wlen),
+    .arb_rsize(dcache_arb_rsize),
+    .arb_rlen(dcache_arb_rlen)
+  );
  
  
  
@@ -993,43 +1029,7 @@ wire [7:0] icache_arb_rlen;
   wire [7:0] ram_wlen_dcache;
 
 
-  dcache_top u_dcache_top (
-      .clk(clk),
-      .rst(rst),
-      /* cpu<-->cache 端口 */
-      .mem_addr_i(mem_addr),  // CPU 的访存信息 
-      .mem_mask_i(mem_mask),  // 访存掩码
-      .mem_addr_valid_i  (mem_addr_valid),    // 地址是否有效，无效时，���止访问 cache
-      .mem_write_valid_i(mem_write_valid),  // 1'b1,表示写;1'b0 表示读 
-      .mem_wdata_i(mem_wdata),  // 写数据
-      .mem_rdata_o(mem_rdata),  // dcache 返回读数据
-      .mem_data_ready_o(mem_data_ready),
-      // .mem_size_i(mem_size),
-      // dcache 读数据是否准备好(未准备好需要暂停流水线)
-
-    // axi4_arb 接口
-    .arb_awaddr(dcache_arb_awaddr),
-    .arb_awvalid(dcache_arb_awvalid),
-    .arb_awready(dcache_arb_awready),
-    .arb_wdata(dcache_arb_wdata),
-    .arb_wmask(dcache_arb_wmask),
-    .arb_wvalid(dcache_arb_wvalid),
-    .arb_wready(dcache_arb_wready),
-    .arb_wlast(dcache_arb_wlast),
-    .arb_bvalid(dcache_arb_bvalid),
-    .arb_bready(dcache_arb_bready),
-    .arb_araddr(dcache_arb_araddr),
-    .arb_arvalid(dcache_arb_arvalid),
-    .arb_arready(dcache_arb_arready),
-    .arb_rdata(dcache_arb_rdata),
-    .arb_rvalid(dcache_arb_rvalid),
-    .arb_rready(dcache_arb_rready),
-    .arb_rlast(dcache_arb_rlast),
-    .arb_wsize(dcache_arb_wsize),
-    .arb_wlen(dcache_arb_wlen),
-    .arb_rsize(dcache_arb_rsize),
-    .arb_rlen(dcache_arb_rlen)
-  );
+ 
 
 
 
