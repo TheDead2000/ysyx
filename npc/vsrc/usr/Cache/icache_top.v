@@ -11,16 +11,21 @@
 // 6. 组号: 7bit（2^7==128）
 // 6. tag: 32-6-7 == 19 bit 
 
+
 module icache_top (
     input clk,
     input rst,
     /* cpu<-->cache 端口 */
-    input [31:0] preif_raddr_i,  // CPU 的访存信息 
+    input [`XLEN-1:0] preif_raddr_i,  // CPU 的访存信息 
+    // input [7:0] preif_rmask_i,  // 访存掩码
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
-    output [31:0] if_rdata_o,  // icache 返回读数据
-    output if_rdata_valid_o,   // icache 读数据是否准备好
+    output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
 
-    // axi4_arb 接口 - 连接到 axi4_arb 模块
+    //input  if_rdata_ready_i,  // 是否准备好接收数据
+    output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
+
+
+      // axi4_arb 接口 - 连接到 axi4_arb 模块
     output reg [31:0] arb_awaddr,
     output reg arb_awvalid,
     input arb_awready,
@@ -28,21 +33,38 @@ module icache_top (
     output reg [3:0] arb_wmask,
     output reg arb_wvalid,
     input arb_wready,
-    output reg arb_wlast,
-    input arb_bvalid,
-    output reg arb_bready,
-    output reg [31:0] arb_araddr,
-    output reg arb_arvalid,
+
     input arb_arready,
-    input [31:0] arb_rdata,
-    input arb_rvalid,
     output reg arb_rready,
     input arb_rlast,
-    output reg [3:0] arb_rsize,
-    output reg [7:0] arb_rlen
+
+
+
+
+    /* cache<-->mem 端口 */
+    output [`XLEN-1:0] arb_araddr,
+    output                             arb_arvalid,
+    // output [                      3:0] ram_rmask_icache_o,
+    output [                      3:0] arb_rsize,
+    output [                      7:0] arb_rlen,
+    input                              arb_rvalid,
+    input  [    `XLEN-1:0] arb_rdata
+
+
 );
 
-  wire [5:0] cache_blk_addr;  // 6bit块内地址
+`ifndef YSYX_SOC
+  import "DPI-C" function void icache_hit_count(
+    input int last_pc,
+    input int now_pc
+  );
+  import "DPI-C" function void icache_unhit_count();
+`endif
+
+
+  // 寄存器已复位
+
+  wire [5:0] cache_blk_addr;  // 6bit块内地址（保持不变）
   wire [6:0] cache_line_idx;  // 7bit组号
   wire [18:0] cache_line_tag; // 19bit tag
   assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
@@ -50,82 +72,121 @@ module icache_top (
   wire icache_hit;
   wire uncache;
 
-  /* cache 状态 */
+
+  /* cache 命中 */
   localparam CACHE_RST = 4'd0;
   localparam CACHE_IDLE = 4'd1;
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
 
-  reg [31:0] uncache_rdata;
+  reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
+
 
   reg [5:0] blk_addr_reg;
   reg [6:0] line_idx_reg;
   reg [18:0] line_tag_reg;
   reg icache_tag_write_valid;
+
   reg uncache_data_ready;
+  // cache<-->mem 端口 
+  reg [`XLEN-1:0] _ram_raddr_icache_o;
+  reg _ram_raddr_valid_icache_o;
+  reg [3:0] _ram_rmask_icache_o;
+  reg [3:0] _ram_rsize_icache_o;
+  reg [7:0] _ram_rlen_icache_o;
+  reg [3:0] burst_count;
 
-  // SoC SRAM 基地址
-  localparam SRAM_BASE = 32'h0f00_0000;
 
-  // 计算 SRAM 地址
-  /* verilator lint_off WIDTHEXPAND */
-  wire [31:0] sram_addr = SRAM_BASE + {line_idx_reg, 4'b0};
+  wire ram_r_handshake = _ram_raddr_valid_icache_o & arb_rvalid;
+  wire [3:0] burst_count_plus1 = burst_count + 1;
+
 
   uncache_check u_uncache_check (
-      .addr_check_i({line_tag_reg, line_idx_reg, blk_addr_reg}),
+      .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
       .uncache_valid_o(uncache)
   );
 
   always @(posedge clk) begin
     if (rst) begin
-      icache_state <= CACHE_RST;
-      blk_addr_reg <= 0;
-      line_idx_reg <= 0;
-      line_tag_reg <= 0;
-      icache_tag_write_valid <= 0;
-      uncache_data_ready <= 0;
-      uncache_rdata <= 0;
-      arb_rsize = 4'b0100; // 32位
-      arb_rlen = 8'd0;     // 单次传输
+      icache_state              <= CACHE_RST;
+      blk_addr_reg              <= 0;
+      line_idx_reg              <= 0;
+      line_tag_reg              <= 0;
+      icache_tag_write_valid    <= 0;
+      _ram_rmask_icache_o       <= 0;
+      _ram_rsize_icache_o       <= 0;
+      _ram_raddr_valid_icache_o <= 0;
+      uncache_data_ready        <= 0;
+      _ram_raddr_icache_o       <= 0;
+      _ram_rlen_icache_o        <= 0;
+      burst_count               <= 0;
+      uncache_rdata             <= 0;
     end else begin
       case (icache_state)
         CACHE_RST: begin
           icache_state <= CACHE_IDLE;
         end
         CACHE_IDLE: begin
-          blk_addr_reg <= cache_blk_addr;
-          line_idx_reg <= cache_line_idx;
-          line_tag_reg <= cache_line_tag;
+          blk_addr_reg           <= cache_blk_addr;
+          line_idx_reg           <= cache_line_idx;
+          line_tag_reg           <= cache_line_tag;
           icache_tag_write_valid <= 0;
-          uncache_data_ready <= 0;
-          
+          uncache_data_ready     <= 0;
+          // 执行 fencei 指令时，保证 icache 处于 idle 状态
           if (preif_raddr_valid_i) begin
             icache_state <= CACHE_LOOKUP;
           end
         end
         CACHE_LOOKUP: begin
-          if (~icache_hit && ~uncache) begin
-            // Cache miss，需要从内存读取数据到 SoC SRAM
+          blk_addr_reg <= cache_blk_addr;
+          line_idx_reg <= cache_line_idx;
+          line_tag_reg <= cache_line_tag;
+          icache_tag_write_valid    <= 0;
+          uncache_data_ready <= 0;
+          // 执行 fencei 指令时，保证 icache 处于 idle 状态
+        if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
+            _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
+            _ram_raddr_valid_icache_o <= 1;  // 地址有效
+            _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+            _ram_rsize_icache_o <= 4'b0010;  // 32bit 
+            _ram_rlen_icache_o <= 8'd3;    // 突发16次 
+            burst_count <= 0;  // 清空计数器
+`ifndef YSYX_SOC 
+            icache_unhit_count();
+`endif
           end else if (~icache_hit && uncache) begin
-            // Uncache 访问，直接从内存读取
-            icache_state <= UNCACHE_READ;
+            icache_state              <= UNCACHE_READ;
+            _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, blk_addr_reg};  // 读地址
+            _ram_raddr_valid_icache_o <= 1;  // 地址有效
+            _ram_rmask_icache_o       <= 4'b_1111;  // 读掩码
+            _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
+            _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
+`ifndef YSYX_SOC 
+          else if (icache_hit) begin : hit
+            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
+          end
+`endif 
         end
         CACHE_MISS: begin
-          // 通过 axi4_arb 从内存读取数据
-          if (arb_rvalid && arb_rready) begin
-            icache_tag_write_valid <= 1;
-            icache_state <= CACHE_IDLE;
+          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+              icache_state <= CACHE_IDLE;
+              _ram_raddr_valid_icache_o <= 0;  // 传输结束
+              icache_tag_write_valid <= 1;  // 写 tag 
+            end else begin
+              burst_count <= burst_count_plus1;
+            end
           end
         end
         UNCACHE_READ: begin
-          // Uncache 访问，直接从内存读取
-          if (arb_rvalid && arb_rready) begin
-            uncache_rdata <= arb_rdata;
-            uncache_data_ready <= 1;
+          if (ram_r_handshake) begin
+            _ram_raddr_valid_icache_o <= 0;
+            uncache_data_ready <= 1;  // 完成信号
+            uncache_rdata <= arb_rdata[31:0]; // 直接取低32位
             icache_state <= CACHE_IDLE;
           end
         end
@@ -136,67 +197,35 @@ module icache_top (
     end
   end
 
-  // axi4_arb 接口控制逻辑
-  always @(*) begin
-    // 默认值
-    arb_awvalid = 1'b0;
-    arb_wvalid = 1'b0;
-    arb_wlast = 1'b0;
-    arb_arvalid = 1'b0;
-    arb_rready = 1'b1;
-    arb_bready = 1'b1;
-    
-    arb_awaddr = sram_addr;
-    arb_araddr = uncache ? {line_tag_reg, line_idx_reg, blk_addr_reg} : sram_addr;
-    arb_wdata = 32'b0;
-    arb_wmask = 4'b1111;
-
-    case (icache_state)
-      CACHE_MISS: begin
-        // 从内存读取数据
-        arb_arvalid = 1'b1;
-        arb_rready = 1'b1;
-      end
-      UNCACHE_READ: begin
-        // Uncache 读取
-        arb_arvalid = 1'b1;
-        arb_rready = 1'b1;
-      end
-      default: begin
-        // 空闲状态
-      end
-    endcase
-  end
-
   icache_tag u_icache_tag (
-      .clk(clk),
-      .rst(rst),
-      .icache_tag_i(line_tag_reg),
-      .icache_index_i(line_idx_reg),
-      .write_valid_i(icache_tag_write_valid),
-      .icache_hit_o(icache_hit)
+      .clk           (clk),
+      .rst           (rst),
+      .icache_tag_i  (line_tag_reg),            // tag
+      .icache_index_i(line_idx_reg),            // index
+      .write_valid_i (icache_tag_write_valid),  // 写使能
+      .icache_hit_o  (icache_hit)
   );
 
-  // 数据输出选择
-  assign if_rdata_valid_o = (icache_hit && !uncache) | uncache_data_ready;
-  assign if_rdata_o = uncache ? uncache_rdata : arb_rdata;
+
+
+  wire [`XLEN-1:0] icache_rdata;
+
+  // wire [`XLEN-1:0] _icache_data_o = {32'b0, icache_line_rdata[blk_addr_reg*8+:32]};
+
+  // 1. icache_hit ： 数据来自 cache
+  // 2. uncache_data_ready ：数据来自 uncache
+  assign if_rdata_valid_o = icache_hit | uncache_data_ready;
+  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
+  assign if_rdata_o = icache_final_data;
+
+
+  assign arb_araddr = _ram_raddr_icache_o;
+  assign arb_arvalid = _ram_raddr_valid_icache_o;
+  // assign ram_rmask_icache_o = _ram_rmask_icache_o;
+  assign arb_rsize = _ram_rsize_icache_o;
+  assign arb_rlen = _ram_rlen_icache_o;
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -224,32 +253,6 @@ module icache_top (
     output [                      7:0] ram_rlen_icache_o,
     input                              ram_rdata_ready_icache_i,
     input  [    `XLEN-1:0] ram_rdata_icache_i,
-
-
-    // axi4_arb 接口 - 连接到 axi4_arb 模块
-    output [`XLEN-1:0] arb_awaddr,
-    output arb_awvalid,
-    input arb_awready,
-    output [127:0] arb_wdata,
-    output [3:0] arb_wmask,
-    output arb_wvalid,
-    input arb_wready,
-    output arb_wlast,
-    input arb_bvalid,
-    output arb_bready,
-    output [`XLEN-1:0] arb_araddr,
-    output arb_arvalid,
-    input arb_arready,
-    input [`XLEN-1:0] arb_rdata,
-    input arb_rvalid,
-    output arb_rready,
-    input arb_rlast,
-    output [3:0] arb_wsize,
-    output [7:0] arb_wlen,
-    output [3:0] arb_rsize,
-    output [7:0] arb_rlen
-
-
     `ifndef YSYX_SOC
     /* sram */
     output [                      6:0] io_sram4_addr,
@@ -446,53 +449,6 @@ wire [127:0] icache_wdate =
     (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
                                   {ram_rdata_icache_i[31:0], 96'b0};
   wire [`XLEN-1:0] icache_rdata;
-
-
-
-// 实例化 icache_data 并连接 axi4_arb 接口
-icache_data u_icache_data (
-    .clk(clk),
-    .rst(rst),
-    .icache_index_i(icache_index_i),
-    .icache_blk_addr_i(icache_blk_addr_i),
-    .icache_line_wdata_i(icache_line_wdata_i),
-    .icache_wmask(icache_wmask),
-    .burst_count_i(burst_count_i),
-    .icache_wen_i(icache_wen_i),
-    .icache_rdata_o(icache_rdata_o),
-    
-    // axi4_arb 接口
-    .arb_awaddr(arb_awaddr),
-    .arb_awvalid(arb_awvalid),
-    .arb_awready(arb_awready),
-    .arb_wdata(arb_wdata),
-    .arb_wmask(arb_wmask),
-    .arb_wvalid(arb_wvalid),
-    .arb_wready(arb_wready),
-    .arb_wlast(arb_wlast),
-    .arb_bvalid(arb_bvalid),
-    .arb_bready(arb_bready),
-    .arb_araddr(arb_araddr),
-    .arb_arvalid(arb_arvalid),
-    .arb_arready(arb_arready),
-    .arb_rdata(arb_rdata),
-    .arb_rvalid(arb_rvalid),
-    .arb_rready(arb_rready),
-    .arb_rlast(arb_rlast),
-    .arb_wsize(arb_wsize),
-    .arb_wlen(arb_wlen),
-    .arb_rsize(arb_rsize),
-    .arb_rlen(arb_rlen)
-);
-
-
-
-
-
-
-
-
-
   `ifndef YSYX_SOC
   icache_data u_icache_data (
 

@@ -485,7 +485,7 @@ exu exu (
     .exc_op_o       (exc_op_ex),
 
     // 请求暂停流水线
-    .ram_stall_valid_mem_i(ram_stall_valid_mem),  // mem 阶段访存暂停
+    // .ram_stall_valid_mem_i(ram_stall_valid_mem),  // mem 阶段访存暂停
     .jump_hazard_valid_o(jump_hazard_valid),
     .alu_mul_div_valid_o(alu_mul_div_valid),
     /* TARP 总线 */
@@ -901,9 +901,7 @@ wire [7:0] icache_arb_rlen;
     .arb_wmask(icache_arb_wmask),
     .arb_wvalid(icache_arb_wvalid),
     .arb_wready(icache_arb_wready),
-    .arb_wlast(icache_arb_wlast),
-    .arb_bvalid(icache_arb_bvalid),
-    .arb_bready(icache_arb_bready),
+
     .arb_araddr(icache_arb_araddr),
     .arb_arvalid(icache_arb_arvalid),
     .arb_arready(icache_arb_arready),

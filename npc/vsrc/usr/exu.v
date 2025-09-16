@@ -75,7 +75,7 @@ module exu (
     output [`INST_LEN-1:0] redirect_pc_o,
     output                 redirect_pc_valid_o, 
     // 请求暂停流水线
-    input wire ram_stall_valid_mem_i,
+    // input wire ram_stall_valid_mem_i,
     output jump_hazard_valid_o,
     output alu_mul_div_valid_o,
 
