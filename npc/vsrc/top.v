@@ -909,8 +909,8 @@ wire [7:0] icache_arb_rlen;
     .arb_rvalid(icache_arb_rvalid),
     .arb_rready(icache_arb_rready),
     .arb_rlast(icache_arb_rlast),
-    // .arb_wsize(icache_arb_wsize),
-    // .arb_wlen(icache_arb_wlen),
+    .arb_wsize(icache_arb_wsize),
+    .arb_wlen(icache_arb_wlen),
     .arb_rsize(icache_arb_rsize),
     .arb_rlen(icache_arb_rlen)
 );
@@ -1136,6 +1136,15 @@ axi4_arb axi_arb (
     .if_rlen_i(icache_arb_rlen),
     .if_rdata_o(icache_arb_rdata),
     .if_rdata_ready_o(icache_arb_rvalid),
+    
+    // if 访存请求端口（写）- 连接到 icache
+    .if_write_addr_i(icache_arb_awaddr),
+    .if_write_valid_i(icache_arb_awvalid),
+    .if_wmask_i(icache_arb_wmask),
+    .if_wdata_i(icache_arb_wdata),
+    .if_wsize_i(icache_arb_wsize),
+    .if_wlen_i(icache_arb_wlen),
+    .if_wdata_ready_o(icache_arb_wready),
 
     // dcache 访存请求端口（读）
     .mem_read_addr_i(dcache_arb_araddr),
@@ -1164,7 +1173,7 @@ axi4_arb axi_arb (
     .arb_rlen_o(arb_rlen),
     .arb_rdata_i(arb_rdata),
     .arb_rdata_ready_i(arb_rdata_ready),
-    .arb_rlast_i(arb_rlast),  // 这是输入信号，从 axi4_rw 模块来
+    .arb_rlast_i(arb_rlast),
     
     // 写通道
     .arb_write_addr_o(arb_write_addr),

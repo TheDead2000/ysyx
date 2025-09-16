@@ -12,45 +12,38 @@
 // 6. tag: 32-6-7 == 19 bit 
 
 
+
 module icache_top (
     input clk,
     input rst,
     /* cpu<-->cache 端口 */
     input [`XLEN-1:0] preif_raddr_i,  // CPU 的访存信息 
-    // input [7:0] preif_rmask_i,  // 访存掩码
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
-
-    //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
 
-
-      // axi4_arb 接口 - 连接到 axi4_arb 模块
-    output reg [31:0] arb_awaddr,
-    output reg arb_awvalid,
-    input arb_awready,
-    output reg [31:0] arb_wdata,
-    output reg [3:0] arb_wmask,
-    output reg arb_wvalid,
-    input arb_wready,
-
-    input arb_arready,
-    output reg arb_rready,
-    input arb_rlast,
-
-
-
-
     /* cache<-->mem 端口 */
+    // 读端口
     output [`XLEN-1:0] arb_araddr,
     output                             arb_arvalid,
-    // output [                      3:0] ram_rmask_icache_o,
     output [                      3:0] arb_rsize,
     output [                      7:0] arb_rlen,
+    input                              arb_arready,
     input                              arb_rvalid,
-    input  [    `XLEN-1:0] arb_rdata
-
-
+    input  [    `XLEN-1:0] arb_rdata,
+    input                              arb_rlast,
+    output                             arb_rready,
+    
+    // 写端口 - 用于将数据写入SDRAM
+    output [`XLEN-1:0] arb_awaddr,
+    output                             arb_awvalid,
+    input                              arb_awready,
+    output [                      3:0] arb_wmask,
+    output [                      3:0] arb_wsize,
+    output [                      7:0] arb_wlen,
+    output [    `XLEN-1:0] arb_wdata,
+    output                             arb_wvalid,
+    input                              arb_wready
 );
 
 `ifndef YSYX_SOC
@@ -60,7 +53,6 @@ module icache_top (
   );
   import "DPI-C" function void icache_unhit_count();
 `endif
-
 
   // 寄存器已复位
 
@@ -72,17 +64,16 @@ module icache_top (
   wire icache_hit;
   wire uncache;
 
-
   /* cache 命中 */
   localparam CACHE_RST = 4'd0;
   localparam CACHE_IDLE = 4'd1;
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
+  localparam CACHE_WRITE_SDRAM = 4'd5; // 新增状态：将数据写入SDRAM
 
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
-
 
   reg [5:0] blk_addr_reg;
   reg [6:0] line_idx_reg;
@@ -90,18 +81,28 @@ module icache_top (
   reg icache_tag_write_valid;
 
   reg uncache_data_ready;
+  
   // cache<-->mem 端口 
-  reg [`XLEN-1:0] _ram_raddr_icache_o;
-  reg _ram_raddr_valid_icache_o;
-  reg [3:0] _ram_rmask_icache_o;
-  reg [3:0] _ram_rsize_icache_o;
-  reg [7:0] _ram_rlen_icache_o;
+  reg [`XLEN-1:0] _arb_araddr;
+  reg _arb_arvalid;
+  reg [3:0] _arb_rsize;
+  reg [7:0] _arb_rlen;
+  reg _arb_rready;
+  
+  reg [`XLEN-1:0] _arb_awaddr;
+  reg _arb_awvalid;
+  reg [3:0] _arb_wmask;
+  reg [3:0] _arb_wsize;
+  reg [7:0] _arb_wlen;
+  reg [`XLEN-1:0] _arb_wdata;
+  reg _arb_wvalid;
+  
   reg [3:0] burst_count;
-
-
-  wire ram_r_handshake = _ram_raddr_valid_icache_o & arb_rvalid;
   wire [3:0] burst_count_plus1 = burst_count + 1;
 
+  // 缓存行数据寄存器 - 改为32位
+  reg [`XLEN-1:0] cache_line_data;
+  reg [3:0] data_write_count;
 
   uncache_check u_uncache_check (
       .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
@@ -115,14 +116,28 @@ module icache_top (
       line_idx_reg              <= 0;
       line_tag_reg              <= 0;
       icache_tag_write_valid    <= 0;
-      _ram_rmask_icache_o       <= 0;
-      _ram_rsize_icache_o       <= 0;
-      _ram_raddr_valid_icache_o <= 0;
       uncache_data_ready        <= 0;
-      _ram_raddr_icache_o       <= 0;
-      _ram_rlen_icache_o        <= 0;
       burst_count               <= 0;
       uncache_rdata             <= 0;
+      
+      // 初始化AXI接口信号
+      _arb_araddr               <= 0;
+      _arb_arvalid              <= 0;
+      _arb_rsize                <= 0;
+      _arb_rlen                 <= 0;
+      _arb_rready               <= 0;
+      
+      _arb_awaddr               <= 0;
+      _arb_awvalid              <= 0;
+      _arb_wmask                <= 0;
+      _arb_wsize                <= 0;
+      _arb_wlen                 <= 0;
+      _arb_wdata                <= 0;
+      _arb_wvalid               <= 0;
+      
+      // 初始化数据寄存器
+      cache_line_data           <= 0;
+      data_write_count          <= 0;
     end else begin
       case (icache_state)
         CACHE_RST: begin
@@ -134,7 +149,7 @@ module icache_top (
           line_tag_reg           <= cache_line_tag;
           icache_tag_write_valid <= 0;
           uncache_data_ready     <= 0;
-          // 执行 fencei 指令时，保证 icache 处于 idle 状态
+          
           if (preif_raddr_valid_i) begin
             icache_state <= CACHE_LOOKUP;
           end
@@ -143,50 +158,76 @@ module icache_top (
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
-          icache_tag_write_valid    <= 0;
+          icache_tag_write_valid <= 0;
           uncache_data_ready <= 0;
-          // 执行 fencei 指令时，保证 icache 处于 idle 状态
-        if (~icache_hit && ~uncache) begin
+          
+          if (~icache_hit && ~uncache) begin
+            // 缓存未命中，需要从内存加载
             icache_state <= CACHE_MISS;
-            _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
-            _ram_raddr_valid_icache_o <= 1;  // 地址有效
-            _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
-            _ram_rsize_icache_o <= 4'b0010;  // 32bit 
-            _ram_rlen_icache_o <= 8'd3;    // 突发16次 
-            burst_count <= 0;  // 清空计数器
+            _arb_araddr <= {line_tag_reg, line_idx_reg, 6'b0};
+            _arb_arvalid <= 1;
+            _arb_rsize <= 4'b0010; // 32位访问
+            _arb_rlen <= 8'd0;     // 单次传输（32位缓存行）
+            _arb_rready <= 1;
+            burst_count <= 0;
 `ifndef YSYX_SOC 
             icache_unhit_count();
 `endif
           end else if (~icache_hit && uncache) begin
-            icache_state              <= UNCACHE_READ;
-            _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, blk_addr_reg};  // 读地址
-            _ram_raddr_valid_icache_o <= 1;  // 地址有效
-            _ram_rmask_icache_o       <= 4'b_1111;  // 读掩码
-            _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
-            _ram_rlen_icache_o        <= 8'd0;  // 不突发
+            icache_state <= UNCACHE_READ;
+            _arb_araddr <= {line_tag_reg, line_idx_reg, blk_addr_reg};
+            _arb_arvalid <= 1;
+            _arb_rsize <= 4'b0010; // 32位访问
+            _arb_rlen <= 8'd0;     // 单次访问
+            _arb_rready <= 1;
           end
 `ifndef YSYX_SOC 
-          else if (icache_hit) begin : hit
+          else if (icache_hit) begin
             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
           end
 `endif 
         end
         CACHE_MISS: begin
-          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
-              icache_state <= CACHE_IDLE;
-              _ram_raddr_valid_icache_o <= 0;  // 传输结束
-              icache_tag_write_valid <= 1;  // 写 tag 
-            end else begin
-              burst_count <= burst_count_plus1;
-            end
+          if (arb_rvalid && _arb_rready) begin
+            // 接收到数据，存储到缓存行寄存器
+            cache_line_data <= arb_rdata;
+            
+            // 单次传输即可完成，准备将数据写入SDRAM
+            icache_state <= CACHE_WRITE_SDRAM;
+            _arb_arvalid <= 0;
+            _arb_rready <= 0;
+            data_write_count <= 0;
+          end
+        end
+        CACHE_WRITE_SDRAM: begin
+          // 将缓存行数据写入SDRAM
+          if (data_write_count == 0) begin
+            // 发起写请求
+            _arb_awaddr <= {line_tag_reg, line_idx_reg, 6'b0}; // SDRAM地址
+            _arb_awvalid <= 1;
+            _arb_wsize <= 4'b0010; // 32位访问
+            _arb_wlen <= 8'd0;     // 单次传输（32位缓存行）
+          end
+          
+          if (arb_awready && _arb_awvalid) begin
+            _arb_awvalid <= 0;
+            _arb_wvalid <= 1;
+            _arb_wdata <= cache_line_data; // 准备写入数据
+          end
+          
+          if (arb_wready && _arb_wvalid) begin
+            // 写入完成
+            _arb_wvalid <= 0;
+            icache_state <= CACHE_IDLE;
+            icache_tag_write_valid <= 1;
           end
         end
         UNCACHE_READ: begin
-          if (ram_r_handshake) begin
-            _ram_raddr_valid_icache_o <= 0;
-            uncache_data_ready <= 1;  // 完成信号
-            uncache_rdata <= arb_rdata[31:0]; // 直接取低32位
+          if (arb_rvalid && _arb_rready) begin
+            _arb_arvalid <= 0;
+            _arb_rready <= 0;
+            uncache_data_ready <= 1;
+            uncache_rdata <= arb_rdata;
             icache_state <= CACHE_IDLE;
           end
         end
@@ -197,6 +238,7 @@ module icache_top (
     end
   end
 
+  // icache标签存储器
   icache_tag u_icache_tag (
       .clk           (clk),
       .rst           (rst),
@@ -206,26 +248,259 @@ module icache_top (
       .icache_hit_o  (icache_hit)
   );
 
-
-
-  wire [`XLEN-1:0] icache_rdata;
-
-  // wire [`XLEN-1:0] _icache_data_o = {32'b0, icache_line_rdata[blk_addr_reg*8+:32]};
-
-  // 1. icache_hit ： 数据来自 cache
-  // 2. uncache_data_ready ：数据来自 uncache
-  assign if_rdata_valid_o = icache_hit | uncache_data_ready;
+  // 从SDRAM读取数据 - 通过AXI总线
+  // 这里需要实现从SDRAM读取缓存数据的逻辑
+  // 简化处理：假设当标签命中时，数据已经在SDRAM中，可以直接读取
+  
+  // 输出数据选择
+  wire [`XLEN-1:0] icache_rdata = cache_line_data;
+  
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
   assign if_rdata_o = icache_final_data;
+  assign if_rdata_valid_o = icache_hit | uncache_data_ready;
 
-
-  assign arb_araddr = _ram_raddr_icache_o;
-  assign arb_arvalid = _ram_raddr_valid_icache_o;
-  // assign ram_rmask_icache_o = _ram_rmask_icache_o;
-  assign arb_rsize = _ram_rsize_icache_o;
-  assign arb_rlen = _ram_rlen_icache_o;
-
+  // AXI接口连接
+  assign arb_araddr = _arb_araddr;
+  assign arb_arvalid = _arb_arvalid;
+  assign arb_rsize = _arb_rsize;
+  assign arb_rlen = _arb_rlen;
+  assign arb_rready = _arb_rready;
+  
+  assign arb_awaddr = _arb_awaddr;
+  assign arb_awvalid = _arb_awvalid;
+  assign arb_wmask = _arb_wmask;
+  assign arb_wsize = _arb_wsize;
+  assign arb_wlen = _arb_wlen;
+  assign arb_wdata = _arb_wdata;
+  assign arb_wvalid = _arb_wvalid;
 endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+// module icache_top (
+//     input clk,
+//     input rst,
+//     /* cpu<-->cache 端口 */
+//     input [`XLEN-1:0] preif_raddr_i,  // CPU 的访存信息 
+//     // input [7:0] preif_rmask_i,  // 访存掩码
+//     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
+//     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
+
+//     //input  if_rdata_ready_i,  // 是否准备好接收数据
+//     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
+
+
+//       // axi4_arb 接口 - 连接到 axi4_arb 模块
+//     output reg [31:0] arb_awaddr,
+//     output reg arb_awvalid,
+//     input arb_awready,
+//     output reg [31:0] arb_wdata,
+//     output reg [3:0] arb_wmask,
+//     output reg arb_wvalid,
+//     input arb_wready,
+
+//     input arb_arready,
+//     output reg arb_rready,
+//     input arb_rlast,
+
+
+
+
+//     /* cache<-->mem 端口 */
+//     output [`XLEN-1:0] arb_araddr,
+//     output                             arb_arvalid,
+//     // output [                      3:0] ram_rmask_icache_o,
+//     output [                      3:0] arb_rsize,
+//     output [                      7:0] arb_rlen,
+//     input                              arb_rvalid,
+//     input  [    `XLEN-1:0] arb_rdata
+
+
+// );
+
+// `ifndef YSYX_SOC
+//   import "DPI-C" function void icache_hit_count(
+//     input int last_pc,
+//     input int now_pc
+//   );
+//   import "DPI-C" function void icache_unhit_count();
+// `endif
+
+
+//   // 寄存器已复位
+
+//   wire [5:0] cache_blk_addr;  // 6bit块内地址（保持不变）
+//   wire [6:0] cache_line_idx;  // 7bit组号
+//   wire [18:0] cache_line_tag; // 19bit tag
+//   assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
+
+//   wire icache_hit;
+//   wire uncache;
+
+
+//   /* cache 命中 */
+//   localparam CACHE_RST = 4'd0;
+//   localparam CACHE_IDLE = 4'd1;
+//   localparam CACHE_MISS = 4'd2;
+//   localparam UNCACHE_READ = 4'd3;
+//   localparam CACHE_LOOKUP = 4'd4;
+
+//   reg [`XLEN-1:0] uncache_rdata;
+//   reg [3:0] icache_state;
+
+
+//   reg [5:0] blk_addr_reg;
+//   reg [6:0] line_idx_reg;
+//   reg [18:0] line_tag_reg;
+//   reg icache_tag_write_valid;
+
+//   reg uncache_data_ready;
+//   // cache<-->mem 端口 
+//   reg [`XLEN-1:0] _ram_raddr_icache_o;
+//   reg _ram_raddr_valid_icache_o;
+//   reg [3:0] _ram_rmask_icache_o;
+//   reg [3:0] _ram_rsize_icache_o;
+//   reg [7:0] _ram_rlen_icache_o;
+//   reg [3:0] burst_count;
+
+
+//   wire ram_r_handshake = _ram_raddr_valid_icache_o & arb_rvalid;
+//   wire [3:0] burst_count_plus1 = burst_count + 1;
+
+
+//   uncache_check u_uncache_check (
+//       .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
+//       .uncache_valid_o(uncache)
+//   );
+
+//   always @(posedge clk) begin
+//     if (rst) begin
+//       icache_state              <= CACHE_RST;
+//       blk_addr_reg              <= 0;
+//       line_idx_reg              <= 0;
+//       line_tag_reg              <= 0;
+//       icache_tag_write_valid    <= 0;
+//       _ram_rmask_icache_o       <= 0;
+//       _ram_rsize_icache_o       <= 0;
+//       _ram_raddr_valid_icache_o <= 0;
+//       uncache_data_ready        <= 0;
+//       _ram_raddr_icache_o       <= 0;
+//       _ram_rlen_icache_o        <= 0;
+//       burst_count               <= 0;
+//       uncache_rdata             <= 0;
+//     end else begin
+//       case (icache_state)
+//         CACHE_RST: begin
+//           icache_state <= CACHE_IDLE;
+//         end
+//         CACHE_IDLE: begin
+//           blk_addr_reg           <= cache_blk_addr;
+//           line_idx_reg           <= cache_line_idx;
+//           line_tag_reg           <= cache_line_tag;
+//           icache_tag_write_valid <= 0;
+//           uncache_data_ready     <= 0;
+//           // 执行 fencei 指令时，保证 icache 处于 idle 状态
+//           if (preif_raddr_valid_i) begin
+//             icache_state <= CACHE_LOOKUP;
+//           end
+//         end
+//         CACHE_LOOKUP: begin
+//           blk_addr_reg <= cache_blk_addr;
+//           line_idx_reg <= cache_line_idx;
+//           line_tag_reg <= cache_line_tag;
+//           icache_tag_write_valid    <= 0;
+//           uncache_data_ready <= 0;
+//           // 执行 fencei 指令时，保证 icache 处于 idle 状态
+//         if (~icache_hit && ~uncache) begin
+//             icache_state <= CACHE_MISS;
+//             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
+//             _ram_raddr_valid_icache_o <= 1;  // 地址有效
+//             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+//             _ram_rsize_icache_o <= 4'b0010;  // 32bit 
+//             _ram_rlen_icache_o <= 8'd3;    // 突发16次 
+//             burst_count <= 0;  // 清空计数器
+// `ifndef YSYX_SOC 
+//             icache_unhit_count();
+// `endif
+//           end else if (~icache_hit && uncache) begin
+//             icache_state              <= UNCACHE_READ;
+//             _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, blk_addr_reg};  // 读地址
+//             _ram_raddr_valid_icache_o <= 1;  // 地址有效
+//             _ram_rmask_icache_o       <= 4'b_1111;  // 读掩码
+//             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
+//             _ram_rlen_icache_o        <= 8'd0;  // 不突发
+//           end
+// `ifndef YSYX_SOC 
+//           else if (icache_hit) begin : hit
+//             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
+//           end
+// `endif 
+//         end
+//         CACHE_MISS: begin
+//           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+//             if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+//               icache_state <= CACHE_IDLE;
+//               _ram_raddr_valid_icache_o <= 0;  // 传输结束
+//               icache_tag_write_valid <= 1;  // 写 tag 
+//             end else begin
+//               burst_count <= burst_count_plus1;
+//             end
+//           end
+//         end
+//         UNCACHE_READ: begin
+//           if (ram_r_handshake) begin
+//             _ram_raddr_valid_icache_o <= 0;
+//             uncache_data_ready <= 1;  // 完成信号
+//             uncache_rdata <= arb_rdata[31:0]; // 直接取低32位
+//             icache_state <= CACHE_IDLE;
+//           end
+//         end
+//         default: begin
+//           icache_state <= CACHE_IDLE;
+//         end
+//       endcase
+//     end
+//   end
+
+//   icache_tag u_icache_tag (
+//       .clk           (clk),
+//       .rst           (rst),
+//       .icache_tag_i  (line_tag_reg),            // tag
+//       .icache_index_i(line_idx_reg),            // index
+//       .write_valid_i (icache_tag_write_valid),  // 写使能
+//       .icache_hit_o  (icache_hit)
+//   );
+
+
+
+//   wire [`XLEN-1:0] icache_rdata;
+
+//   // wire [`XLEN-1:0] _icache_data_o = {32'b0, icache_line_rdata[blk_addr_reg*8+:32]};
+
+//   // 1. icache_hit ： 数据来自 cache
+//   // 2. uncache_data_ready ：数据来自 uncache
+//   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
+//   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
+//   assign if_rdata_o = icache_final_data;
+
+
+//   assign arb_araddr = _ram_raddr_icache_o;
+//   assign arb_arvalid = _ram_raddr_valid_icache_o;
+//   // assign ram_rmask_icache_o = _ram_rmask_icache_o;
+//   assign arb_rsize = _ram_rsize_icache_o;
+//   assign arb_rlen = _ram_rlen_icache_o;
+
+// endmodule
 
 
 
