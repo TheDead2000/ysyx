@@ -166,7 +166,7 @@ module icache_top (
             icache_state <= CACHE_MISS;
             _arb_araddr <= {line_tag_reg, line_idx_reg, 6'b0};
             _arb_arvalid <= 1;
-            _arb_rsize <= 4'b0010; // 32位访问
+            _arb_rsize <= 4'b0100; // 32位访问
             _arb_rlen <= 8'd0;     // 单次传输（32位缓存行）
             _arb_rready <= 1;
             burst_count <= 0;
@@ -177,7 +177,7 @@ module icache_top (
             icache_state <= UNCACHE_READ;
             _arb_araddr <= {line_tag_reg, line_idx_reg, blk_addr_reg};
             _arb_arvalid <= 1;
-            _arb_rsize <= 4'b0010; // 32位访问
+            _arb_rsize <= 4'b0100; // 32位访问
             _arb_rlen <= 8'd0;     // 单次访问
             _arb_rready <= 1;
           end
@@ -205,7 +205,7 @@ module icache_top (
             // 发起写请求
             _arb_awaddr <= {line_tag_reg, line_idx_reg, 6'b0}; // SDRAM地址
             _arb_awvalid <= 1;
-            _arb_wsize <= 4'b0010; // 32位访问
+            _arb_wsize <= 4'b0100; // 32位访问
             _arb_wlen <= 8'd0;     // 单次传输（32位缓存行）
           end
           
