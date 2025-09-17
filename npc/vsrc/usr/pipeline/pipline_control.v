@@ -54,11 +54,7 @@ module pipline_control (
       // 访存时阻塞所有流水线
     end 
 
-    if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
-      _stall = 6'b000000;
-      _flush = 6'b000000;
-    end
-    else   if (ram_stall_req_mem) begin 
+  if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
