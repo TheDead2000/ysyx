@@ -57,12 +57,12 @@ module pipline_control (
       _stall = 6'b000000;
       _flush = 6'b000000;
     end
-     if (!ram_stall_req_mem) begin 
+     if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
     else  
-    if( !ram_stall_req_if) begin
+    if(ram_stall_req_if) begin
         _stall = ram_if_stall;
         _flush = ram_if_flush;
       end
