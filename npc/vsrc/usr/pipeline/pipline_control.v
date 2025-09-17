@@ -61,6 +61,10 @@ module pipline_control (
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
+    else if(ram_stall_req_if & ram_stall_req_mem & arb_rdata_ready_i)begin
+      _stall = 6'b000000;
+      _flush = 6'b000000;
+    end
     else  
     if(ram_stall_req_if) begin
         _stall = ram_if_stall;
