@@ -752,6 +752,7 @@ clint clint_u (
 
     .trap_bus_i(trap_bus_mem),
 
+     .arb_wdata_ready_i(arb_wdata_ready),
     .ram_stall_valid_if_i(ram_stall_valid_if),
     .ram_stall_valid_mem_i(ram_stall_valid_mem),
     .load_use_valid_id_i(load_use_valid),

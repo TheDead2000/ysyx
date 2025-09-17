@@ -103,6 +103,7 @@ module icache_top (
   // 缓存行数据寄存器 - 改为32位
   reg [`XLEN-1:0] cache_line_data;
   reg [3:0] data_write_count;
+  
 
   uncache_check u_uncache_check (
       .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
