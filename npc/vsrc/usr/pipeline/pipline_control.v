@@ -35,7 +35,7 @@ module pipline_control (
   localparam ram_mem_stall = 6'b001111;
 
   localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
-  localparam ram_if_stall = 6'b110000;  // Stall PC and IF/ID
+  localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
