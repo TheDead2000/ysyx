@@ -35,7 +35,7 @@ module pipline_control (
   localparam ram_mem_stall = 6'b001111;
 
   localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
-  localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
+  localparam ram_if_stall = 6'b110000;  // Stall PC and IF/ID
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
@@ -49,14 +49,16 @@ module pipline_control (
       _stall = 6'b000000;
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
-    end if( ram_stall_req_if) begin
+    end 
+    
+    if (ram_stall_req_mem) begin 
+      _stall = ram_mem_stall;
+      _flush = ram_mem_flush;
+    end 
+    else if( ram_stall_req_if) begin
         _stall = ram_if_stall;
         _flush = ram_if_flush;
       end
-    else if (ram_stall_req_mem) begin 
-      _stall = ram_mem_stall;
-      _flush = ram_mem_flush;
-    end
     // else if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
     //   _stall = 6'b000000;
     //   _flush = 6'b000000;
