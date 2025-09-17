@@ -12,7 +12,7 @@ module pipline_control (
     input trap_stall_valid_wb_i,
     input trap_flush_valid_wb_i,
     input arb_wdata_ready_i,
-
+    input arb_rdata_ready_i,
     /* ---signals to other stages of the pipeline  ----*/
     output [5:0] stall_o,   // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
     output [5:0] flush_o  // flush the whole pipleline if exception or interrupt happened
@@ -50,15 +50,15 @@ module pipline_control (
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
     end 
-    if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
-      _stall = 6'b000000;
-      _flush = 6'b000000;
-    end
-    else if (ram_stall_req_mem) begin 
+    // if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
+    //   _stall = 6'b000000;
+    //   _flush = 6'b000000;
+    // end
+     if (!arb_wdata_ready_i) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
-    else if( ram_stall_req_if) begin
+    else if( !arb_rdata_ready_i) begin
         _stall = ram_if_stall;
         _flush = ram_if_flush;
       end

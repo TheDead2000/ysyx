@@ -26,6 +26,7 @@ module clint (
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
     input arb_wdata_ready_i,
+    input arb_rdata_ready_i,  // 读数据是否有效
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
@@ -425,6 +426,7 @@ end
       .trap_flush_valid_wb_i(trap_flush_condition),
       .trap_stall_valid_wb_i(trap_stall_valid),
       .arb_wdata_ready_i(arb_wdata_ready_i),
+      .arb_rdata_ready_i(arb_rdata_ready_i),
       .stall_o(stall_o),
       .flush_o(flush_o)
   );

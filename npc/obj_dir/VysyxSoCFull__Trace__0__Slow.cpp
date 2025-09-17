@@ -2155,6 +2155,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6519,"jump_valid_ex_i", false,-1);
     tracep->declBit(c+639,"alu_mul_div_valid_ex_i", false,-1);
     tracep->declBit(c+719,"arb_wdata_ready_i", false,-1);
+    tracep->declBit(c+712,"arb_rdata_ready_i", false,-1);
     tracep->declBit(c+6227,"csr_write_en_o", false,-1);
     tracep->declBus(c+6566,"csr_write_addr_o", false,-1, 11,0);
     tracep->declBus(c+6567,"csr_write_data_o", false,-1, 31,0);
@@ -2258,6 +2259,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6232,"trap_stall_valid_wb_i", false,-1);
     tracep->declBit(c+6522,"trap_flush_valid_wb_i", false,-1);
     tracep->declBit(c+719,"arb_wdata_ready_i", false,-1);
+    tracep->declBit(c+712,"arb_rdata_ready_i", false,-1);
     tracep->declBus(c+6,"stall_o", false,-1, 5,0);
     tracep->declBus(c+7,"flush_o", false,-1, 5,0);
     tracep->declBus(c+6721,"load_use_flush", false,-1, 5,0);
