@@ -19,7 +19,7 @@ module icache_top (
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
-
+    input mem_stall_i,
     /* cache<-->mem 端口 */
     // 读端口
     output [`XLEN-1:0] arb_araddr,
@@ -292,7 +292,7 @@ wire [`XLEN-1:0] sram_write_addr = SRAM_BASE + {19'b0, line_idx_reg, 6'b0};
   
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
   assign if_rdata_o = icache_final_data;
-  assign if_rdata_valid_o = (icache_hit && sram_read_valid) | uncache_data_ready;
+  assign if_rdata_valid_o = mem_stall_i ? 1 : (icache_hit && sram_read_valid) | uncache_data_ready;
 
   // AXI接口连接
   assign arb_araddr = _arb_araddr;
