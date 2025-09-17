@@ -168,12 +168,8 @@ module axi4_arb (
         end
         MEM_WRITE_STATE: begin
           if (arb_wdata_ready_i) begin
-            write_burst_count <= write_burst_count + 1;
-            
-            if (write_burst_count == write_burst_total) begin
               write_arb_state <= ARB_IDLE;
               _arb_write_valid_o <= 0;
-            end
           end
         end
         IF_WRITE_STATE: begin
