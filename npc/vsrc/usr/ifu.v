@@ -88,7 +88,6 @@ module ifu (
 
   // 若 icache 数据没有准备好,发出 stall 请求,暂停流水线
   wire _ram_stall = (!if_rdata_valid_i);
- 
   assign ram_stall_valid_if_o =  ram_stall_valid_mem_i ? 0 : _ram_stall;
   assign inst_data_o = _inst_data;
 
