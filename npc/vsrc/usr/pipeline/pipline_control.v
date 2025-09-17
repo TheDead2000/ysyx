@@ -57,10 +57,10 @@ module pipline_control (
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end
-    else if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
-      _stall = 6'b000000;
-      _flush = 6'b000000;
-    end
+    // else if(ram_stall_req_if & ram_stall_req_mem & arb_wdata_ready_i)begin
+    //   _stall = 6'b000000;
+    //   _flush = 6'b000000;
+    // end
       // 中断|异常,(发生在 mem 阶段)
      else if(trap_flush_valid_wb_i) begin
       _stall = trap_ecall_stall;
