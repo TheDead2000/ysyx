@@ -57,6 +57,10 @@ module pipline_control (
       // 只有MEM阶段有stall请求
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
+    end else if (if_stall_only) begin
+      // 只有IF阶段有stall请求
+      _stall = ram_if_stall;
+      _flush = ram_if_flush;
     end 
       // 中断|异常,(发生在 mem 阶段)
     else if(trap_flush_valid_wb_i) begin
