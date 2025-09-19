@@ -49,7 +49,8 @@ module memory (
     input [`XLEN-1:0] mem_rdata_i,  // 返回到读取的数据
     output [`XLEN-1:0] mem_wdata_o,  // 写入的数据
     /* stall req */
-    output ram_stall_valid_mem_o // mem 阶段访存暂停
+    output ram_stall_valid_mem_o,// mem 阶段访存暂停
+    output ls_valid_o
 
 );
 
@@ -179,6 +180,7 @@ assign clint_valid = (_addr[31:0] == `MTIME_ADDR_LOW)   |
 
   assign mem_addr_valid_o = (ls_valid) & (~mem_data_ready_i);
   assign mem_write_valid_o = _isstore & mem_addr_valid_o;
+  assign ls_valid_o = ls_valid;
   assign mem_size_o = ls_size;
   assign mem_data_o = 
     ({32{_isload}} & mem_rdata_ext) |  // 使用直接返回的读数据

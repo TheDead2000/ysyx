@@ -20,17 +20,17 @@ extern "C" {
     extern void bpu_count(svBit bpu_ret);
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/flash/flash.v:84:30
     extern void flash_read(int addr, int* data);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:687:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:689:32
     extern void inst_commit(int pc, int inst, svBit commit_valid);
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/build/ysyxSoCFull.v:5402:30
     extern void mrom_read(int raddr, int* rdata);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:228:32
     extern void set_csr_ptr(const svOpenArrayHandle a);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:702:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:704:32
     extern void set_diffpc(int nextpc, int inst, svBit commit_valid);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/gpr_regfile.v:38:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:227:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/lsu.v:229:32
     extern void set_mem_pc(int mem_pc);
 
 #ifdef __cplusplus

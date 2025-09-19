@@ -13,7 +13,7 @@ module ifu (
     input [`XLEN-1:0] if_rdata_i,
     /* stall req */
     output ram_stall_valid_if_o,  // if 阶段访存暂停
- 
+    input ls_valid_i,
     /* to if/id */
     output [`XLEN-1:0] inst_addr_o,
     output [`XLEN-1:0] inst_data_o,
@@ -88,7 +88,7 @@ module ifu (
   // 若 icache 数据没有准备好,发出 stall 请求,暂停流水线
   wire _ram_stall = (!if_rdata_valid_i);
 
-  assign ram_stall_valid_if_o = _ram_stall;
+  assign ram_stall_valid_if_o = ls_valid_i ? 0 : _ram_stall;
   assign inst_data_o = _inst_data;
 
   /***********************TRAP**********************/

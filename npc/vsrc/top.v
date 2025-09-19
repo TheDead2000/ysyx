@@ -94,6 +94,7 @@ wire [`HISLEN-1:0] history_fb;   // 预测时使用的历史记录
 wire[1:0] ex_jump_type; // 跳转类型
 wire [4:0] ex_rd_addr; // 目的寄存器地址
 
+wire ls_valid;
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -102,7 +103,7 @@ ifu ifu (
   .if_rdata_i          (if_rdata),            // 返回到读取的数据
   /* stall req */
   .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
-
+  .ls_valid_i(ls_valid),
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
@@ -632,6 +633,7 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
       .mem_rdata_i(mem_rdata),
       .mem_wdata_o(mem_wdata),
       .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
+      .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem)
   );
 
