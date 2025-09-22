@@ -54,7 +54,7 @@ module pipline_control (
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
     end 
-  if(if_rdata_valid_i == 0)begin
+  if(!if_rdata_valid_i)begin
     _stall = ram_if_stall;
     _flush = ram_if_flush;
   end
