@@ -135,7 +135,7 @@ int run(int step) {
     uint32_t pc = PC_STRUCT;
     // printf("PC_STRUCT=%x\n",pc);
     single_inst();
-    tfp->flush();
+    // tfp->flush();
     g_nr_guest_inst++;
     // if (unlikely(step < PRINT_INST_MIN && step >= 0))
     //   print_inst_asm(dpic_pc, inst);
