@@ -2150,6 +2150,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+670,"clint_wdata_i", false,-1, 31,0);
     tracep->declBus(c+671,"clint_rdata_o", false,-1, 31,0);
     tracep->declBus(c+659,"trap_bus_i", false,-1, 19,0);
+    tracep->declBit(c+592,"ls_valid_i", false,-1);
     tracep->declBit(c+584,"ram_stall_valid_if_i", false,-1);
     tracep->declBit(c+661,"ram_stall_valid_mem_i", false,-1);
     tracep->declBit(c+615,"load_use_valid_id_i", false,-1);
@@ -2252,6 +2253,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_pipline_control ");
     tracep->declBit(c+6574,"rst", false,-1);
+    tracep->declBit(c+592,"ls_valid_i", false,-1);
     tracep->declBit(c+584,"ram_stall_valid_if_i", false,-1);
     tracep->declBit(c+661,"ram_stall_valid_mem_i", false,-1);
     tracep->declBit(c+615,"load_use_valid_id_i", false,-1);
@@ -11239,8 +11241,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+659,"trap_bus_o", false,-1, 19,0);
     tracep->declBus(c+660,"mem_addr_o", false,-1, 31,0);
     tracep->declBit(c+661,"mem_addr_valid_o", false,-1);
-    tracep->declBus(c+662,"mem_mask_o", false,-1, 3,0);
-    tracep->declBit(c+666,"mem_write_valid_o", false,-1);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11250,6 +11250,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBus(c+662,"mem_mask_o", false,-1, 3,0);
+    tracep->declBit(c+666,"mem_write_valid_o", false,-1);
     tracep->declBus(c+665,"mem_size_o", false,-1, 3,0);
     tracep->declBit(c+667,"mem_data_ready_i", false,-1);
     tracep->declBus(c+663,"mem_rdata_i", false,-1, 31,0);

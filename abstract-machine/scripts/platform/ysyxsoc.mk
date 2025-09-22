@@ -31,5 +31,5 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NPC_HOME) clean
+# 	$(MAKE) -C $(NPC_HOME) clean
 	$(MAKE) -C $(NPC_HOME) run IMG=$(IMAGE).bin
