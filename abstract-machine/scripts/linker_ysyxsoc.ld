@@ -20,7 +20,7 @@ SECTIONS {
   _sdram_start = ORIGIN(sdram);
   _sdram_end = _sdram_start + LENGTH(sdram);
 
-  . = _flash_start;
+  . = _mrom_start;
 
   .bl.f : ALIGN(4) {
     *(.bl.f*)
