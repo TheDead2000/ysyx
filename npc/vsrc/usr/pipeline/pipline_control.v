@@ -61,8 +61,8 @@ module pipline_control (
   // end
   // else 
   if(ls_valid_i & (if_rdata_valid_i == 1'b0)) begin
-    _stall = ram_mem_flush;
-    _flush = ram_mem_stall;
+    _stall = ram_mem_stall;
+    _flush = ram_mem_flush;
   end
   else
   if (ram_stall_req_mem) begin 
