@@ -122,7 +122,7 @@ void halt(int code) {
 void _trm_init() {
 #ifndef DIFFTEST_ON
   init_uart(115200);
-  putch('a');
+//   putch('a');
 //   putch('b');
 //   brandShow();
 #endif
