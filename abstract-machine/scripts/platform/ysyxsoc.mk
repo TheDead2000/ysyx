@@ -32,4 +32,4 @@ image: $(IMAGE).elf
 
 run: image
 	$(MAKE) -C $(NPC_HOME) clean
-	$(MAKE) -C $(NPC_HOME) run IMAGE=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME) run IMG=$(IMAGE).bin
