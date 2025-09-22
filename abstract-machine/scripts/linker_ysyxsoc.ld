@@ -8,8 +8,8 @@ MEMORY {
 
 SECTIONS {
 
-  . = _start;
   .text : {
+    *(entry)
     *(.text .text.*)
   } > MROM
 
