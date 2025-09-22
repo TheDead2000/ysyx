@@ -4,7 +4,7 @@
 module pipline_control (
     input rst,
     /* ----- stall request from other modules  --------*/
-    input ls_valid_i,
+    input if_rdata_valid_i,
     input ram_stall_valid_if_i,  // if ram
     input ram_stall_valid_mem_i,  // mem ram
     input load_use_valid_id_i,  //load-use data hazard from id
@@ -54,8 +54,11 @@ module pipline_control (
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
     end 
-
-  if (ram_stall_req_mem | ls_valid_i) begin 
+  if(if_rdata_valid_i == 0)begin
+    _stall = ram_if_stall;
+    _flush = ram_if_flush;
+  end
+  if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
