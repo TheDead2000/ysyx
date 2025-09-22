@@ -895,7 +895,6 @@ wire [7:0] icache_arb_rlen;
       .preif_raddr_valid_i(read_req),  // 地址是否有效，无效时，停止访问 cache
       .if_rdata_o(if_rdata),  // icache 返回读数据
       .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
-      .mem_stall_i(ram_stall_valid_mem),
     
     // axi4_arb 接口
     .arb_awaddr(icache_arb_awaddr),
