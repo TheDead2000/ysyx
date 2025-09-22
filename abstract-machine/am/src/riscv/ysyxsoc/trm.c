@@ -3,6 +3,7 @@
 #include <ysyxsoc.h>
 #include <string.h>
 #include <stdio.h>
+#include "../riscv.h"
 
 #define ysyxsoc_ebreak(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
 
@@ -120,7 +121,7 @@ void halt(int code) {
 
 void _trm_init() {
 #ifndef DIFFTEST_ON
-//   init_uart(115200);
+  init_uart(115200);
 //   brandShow();
 #endif
   int ret = main(mainargs);
