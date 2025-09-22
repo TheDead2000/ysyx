@@ -62,7 +62,7 @@ void init_uart(uint32_t baud_rate) {
   uint16_t divisior = 50000000/(16 * baud_rate); // dummy system clock speed
   outb(UART_REG_DL2, divisior >> 8);
   outb(UART_REG_DL1, divisior);
-  outb(UART_REG_LC, inb(UART_REG_LC) & (~0x80));
+//   outb(UART_REG_LC, inb(UART_REG_LC) & (~0x80));
 }
 
 void init_spi(uint32_t spi_clock, uint8_t spi_ss, uint8_t char_len, uint8_t tx_neg, uint8_t rx_neg, uint8_t lsb) {
