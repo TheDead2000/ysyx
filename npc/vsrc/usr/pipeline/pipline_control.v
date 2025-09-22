@@ -44,7 +44,7 @@ module pipline_control (
   wire trap_stall_req = trap_stall_valid_wb_i;
   wire arb_rdata_ready_i_aux = !arb_rdata_ready_i;
   wire arb_wdata_ready_i_aux = !arb_wdata_ready_i;
-
+  wire test = (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0);
 
   reg [5:0] _flush;
   reg [5:0] _stall;
@@ -60,7 +60,7 @@ module pipline_control (
   //   _flush = ram_mem_stall;
   // end
   // else 
-  if(ls_valid_i & (if_rdata_valid_i == 1'b0)) begin
+  if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
     _stall = ram_mem_stall;
     _flush = ram_mem_flush;
   end
