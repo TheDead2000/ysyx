@@ -73,13 +73,3 @@ word_t isa_reg_str2val(const char *s, bool *success) {
 void init_reg(){
   cpu=(CPU_state*)malloc(sizeof(CPU_state));
 }
-
- void set_csr_ptr(){
-
-}
-extern void set_gpr_ptr(){
-
-}
-extern void inst_commit(){
-
-}

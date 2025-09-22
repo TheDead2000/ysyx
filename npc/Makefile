@@ -57,7 +57,7 @@ VERILATOR_FLAGS +=  -cc --exe  --build  --clk clk  --timescale-override 1ns
 VERILATOR_FLAGS += ${VERILATOR_INC_PATH}
 VERILATOR_FLAGS += --top ${TOP_MODULE}
 VERILATOR_FLAGS += --timescale "1ns/1ns" --no-timing
-
+VERILATOR_FLAGS += -autoflush
 # gcc flags 
 
 ifeq ($(TOP_MODULE),top)
