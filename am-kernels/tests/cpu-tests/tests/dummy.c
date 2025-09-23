@@ -1,6 +1,6 @@
 #include <am.h>
+#include <stdio.h>
 int main() {
-  putch('a');
-  putch('b');
+  printf("hello,world!\n");
   return 0;
 }
