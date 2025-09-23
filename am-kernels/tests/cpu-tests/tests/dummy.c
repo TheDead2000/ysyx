@@ -1,4 +1,5 @@
+#include <am.h>
 int main() {
-  putch("a");
+  putch('a');
   return 0;
 }
