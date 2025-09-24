@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <klib.h>
 int main() {
-  putch('a');
-  printf("hello,world!\n");
+  putch('h');
+  putch('e');
+  putch('l');
+  putch('l');
+  putch('o');
+  // printf("hello,world!\n");
   return 0;
 }
