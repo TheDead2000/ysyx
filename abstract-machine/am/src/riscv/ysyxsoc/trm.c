@@ -123,7 +123,7 @@ void _trm_init() {
 #ifndef DIFFTEST_ON
 //   brandShow();
 #endif
-  init_uart(115200);  init_uart(115200);
+  init_uart(115200);
   int ret = main(mainargs);
   halt(ret);
 }
