@@ -60,11 +60,11 @@ module pipline_control (
   //   _flush = ram_mem_stall;
   // end
   // else 
-  if(ram_stall_req_mem & if_rdata_valid_i)begin
-   _stall = 6'b001100;
-   _flush = 6'b000000;
-  end
-  else
+  // if(ram_stall_req_mem & if_rdata_valid_i)begin
+  //  _stall = 6'b001100;
+  //  _flush = 6'b000000;
+  // end
+  // else
   if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
