@@ -60,11 +60,7 @@ module pipline_control (
   //   _flush = ram_mem_stall;
   // end
   // else 
-  if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
-    _stall = ram_if_stall;
-    _flush = ram_if_flush;
-  end
-  else
+  
   if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
@@ -94,7 +90,14 @@ module pipline_control (
       _stall = load_use_stall;
       _flush = load_use_flush;
       // 没有异常情况,正常执行
-    end else begin
+    end 
+    else
+    if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
+    _stall = ram_if_stall;
+    _flush = ram_if_flush;
+    end
+     else
+     begin
       _stall = 6'b000000;
       _flush = 6'b000000;
     end
