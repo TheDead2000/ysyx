@@ -102,8 +102,8 @@ module pipline_control (
     end 
     else
     if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
-    _stall = ram_mem_stall;
-    _flush = ram_mem_stall;
+    _stall = ram_if_stall;
+    _flush = ram_if_flush;
     end
      else
      begin
