@@ -7,6 +7,12 @@ int main() {
   putch('l');
   putch('l');
   putch('o');
+  putch(',');
+  putch('w');
+  putch('o');
+  putch('r');
+  putch('l');
+  putch('d');
   // printf("hello,world!\n");
   return 0;
 }
