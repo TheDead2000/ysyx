@@ -124,7 +124,7 @@ void _trm_init() {
   // init_uart(115200);
 //   brandShow();
 #endif
-  putch('a');
+
   int ret = main(mainargs);
   halt(ret);
 }
