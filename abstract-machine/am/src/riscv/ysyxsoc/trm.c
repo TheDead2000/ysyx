@@ -108,7 +108,7 @@ void spi_tx_start() {
 }
 
 void putch(char ch) {
-  while((inb(UART_REG_LS) & 0x20) == 0);
+  // while((inb(UART_REG_LS) & 0x20) == 0);
   outb(UART_REG_TX, ch);
 }
 
@@ -121,9 +121,10 @@ void halt(int code) {
 
 void _trm_init() {
 #ifndef DIFFTEST_ON
-  init_uart(115200);
+  // init_uart(115200);
 //   brandShow();
 #endif
+  putch('a');
   int ret = main(mainargs);
   halt(ret);
 }
