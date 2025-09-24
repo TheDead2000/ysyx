@@ -71,7 +71,7 @@ module pipline_control (
     end 
     else if(ram_stall_req_if) begin
         _stall = ram_mem_stall;
-        _flush = ram_if_flush;
+        _flush = ram_mem_flush;
         end
       // 中断|异常,(发生在 mem 阶段)
      else if(trap_flush_valid_wb_i) begin
@@ -82,11 +82,11 @@ module pipline_control (
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
       // 跳转指令,(发生在 ex 阶段)
-     end else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
-      _stall = 6'b000111;
-      _flush = 6'b001000;
-     
-     end
+     end 
+    //  else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
+    //   _stall = 6'b000111;
+    //   _flush = 6'b001000;
+    //  end
       else if (jump_valid_ex_i) begin
       _stall = jump_stall;
       _flush = jump_flush;
@@ -101,11 +101,11 @@ module pipline_control (
       // 没有异常情况,正常执行
     end 
     else
-    if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
-    _stall = ram_if_stall;
-    _flush = ram_if_flush;
-    end
-     else
+    // if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
+    // _stall = ram_if_stall;
+    // _flush = ram_if_flush;
+    // end
+    //  else
      begin
       _stall = 6'b000000;
       _flush = 6'b000000;
