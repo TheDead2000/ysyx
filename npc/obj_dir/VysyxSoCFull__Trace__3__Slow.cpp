@@ -4768,7 +4768,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
     bufp->fullIData(oldp+6732,(7U),32);
     bufp->fullIData(oldp+6733,(0x80U),32);
     bufp->fullIData(oldp+6734,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_rdata),32);
-    bufp->fullIData(oldp+6735,(0x20000000U),32);
+    bufp->fullIData(oldp+6735,(0x30000000U),32);
     bufp->fullBit(oldp+6736,(1U));
     bufp->fullCData(oldp+6737,(0x1bU),8);
     bufp->fullCData(oldp+6738,(0xebU),8);
@@ -4783,9 +4783,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
     bufp->fullIData(oldp+6747,(0xaU),32);
     bufp->fullIData(oldp+6748,(6U),32);
     bufp->fullIData(oldp+6749,(0x11U),32);
-    bufp->fullIData(oldp+6750,(0x30000000U),32);
-    bufp->fullIData(oldp+6751,(0x3fffffffU),32);
-    bufp->fullIData(oldp+6752,(8U),32);
-    bufp->fullCData(oldp+6753,(0xaU),4);
-    bufp->fullIData(oldp+6754,(0xbU),32);
+    bufp->fullIData(oldp+6750,(0x3fffffffU),32);
+    bufp->fullIData(oldp+6751,(8U),32);
+    bufp->fullCData(oldp+6752,(0xaU),4);
+    bufp->fullIData(oldp+6753,(0xbU),32);
 }
