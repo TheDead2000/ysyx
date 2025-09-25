@@ -21,6 +21,8 @@ int printf(const char *fmt, ...) {
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
+  putch(*fmt);
+  putch(*(fmt++));
   int len = vsprintf(out, fmt, args);
   va_end(args);
   // out[0] = 'h';
