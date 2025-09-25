@@ -13,6 +13,7 @@ int main() {
   putch('r');
   putch('l');
   putch('d');
+  putch('\n');
   // printf("hello,world!\n");
   return 0;
 }
