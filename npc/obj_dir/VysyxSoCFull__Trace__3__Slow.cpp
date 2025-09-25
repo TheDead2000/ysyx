@@ -4416,89 +4416,91 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
     bufp->fullCData(oldp+6459,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__fifo_tx__DOT__bottom),4);
     bufp->fullCData(oldp+6460,((0xfU & ((IData)(1U) 
                                         + (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__fifo_tx__DOT__top)))),4);
-    bufp->fullBit(oldp+6461,(vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss));
-    bufp->fullBit(oldp+6462,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_en));
-    bufp->fullIData(oldp+6463,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__cause_value_latched),32);
-    bufp->fullBit(oldp+6464,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__is_delegated_latched));
-    bufp->fullBit(oldp+6465,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_pending_latched));
-    bufp->fullCData(oldp+6466,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__csr_state),3);
-    bufp->fullBit(oldp+6467,((0U != (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__csr_state))));
-    bufp->fullCData(oldp+6468,(vlSelf->ysyxSoCFull__DOT__flash__DOT__state),3);
-    bufp->fullCData(oldp+6469,(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter),8);
-    bufp->fullCData(oldp+6470,(vlSelf->ysyxSoCFull__DOT__flash__DOT__cmd),8);
-    bufp->fullIData(oldp+6471,(vlSelf->ysyxSoCFull__DOT__flash__DOT__addr),24);
-    bufp->fullIData(oldp+6472,(vlSelf->ysyxSoCFull__DOT__flash__DOT__data),32);
-    bufp->fullBit(oldp+6473,(((1U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
+    bufp->fullBit(oldp+6461,((1U & ((IData)(vlSelf->ysyxSoCFull__DOT___asic_spi_ss) 
+                                    >> 7U))));
+    bufp->fullBit(oldp+6462,(vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss));
+    bufp->fullBit(oldp+6463,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_en));
+    bufp->fullIData(oldp+6464,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__cause_value_latched),32);
+    bufp->fullBit(oldp+6465,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__is_delegated_latched));
+    bufp->fullBit(oldp+6466,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_pending_latched));
+    bufp->fullCData(oldp+6467,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__csr_state),3);
+    bufp->fullBit(oldp+6468,((0U != (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__csr_state))));
+    bufp->fullCData(oldp+6469,(vlSelf->ysyxSoCFull__DOT__flash__DOT__state),3);
+    bufp->fullCData(oldp+6470,(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter),8);
+    bufp->fullCData(oldp+6471,(vlSelf->ysyxSoCFull__DOT__flash__DOT__cmd),8);
+    bufp->fullIData(oldp+6472,(vlSelf->ysyxSoCFull__DOT__flash__DOT__addr),24);
+    bufp->fullIData(oldp+6473,(vlSelf->ysyxSoCFull__DOT__flash__DOT__data),32);
+    bufp->fullBit(oldp+6474,(((1U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
                               & (0x17U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter)))));
-    bufp->fullIData(oldp+6474,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w),32);
-    bufp->fullIData(oldp+6475,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w),32);
-    bufp->fullBit(oldp+6476,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pslverr));
-    bufp->fullIData(oldp+6477,((0x3fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),30);
-    bufp->fullIData(oldp+6478,((0x1fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),29);
-    bufp->fullBit(oldp+6479,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_2_psel));
-    bufp->fullBit(oldp+6480,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_psel));
-    bufp->fullBit(oldp+6481,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_penable));
-    bufp->fullBit(oldp+6482,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_penable) 
+    bufp->fullIData(oldp+6475,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w),32);
+    bufp->fullIData(oldp+6476,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w),32);
+    bufp->fullBit(oldp+6477,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pslverr));
+    bufp->fullIData(oldp+6478,((0x3fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),30);
+    bufp->fullIData(oldp+6479,((0x1fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),29);
+    bufp->fullBit(oldp+6480,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_2_psel));
+    bufp->fullBit(oldp+6481,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_psel));
+    bufp->fullBit(oldp+6482,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_penable));
+    bufp->fullBit(oldp+6483,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_penable) 
                               & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_psel))));
-    bufp->fullBit(oldp+6483,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_0_psel));
-    bufp->fullBit(oldp+6484,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_0_penable));
-    bufp->fullBit(oldp+6485,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_0));
-    bufp->fullBit(oldp+6486,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_1));
-    bufp->fullBit(oldp+6487,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_2));
-    bufp->fullBit(oldp+6488,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_3));
-    bufp->fullBit(oldp+6489,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_4));
-    bufp->fullBit(oldp+6490,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_5));
-    bufp->fullBit(oldp+6491,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_6));
-    bufp->fullCData(oldp+6492,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__resp_hold),2);
-    bufp->fullCData(oldp+6493,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pslverr) 
+    bufp->fullBit(oldp+6484,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_0_psel));
+    bufp->fullBit(oldp+6485,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_0_penable));
+    bufp->fullBit(oldp+6486,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_0));
+    bufp->fullBit(oldp+6487,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_1));
+    bufp->fullBit(oldp+6488,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_2));
+    bufp->fullBit(oldp+6489,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_3));
+    bufp->fullBit(oldp+6490,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_4));
+    bufp->fullBit(oldp+6491,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_5));
+    bufp->fullBit(oldp+6492,(vlSelf->ysyxSoCFull__DOT__asic__DOT__apbxbar__DOT__sel_6));
+    bufp->fullCData(oldp+6493,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__resp_hold),2);
+    bufp->fullCData(oldp+6494,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pslverr) 
                                 << 1U)),2);
-    bufp->fullCData(oldp+6494,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__next_privilege),2);
-    bufp->fullBit(oldp+6495,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_valid));
-    bufp->fullBit(oldp+6496,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_pending));
-    bufp->fullBit(oldp+6497,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_delegated));
-    bufp->fullIData(oldp+6498,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__cause_value),32);
-    bufp->fullIData(oldp+6499,((0x1fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),32);
-    bufp->fullBit(oldp+6500,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we));
-    bufp->fullBit(oldp+6501,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_re));
-    bufp->fullCData(oldp+6502,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte0),8);
-    bufp->fullCData(oldp+6503,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte1),8);
-    bufp->fullCData(oldp+6504,((0xffU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w 
+    bufp->fullCData(oldp+6495,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__next_privilege),2);
+    bufp->fullBit(oldp+6496,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_valid));
+    bufp->fullBit(oldp+6497,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_pending));
+    bufp->fullBit(oldp+6498,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__interrupt_delegated));
+    bufp->fullIData(oldp+6499,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__cause_value),32);
+    bufp->fullIData(oldp+6500,((0x1fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),32);
+    bufp->fullBit(oldp+6501,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we));
+    bufp->fullBit(oldp+6502,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_re));
+    bufp->fullCData(oldp+6503,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte0),8);
+    bufp->fullCData(oldp+6504,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte1),8);
+    bufp->fullCData(oldp+6505,((0xffU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w 
                                          >> 0x10U))),8);
-    bufp->fullCData(oldp+6505,((vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w 
+    bufp->fullCData(oldp+6506,((vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w 
                                 >> 0x18U)),8);
-    bufp->fullIData(oldp+6506,(((0xffff0000U & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w) 
+    bufp->fullIData(oldp+6507,(((0xffff0000U & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_write_data_w) 
                                 | (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte1) 
                                     << 8U) | (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__byte0)))),32);
-    bufp->fullIData(oldp+6507,((0xfffffcU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),24);
-    bufp->fullIData(oldp+6508,((0xffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),24);
-    bufp->fullBit(oldp+6509,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_rd_w));
-    bufp->fullBit(oldp+6510,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__is_write));
-    bufp->fullCData(oldp+6511,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT____Vcellinp__u_sdram_ctrl__inport_wr_i),4);
-    bufp->fullBit(oldp+6512,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_req_w));
-    bufp->fullSData(oldp+6513,((0x1feU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
+    bufp->fullIData(oldp+6508,((0xfffffcU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),24);
+    bufp->fullIData(oldp+6509,((0xffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),24);
+    bufp->fullBit(oldp+6510,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_rd_w));
+    bufp->fullBit(oldp+6511,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__is_write));
+    bufp->fullCData(oldp+6512,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT____Vcellinp__u_sdram_ctrl__inport_wr_i),4);
+    bufp->fullBit(oldp+6513,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_req_w));
+    bufp->fullSData(oldp+6514,((0x1feU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
                                           >> 1U))),13);
-    bufp->fullSData(oldp+6514,((0x1fffU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
+    bufp->fullSData(oldp+6515,((0x1fffU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
                                            >> 0xcU))),13);
-    bufp->fullCData(oldp+6515,((3U & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
+    bufp->fullCData(oldp+6516,((3U & (vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w 
                                       >> 0xaU))),2);
-    bufp->fullIData(oldp+6516,((0x3fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),32);
-    bufp->fullBit(oldp+6517,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel));
-    bufp->fullIData(oldp+6518,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr),32);
-    bufp->fullBit(oldp+6519,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_psel));
-    bufp->fullBit(oldp+6520,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_penable));
-    bufp->fullCData(oldp+6521,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
+    bufp->fullIData(oldp+6517,((0x3fffffffU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),32);
+    bufp->fullBit(oldp+6518,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel));
+    bufp->fullIData(oldp+6519,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr),32);
+    bufp->fullBit(oldp+6520,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_psel));
+    bufp->fullBit(oldp+6521,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_penable));
+    bufp->fullCData(oldp+6522,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
                                  ? 1U : ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_sel)
                                           ? 1U : 0U))),3);
-    bufp->fullBit(oldp+6522,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pwrite));
-    bufp->fullIData(oldp+6523,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pwdata),32);
-    bufp->fullCData(oldp+6524,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pstrb),4);
-    bufp->fullBit(oldp+6525,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_sel));
-    bufp->fullCData(oldp+6526,((0x1fU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)),5);
-    bufp->fullBit(oldp+6527,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
-                              & (0x14U == (0x1cU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)))));
+    bufp->fullBit(oldp+6523,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pwrite));
+    bufp->fullIData(oldp+6524,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pwdata),32);
+    bufp->fullCData(oldp+6525,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pstrb),4);
+    bufp->fullBit(oldp+6526,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_sel));
+    bufp->fullCData(oldp+6527,((0x1fU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)),5);
     bufp->fullBit(oldp+6528,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
+                              & (0x14U == (0x1cU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)))));
+    bufp->fullBit(oldp+6529,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
                               & (0x10U == (0x1cU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)))));
-    bufp->fullCData(oldp+6529,(((((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
+    bufp->fullCData(oldp+6530,(((((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
                                   & (0xcU == (0x1cU 
                                               & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr))) 
                                  << 3U) | ((((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
@@ -4518,84 +4520,83 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                     == 
                                                     (0x1cU 
                                                      & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr))))))),4);
-    bufp->fullBit(oldp+6530,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
+    bufp->fullBit(oldp+6531,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____VdfgTmp_h6152756d__0) 
                               & (0x18U == (0x1cU & vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_paddr)))));
-    bufp->fullCData(oldp+6531,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____Vcellinp__shift__latch),4);
-    bufp->fullCData(oldp+6532,((7U & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),3);
-    bufp->fullCData(oldp+6533,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_w),8);
-    bufp->fullCData(oldp+6534,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__tf_data_in),8);
-    bufp->fullSData(oldp+6535,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_addr),12);
-    bufp->fullIData(oldp+6536,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_data),32);
-    bufp->fullCData(oldp+6537,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__next_csr_state),3);
-    bufp->fullBit(oldp+6538,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__is_delegated));
-    bufp->fullCData(oldp+6539,((((((3U & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__qspi_dio__out__strong__out0) 
+    bufp->fullCData(oldp+6532,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT____Vcellinp__shift__latch),4);
+    bufp->fullCData(oldp+6533,((7U & vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__ram_addr_w)),3);
+    bufp->fullCData(oldp+6534,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_w),8);
+    bufp->fullCData(oldp+6535,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__tf_data_in),8);
+    bufp->fullSData(oldp+6536,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_addr),12);
+    bufp->fullIData(oldp+6537,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_data),32);
+    bufp->fullCData(oldp+6538,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__next_csr_state),3);
+    bufp->fullBit(oldp+6539,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__is_delegated));
+    bufp->fullCData(oldp+6540,((((((3U & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__qspi_dio__out__strong__out0) 
                                           & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__douten))) 
                                    | (0xcU & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__qspi_dio__out__strong__out1) 
                                               & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__douten)))) 
                                   & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__qspi_dio__en0)) 
                                  & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__qspi_dio__en0)) 
                                 & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__qspi_dio__en0))),4);
-    bufp->fullBit(oldp+6540,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pready));
-    bufp->fullIData(oldp+6541,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_prdata),32);
-    bufp->fullBit(oldp+6542,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__nodeIn_bvalid));
-    bufp->fullBit(oldp+6543,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__nodeIn_rvalid));
-    bufp->fullBit(oldp+6544,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi4buf__DOT__nodeIn_bdeq_q__DOT__do_enq));
-    bufp->fullBit(oldp+6545,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi4buf__DOT__nodeIn_rdeq_q__DOT__do_enq));
-    bufp->fullCData(oldp+6546,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__dout),4);
-    bufp->fullCData(oldp+6547,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__douten),4);
-    bufp->fullCData(oldp+6548,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_dout),4);
-    bufp->fullBit(oldp+6549,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mr_rd));
-    bufp->fullBit(oldp+6550,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_wr));
-    bufp->fullBit(oldp+6551,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__nstate));
-    bufp->fullBit(oldp+6552,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__nstate));
-    bufp->fullBit(oldp+6553,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MW__DOT__nstate));
-    bufp->fullCData(oldp+6554,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__next_state_r),4);
-    bufp->fullCData(oldp+6555,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__target_state_r),4);
-    bufp->fullCData(oldp+6556,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__delay_r),4);
-    bufp->fullIData(oldp+6557,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT__wb_dat),32);
-    bufp->fullCData(oldp+6558,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_r),8);
-    bufp->fullBit(oldp+6559,(vlSelf->clock));
-    bufp->fullBit(oldp+6560,(vlSelf->reset));
-    bufp->fullSData(oldp+6561,(vlSelf->externalPins_gpio_out),16);
-    bufp->fullSData(oldp+6562,(vlSelf->externalPins_gpio_in),16);
-    bufp->fullCData(oldp+6563,(vlSelf->externalPins_gpio_seg_0),8);
-    bufp->fullCData(oldp+6564,(vlSelf->externalPins_gpio_seg_1),8);
-    bufp->fullCData(oldp+6565,(vlSelf->externalPins_gpio_seg_2),8);
-    bufp->fullCData(oldp+6566,(vlSelf->externalPins_gpio_seg_3),8);
-    bufp->fullCData(oldp+6567,(vlSelf->externalPins_gpio_seg_4),8);
-    bufp->fullCData(oldp+6568,(vlSelf->externalPins_gpio_seg_5),8);
-    bufp->fullCData(oldp+6569,(vlSelf->externalPins_gpio_seg_6),8);
-    bufp->fullCData(oldp+6570,(vlSelf->externalPins_gpio_seg_7),8);
-    bufp->fullBit(oldp+6571,(vlSelf->externalPins_ps2_clk));
-    bufp->fullBit(oldp+6572,(vlSelf->externalPins_ps2_data));
-    bufp->fullCData(oldp+6573,(vlSelf->externalPins_vga_r),8);
-    bufp->fullCData(oldp+6574,(vlSelf->externalPins_vga_g),8);
-    bufp->fullCData(oldp+6575,(vlSelf->externalPins_vga_b),8);
-    bufp->fullBit(oldp+6576,(vlSelf->externalPins_vga_hsync));
-    bufp->fullBit(oldp+6577,(vlSelf->externalPins_vga_vsync));
-    bufp->fullBit(oldp+6578,(vlSelf->externalPins_vga_valid));
-    bufp->fullBit(oldp+6579,(vlSelf->externalPins_uart_rx));
-    bufp->fullBit(oldp+6580,(vlSelf->externalPins_uart_tx));
-    bufp->fullBit(oldp+6581,(vlSelf->ysyxSoCFull__DOT___asic_spi_mosi));
-    bufp->fullBit(oldp+6582,(((IData)(vlSelf->ysyxSoCFull__DOT__bitrev__DOT__miso_reg) 
-                              & ((IData)(vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss) 
-                                 | ((((2U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
-                                      & (0U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter)))
-                                      ? vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap
-                                      : vlSelf->ysyxSoCFull__DOT__flash__DOT__data) 
-                                    >> 0x1fU)))));
-    bufp->fullBit(oldp+6583,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
+    bufp->fullBit(oldp+6541,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_pready));
+    bufp->fullIData(oldp+6542,(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_prdata),32);
+    bufp->fullBit(oldp+6543,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__nodeIn_bvalid));
+    bufp->fullBit(oldp+6544,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__nodeIn_rvalid));
+    bufp->fullBit(oldp+6545,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi4buf__DOT__nodeIn_bdeq_q__DOT__do_enq));
+    bufp->fullBit(oldp+6546,(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi4buf__DOT__nodeIn_rdeq_q__DOT__do_enq));
+    bufp->fullCData(oldp+6547,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__dout),4);
+    bufp->fullCData(oldp+6548,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__douten),4);
+    bufp->fullCData(oldp+6549,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_dout),4);
+    bufp->fullBit(oldp+6550,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mr_rd));
+    bufp->fullBit(oldp+6551,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_wr));
+    bufp->fullBit(oldp+6552,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__nstate));
+    bufp->fullBit(oldp+6553,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__nstate));
+    bufp->fullBit(oldp+6554,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MW__DOT__nstate));
+    bufp->fullCData(oldp+6555,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__next_state_r),4);
+    bufp->fullCData(oldp+6556,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__target_state_r),4);
+    bufp->fullCData(oldp+6557,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lsdram_apb__DOT__msdram__DOT__u_sdram_ctrl__DOT__delay_r),4);
+    bufp->fullIData(oldp+6558,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__u0_spi_top__DOT__wb_dat),32);
+    bufp->fullCData(oldp+6559,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_r),8);
+    bufp->fullBit(oldp+6560,(vlSelf->clock));
+    bufp->fullBit(oldp+6561,(vlSelf->reset));
+    bufp->fullSData(oldp+6562,(vlSelf->externalPins_gpio_out),16);
+    bufp->fullSData(oldp+6563,(vlSelf->externalPins_gpio_in),16);
+    bufp->fullCData(oldp+6564,(vlSelf->externalPins_gpio_seg_0),8);
+    bufp->fullCData(oldp+6565,(vlSelf->externalPins_gpio_seg_1),8);
+    bufp->fullCData(oldp+6566,(vlSelf->externalPins_gpio_seg_2),8);
+    bufp->fullCData(oldp+6567,(vlSelf->externalPins_gpio_seg_3),8);
+    bufp->fullCData(oldp+6568,(vlSelf->externalPins_gpio_seg_4),8);
+    bufp->fullCData(oldp+6569,(vlSelf->externalPins_gpio_seg_5),8);
+    bufp->fullCData(oldp+6570,(vlSelf->externalPins_gpio_seg_6),8);
+    bufp->fullCData(oldp+6571,(vlSelf->externalPins_gpio_seg_7),8);
+    bufp->fullBit(oldp+6572,(vlSelf->externalPins_ps2_clk));
+    bufp->fullBit(oldp+6573,(vlSelf->externalPins_ps2_data));
+    bufp->fullCData(oldp+6574,(vlSelf->externalPins_vga_r),8);
+    bufp->fullCData(oldp+6575,(vlSelf->externalPins_vga_g),8);
+    bufp->fullCData(oldp+6576,(vlSelf->externalPins_vga_b),8);
+    bufp->fullBit(oldp+6577,(vlSelf->externalPins_vga_hsync));
+    bufp->fullBit(oldp+6578,(vlSelf->externalPins_vga_vsync));
+    bufp->fullBit(oldp+6579,(vlSelf->externalPins_vga_valid));
+    bufp->fullBit(oldp+6580,(vlSelf->externalPins_uart_rx));
+    bufp->fullBit(oldp+6581,(vlSelf->externalPins_uart_tx));
+    bufp->fullBit(oldp+6582,(vlSelf->ysyxSoCFull__DOT___asic_spi_mosi));
+    bufp->fullBit(oldp+6583,((1U & ((IData)(vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss) 
+                                    | ((((2U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
+                                         & (0U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter)))
+                                         ? vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap
+                                         : vlSelf->ysyxSoCFull__DOT__flash__DOT__data) 
+                                       >> 0x1fU)))));
+    bufp->fullBit(oldp+6584,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
                                ? (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_sck)
                                : (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mr_sck))));
-    bufp->fullBit(oldp+6584,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
+    bufp->fullBit(oldp+6585,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
                                ? (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_ce_n)
                                : (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mr_ce_n))));
-    bufp->fullBit(oldp+6585,((1U & (~ (IData)(vlSelf->clock)))));
-    bufp->fullBit(oldp+6586,((((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
+    bufp->fullBit(oldp+6586,((1U & (~ (IData)(vlSelf->clock)))));
+    bufp->fullBit(oldp+6587,((((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
                                 ? (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_done)
                                 : (0x1cU == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__counter))) 
                               & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_2_psel))));
-    bufp->fullIData(oldp+6587,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_psel)
+    bufp->fullIData(oldp+6588,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT___apbxbar_auto_anon_out_1_psel)
                                  ? (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_r) 
                                      << 0x18U) | (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_r) 
                                                    << 0x10U) 
@@ -4603,19 +4604,19 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                       << 8U) 
                                                      | (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_dat8_r))))
                                  : 0U)),32);
-    bufp->fullBit(oldp+6588,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
+    bufp->fullBit(oldp+6589,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
                                ? (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pready)
                                : ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_sel) 
                                   & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_pready)))));
-    bufp->fullIData(oldp+6589,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
+    bufp->fullIData(oldp+6590,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__spi_master_psel)
                                  ? vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_prdata
                                  : ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_sel)
                                      ? vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_prdata
                                      : 0U))),32);
-    bufp->fullIData(oldp+6590,(((1U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__state))
+    bufp->fullIData(oldp+6591,(((1U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__state))
                                  ? vlSelf->ysyxSoCFull__DOT__asic__DOT___apbdelay_delayer_in_prdata
                                  : vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__nodeIn_rdata_r)),32);
-    bufp->fullQData(oldp+6591,((((QData)((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__rid_reg)) 
+    bufp->fullQData(oldp+6592,((((QData)((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__rid_reg)) 
                                  << 0x23U) | (((QData)((IData)(
                                                                ((1U 
                                                                  == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__state))
@@ -4626,9 +4627,9 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                                 (1U 
                                                                  | ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__resp_hold) 
                                                                     << 1U))))))),39);
-    bufp->fullBit(oldp+6593,(vlSelf->ysyxSoCFull__DOT__asic__DOT____Vcellinp__cpu__reset));
-    bufp->fullBit(oldp+6594,((1U & (~ (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT____Vcellinp__cpu__reset)))));
-    bufp->fullBit(oldp+6595,(((~ ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
+    bufp->fullBit(oldp+6594,(vlSelf->ysyxSoCFull__DOT__asic__DOT____Vcellinp__cpu__reset));
+    bufp->fullBit(oldp+6595,((1U & (~ (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT____Vcellinp__cpu__reset)))));
+    bufp->fullBit(oldp+6596,(((~ ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
                                   >> 1U)) & (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__idu__DOT___inst_jal) 
                                               | (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__idu__DOT___inst_jalr)) 
                                              & (0U 
@@ -4636,244 +4637,234 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                 (0x1fU 
                                                  & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__if2id__DOT___inst_data_if_id_q 
                                                     >> 7U)))))));
-    bufp->fullBit(oldp+6596,((1U & (~ (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
+    bufp->fullBit(oldp+6597,((1U & (~ (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                                         >> 4U) | (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
                                                    >> 4U) 
                                                   | (0U 
                                                      == vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ex2mem__DOT___pc_ex_mem_q)))))));
-    bufp->fullBit(oldp+6597,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
+    bufp->fullBit(oldp+6598,(((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__wb_we)
                                ? (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_done)
                                : (0x1cU == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__counter)))));
-    bufp->fullBit(oldp+6598,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_done));
-    bufp->fullBit(oldp+6599,((1U & (~ (IData)(vlSelf->reset)))));
-    bufp->fullIData(oldp+6600,((0x3440U | (((4U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_state)) 
+    bufp->fullBit(oldp+6599,(vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__mw_done));
+    bufp->fullBit(oldp+6600,((1U & (~ (IData)(vlSelf->reset)))));
+    bufp->fullIData(oldp+6601,((0x3440U | (((4U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_state)) 
                                             & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pready) 
                                                & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_penable))) 
                                            << 8U))),32);
-    bufp->fullBit(oldp+6601,(((4U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_state)) 
+    bufp->fullBit(oldp+6602,(((4U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_state)) 
                               & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__apb_pready) 
                                  & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lspi__DOT__mspi__DOT__flash_xip_penable)))));
-    bufp->fullBit(oldp+6602,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_we));
-    bufp->fullBit(oldp+6603,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_re));
-    bufp->fullSData(oldp+6604,(((vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__rfifo__DOT__ram
+    bufp->fullBit(oldp+6603,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_we));
+    bufp->fullBit(oldp+6604,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__reg_re));
+    bufp->fullSData(oldp+6605,(((vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__rfifo__DOT__ram
                                  [vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__bottom] 
                                  << 3U) | (IData)(vlSelf->__VdfgTmp_ha17ae98a__0))),11);
-    bufp->fullCData(oldp+6605,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__rfifo__DOT__ram
+    bufp->fullCData(oldp+6606,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__rfifo__DOT__ram
                                [vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__receiver__DOT__fifo_rx__DOT__bottom]),8);
-    bufp->fullCData(oldp+6606,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__tf_data_out),8);
-    bufp->fullBit(oldp+6607,(vlSelf->ysyxSoCFull__DOT____Vcellinp__bitrev__ss));
-    bufp->fullBit(oldp+6608,(vlSelf->ysyxSoCFull__DOT__bitrev__DOT__miso_reg));
-    bufp->fullCData(oldp+6609,(vlSelf->ysyxSoCFull__DOT__bitrev__DOT__data_reg),8);
-    bufp->fullCData(oldp+6610,(vlSelf->ysyxSoCFull__DOT__bitrev__DOT__data_cnt),4);
-    bufp->fullBit(oldp+6611,((1U & ((IData)(vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss) 
-                                    | ((((2U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
-                                         & (0U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter)))
-                                         ? vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap
-                                         : vlSelf->ysyxSoCFull__DOT__flash__DOT__data) 
-                                       >> 0x1fU)))));
-    bufp->fullIData(oldp+6612,(vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata),32);
-    bufp->fullIData(oldp+6613,(((0xfffffeU & (vlSelf->ysyxSoCFull__DOT__flash__DOT__addr 
+    bufp->fullCData(oldp+6607,(vlSelf->ysyxSoCFull__DOT__asic__DOT__luart__DOT__muart__DOT__Uregs__DOT__transmitter__DOT__tf_data_out),8);
+    bufp->fullIData(oldp+6608,(vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata),32);
+    bufp->fullIData(oldp+6609,(((0xfffffeU & (vlSelf->ysyxSoCFull__DOT__flash__DOT__addr 
                                               << 1U)) 
                                 | (IData)(vlSelf->ysyxSoCFull__DOT___asic_spi_mosi))),32);
-    bufp->fullIData(oldp+6614,(vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap),32);
-    bufp->fullCData(oldp+6615,(1U),3);
-    bufp->fullBit(oldp+6616,(0U));
-    bufp->fullBit(oldp+6617,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_pready));
-    bufp->fullBit(oldp+6618,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_pslverr));
-    bufp->fullIData(oldp+6619,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_prdata),32);
-    bufp->fullBit(oldp+6620,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_pready));
-    bufp->fullBit(oldp+6621,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_pslverr));
-    bufp->fullIData(oldp+6622,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_prdata),32);
-    bufp->fullBit(oldp+6623,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_pready));
-    bufp->fullBit(oldp+6624,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_pslverr));
-    bufp->fullIData(oldp+6625,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_prdata),32);
-    bufp->fullBit(oldp+6626,(1U));
-    bufp->fullCData(oldp+6627,(0U),4);
-    bufp->fullCData(oldp+6628,(1U),2);
+    bufp->fullIData(oldp+6610,(vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap),32);
+    bufp->fullCData(oldp+6611,(1U),3);
+    bufp->fullBit(oldp+6612,(0U));
+    bufp->fullBit(oldp+6613,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_pready));
+    bufp->fullBit(oldp+6614,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_pslverr));
+    bufp->fullIData(oldp+6615,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_prdata),32);
+    bufp->fullBit(oldp+6616,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_pready));
+    bufp->fullBit(oldp+6617,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_pslverr));
+    bufp->fullIData(oldp+6618,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lkeyboard_auto_in_prdata),32);
+    bufp->fullBit(oldp+6619,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_pready));
+    bufp->fullBit(oldp+6620,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_pslverr));
+    bufp->fullIData(oldp+6621,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lgpio_auto_in_prdata),32);
+    bufp->fullBit(oldp+6622,(1U));
+    bufp->fullCData(oldp+6623,(0U),4);
+    bufp->fullCData(oldp+6624,(1U),2);
+    bufp->fullIData(oldp+6625,(0U),32);
+    bufp->fullCData(oldp+6626,(0U),8);
+    bufp->fullCData(oldp+6627,(0U),3);
+    bufp->fullCData(oldp+6628,(0U),2);
     bufp->fullIData(oldp+6629,(0U),32);
-    bufp->fullCData(oldp+6630,(0U),8);
-    bufp->fullCData(oldp+6631,(0U),3);
-    bufp->fullCData(oldp+6632,(0U),2);
-    bufp->fullIData(oldp+6633,(0U),32);
-    bufp->fullIData(oldp+6634,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__bpu_pc_o),32);
-    bufp->fullBit(oldp+6635,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__bpu_pc_valid_o));
-    bufp->fullBit(oldp+6636,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pdt_res));
-    bufp->fullIData(oldp+6637,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pdt_tag),32);
-    bufp->fullBit(oldp+6638,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__which_pdt_o));
-    bufp->fullSData(oldp+6639,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__history_o),16);
-    bufp->fullBit(oldp+6640,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__csr_imm_valid_o));
-    bufp->fullBit(oldp+6641,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__csr_write_valid_mem));
-    bufp->fullIData(oldp+6642,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__next_pc),32);
-    bufp->fullIData(oldp+6643,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_icache),32);
-    bufp->fullBit(oldp+6644,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_valid_icache));
-    bufp->fullCData(oldp+6645,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rmask_icache),4);
-    bufp->fullCData(oldp+6646,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rsize_icache),4);
-    bufp->fullCData(oldp+6647,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rlen_icache),8);
-    bufp->fullBit(oldp+6648,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_ready_icache));
-    bufp->fullIData(oldp+6649,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_icache),32);
-    bufp->fullIData(oldp+6650,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awaddr),32);
-    bufp->fullBit(oldp+6651,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awvalid));
-    bufp->fullBit(oldp+6652,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awready));
-    bufp->fullIData(oldp+6653,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wdata),32);
-    bufp->fullCData(oldp+6654,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wmask),4);
-    bufp->fullBit(oldp+6655,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wvalid));
-    bufp->fullBit(oldp+6656,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wlast));
-    bufp->fullBit(oldp+6657,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_bvalid));
-    bufp->fullBit(oldp+6658,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_bready));
-    bufp->fullBit(oldp+6659,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_arready));
-    bufp->fullBit(oldp+6660,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_rready));
-    bufp->fullBit(oldp+6661,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_rlast));
-    bufp->fullCData(oldp+6662,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wsize),4);
-    bufp->fullCData(oldp+6663,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wlen),8);
-    bufp->fullIData(oldp+6664,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_dcache),32);
-    bufp->fullBit(oldp+6665,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_valid_dcache));
-    bufp->fullCData(oldp+6666,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rmask_dcache),4);
-    bufp->fullCData(oldp+6667,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rsize_dcache),4);
-    bufp->fullCData(oldp+6668,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rlen_dcache),8);
-    bufp->fullBit(oldp+6669,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_ready_dcache));
-    bufp->fullIData(oldp+6670,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_dcache),32);
-    bufp->fullIData(oldp+6671,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_waddr_dcache),32);
-    bufp->fullBit(oldp+6672,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_waddr_valid_dcache));
-    bufp->fullCData(oldp+6673,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wmask_dcache),4);
-    bufp->fullBit(oldp+6674,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wdata_ready_dcache));
-    bufp->fullIData(oldp+6675,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wdata_dcache),32);
-    bufp->fullCData(oldp+6676,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wsize_dcache),4);
-    bufp->fullCData(oldp+6677,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wlen_dcache),8);
-    bufp->fullBit(oldp+6678,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_awready));
-    bufp->fullBit(oldp+6679,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_wvalid));
-    bufp->fullBit(oldp+6680,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_wlast));
-    bufp->fullBit(oldp+6681,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_bvalid));
-    bufp->fullBit(oldp+6682,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_bready));
-    bufp->fullBit(oldp+6683,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_arready));
-    bufp->fullBit(oldp+6684,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_rready));
-    bufp->fullBit(oldp+6685,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_rlast));
-    bufp->fullBit(oldp+6686,(0U));
-    bufp->fullCData(oldp+6687,(0xfU),4);
-    bufp->fullCData(oldp+6688,(2U),4);
-    bufp->fullIData(oldp+6689,(0x20U),32);
-    bufp->fullIData(oldp+6690,(4U),32);
-    bufp->fullIData(oldp+6691,(1U),32);
-    bufp->fullIData(oldp+6692,(3U),32);
-    bufp->fullCData(oldp+6693,(2U),3);
-    bufp->fullCData(oldp+6694,(3U),3);
-    bufp->fullCData(oldp+6695,(4U),3);
-    bufp->fullCData(oldp+6696,(5U),3);
-    bufp->fullCData(oldp+6697,(6U),3);
-    bufp->fullCData(oldp+6698,(4U),6);
-    bufp->fullCData(oldp+6699,(3U),6);
-    bufp->fullCData(oldp+6700,(6U),6);
-    bufp->fullCData(oldp+6701,(2U),6);
-    bufp->fullCData(oldp+6702,(8U),6);
-    bufp->fullCData(oldp+6703,(7U),6);
-    bufp->fullCData(oldp+6704,(0xeU),6);
-    bufp->fullCData(oldp+6705,(0x3fU),6);
-    bufp->fullCData(oldp+6706,(0x10U),6);
-    bufp->fullCData(oldp+6707,(0xfU),6);
-    bufp->fullCData(oldp+6708,(0U),6);
-    bufp->fullIData(oldp+6709,(0xcU),32);
-    bufp->fullSData(oldp+6710,(0U),12);
-    bufp->fullIData(oldp+6711,(0x13U),32);
-    bufp->fullIData(oldp+6712,(5U),32);
-    bufp->fullCData(oldp+6713,(0U),5);
-    bufp->fullIData(oldp+6714,(0x14U),32);
-    bufp->fullIData(oldp+6715,(0U),20);
-    bufp->fullIData(oldp+6716,(0x14U),32);
-    bufp->fullIData(oldp+6717,(2U),32);
-    bufp->fullIData(oldp+6718,(0x40U),32);
-    bufp->fullIData(oldp+6719,(0x20U),32);
-    bufp->fullIData(oldp+6720,(0x19U),32);
-    bufp->fullIData(oldp+6721,(0x10U),32);
-    bufp->fullSData(oldp+6722,(0U),16);
-    bufp->fullIData(oldp+6723,(0xdU),32);
-    bufp->fullIData(oldp+6724,(0x7fU),32);
-    bufp->fullIData(oldp+6725,(0x707fU),32);
-    bufp->fullIData(oldp+6726,(0xfe00707fU),32);
-    bufp->fullIData(oldp+6727,(0xffffffffU),32);
-    bufp->fullIData(oldp+6728,(0x37U),32);
-    bufp->fullIData(oldp+6729,(0x17U),32);
-    bufp->fullIData(oldp+6730,(0x6fU),32);
-    bufp->fullIData(oldp+6731,(0x67U),32);
-    bufp->fullIData(oldp+6732,(0x63U),32);
-    bufp->fullIData(oldp+6733,(0x1063U),32);
-    bufp->fullIData(oldp+6734,(0x4063U),32);
-    bufp->fullIData(oldp+6735,(0x5063U),32);
-    bufp->fullIData(oldp+6736,(0x6063U),32);
-    bufp->fullIData(oldp+6737,(0x7063U),32);
-    bufp->fullIData(oldp+6738,(3U),32);
-    bufp->fullIData(oldp+6739,(0x1003U),32);
-    bufp->fullIData(oldp+6740,(0x2003U),32);
-    bufp->fullIData(oldp+6741,(0x4003U),32);
-    bufp->fullIData(oldp+6742,(0x5003U),32);
-    bufp->fullIData(oldp+6743,(0x23U),32);
-    bufp->fullIData(oldp+6744,(0x1023U),32);
-    bufp->fullIData(oldp+6745,(0x2023U),32);
-    bufp->fullIData(oldp+6746,(0x2013U),32);
-    bufp->fullIData(oldp+6747,(0x3013U),32);
-    bufp->fullIData(oldp+6748,(0x4013U),32);
-    bufp->fullIData(oldp+6749,(0x6013U),32);
-    bufp->fullIData(oldp+6750,(0x7013U),32);
-    bufp->fullIData(oldp+6751,(0x1013U),32);
-    bufp->fullIData(oldp+6752,(0x5013U),32);
-    bufp->fullIData(oldp+6753,(0x40005013U),32);
-    bufp->fullIData(oldp+6754,(0x33U),32);
-    bufp->fullIData(oldp+6755,(0x40000033U),32);
-    bufp->fullIData(oldp+6756,(0x1033U),32);
-    bufp->fullIData(oldp+6757,(0x2033U),32);
-    bufp->fullIData(oldp+6758,(0x3033U),32);
-    bufp->fullIData(oldp+6759,(0x4033U),32);
-    bufp->fullIData(oldp+6760,(0x5033U),32);
-    bufp->fullIData(oldp+6761,(0x40005033U),32);
-    bufp->fullIData(oldp+6762,(0x6033U),32);
-    bufp->fullIData(oldp+6763,(0x7033U),32);
-    bufp->fullIData(oldp+6764,(0x73U),32);
-    bufp->fullIData(oldp+6765,(0x100073U),32);
-    bufp->fullIData(oldp+6766,(0x30200073U),32);
-    bufp->fullIData(oldp+6767,(0x1073U),32);
-    bufp->fullIData(oldp+6768,(0x2073U),32);
-    bufp->fullIData(oldp+6769,(0x3073U),32);
-    bufp->fullIData(oldp+6770,(0x5073U),32);
-    bufp->fullIData(oldp+6771,(0x6073U),32);
-    bufp->fullIData(oldp+6772,(0x7073U),32);
-    bufp->fullIData(oldp+6773,(0x2000033U),32);
-    bufp->fullIData(oldp+6774,(0x2001033U),32);
-    bufp->fullIData(oldp+6775,(0x2002033U),32);
-    bufp->fullIData(oldp+6776,(0x2003033U),32);
-    bufp->fullIData(oldp+6777,(0x2004033U),32);
-    bufp->fullIData(oldp+6778,(0x2005033U),32);
-    bufp->fullIData(oldp+6779,(0x2006033U),32);
-    bufp->fullIData(oldp+6780,(0x2007033U),32);
-    bufp->fullIData(oldp+6781,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_writeback_data),32);
-    bufp->fullCData(oldp+6782,(1U),4);
-    bufp->fullCData(oldp+6783,(3U),4);
-    bufp->fullCData(oldp+6784,(4U),4);
-    bufp->fullCData(oldp+6785,(5U),4);
-    bufp->fullCData(oldp+6786,(6U),4);
-    bufp->fullCData(oldp+6787,(7U),4);
-    bufp->fullCData(oldp+6788,(8U),4);
-    bufp->fullCData(oldp+6789,(9U),4);
-    bufp->fullIData(oldp+6790,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_rdata),32);
-    bufp->fullIData(oldp+6791,(0x13U),32);
-    bufp->fullIData(oldp+6792,(7U),32);
-    bufp->fullIData(oldp+6793,(0x80U),32);
-    bufp->fullIData(oldp+6794,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_rdata),32);
-    bufp->fullIData(oldp+6795,(0x30000000U),32);
-    bufp->fullBit(oldp+6796,(1U));
-    bufp->fullCData(oldp+6797,(0x1bU),8);
-    bufp->fullCData(oldp+6798,(0xebU),8);
-    bufp->fullCData(oldp+6799,(0x38U),8);
-    bufp->fullIData(oldp+6800,(0x64U),32);
-    bufp->fullIData(oldp+6801,(0x18U),32);
-    bufp->fullIData(oldp+6802,(9U),32);
-    bufp->fullIData(oldp+6803,(0x2000U),32);
-    bufp->fullIData(oldp+6804,(0x2710U),32);
-    bufp->fullIData(oldp+6805,(0x30cU),32);
-    bufp->fullSData(oldp+6806,(0x21U),13);
-    bufp->fullIData(oldp+6807,(0xaU),32);
-    bufp->fullIData(oldp+6808,(6U),32);
-    bufp->fullIData(oldp+6809,(0x11U),32);
-    bufp->fullIData(oldp+6810,(0x3fffffffU),32);
-    bufp->fullIData(oldp+6811,(8U),32);
-    bufp->fullCData(oldp+6812,(0x40U),8);
-    bufp->fullCData(oldp+6813,(0xaU),4);
-    bufp->fullIData(oldp+6814,(0xbU),32);
+    bufp->fullIData(oldp+6630,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__bpu_pc_o),32);
+    bufp->fullBit(oldp+6631,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__bpu_pc_valid_o));
+    bufp->fullBit(oldp+6632,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pdt_res));
+    bufp->fullIData(oldp+6633,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pdt_tag),32);
+    bufp->fullBit(oldp+6634,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__which_pdt_o));
+    bufp->fullSData(oldp+6635,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__history_o),16);
+    bufp->fullBit(oldp+6636,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__csr_imm_valid_o));
+    bufp->fullBit(oldp+6637,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__csr_write_valid_mem));
+    bufp->fullIData(oldp+6638,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__next_pc),32);
+    bufp->fullIData(oldp+6639,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_icache),32);
+    bufp->fullBit(oldp+6640,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_valid_icache));
+    bufp->fullCData(oldp+6641,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rmask_icache),4);
+    bufp->fullCData(oldp+6642,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rsize_icache),4);
+    bufp->fullCData(oldp+6643,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rlen_icache),8);
+    bufp->fullBit(oldp+6644,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_ready_icache));
+    bufp->fullIData(oldp+6645,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_icache),32);
+    bufp->fullIData(oldp+6646,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awaddr),32);
+    bufp->fullBit(oldp+6647,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awvalid));
+    bufp->fullBit(oldp+6648,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_awready));
+    bufp->fullIData(oldp+6649,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wdata),32);
+    bufp->fullCData(oldp+6650,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wmask),4);
+    bufp->fullBit(oldp+6651,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wvalid));
+    bufp->fullBit(oldp+6652,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wlast));
+    bufp->fullBit(oldp+6653,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_bvalid));
+    bufp->fullBit(oldp+6654,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_bready));
+    bufp->fullBit(oldp+6655,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_arready));
+    bufp->fullBit(oldp+6656,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_rready));
+    bufp->fullBit(oldp+6657,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_rlast));
+    bufp->fullCData(oldp+6658,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wsize),4);
+    bufp->fullCData(oldp+6659,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__icache_arb_wlen),8);
+    bufp->fullIData(oldp+6660,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_dcache),32);
+    bufp->fullBit(oldp+6661,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_raddr_valid_dcache));
+    bufp->fullCData(oldp+6662,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rmask_dcache),4);
+    bufp->fullCData(oldp+6663,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rsize_dcache),4);
+    bufp->fullCData(oldp+6664,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rlen_dcache),8);
+    bufp->fullBit(oldp+6665,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_ready_dcache));
+    bufp->fullIData(oldp+6666,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_rdata_dcache),32);
+    bufp->fullIData(oldp+6667,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_waddr_dcache),32);
+    bufp->fullBit(oldp+6668,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_waddr_valid_dcache));
+    bufp->fullCData(oldp+6669,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wmask_dcache),4);
+    bufp->fullBit(oldp+6670,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wdata_ready_dcache));
+    bufp->fullIData(oldp+6671,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wdata_dcache),32);
+    bufp->fullCData(oldp+6672,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wsize_dcache),4);
+    bufp->fullCData(oldp+6673,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ram_wlen_dcache),8);
+    bufp->fullBit(oldp+6674,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_awready));
+    bufp->fullBit(oldp+6675,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_wvalid));
+    bufp->fullBit(oldp+6676,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_wlast));
+    bufp->fullBit(oldp+6677,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_bvalid));
+    bufp->fullBit(oldp+6678,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_bready));
+    bufp->fullBit(oldp+6679,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_arready));
+    bufp->fullBit(oldp+6680,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_rready));
+    bufp->fullBit(oldp+6681,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__dcache_arb_rlast));
+    bufp->fullBit(oldp+6682,(0U));
+    bufp->fullCData(oldp+6683,(0xfU),4);
+    bufp->fullCData(oldp+6684,(2U),4);
+    bufp->fullIData(oldp+6685,(0x20U),32);
+    bufp->fullIData(oldp+6686,(4U),32);
+    bufp->fullIData(oldp+6687,(1U),32);
+    bufp->fullIData(oldp+6688,(3U),32);
+    bufp->fullCData(oldp+6689,(2U),3);
+    bufp->fullCData(oldp+6690,(3U),3);
+    bufp->fullCData(oldp+6691,(4U),3);
+    bufp->fullCData(oldp+6692,(5U),3);
+    bufp->fullCData(oldp+6693,(6U),3);
+    bufp->fullCData(oldp+6694,(4U),6);
+    bufp->fullCData(oldp+6695,(3U),6);
+    bufp->fullCData(oldp+6696,(6U),6);
+    bufp->fullCData(oldp+6697,(2U),6);
+    bufp->fullCData(oldp+6698,(8U),6);
+    bufp->fullCData(oldp+6699,(7U),6);
+    bufp->fullCData(oldp+6700,(0xeU),6);
+    bufp->fullCData(oldp+6701,(0x3fU),6);
+    bufp->fullCData(oldp+6702,(0x10U),6);
+    bufp->fullCData(oldp+6703,(0xfU),6);
+    bufp->fullCData(oldp+6704,(0U),6);
+    bufp->fullIData(oldp+6705,(0xcU),32);
+    bufp->fullSData(oldp+6706,(0U),12);
+    bufp->fullIData(oldp+6707,(0x13U),32);
+    bufp->fullIData(oldp+6708,(5U),32);
+    bufp->fullCData(oldp+6709,(0U),5);
+    bufp->fullIData(oldp+6710,(0x14U),32);
+    bufp->fullIData(oldp+6711,(0U),20);
+    bufp->fullIData(oldp+6712,(0x14U),32);
+    bufp->fullIData(oldp+6713,(2U),32);
+    bufp->fullIData(oldp+6714,(0x40U),32);
+    bufp->fullIData(oldp+6715,(0x20U),32);
+    bufp->fullIData(oldp+6716,(0x19U),32);
+    bufp->fullIData(oldp+6717,(0x10U),32);
+    bufp->fullSData(oldp+6718,(0U),16);
+    bufp->fullIData(oldp+6719,(0xdU),32);
+    bufp->fullIData(oldp+6720,(0x7fU),32);
+    bufp->fullIData(oldp+6721,(0x707fU),32);
+    bufp->fullIData(oldp+6722,(0xfe00707fU),32);
+    bufp->fullIData(oldp+6723,(0xffffffffU),32);
+    bufp->fullIData(oldp+6724,(0x37U),32);
+    bufp->fullIData(oldp+6725,(0x17U),32);
+    bufp->fullIData(oldp+6726,(0x6fU),32);
+    bufp->fullIData(oldp+6727,(0x67U),32);
+    bufp->fullIData(oldp+6728,(0x63U),32);
+    bufp->fullIData(oldp+6729,(0x1063U),32);
+    bufp->fullIData(oldp+6730,(0x4063U),32);
+    bufp->fullIData(oldp+6731,(0x5063U),32);
+    bufp->fullIData(oldp+6732,(0x6063U),32);
+    bufp->fullIData(oldp+6733,(0x7063U),32);
+    bufp->fullIData(oldp+6734,(3U),32);
+    bufp->fullIData(oldp+6735,(0x1003U),32);
+    bufp->fullIData(oldp+6736,(0x2003U),32);
+    bufp->fullIData(oldp+6737,(0x4003U),32);
+    bufp->fullIData(oldp+6738,(0x5003U),32);
+    bufp->fullIData(oldp+6739,(0x23U),32);
+    bufp->fullIData(oldp+6740,(0x1023U),32);
+    bufp->fullIData(oldp+6741,(0x2023U),32);
+    bufp->fullIData(oldp+6742,(0x2013U),32);
+    bufp->fullIData(oldp+6743,(0x3013U),32);
+    bufp->fullIData(oldp+6744,(0x4013U),32);
+    bufp->fullIData(oldp+6745,(0x6013U),32);
+    bufp->fullIData(oldp+6746,(0x7013U),32);
+    bufp->fullIData(oldp+6747,(0x1013U),32);
+    bufp->fullIData(oldp+6748,(0x5013U),32);
+    bufp->fullIData(oldp+6749,(0x40005013U),32);
+    bufp->fullIData(oldp+6750,(0x33U),32);
+    bufp->fullIData(oldp+6751,(0x40000033U),32);
+    bufp->fullIData(oldp+6752,(0x1033U),32);
+    bufp->fullIData(oldp+6753,(0x2033U),32);
+    bufp->fullIData(oldp+6754,(0x3033U),32);
+    bufp->fullIData(oldp+6755,(0x4033U),32);
+    bufp->fullIData(oldp+6756,(0x5033U),32);
+    bufp->fullIData(oldp+6757,(0x40005033U),32);
+    bufp->fullIData(oldp+6758,(0x6033U),32);
+    bufp->fullIData(oldp+6759,(0x7033U),32);
+    bufp->fullIData(oldp+6760,(0x73U),32);
+    bufp->fullIData(oldp+6761,(0x100073U),32);
+    bufp->fullIData(oldp+6762,(0x30200073U),32);
+    bufp->fullIData(oldp+6763,(0x1073U),32);
+    bufp->fullIData(oldp+6764,(0x2073U),32);
+    bufp->fullIData(oldp+6765,(0x3073U),32);
+    bufp->fullIData(oldp+6766,(0x5073U),32);
+    bufp->fullIData(oldp+6767,(0x6073U),32);
+    bufp->fullIData(oldp+6768,(0x7073U),32);
+    bufp->fullIData(oldp+6769,(0x2000033U),32);
+    bufp->fullIData(oldp+6770,(0x2001033U),32);
+    bufp->fullIData(oldp+6771,(0x2002033U),32);
+    bufp->fullIData(oldp+6772,(0x2003033U),32);
+    bufp->fullIData(oldp+6773,(0x2004033U),32);
+    bufp->fullIData(oldp+6774,(0x2005033U),32);
+    bufp->fullIData(oldp+6775,(0x2006033U),32);
+    bufp->fullIData(oldp+6776,(0x2007033U),32);
+    bufp->fullIData(oldp+6777,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_writeback_data),32);
+    bufp->fullCData(oldp+6778,(1U),4);
+    bufp->fullCData(oldp+6779,(3U),4);
+    bufp->fullCData(oldp+6780,(4U),4);
+    bufp->fullCData(oldp+6781,(5U),4);
+    bufp->fullCData(oldp+6782,(6U),4);
+    bufp->fullCData(oldp+6783,(7U),4);
+    bufp->fullCData(oldp+6784,(8U),4);
+    bufp->fullCData(oldp+6785,(9U),4);
+    bufp->fullIData(oldp+6786,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_rdata),32);
+    bufp->fullIData(oldp+6787,(0x13U),32);
+    bufp->fullIData(oldp+6788,(7U),32);
+    bufp->fullIData(oldp+6789,(0x80U),32);
+    bufp->fullIData(oldp+6790,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_rdata),32);
+    bufp->fullIData(oldp+6791,(0x30000000U),32);
+    bufp->fullBit(oldp+6792,(1U));
+    bufp->fullCData(oldp+6793,(0x1bU),8);
+    bufp->fullCData(oldp+6794,(0xebU),8);
+    bufp->fullCData(oldp+6795,(0x38U),8);
+    bufp->fullIData(oldp+6796,(0x64U),32);
+    bufp->fullIData(oldp+6797,(0x18U),32);
+    bufp->fullIData(oldp+6798,(9U),32);
+    bufp->fullIData(oldp+6799,(0x2000U),32);
+    bufp->fullIData(oldp+6800,(0x2710U),32);
+    bufp->fullIData(oldp+6801,(0x30cU),32);
+    bufp->fullSData(oldp+6802,(0x21U),13);
+    bufp->fullIData(oldp+6803,(0xaU),32);
+    bufp->fullIData(oldp+6804,(6U),32);
+    bufp->fullIData(oldp+6805,(0x11U),32);
+    bufp->fullIData(oldp+6806,(0x3fffffffU),32);
+    bufp->fullIData(oldp+6807,(8U),32);
+    bufp->fullCData(oldp+6808,(0x40U),8);
+    bufp->fullCData(oldp+6809,(0xaU),4);
+    bufp->fullIData(oldp+6810,(0xbU),32);
 }
