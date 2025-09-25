@@ -66,7 +66,6 @@ int vsprintf(char *out, const char *fmt, va_list args)
       }
       break;
     default:
-      putch('d');
       out[out_offset++] = *p;
       break;
     }

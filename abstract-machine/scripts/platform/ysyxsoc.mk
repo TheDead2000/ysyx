@@ -14,7 +14,7 @@ AM_SRCS := riscv/ysyxsoc/start.S \
 CFLAGS    += -fdata-sections -ffunction-sections
 
 LDFLAGS   += -T $(AM_HOME)/scripts/linker_ysyxsoc.ld
-LDFLAGS   += --defsym=_stack_size=8K
+LDFLAGS   += --defsym=_stack_size=4K
 LDFLAGS   += --gc-sections -e _start
 # LDFLAGS   += --print-map
 # LDFLAGS   += -Map out.map
