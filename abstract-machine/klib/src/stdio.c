@@ -35,6 +35,8 @@ int vsprintf(char *out, const char *fmt, va_list args)
 {
   size_t out_offset = 0;
   const char *p = fmt;
+  putch('a');
+  putch(*p);
   while (*p != '\0')
   {
     switch (*p)
