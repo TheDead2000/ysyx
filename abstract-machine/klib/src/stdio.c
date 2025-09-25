@@ -23,7 +23,8 @@ int printf(const char *fmt, ...) {
   va_start(args, fmt);
   int len = vsprintf(out, fmt, args);
   va_end(args);
-  putch('p');
+  putch(out[0]);
+  putch(out[1]);
   putstr(out);
   return len;
 }
