@@ -25,8 +25,8 @@ int printf(const char *fmt, ...) {
   va_end(args);
   out[0] = 'h';
   out[1] = 'e';
-  putch(out[0]);
-  putch(out[1]);
+  // putch(out[0]);
+  // putch(out[1]);
   putstr(out);
   return len;
 }
