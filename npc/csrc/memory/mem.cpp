@@ -99,10 +99,10 @@ void init_pmem_img(char *img_file) {
 
 void init_img(char *img_file) {
   init_mem();
-  // init_flash();
+  init_flash();
   // init_flash_img("/ysyx-workbench/npc/char-test.bin");
-  // init_flash_img(img_file);
+  init_flash_img(img_file);
   // init_pmem_img(img_file);
-  init_mrom(img_file);
+  // init_mrom(img_file);
 
 }
