@@ -23,6 +23,10 @@ int printf(const char *fmt, ...) {
   va_start(args, fmt);
   putch(*fmt);
   putch(*(fmt++));
+  putch(*(fmt++));
+  putch(*(fmt++));
+  putch(*(fmt++));
+  putch(*(fmt++));
   int len = vsprintf(out, fmt, args);
   va_end(args);
   // out[0] = 'h';
