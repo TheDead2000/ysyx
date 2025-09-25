@@ -66,6 +66,7 @@ int vsprintf(char *out, const char *fmt, va_list args)
       }
       break;
     default:
+      putch('d');
       out[out_offset++] = *p;
       break;
     }
@@ -115,7 +116,7 @@ int print_num_long(char *out, size_t out_offset, long val)
 int print_str(char *out, size_t out_offset, char *val)
 {
   size_t i = 0;
-  putch('s');
+
   while (val[i] != '\0')
   {
     out[out_offset++] = val[i++];
