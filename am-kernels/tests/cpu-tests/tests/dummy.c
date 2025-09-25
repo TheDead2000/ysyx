@@ -1,6 +1,7 @@
 #include <am.h>
 #include <stdio.h>
 #include <klib.h>
+char* str = "hello,wolrd\n";
 int main() {
   // putch('h');
   // putch('e');
@@ -14,6 +15,6 @@ int main() {
   // putch('l');
   // putch('d');
   // putch('\n');
-  printf("hello,world!\n");
+  printf("%s",str);
   return 0;
 }
