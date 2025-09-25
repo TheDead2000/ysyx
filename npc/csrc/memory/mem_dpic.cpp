@@ -9,8 +9,8 @@ extern uint64_t time_now;
 // mtrace 使用dpi-c实现
 extern "C" void flash_read(int32_t addr, int32_t *data) {
   *data = flash[addr / 4];
-  printf("addr=%x\n",addr);
-  printf("data=%x\n",*data);
+  // printf("addr=%x\n",addr);
+  // printf("data=%x\n",*data);
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   //  *data = 0x00100073;  // ebreak的机器码
