@@ -38,6 +38,9 @@ int vsprintf(char *out, const char *fmt, va_list args)
   putch('a');
   putch(*p);
   putch(*(p++));
+    putch(*(p++));
+      putch(*(p++));
+        putch(*(p++));
   while (*p != '\0')
   {
     switch (*p)
