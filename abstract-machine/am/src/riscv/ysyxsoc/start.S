@@ -85,5 +85,4 @@ _bl_ss_load_align4:
   addi t0, t0, 4
   j 0b
 1:
-
   ret
