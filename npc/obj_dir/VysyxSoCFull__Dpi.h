@@ -22,10 +22,12 @@ extern "C" {
     extern void flash_read(int addr, int* data);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:689:32
     extern void inst_commit(int pc, int inst, svBit commit_valid);
-    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/build/ysyxSoCFull.v:5402:30
+    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/build/ysyxSoCFull.v:6046:30
     extern void mrom_read(int raddr, int* rdata);
-    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/psram/psram.v:1:30
-    extern void psram_wr(int addr, int wen, int ren, int wdata, int size, int* rdata);
+    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/psram/psram.v:111:30
+    extern void psram_read(int addr, int* data);
+    // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/psram/psram.v:112:30
+    extern void psram_write(int addr, int data, int mask);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:228:32
     extern void set_csr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:704:32

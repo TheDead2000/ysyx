@@ -36,12 +36,14 @@ class VysyxSoCFull__Syms final : public VerilatedSyms {
     // SCOPE NAMES
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi42apb;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4frag;
+    VerilatedScope __Vscope_ysyxSoCFull__asic__axi4xbar;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4xbar_1;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4yank;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4yank__unnamedblk1;
     VerilatedScope __Vscope_ysyxSoCFull__asic__lmrom;
     VerilatedScope __Vscope_ysyxSoCFull__flash;
     VerilatedScope __Vscope_ysyxSoCFull__flash__flash_cmd_i;
+    VerilatedScope __Vscope_ysyxSoCFull__psram;
 
     // CONSTRUCTORS
     VysyxSoCFull__Syms(VerilatedContext* contextp, const char* namep, VysyxSoCFull* modelp);

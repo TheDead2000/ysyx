@@ -18,13 +18,34 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
   // printf("data=%x\n",*data);
 }
 
+// extern "C" void psram_read(int32_t addr, int32_t *data) {
+//   *data = psram[(addr - 0x80000000) / 4];
+// }
+// extern "C" void psram_write(int32_t addr, int32_t data) {
+
+//   ((uint8_t *)psram)[addr - 0x80000000] = data;
+// }
+
 extern "C" void psram_read(int32_t addr, int32_t *data) {
   *data = psram[(addr - 0x80000000) / 4];
+  printf("psram read data :%x\n",data);
 }
-extern "C" void psram_write(int32_t addr, int32_t data) {
 
-  ((uint8_t *)psram)[addr - 0x80000000] = data;
+extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
+
+    uint32_t wdata = data >> ((8-mask)*4);
+    ((uint8_t *)psram)[addr - 0x80000000] = data;
+    switch ( mask/2) {
+    case 1: ((uint8_t *)psram)[addr - 0x80000000] = data;return;
+    case 2: ((uint16_t *)psram)[addr - 0x80000000] = data; return;
+    case 4: ((uint32_t *)psram)[addr - 0x80000000] = data;return;
+  }
+  printf("psram wdata %x\n",wdata);
 }
+
+
+
+
 extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, int32_t size, int32_t* rdata) {
     // 将地址映射到数组索引（假设地址从0开始）
     uint32_t index = addr;
