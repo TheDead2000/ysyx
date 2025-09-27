@@ -25,7 +25,53 @@ extern "C" void psram_write(int32_t addr, int32_t data) {
 
   ((uint8_t *)psram)[addr - 0x80000000] = data;
 }
-
+extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, int32_t size, int32_t* rdata) {
+    // 将地址映射到数组索引（假设地址从0开始）
+    uint32_t index = addr;
+    
+    if (wen) {
+        // 写操作
+        printf("psram_write :%x\n",wdata);
+        switch (size) {
+            case 1: // 字节写
+                psram[index] = wdata & 0xFF;
+                break;
+            case 3: // 半字写（2字节）
+                psram[index] = (wdata >> 0) & 0xFF;
+                psram[index + 1] = (wdata >> 8) & 0xFF;
+                break;
+            case 15: // 字写（4字节）
+                psram[index] = (wdata >> 0) & 0xFF;
+                psram[index + 1] = (wdata >> 8) & 0xFF;
+                psram[index + 2] = (wdata >> 16) & 0xFF;
+                psram[index + 3] = (wdata >> 24) & 0xFF;
+                break;
+            default:
+                break;
+        }
+      }
+    if (ren) {
+        // 读操作
+        printf("rdata :%x\n",rdata);
+        switch (size) {
+            case 1: // 字节读
+                *rdata = psram[index];
+                break;
+            case 3: // 半字读（2字节）
+                *rdata = (psram[index] << 0) | (psram[index + 1] << 8);
+                break;
+            case 15: // 字读（4字节）
+                *rdata = (psram[index] << 0) | (psram[index + 1] << 8) | 
+                         (psram[index + 2] << 16) | (psram[index + 3] << 24);
+                break;
+            default:
+                *rdata = 0;
+                break;
+        }
+    } else {
+        *rdata = 0;
+    }
+}
 extern "C" int get_time(int raddr) {
   if (raddr == 0x10000048) {
     time_now = get_time_local();
