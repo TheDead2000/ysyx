@@ -1,39 +1,41 @@
-extern unsigned char _data_load[];
-extern unsigned char _edata_load[];
-extern unsigned char _data[];
-extern unsigned char _edata[];
+#include <stdint.h>
 
-extern unsigned char _rodata_load[];
-extern unsigned char _erodata_load[];
-extern unsigned char _rodata[];
-extern unsigned char _erodata[];
+// 链接脚本提供的符号
+extern unsigned char _data_load[], _data[], _edata[];
+extern unsigned char _rodata_load[], _rodata[], _erodata[];
+extern unsigned char _bss_start[], _ebss[];
 
-extern unsigned char _bss_start[];
-extern unsigned char _ebss[];
-
+// _start_c 保证驻留在 flash
+__attribute__((section(".startup")))
 void _start_c(void) {
     unsigned char *src, *dst;
 
-    // 拷贝 .data 段 (flash -> sdram)
+    // 1. 拷贝 .data 段 (flash -> sdram)
     src = _data_load;
     dst = _data;
     while (dst < _edata) {
         *dst++ = *src++;
     }
 
-    // 拷贝 .rodata 段 (flash -> sdram)
+    // 2. 拷贝 .rodata 段 (flash -> sdram)
     src = _rodata_load;
     dst = _rodata;
     while (dst < _erodata) {
         *dst++ = *src++;
     }
 
-    // 清零 .bss 段
+    // 3. 清零 .bss 段
     dst = _bss_start;
     while (dst < _ebss) {
         *dst++ = 0;
     }
 
+    // 4. 跳到 main
     extern int main(void);
-    main();   // 跳到 main
+    int ret = main();
+
+    // 5. main 返回则死循环
+    while (1) {
+        (void)ret;
+    }
 }

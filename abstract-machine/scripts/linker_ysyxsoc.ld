@@ -3,7 +3,7 @@ ENTRY(_start)
 MEMORY {
   sram  (rwx) : ORIGIN = 0x0f000000, LENGTH = 8K
   mrom  (r x) : ORIGIN = 0x20000000, LENGTH = 4K
-  flash (rwx) : ORIGIN = 0x30000000, LENGTH = 16M
+  flash (rx)  : ORIGIN = 0x30000000, LENGTH = 16M
   psram (rwx) : ORIGIN = 0x80000000, LENGTH = 4M
   sdram (rwx) : ORIGIN = 0xa0000000, LENGTH = 64M
 }
@@ -20,31 +20,23 @@ SECTIONS {
 
   . = _flash_start;
 
-  /* 启动代码放 flash */
-  .bl.f : ALIGN(4) {
-    *(.bl.f*)
+  /* 启动代码放 flash (XIP) */
+  .startup : ALIGN(4) {
+    KEEP(*(.startup))    /* 包含 _start_c */
+    KEEP(*(.bl.f*))      /* 启动汇编 start.S */
     . = ALIGN(4);
   } > flash
 
-  /* 一部分小代码放 SRAM */
-  .bl.s : ALIGN(4) {
-    _bl_s = .;
-    *(.bl.s*)
-    . = ALIGN(4);
-    _ebl_s = .;
-  } > sram AT> flash
-  _bl_s_load = LOADADDR(.bl.s);
-
-  /* text 段放 SDRAM，加载自 flash */
+  /* .text 放 SDRAM，加载自 flash */
   .text : ALIGN(4) {
     _text = .;
     *(.text*)
     . = ALIGN(4);
     _etext = .;
   } > sdram AT> flash
-  _text_load  = LOADADDR(.text);
+  _text_load = LOADADDR(.text);
 
-  /* rodata 段放 SDRAM，加载自 flash */
+  /* .rodata 放 SDRAM，加载自 flash */
   .rodata : ALIGN(4) {
     _rodata = .;
     *(.rodata*)
@@ -52,9 +44,9 @@ SECTIONS {
     . = ALIGN(4);
     _erodata = .;
   } > sdram AT> flash
-  _rodata_load  = LOADADDR(.rodata);
+  _rodata_load = LOADADDR(.rodata);
 
-  /* data 段放 SDRAM，加载自 flash */
+  /* .data 放 SDRAM，加载自 flash */
   .data : ALIGN(4) {
     _data = .;
     *(.data*)
@@ -64,7 +56,7 @@ SECTIONS {
   } > sdram AT> flash
   _data_load = LOADADDR(.data);
 
-  /* bss 段放 SDRAM */
+  /* .bss 放 SDRAM */
   .bss (NOLOAD) : ALIGN(4) {
     _bss_start = .;
     *(.bss*)
@@ -83,7 +75,7 @@ SECTIONS {
   /* 栈放在 SRAM */
   .stack (NOLOAD) : ALIGN(8) {
     _stack_top = .;
-    . += 2K;   /* 栈大小，你可以自己调 */
+    . += 2K;   /* 栈大小，可调 */
     _stack_pointer = .;
   } > sram
 }
