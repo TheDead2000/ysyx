@@ -133,7 +133,7 @@ int run(int step) {
       nemu_state.state = NEMU_RUNNING;
     }
     uint32_t pc = PC_STRUCT;
-    // printf("PC_STRUCT=%x\n",pc);
+    printf("PC_STRUCT=%x\n",pc);
     single_inst();
     // tfp->flush();
     g_nr_guest_inst++;
@@ -142,10 +142,10 @@ int run(int step) {
     
       //trace_and_difftest(dpic_pc, inst);
 #ifdef CONFIG_WAVE_FORM
-    if (unlikely(g_nr_guest_inst == 800000)) {
-      Warn("Waveform Enabled!May result in a very large file!");
-      nemu_state.state = NEMU_STOP;
-    }
+    // if (unlikely(g_nr_guest_inst == 800000)) {
+    //   Warn("Waveform Enabled!May result in a very large file!");
+    //   nemu_state.state = NEMU_STOP;
+    // }
 
 #endif
     if (unlikely(nemu_state.state != NEMU_RUNNING))
