@@ -30,20 +30,20 @@ int printf(const char *fmt, ...) {
   putch('0' + printf_call_count);
   putch(']');
   putch(' ');
-  
-  // 打印字符串地址
-  putch('@');
-  putch('0' + ((uintptr_t)fmt >> 28) & 0xF);
-  putch('0' + ((uintptr_t)fmt >> 24) & 0xF);
-  putch('0' + ((uintptr_t)fmt >> 20) & 0xF);
-  putch('0' + ((uintptr_t)fmt >> 16) & 0xF);
-  putch(' ');
 
-
-  for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {
-    putch(fmt[i]);
-    putch('|'); // 添加分隔符，看是否每个字符都被处理
+ const char *p = fmt;
+  int i = 0;
+  while (i < 15 && *p != '\0') {
+    putch(*p);
+    putch('|');
+    p++;
+    i++;
   }
+
+  // for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {
+  //   putch(fmt[i]);
+  //   putch('|'); // 添加分隔符，看是否每个字符都被处理
+  // }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
