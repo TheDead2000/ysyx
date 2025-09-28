@@ -10,96 +10,80 @@ MEMORY {
 
 SECTIONS {
   _sram_start = ORIGIN(sram);
-  _sram_end = _sram_start + LENGTH(sram);
-  _mrom_start = ORIGIN(mrom);
-  _mrom_end = _mrom_start + LENGTH(mrom);
+  _sram_end   = _sram_start + LENGTH(sram);
+
   _flash_start = ORIGIN(flash);
-  _flash_end = _flash_start + LENGTH(flash);
-  _psram_start = ORIGIN(psram);
-  _psram_end = _psram_start + LENGTH(psram);
+  _flash_end   = _flash_start + LENGTH(flash);
+
   _sdram_start = ORIGIN(sdram);
-  _sdram_end = _sdram_start + LENGTH(sdram);
+  _sdram_end   = _sdram_start + LENGTH(sdram);
 
   . = _flash_start;
 
+  /* 启动代码放 flash */
   .bl.f : ALIGN(4) {
     *(.bl.f*)
-
     . = ALIGN(4);
   } > flash
 
+  /* 一部分小代码放 SRAM */
   .bl.s : ALIGN(4) {
     _bl_s = .;
-
     *(.bl.s*)
-
     . = ALIGN(4);
     _ebl_s = .;
   } > sram AT> flash
   _bl_s_load = LOADADDR(.bl.s);
-  _ebl_s_load = _bl_s_load + SIZEOF(.bl.s);
 
+  /* text 段放 SDRAM，加载自 flash */
   .text : ALIGN(4) {
     _text = .;
-
     *(.text*)
-
     . = ALIGN(4);
-    PROVIDE(etext = .);
     _etext = .;
   } > sdram AT> flash
-  _text_load = LOADADDR(.text);
-  _etext_load = _text_load + SIZEOF(.text);
+  _text_load  = LOADADDR(.text);
 
+  /* rodata 段放 SDRAM，加载自 flash */
   .rodata : ALIGN(4) {
+    _rodata = .;
     *(.rodata*)
     *(.srodata*)
-  } > flash
+    . = ALIGN(4);
+    _erodata = .;
+  } > sdram AT> flash
+  _rodata_load  = LOADADDR(.rodata);
 
+  /* data 段放 SDRAM，加载自 flash */
   .data : ALIGN(4) {
     _data = .;
-
     *(.data*)
     *(.sdata*)
-    
     . = ALIGN(4);
-    PROVIDE(edata = .);
     _edata = .;
   } > sdram AT> flash
   _data_load = LOADADDR(.data);
-  _edata_load = _data_load + SIZEOF(.data);
 
-  _data_extra = DEFINED(_data_extra) ? _data_extra : 0;
-  _edata_extra = DEFINED(_edata_extra) ? _edata_extra : 0;
-  _data_extra_load = DEFINED(_data_extra_load) ? _data_extra_load : 0;
-  _edata_extra_load = DEFINED(_edata_extra_load) ? _edata_extra_load : 0;
-
+  /* bss 段放 SDRAM */
   .bss (NOLOAD) : ALIGN(4) {
     _bss_start = .;
-
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-
     . = ALIGN(4);
     _ebss = .;
   } > sdram
-
-  _bss_extra_start = DEFINED(_bss_extra_start) ? _bss_extra_start : 0;
-  _ebss_extra = DEFINED(_ebss_extra) ? _ebss_extra : 0;
 
   PROVIDE(end = .);
   _end = .;
 
   . = ALIGN(8);
-  _heap_start = _psram_start;
+  _heap_start = _end;
 
+  /* 栈放在 SRAM */
   .stack (NOLOAD) : ALIGN(8) {
     _stack_top = .;
-
-    . += _stack_size;
-
-    . = ALIGN(8);
+    . += 2K;   /* 栈大小，你可以自己调 */
     _stack_pointer = .;
   } > sram
 }
