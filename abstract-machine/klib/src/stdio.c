@@ -21,7 +21,7 @@ int printf(const char *fmt, ...) {
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
-  putstr("fmt content: ");
+  // putstr("fmt content: ");
   // for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
   //   putch(fmt[i]);
   // }
