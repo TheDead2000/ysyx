@@ -58,7 +58,6 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
     case 2: ((uint16_t *)psram)[addr - 0x80000000] = data; return;
     case 4: ((uint32_t *)psram)[addr - 0x80000000] = data;return;
   }
-
 }
 
 

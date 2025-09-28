@@ -51,12 +51,11 @@ SECTIONS {
   _text_load = LOADADDR(.text);
   _etext_load = _text_load + SIZEOF(.text);
 
-
- 
- .rodata : ALIGN(4) {
+   .rodata : ALIGN(4) {
     _rodata = .;
-    *(.rodata*)
-    *(.srodata*)
+    *(.rodata .rodata.*)    /* 更明确的模式匹配 */
+    *(.srodata .srodata.*)
+    *(.gnu.linkonce.r*)
     . = ALIGN(4);
     _erodata = .;
   } > sdram AT> flash
@@ -66,12 +65,10 @@ SECTIONS {
 
   .data : ALIGN(4) {
     _data = .;
-
-    *(.data*)
-    *(.sdata*)
-    
+    *(.data .data.*)
+    *(.sdata .sdata.*)
+    *(.gnu.linkonce.d*)
     . = ALIGN(4);
-    PROVIDE(edata = .);
     _edata = .;
   } > sdram AT> flash
   _data_load = LOADADDR(.data);

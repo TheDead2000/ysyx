@@ -13,12 +13,16 @@ AM_SRCS := riscv/ysyxsoc/start.S \
 
 
 CFLAGS    += -fdata-sections -ffunction-sections
+CFLAGS += -nostdlib -ffreestanding
+
 
 LDFLAGS   += -T $(AM_HOME)/scripts/linker_ysyxsoc.ld
 LDFLAGS   += --defsym=_stack_size=4K
 LDFLAGS   += --gc-sections -e _start
-# LDFLAGS   += --print-map
-# LDFLAGS   += -Map out.map
+
+LDFLAGS   += --print-map
+LDFLAGS   += -Map out.map
+
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/riscv/ysyxsoc/include
 ifneq ($(DIFFTEST),)
