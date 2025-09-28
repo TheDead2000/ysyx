@@ -22,8 +22,8 @@ SECTIONS {
 
   /* 启动代码放 flash (XIP) */
   .startup : ALIGN(4) {
-    KEEP(*(.startup))    /* 包含 _start_c */
     KEEP(*(.bl.f*))      /* 启动汇编 start.S */
+    KEEP(*(.startup))    /* 包含 _start_c */
     . = ALIGN(4);
   } > flash
 
