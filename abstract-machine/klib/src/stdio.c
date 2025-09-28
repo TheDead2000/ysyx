@@ -24,6 +24,7 @@ int printf(const char *fmt, ...) {
   // putstr("fmt content: ");
   for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {
     putch(fmt[i]);
+    putch('|'); // 添加分隔符，看是否每个字符都被处理
   }
   int len = vsprintf(out, fmt, args);
   va_end(args);
