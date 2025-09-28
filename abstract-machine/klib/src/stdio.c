@@ -16,12 +16,20 @@ int vsprintf(char *out, const char *fmt, va_list args);
 int print_num_hex(char *out, size_t out_offset, int unsigned val);
 int print_num_long(char *out, size_t out_offset, long val);
 
+int printf_call_count = 0;
 int printf(const char *fmt, ...) {
   //TODO
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
   // putstr("fmt content: ");
+    printf_call_count++;
+  
+  // 打印调用次数
+  putch('[');
+  putch('0' + printf_call_count);
+  putch(']');
+  putch(' ');
   for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {
     putch(fmt[i]);
     putch('|'); // 添加分隔符，看是否每个字符都被处理
