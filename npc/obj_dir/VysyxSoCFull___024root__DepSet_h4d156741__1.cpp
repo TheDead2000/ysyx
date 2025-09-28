@@ -15,19 +15,19 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__9(VysyxSoCFull___0
     VysyxSoCFull__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    VysyxSoCFull___024root___nba_sequent__TOP__9\n"); );
     // Init
-    IData/*31:0*/ __Vtask_flash_read__62__data;
-    __Vtask_flash_read__62__data = 0;
+    IData/*31:0*/ __Vtask_flash_read__61__data;
+    __Vtask_flash_read__61__data = 0;
     // Body
     if (((1U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__state)) 
          & (0x17U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__counter)))) {
         if (VL_LIKELY((3U == (IData)(vlSelf->ysyxSoCFull__DOT__flash__DOT__cmd)))) {
             VysyxSoCFull___024unit____Vdpiimwrap_flash_read_TOP____024unit(
-                                                                           (1U 
-                                                                            | (0xfffffeU 
-                                                                               & (vlSelf->ysyxSoCFull__DOT__flash__DOT__addr 
-                                                                                << 1U))), __Vtask_flash_read__62__data);
+                                                                           ((0xfffffeU 
+                                                                             & (vlSelf->ysyxSoCFull__DOT__flash__DOT__addr 
+                                                                                << 1U)) 
+                                                                            | (IData)(vlSelf->ysyxSoCFull__DOT___asic_spi_mosi)), __Vtask_flash_read__61__data);
             vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata 
-                = __Vtask_flash_read__62__data;
+                = __Vtask_flash_read__61__data;
         } else {
             VL_FWRITEF(0x80000002U,"Assertion failed: Unsupport command `%xh`, only support `03h` read command\n",
                        8,vlSelf->ysyxSoCFull__DOT__flash__DOT__cmd);
@@ -39,6 +39,14 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__9(VysyxSoCFull___0
             VL_STOP_MT("/home/zy/ysyx-workbench/ysyxSoC/perip/flash/flash.v", 98, "");
         }
     }
+    vlSelf->ysyxSoCFull__DOT__flash__DOT__data_bswap 
+        = ((vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata 
+            << 0x18U) | ((0xff0000U & (vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata 
+                                       << 8U)) | ((0xff00U 
+                                                   & (vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata 
+                                                      >> 8U)) 
+                                                  | (vlSelf->ysyxSoCFull__DOT__flash__DOT__rdata 
+                                                     >> 0x18U))));
 }
 
 void VysyxSoCFull___024unit____Vdpiimwrap_psram_wr_TOP____024unit(IData/*31:0*/ addr, IData/*31:0*/ wen, IData/*31:0*/ ren, IData/*31:0*/ wdata, IData/*31:0*/ size, IData/*31:0*/ &rdata);
@@ -74,8 +82,8 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__15(VysyxSoCFull___
                                                                       ((0xaU 
                                                                         == (IData)(vlSelf->ysyxSoCFull__DOT__psram__DOT__cnt))
                                                                         ? 1U
-                                                                        : 0U)))), vlSelf->__Vtask_psram_wr__63__rdata);
-    vlSelf->ysyxSoCFull__DOT__psram__DOT__rdata = vlSelf->__Vtask_psram_wr__63__rdata;
+                                                                        : 0U)))), vlSelf->__Vtask_psram_wr__62__rdata);
+    vlSelf->ysyxSoCFull__DOT__psram__DOT__rdata = vlSelf->__Vtask_psram_wr__62__rdata;
     vlSelf->ysyxSoCFull__DOT__psram__DOT____VdfgTmp_h8b176a3d__0 
         = ((0xebU == (IData)(vlSelf->ysyxSoCFull__DOT__psram__DOT__cmd)) 
            & (0xeU <= (IData)(vlSelf->ysyxSoCFull__DOT__psram__DOT__cnt)));
