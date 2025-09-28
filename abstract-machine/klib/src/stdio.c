@@ -31,7 +31,7 @@ int printf(const char *fmt, ...) {
   // out[1] = 'e';
   // putch(out[0]);
   // putch(out[1]);
-  putstr(out);
+  // putstr(out);
   return len;
 }
 
