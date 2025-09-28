@@ -9,21 +9,9 @@ extern uint64_t time_now;
 // mtrace 使用dpi-c实现
 extern "C" void flash_read(int32_t addr, int32_t *data) {
     // 计算字地址和字节偏移
-    uint32_t word_addr = addr & ~3;  // 对齐到字边界
-    int byte_offset = addr & 3;      // 字节偏移 (0-3)
+    *data = flash[addr] & 0xFF;  // 只返回低8位
     
-    // 读取整个字
-    uint32_t word = flash[word_addr / 4];
-    
-    // 根据字节偏移提取对应的字节（小端序）
-    uint8_t byte = (word >> (byte_offset * 8)) & 0xFF;
-    
-    // 返回零扩展的字节
-    *data = byte;
-    
-    // 调试输出
-    // printf("flash_read: addr=0x%08x, word_addr=0x%08x, offset=%d, word=0x%08x, byte=0x%02x\n", 
-    //        addr, word_addr, byte_offset, word, byte);
+    printf("flash_read: addr=0x%08x, data=0x%02x\n", addr, *data);
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   //  *data = 0x00100073;  // ebreak的机器码
