@@ -51,10 +51,7 @@ SECTIONS {
   _text_load = LOADADDR(.text);
   _etext_load = _text_load + SIZEOF(.text);
 
- # .rodata : ALIGN(4) {
- #   *(.rodata*)
- #   *(.srodata*)
- # } > flash
+
  
  .rodata : ALIGN(4) {
     _rodata = .;

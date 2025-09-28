@@ -23,7 +23,6 @@ int main() {
   // 直接测试内存访问
   const char *str = "hello,world!\n";
   
-  // 方法1：直接逐个字符输出
   // putch(str[0]);
   // putch('|');
   // putch(str[1]); 
