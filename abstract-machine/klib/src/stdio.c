@@ -45,15 +45,30 @@ int printf_call_count = 0;
   //   putch(c);
   //   putch('|');
   // }
+  void test_flash_byte_access() {
+    // 测试直接访问 Flash 中的不同字节
+    const char *flash_str = (const char*)0x300006b4; // 你的字符串地址
+    
+    putch('F');
+    putch(':');
+    for(int i = 0; i < 5; i++) {
+        // 直接字节访问
+        char c = flash_str[i];
+        putch(c);
+        putch('|');
+    }
+}
+
 int printf(const char *fmt, ...) {
   //TODO
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
-  for(int i = 0 ; i < 10 ;i++  )
-  {
-    putch(fmt[i]);
-  }
+  // for(int i = 0 ; i < 10 ;i++  )
+  // {
+  //   putch(fmt[i]);
+  // }
+  test_flash_byte_access();
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
