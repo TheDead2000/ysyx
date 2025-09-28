@@ -31,8 +31,8 @@ void _start_c(void) {
     }
 
     // 4. 跳到 main
-    extern int main(void);
-    int ret = main();
+    extern int _trm_init(void);
+    int ret = _trm_init();
 
     // 5. main 返回则死循环
     while (1) {
