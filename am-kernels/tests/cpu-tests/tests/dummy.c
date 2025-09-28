@@ -15,7 +15,7 @@ int main() {
   // putch('l');
   // putch('d');
   // putch('\n');
-  printf("%s",str);
-  // printf("hello,world!\n");
+  // printf("%s",str);
+  printf("hello,world!\n");
   return 0;
 }
