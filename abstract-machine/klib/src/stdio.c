@@ -98,10 +98,10 @@ int printf(const char *fmt, ...) {
   // test_flash_byte_access();
   // putch('\n');
   // putstr("fmt\n");
-  for(int i = 0 ; i < 10 ;i++  )
-  {
-    putch(fmt[i]);
-  }
+  // for(int i = 0 ; i < 10 ;i++  )
+  // {
+  //   putch(fmt[i]);
+  // }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
