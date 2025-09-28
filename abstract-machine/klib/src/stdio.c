@@ -57,6 +57,17 @@ int printf_call_count = 0;
         putch(c);
         putch('|');
     }
+
+    putch('\n');
+    const char *sdram_str = (const char*)0xa0000530; // 你的字符串地址
+        
+    for(int i = 0; i < 5; i++) {
+        // 直接字节访问
+        char c = flash_str[i];
+        putch(c);
+        putch('|');
+    }
+
 }
 
 int printf(const char *fmt, ...) {
