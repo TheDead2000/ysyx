@@ -13,22 +13,20 @@ extern uint64_t time_now;
 //   // printf("data=%x\n",*data);
 // }
 extern "C" void flash_read(int32_t addr, int32_t *data) {
-    // 计算字索引和字节偏移
-    uint32_t word_index = addr / 4;
-    uint32_t byte_offset = addr % 4;
+    uint32_t word = flash[addr / 4];
     
-    // 读取整个字
-    uint32_t word = flash[word_index];
+    // 如果是字节访问（地址不是4字节对齐），返回单个字节
+    // 如果是字访问（地址4字节对齐），返回整个字
+    if (addr % 4 == 0) {
+        *data = word;  // 字访问，返回整个字
+    } else {
+        // 字节访问，返回对应的字节
+        uint32_t byte_offset = addr % 4;
+        *data = (word >> (byte_offset * 8)) & 0xFF;
+        printf("flash_read: byte_offset=0x%08x, data=0x%08x\n", byte_offset, *data);
+    }
     
-    // 根据字节偏移提取对应的字节（小端序）
-    uint8_t byte = (word >> (byte_offset * 8)) & 0xFF;
-    
-    // 返回零扩展的字节
-    *data = byte;
-    
-    // 调试输出
-    printf("flash_read: addr=0x%08x, word_index=%u, byte_offset=%u, word=0x%08x, byte=0x%02x\n", 
-           addr, word_index, byte_offset, word, byte);
+
 }
 
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
