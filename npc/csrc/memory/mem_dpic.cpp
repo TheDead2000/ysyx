@@ -8,10 +8,9 @@
 extern uint64_t time_now;
 // mtrace 使用dpi-c实现
 extern "C" void flash_read(int32_t addr, int32_t *data) {
-    // 计算字地址和字节偏移
-    *data = flash[addr] & 0xFF;  // 只返回低8位
-    
-    printf("flash_read: addr=0x%08x, data=0x%02x\n", addr, *data);
+  *data = flash[addr / 4];
+  printf("addr=%x\n",addr);
+  printf("data=%x\n",*data);
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
   //  *data = 0x00100073;  // ebreak的机器码
