@@ -47,11 +47,11 @@ int printf_call_count = 0;
   // }
   void test_flash_byte_access() {
     // 测试直接访问 Flash 中的不同字节
-    const char *flash_str = (const char*)0x300006a0; // 你的字符串地址
+    const char *flash_str = (const char*)0x30000680; // 你的字符串地址
     
     putch('F');
     putch(':');
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 13; i++) {
         // 直接字节访问
         char c = flash_str[i];
         putch(c);
@@ -59,9 +59,10 @@ int printf_call_count = 0;
     }
 
     putch('\n');
+    putch('S');
     const char *sdram_str = (const char*)0xa0000530; // 你的字符串地址
         
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 13; i++) {
         // 直接字节访问
         char c = flash_str[i];
         putch(c);
