@@ -21,19 +21,19 @@
 // }
 int main() {
   // 直接测试内存访问
-  const char *str = "hello";
+  const char *str = "hello,world!\n";
   
   // 方法1：直接逐个字符输出
-  putch(str[0]);
-  putch('|');
-  putch(str[1]); 
-  putch('|');
-  putch(str[2]);
-  putch('|');
-  putch(str[3]);
-  putch('|');
-  putch(str[4]);
-  putch('\n');
+  // putch(str[0]);
+  // putch('|');
+  // putch(str[1]); 
+  // putch('|');
+  // putch(str[2]);
+  // putch('|');
+  // putch(str[3]);
+  // putch('|');
+  // putch(str[4]);
+  // putch('\n');
   printf(str);
   return 0;
 }
