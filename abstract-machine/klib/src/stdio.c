@@ -31,7 +31,7 @@ int printf(const char *fmt, ...) {
   // out[1] = 'e';
   // putch(out[0]);
   // putch(out[1]);
-  // putstr(out);
+  putstr(out);
   return len;
 }
 
@@ -58,7 +58,6 @@ int vsprintf(char *out, const char *fmt, va_list args)
           out_offset = print_num(out, out_offset, va_arg(args, int));
           break;
         case 's':
-        putch('s');
           out_offset = print_str(out, out_offset, va_arg(args, char *));
           break;
         case 'c':
