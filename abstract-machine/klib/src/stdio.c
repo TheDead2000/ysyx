@@ -31,24 +31,45 @@ int printf(const char *fmt, ...) {
   putch(']');
   putch(' ');
 
-   for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
+
+  const uint32_t *word_ptr = (const uint32_t*)fmt;
+  
+  for(int i = 0; i < 10; i++) {
+    int word_index = i / 4;
+    int byte_offset = i % 4;
+    uint32_t word = word_ptr[word_index];
+    char c = (word >> (byte_offset * 8)) & 0xFF;
+    
+    if(c == '\0') break;
+    
     putch(' ');
     putch('i');
     putch('=');
-    putch('0' + i);  // 显示索引
+    putch('0' + i);
     putch(':');
-    putch('@');
-    
-    // 显示地址的低位
-    uintptr_t addr = (uintptr_t)(&fmt[i]);
-    for(int j = 0; j < 4; j++) {
-      putch('0' + ((addr >> (12 - j*4)) & 0xF));
-    }
-    
-    putch('=');
-    putch(fmt[i]);  // 实际读取的值
+    putch(c);
     putch('|');
   }
+
+
+  //  for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
+  //   putch(' ');
+  //   putch('i');
+  //   putch('=');
+  //   putch('0' + i);  // 显示索引
+  //   putch(':');
+  //   putch('@');
+    
+  //   // 显示地址的低位
+  //   uintptr_t addr = (uintptr_t)(&fmt[i]);
+  //   for(int j = 0; j < 4; j++) {
+  //     putch('0' + ((addr >> (12 - j*4)) & 0xF));
+  //   }
+    
+  //   putch('=');
+  //   putch(fmt[i]);  // 实际读取的值
+  //   putch('|');
+  // }
 
   // for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {
   //   putch(fmt[i]);
