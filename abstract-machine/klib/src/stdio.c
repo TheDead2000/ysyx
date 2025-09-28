@@ -95,9 +95,9 @@ int printf(const char *fmt, ...) {
   //   putch(c);
   //   putch('|');
   // }
-  test_flash_byte_access();
-  putch('\n');
-  putstr("fmt\n");
+  // test_flash_byte_access();
+  // putch('\n');
+  // putstr("fmt\n");
   for(int i = 0 ; i < 10 ;i++  )
   {
     putch(fmt[i]);
