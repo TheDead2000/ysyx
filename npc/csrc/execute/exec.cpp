@@ -73,6 +73,8 @@ void single_inst() {
     g_cycles++;
     single_cycle();
     update_reg_state();
+    if (check_watch_point() && nemu_state.state == NEMU_RUNNING)
+    nemu_state.state = NEMU_STOP;
   } while (0); // need to check next cycle of wbu
                                         // valid!
   // wbu_valid = false;
