@@ -1,14 +1,14 @@
 AM_SRCS := riscv/ysyxsoc/start.S \
            riscv/ysyxsoc/trm.c \
-		    platform/dummy/vme.c \
+		   platform/dummy/vme.c \
            platform/dummy/mpe.c
-#            riscv/ysyxsoc/ioe.c \
-#            riscv/ysyxsoc/timer.c \
-#            riscv/ysyxsoc/input.c \
-#            riscv/ysyxsoc/cte.c \
-#            riscv/ysyxsoc/trap.S \
-#            riscv/ysyxsoc/serial.c \
-#            riscv/ysyxsoc/gpu.c \
+           riscv/ysyxsoc/ioe.c \
+           riscv/ysyxsoc/timer.c \
+           riscv/ysyxsoc/input.c \
+           riscv/ysyxsoc/cte.c \
+           riscv/ysyxsoc/trap.S \
+           riscv/ysyxsoc/serial.c \
+           riscv/ysyxsoc/gpu.c \
 
 
 CFLAGS    += -fdata-sections -ffunction-sections
