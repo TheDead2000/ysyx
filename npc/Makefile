@@ -85,9 +85,16 @@ LLVM_FLAGS = $(filter-out -D__STDC_FORMAT_MACROS, $(shell llvm-config-11 --cxxfl
 LLVM_FLAGS += -Ofast  -fexceptions
 #-lasan(内存检查)
 
+# GCC_LIB = -lreadline \
+# 		  -ldl \
+# 		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
+# 		  ${NVBOARD_HOME}/build/nvboard.a \
+# 		  -lSDL2 \
+# 		  -lSDL2_image \
+# 		  -lSDL2_ttf
+
 GCC_LIB = -lreadline \
 		  -ldl \
-		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
 		  ${NVBOARD_HOME}/build/nvboard.a \
 		  -lSDL2 \
 		  -lSDL2_image \
