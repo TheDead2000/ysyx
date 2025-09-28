@@ -21,19 +21,17 @@ int printf(const char *fmt, ...) {
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
-  putch(*fmt);
-  putch(*(fmt++));
-  putch(*(fmt++));
-  putch(*(fmt++));
-  putch(*(fmt++));
-  putch(*(fmt++));
+  putstr("fmt content: ");
+  for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
+    putch(fmt[i]);
+  }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   // out[0] = 'h';
   // out[1] = 'e';
   // putch(out[0]);
   // putch(out[1]);
-  putstr(out);
+  // putstr(out);
   return len;
 }
 
