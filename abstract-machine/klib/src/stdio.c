@@ -22,9 +22,9 @@ int printf(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   // putstr("fmt content: ");
-  // for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
-  //   putch(fmt[i]);
-  // }
+  for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
+    putch(fmt[i]);
+  }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
