@@ -97,7 +97,7 @@ SECTIONS {
   _end = .;
 
   . = ALIGN(8);
-  _heap_start = _psram_start;
+  _heap_start = _sdram_start;
 
   .stack (NOLOAD) : ALIGN(8) {
     _stack_top = .;
