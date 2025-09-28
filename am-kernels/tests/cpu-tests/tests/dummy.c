@@ -20,7 +20,20 @@
 //   return 0;
 // }
 int main() {
-char str[] = "hello,world!\n";
-printf(str);
-return 0;
+  // 直接测试内存访问
+  const char *str = "hello";
+  
+  // 方法1：直接逐个字符输出
+  putch(str[0]);
+  putch('|');
+  putch(str[1]); 
+  putch('|');
+  putch(str[2]);
+  putch('|');
+  putch(str[3]);
+  putch('|');
+  putch(str[4]);
+  putch('\n');
+  
+  return 0;
 }
