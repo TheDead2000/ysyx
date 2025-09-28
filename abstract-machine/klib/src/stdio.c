@@ -64,10 +64,10 @@ int printf(const char *fmt, ...) {
   char out[BUFFER_LENGH];
   va_list args;
   va_start(args, fmt);
-  // for(int i = 0 ; i < 10 ;i++  )
-  // {
-  //   putch(fmt[i]);
-  // }
+  for(int i = 0 ; i < 10 ;i++  )
+  {
+    putch(fmt[i]);
+  }
   test_flash_byte_access();
   int len = vsprintf(out, fmt, args);
   va_end(args);
