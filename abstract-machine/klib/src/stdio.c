@@ -27,7 +27,7 @@ int printf(const char *fmt, ...) {
   // }
   int len = vsprintf(out, fmt, args);
   va_end(args);
-  putstr(out);
+  // putstr(out);
   return len;
 }
 
