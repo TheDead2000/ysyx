@@ -1,7 +1,7 @@
 #include <am.h>
 #include <stdio.h>
 #include <klib.h>
-char* str = "%shello,wolrd\n";
+// char* str = "%shello,wolrd\n";
 int main() {
   // putch('h');
   // putch('e');
