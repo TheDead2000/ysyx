@@ -46,6 +46,16 @@ _do_bl_ss:
   la a1, _data_extra_load
   la a2, _edata_extra
   jal _bl_ss_load_align4
+  
+  # ----------------------------
+  # 新增：把 .rodata 从 flash 拷贝到 SDRAM (.rodata 在链接脚本中设为 > sdram AT> flash)
+  # ----------------------------
+  la a0, _rodata        # 目标地址（运行地址）
+  la a1, _rodata_load   # 加载地址（flash 中的位置）
+  la a2, _erodata       # 结束地址（运行地址结束）
+  jal _bl_ss_load_align4
+  # ----------------------------
+
 
   la a0, _bss_start
   la a2, _ebss
