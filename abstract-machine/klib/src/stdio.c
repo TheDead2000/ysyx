@@ -31,13 +31,23 @@ int printf(const char *fmt, ...) {
   putch(']');
   putch(' ');
 
- const char *p = fmt;
-  int i = 0;
-  while (i < 15 && *p != '\0') {
-    putch(*p);
+   for(int i = 0; i < 10 && fmt[i] != '\0'; i++) {
+    putch(' ');
+    putch('i');
+    putch('=');
+    putch('0' + i);  // 显示索引
+    putch(':');
+    putch('@');
+    
+    // 显示地址的低位
+    uintptr_t addr = (uintptr_t)(&fmt[i]);
+    for(int j = 0; j < 4; j++) {
+      putch('0' + ((addr >> (12 - j*4)) & 0xF));
+    }
+    
+    putch('=');
+    putch(fmt[i]);  // 实际读取的值
     putch('|');
-    p++;
-    i++;
   }
 
   // for(int i = 0; i < 15 && fmt[i] != '\0'; i++) {

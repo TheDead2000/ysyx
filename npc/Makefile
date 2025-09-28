@@ -82,7 +82,8 @@ endif
 LLVM_LIB = $(shell llvm-config-11 --libs)
 LLVM_FLAGS = $(filter-out -D__STDC_FORMAT_MACROS, $(shell llvm-config-11 --cxxflags))
 
-LLVM_FLAGS += -Ofast  -fexceptions
+# LLVM_FLAGS += -Ofast  -fexceptions 
+LLVM_FLAGS += -O0 -fno-tree-loop-optimize -fno-unroll-loops -fexceptions
 #-lasan(内存检查)
 
 GCC_LIB = -lreadline \

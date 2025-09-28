@@ -45,7 +45,9 @@ VM_USER_CFLAGS = \
 	-D_GNU_SOURCE \
 	-D__STDC_CONSTANT_MACROS \
 	-D__STDC_LIMIT_MACROS \
-	-Ofast \
+	-O0 \
+	-fno-tree-loop-optimize \
+	-fno-unroll-loops \
 	-fexceptions \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
