@@ -1,4 +1,4 @@
-    .section .text
+    .section .bl.f, "ax"
     .globl _start
 _start:
     la sp, _stack_pointer      # 设置栈顶指针
