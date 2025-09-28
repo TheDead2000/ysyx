@@ -34,6 +34,6 @@ int main() {
   putch('|');
   putch(str[4]);
   putch('\n');
-  
+  printf(str);
   return 0;
 }
