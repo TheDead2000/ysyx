@@ -205,6 +205,7 @@ int print_str(char *out, size_t out_offset, char *val)
     out[out_offset++] = val[i++];
     putch(out[out_offset-1]);
   }
+  putstr(out);
   return out_offset;
 }
 int sprintf(char *out, const char *fmt, ...)
