@@ -102,6 +102,10 @@ int printf(const char *fmt, ...) {
   // {
   //   putch(fmt[i]);
   // }
+  ;
+  for(int i = 0; i < 10;i++){
+    putch(va_arg(args, char ));
+  }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
