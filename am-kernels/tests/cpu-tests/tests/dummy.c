@@ -3,6 +3,7 @@
 #include <klib.h>
 
 int main() {
+  const char *str = "hello,world!\n";
   // putch('h');
   // putch('e');
   // putch('l');
@@ -16,7 +17,7 @@ int main() {
   // putch('d');
   // putch('\n');
   // printf("%s",str);
-  printf("hello,world!\n");
+  printf("%s",str);
   return 0;
 }
 // int main() {
