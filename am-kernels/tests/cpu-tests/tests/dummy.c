@@ -146,7 +146,7 @@ void test_sdram_byte_access() {
 }
 
 int main() {
-    // test_sdram_byte_access();
+    test_sdram_byte_access();
     return 0;
 }
 // int main() {
