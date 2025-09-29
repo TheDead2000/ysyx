@@ -98,10 +98,10 @@ int printf(const char *fmt, ...) {
   // test_flash_byte_access();
   // putch('\n');
   // putstr("fmt\n");
-  for(int i = 0 ; i < 10 ;i++  )
-  {
-    putch(fmt[i]);
-  }
+  // for(int i = 0 ; i < 10 ;i++  )
+  // {
+  //   putch(fmt[i]);
+  // }
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
@@ -113,10 +113,6 @@ int vsprintf(char *out, const char *fmt, va_list args)
   size_t out_offset = 0;
   const char *p = fmt;
 
-  // putch(*(p++));
-  // putch(*(p++));
-  // putch(*(p++));
-  // putch(*(p++));
   while (*p != '\0')
   {
     switch (*p)
@@ -131,6 +127,7 @@ int vsprintf(char *out, const char *fmt, va_list args)
           out_offset = print_num(out, out_offset, va_arg(args, int));
           break;
         case 's':
+          putch('S');
           out_offset = print_str(out, out_offset, va_arg(args, char *));
           break;
         case 'c':
