@@ -312,9 +312,33 @@ module dcache_top (
           if (_ram_raddr_valid_dcache_o & arb_rvalid) begin
             _ram_raddr_valid_dcache_o <= 0;
             dcache_data_ready <= 1;  // 完成信号
-            uncache_rdata <= arb_rdata[31:0];  // 数据返回
-            $display("memsize_i:%x\n",mem_size_i);
-            $display("uncache_rdata:%x\n",uncache_rdata);
+            // uncache_rdata <= arb_rdata[31:0];  // 数据返回
+            // $display("memsize_i:%x\n",mem_size_i);
+            // $display("uncache_rdata:%x\n",uncache_rdata);
+               case (mem_size_i)
+      4'b0001: begin // 字节访问 (8位)
+        case (mem_addr_i[1:0])
+          2'b00: uncache_rdata <= {24'b0, arb_rdata[7:0]};    // 字节0
+          2'b01: uncache_rdata <= {24'b0, arb_rdata[15:8]};   // 字节1  
+          2'b10: uncache_rdata <= {24'b0, arb_rdata[23:16]};  // 字节2
+          2'b11: uncache_rdata <= {24'b0, arb_rdata[31:24]};  // 字节3
+        endcase
+      end
+      4'b0010: begin // 半字访问 (16位)
+        case (mem_addr_i[1])
+          1'b0: uncache_rdata <= {16'b0, arb_rdata[15:0]};    // 半字0
+          1'b1: uncache_rdata <= {16'b0, arb_rdata[31:16]};   // 半字1
+        endcase
+      end
+      4'b0100: begin // 字访问 (32位) - lw指令
+        uncache_rdata <= arb_rdata;  // 直接返回整个32位
+      end
+      default: begin
+        uncache_rdata <= arb_rdata;  // 默认情况
+      end
+    endcase
+
+
             dcache_state <= CACHE_IDLE;
           end
         end
