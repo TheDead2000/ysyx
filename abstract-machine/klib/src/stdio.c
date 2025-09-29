@@ -205,6 +205,7 @@ int print_str(char *out, size_t out_offset, char *val)
     out[out_offset++] = val[i++];
     putch(out[out_offset-1]);
   }
+  putch('\n');
 for(int i = 0; i < 10; i++) {
     putch('T');
     putch(out[out_offset - i]);  // 根据索引访问，不改变offset
