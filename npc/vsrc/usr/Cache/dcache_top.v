@@ -248,8 +248,8 @@ module dcache_top (
               dcache_data_ready         <= 0;
               _ram_raddr_dcache_o       <= mem_addr_i;  // 读地址
               _ram_raddr_valid_dcache_o <= 1;  // 地址有效
-              _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
-              _ram_rsize_dcache_o       <= mem_size_i;  //读大小
+              _ram_rmask_dcache_o       <= 4'b_0011;  // 读掩码
+              _ram_rsize_dcache_o       <= 4'b_0001;  //读大小
               _ram_rlen_dcache_o        <= 8'd0;  // 不突发
             end
 
