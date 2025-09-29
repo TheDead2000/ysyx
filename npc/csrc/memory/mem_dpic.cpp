@@ -90,7 +90,7 @@ extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, 
       }
     if (ren) {
         // 读操作
-        printf("rdata :%x\n",rdata);
+        printf("rdata :%x\n",*rdata);
         switch (size) {
             case 1: // 字节读
                 *rdata = psram[index];
