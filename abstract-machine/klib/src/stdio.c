@@ -70,13 +70,6 @@ int printf_call_count = 0;
     }
 
 }
-
-int printf(const char *fmt, ...) {
-  //TODO
-  char out[BUFFER_LENGH];
-  va_list args;
-  va_start(args, fmt);
-
   //   const uint32_t *word_ptr = (const uint32_t*)fmt;
   
   // for(int i = 0; i < 10; i++) {
@@ -102,9 +95,17 @@ int printf(const char *fmt, ...) {
   // {
   //   putch(fmt[i]);
   // }
-  ;
-  for(int i = 0; i < 10;i++){
-    putch(va_arg(args, char ));
+
+
+int printf(const char *fmt, ...) {
+  //TODO
+  char out[BUFFER_LENGH];
+  va_list args;
+  va_start(args, fmt);
+
+  for(int i =0 ; i < 5 ;i++)
+  {
+    putch(fmt[i]);
   }
   int len = vsprintf(out, fmt, args);
   va_end(args);
