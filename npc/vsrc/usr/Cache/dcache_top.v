@@ -315,7 +315,7 @@ module dcache_top (
             // uncache_rdata <= arb_rdata[31:0];  // 数据返回
             // $display("memsize_i:%x\n",mem_size_i);
             // $display("uncache_rdata:%x\n",uncache_rdata);
-               case (mem_size_i)
+      case (mem_size_i)
       4'b0001: begin // 字节访问 (8位)
         case (mem_addr_i[1:0])
           2'b00: uncache_rdata <= {24'b0, arb_rdata[7:0]};    // 字节0
@@ -347,6 +347,7 @@ module dcache_top (
             _ram_waddr_valid_dcache_o <= 0;
             dcache_data_ready         <= 1;  // 完成信号
             dcache_state              <= CACHE_IDLE;
+            $display("mem_size:%x mem_write:%x\n",mem_size_i,mem_wdata_i);
           end
         end
 
