@@ -123,39 +123,39 @@ void test_memory_layout() {
 //     debug_memory_access_pattern();
 //     return 0;
 // }
-// int main() {
-    
-//     // 原来的测试代码
-//     const char *str = "hello";
-//     for(int i = 0; i < 5; i++) {
-//         putch(str[i]);
-//         putch('|');
-//     }
-//     return 0;
-// }
-
-void test_sdram_byte_access() {
-    volatile uint8_t *byte_ptr = (volatile uint8_t*)0xa0000000;
-    
-    // 测试字节写入和读取
-    byte_ptr[0] = 'A';
-    byte_ptr[1] = 'B'; 
-    byte_ptr[2] = 'C';
-    byte_ptr[3] = 'D';
-    
-    // 读取并输出
-    putch(byte_ptr[0]);
-    putch('|');
-    putch(byte_ptr[1]);
-    putch('|');
-    putch(byte_ptr[2]);
-    putch('|');
-    putch(byte_ptr[3]);
-    putch('\n');
-}
-
 int main() {
-    test_sdram_byte_access();
+    
+    // 原来的测试代码
+    const char *str = "hello";
+    for(int i = 0; i < 5; i++) {
+        putch(str[i]);
+        putch('|');
+    }
     return 0;
 }
+
+// void test_sdram_byte_access() {
+//     volatile uint8_t *byte_ptr = (volatile uint8_t*)0xa0000000;
+    
+//     // 测试字节写入和读取
+//     byte_ptr[0] = 'A';
+//     byte_ptr[1] = 'B'; 
+//     byte_ptr[2] = 'C';
+//     byte_ptr[3] = 'D';
+    
+//     // 读取并输出
+//     putch(byte_ptr[0]);
+//     putch('|');
+//     putch(byte_ptr[1]);
+//     putch('|');
+//     putch(byte_ptr[2]);
+//     putch('|');
+//     putch(byte_ptr[3]);
+//     putch('\n');
+// }
+
+// int main() {
+//     test_sdram_byte_access();
+//     return 0;
+// }
 
