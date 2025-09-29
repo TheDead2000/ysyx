@@ -1155,7 +1155,7 @@ axi4_arb axi_arb (
     // dcache 访存请求端口（读）
     .mem_read_addr_i(dcache_arb_araddr),
     .mem_raddr_valid_i(dcache_arb_arvalid),
-    .mem_rmask_i(4'b1111), // 全使能
+    .mem_rmask_i(4'b0011), // 全使能
     .mem_rsize_i(dcache_arb_rsize),
     .mem_rlen_i(dcache_arb_rlen),
     .mem_rdata_o(dcache_arb_rdata),
