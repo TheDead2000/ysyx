@@ -206,8 +206,8 @@ int print_str(char *out, size_t out_offset, char *val)
     putch(out[out_offset-1]);
   }
   putch('T');
-  putch(out[0]);
-  putch(out[1]);
+  putch(out[out_offset--]);
+  putch(out[out_offset--]);
   return out_offset;
 }
 int sprintf(char *out, const char *fmt, ...)
