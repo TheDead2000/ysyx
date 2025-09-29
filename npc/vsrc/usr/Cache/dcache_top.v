@@ -368,7 +368,7 @@ module dcache_top (
             _ram_waddr_valid_dcache_o <= 0;
             dcache_data_ready         <= 1;  // 完成信号
             dcache_state              <= CACHE_IDLE;
-            $display("mem_size:%x mem_write:%x\n",mem_size_i,mem_wdata_i);
+            // $display("mem_size:%x mem_write:%x\n",mem_size_i,mem_wdata_i);
           end
         end
 
