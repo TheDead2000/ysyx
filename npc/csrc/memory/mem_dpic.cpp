@@ -64,12 +64,11 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
 
 
 extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, int32_t size, int32_t* rdata) {
-    // 将地址映射到数组索引（假设地址从0开始）
-    uint32_t index = addr;
+    uint32_t index = addr - 0x80000000;
     
     if (wen) {
         // 写操作
-        printf("psram_write :%x\n",wdata);
+        printf("PSRAM WRITE: addr=0x%08x, wdata=0x%08x, size=%d\n", addr, wdata, size);
         switch (size) {
             case 1: // 字节写
                 psram[index] = wdata & 0xFF;
@@ -87,10 +86,10 @@ extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, 
             default:
                 break;
         }
-      }
+    }
+    
     if (ren) {
         // 读操作
-        printf("rdata :%x\n",*rdata);
         switch (size) {
             case 1: // 字节读
                 *rdata = psram[index];
@@ -106,6 +105,8 @@ extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, 
                 *rdata = 0;
                 break;
         }
+        // 修正：显示实际读到的数据，不是指针地址
+        printf("PSRAM READ: addr=0x%08x, data=0x%08x, size=%d\n", addr, *rdata, size);
     } else {
         *rdata = 0;
     }
