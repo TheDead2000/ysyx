@@ -65,7 +65,7 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
 
 extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, int32_t size, int32_t* rdata) {
     // 将地址映射到数组索引（假设地址从0开始）
-    uint32_t index = addr- 0x80000000;
+    uint32_t index = addr;
     
     if (wen) {
         // 写操作

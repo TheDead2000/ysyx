@@ -56,18 +56,18 @@ void test_memory_layout() {
     }
     putch('\n');
 }
-void debug_psram_access() {
-    // 强制访问 PSRAM 来测试
-    volatile uint32_t *test_ptr = (volatile uint32_t*)0x80000000;
-    uint32_t test_value = *test_ptr;  // 这会触发 psram_read
+// void debug_psram_access() {
+//     // 强制访问 PSRAM 来测试
+//     volatile uint32_t *test_ptr = (volatile uint32_t*)0x80000000;
+//     uint32_t test_value = *test_ptr;  // 这会触发 psram_read
     
-    // 尝试写入
-    *test_ptr = 0x12345678;  // 这会触发 psram_write
-}
+//     // 尝试写入
+//     *test_ptr = 0x12345678;  // 这会触发 psram_write
+// }
 
 int main() {
     // 测试 PSRAM 访问
-    debug_psram_access();
+    // debug_psram_access();
     
     // 原来的测试代码
     const char *str = "hello";
