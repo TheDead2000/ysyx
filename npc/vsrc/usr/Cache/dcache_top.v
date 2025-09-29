@@ -313,6 +313,7 @@ module dcache_top (
             _ram_raddr_valid_dcache_o <= 0;
             dcache_data_ready <= 1;  // 完成信号
             uncache_rdata <= arb_rdata[31:0];  // 数据返回
+            $display("memsize_i:%x\n",mem_size_i);
             $display("uncache_rdata:%x\n",uncache_rdata);
             dcache_state <= CACHE_IDLE;
           end
