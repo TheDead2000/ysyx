@@ -203,7 +203,7 @@ int print_str(char *out, size_t out_offset, char *val)
   {
     putch(val[i]);
     out[out_offset++] = val[i++];
-    putch(out_offset-1);
+    putch(out[out_offset-1]);
   }
   return out_offset;
 }
