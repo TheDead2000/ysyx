@@ -73,7 +73,7 @@ void debug_etext_access() {
     putch('E'); putch('T'); putch(':'); 
     uint32_t addr = (uint32_t)str;
     for(int i = 7; i >= 0; i--) {
-        putch("0123456789ABCDEF"[(addr >> (i*8)) & 0xF]);
+        putch("0123456789ABCDEF"[(addr >> (i*4)) & 0xF]);
     }
     putch('|');
     
