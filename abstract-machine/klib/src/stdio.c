@@ -103,9 +103,6 @@ int printf(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
-
-  putstr(fmt);
-  putch('\n');
   int len = vsprintf(out, fmt, args);
   va_end(args);
   putstr(out);
@@ -131,7 +128,6 @@ int vsprintf(char *out, const char *fmt, va_list args)
           out_offset = print_num(out, out_offset, va_arg(args, int));
           break;
         case 's':
-          putch('S');
           out_offset = print_str(out, out_offset, va_arg(args, char *));
           break;
         case 'c':
@@ -201,15 +197,8 @@ int print_str(char *out, size_t out_offset, char *val)
 
   while (val[i] != '\0')
   {
-    putch(val[i]);
     out[out_offset++] = val[i++];
-    putch(out[out_offset-1]);
   }
-  putch('\n');
-for(int i = 0; i < 10; i++) {
-    putch('T');
-    putch(out[out_offset - i]);  // 根据索引访问，不改变offset
-}
   return out_offset;
 }
 int sprintf(char *out, const char *fmt, ...)
