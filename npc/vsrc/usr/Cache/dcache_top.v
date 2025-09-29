@@ -239,7 +239,7 @@ module dcache_top (
               dcache_data_ready         <= 0;
               _ram_waddr_dcache_o       <= mem_addr_i;  // 写地址
               _ram_waddr_valid_dcache_o <= 1;  // 地址有效
-              _ram_wmask_dcache_o       <= 4'b_1111;  // 写掩码
+              _ram_wmask_dcache_o       <= 4'b_0000;  // 写掩码
               _ram_wdata_dcache_o       <= mem_wdata_i;  // 写数据
               _ram_wsize_dcache_o       <= mem_size_i;  //写大小
               _ram_wlen_dcache_o        <= 8'd0;  // 不突发
