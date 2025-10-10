@@ -18,6 +18,7 @@ int main() {
   // putch('\n');
   // printf("%s",str);
   printf("%s",str);
+  while(1);
   return 0;
 }
 // int main() {
