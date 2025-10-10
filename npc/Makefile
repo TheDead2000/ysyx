@@ -2,6 +2,8 @@
 TOP_MODULE := ysyxSoCFull
 # TOP_MODULE := top
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
+NXDC_FILE = ${NPC_HOME}/nvboardbind/soc.nxdc
+SRC_AUTO_BIND = ${NPC_HOME}/nvboardbind/bind.cpp
 
 # 收集源文件
 ifeq ($(TOP_MODULE),ysyxSoCFull)
@@ -108,11 +110,17 @@ GCC_CFLAGS :=  $(addprefix -CFLAGS ,${GCC_INC_PATH})
 GCC_CFLAGS += $(addprefix -CFLAGS ,${LLVM_FLAGS})
 GCC_FLAGS := ${GCC_CFLAGS} ${GCC_LDFLAGS}
 
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+$(SRC_AUTO_BIND): $(NXDC_FILE)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 # run info:
 OBJ_DIR := ./obj_dir
 BIN := ${OBJ_DIR}/V${TOP_MODULE}
 
-com:${CSRC} ${VSRC} $(SRC_AUTO_BIND)
+
+
+
+com:${CSRC} ${VSRC} $(SRC_AUTO_BIND) $(SRC_AUTO_BIND)
 	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}  ${SRC_AUTO_BIND}
 
 all: default
