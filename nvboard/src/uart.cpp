@@ -55,6 +55,7 @@ void UART::tx_receive() {
       need_update_gui = true;
     }
   }
+  printf("txdata:%x\n",tx_data);
 }
 
 void UART::rx_send() {

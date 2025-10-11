@@ -22,6 +22,8 @@ void nvboard_update() {
   if (*vga_blank_n_ptr) vga_update();
 
   extern bool is_kb_idle;
+  if (unlikely(!is_kb_idle)) kb_update();
+
   extern int16_t uart_divisor_cnt;
   extern bool is_uart_rx_idle;
   if (unlikely((-- uart_divisor_cnt) < 0)) {
