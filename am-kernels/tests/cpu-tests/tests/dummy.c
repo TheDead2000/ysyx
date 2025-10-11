@@ -18,11 +18,11 @@ int main() {
   // putch('\n');
   // printf("%s",str);
   // printf("%s",str);
-  // printf("hello,world!\n");
+  printf("hello,world!\n");
   putch('f');
   putch('t');
   putch('h');
-  // while(1);
+  while(1);
   return 0;
 }
 // int main() {
