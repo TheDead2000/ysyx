@@ -51,11 +51,10 @@ void UART::tx_receive() {
     if (tx) { // stop bit
       tx_state = 0;
       term->feed_ch(tx_data);
-      printf("txdata:%x\n",tx_data);
       need_update_gui = true;
     }
   }
-
+  printf("txdata:%x\n",tx_data);
 }
 
 void UART::rx_send() {
