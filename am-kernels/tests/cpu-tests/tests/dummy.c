@@ -19,6 +19,7 @@ int main() {
   // printf("%s",str);
   // printf("%s",str);
   printf("hello,world!\n");
+  putch('f');
   while(1);
   return 0;
 }
