@@ -46,6 +46,7 @@ void UART::tx_receive() {
     }
   } else if (tx_state >= 1 && tx_state <= 8) { // data
     tx_data = (tx << 7) | (tx_data >> 1);  // data bit
+    printf("betxdata:%x\n",tx_data);
     tx_state ++;
   } else if (tx_state == 9) {
     if (tx) { // stop bit
