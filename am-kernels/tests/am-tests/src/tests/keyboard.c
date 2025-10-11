@@ -9,6 +9,7 @@ static bool has_uart, has_kbd;
 
 static void drain_keys() {
   if (has_uart) {
+    printf("has_uart\n");
     while (1) {
       char ch = io_read(AM_UART_RX).data;
       if (ch == (char)-1) break;
@@ -17,6 +18,7 @@ static void drain_keys() {
   }
 
   if (has_kbd) {
+        printf("has_kbd\n");
     while (1) {
       AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
       if (ev.keycode == AM_KEY_NONE) break;
