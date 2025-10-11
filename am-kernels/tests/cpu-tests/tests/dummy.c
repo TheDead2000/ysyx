@@ -21,6 +21,7 @@ int main() {
   // printf("hello,world!\n");
   putch('f');
   putch('t');
+  putch('h');
   while(1);
   return 0;
 }

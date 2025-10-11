@@ -53,13 +53,13 @@ VM_USER_LDLIBS = \
 	-lreadline \
 	-ldl \
 	/home/zy/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so \
+	/home/zy/ysyx-workbench/nvboard/build/nvboard.a \
 	-lSDL2 \
 	-lSDL2_image \
 	-lSDL2_ttf \
 	-lLLVM-11 \
 	-flto \
 	-fuse-ld=gold \
-	/home/zy/ysyx-workbench/nvboard/build/nvboard.a \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
