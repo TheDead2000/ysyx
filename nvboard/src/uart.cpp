@@ -38,7 +38,6 @@ void UART::update_gui() { // everything is done in update_state()
 
 void UART::tx_receive() {
   uart_divisor_cnt = divisor - 1;
-  printf("receive\n");
   uint8_t tx = *p_tx;
   if (tx_state == 0) { // idle
     if (!tx) { // start bit
@@ -52,10 +51,11 @@ void UART::tx_receive() {
     if (tx) { // stop bit
       tx_state = 0;
       term->feed_ch(tx_data);
+      printf("txdata:%x\n",tx_data);
       need_update_gui = true;
     }
   }
-  printf("txdata:%x\n",tx_data);
+
 }
 
 void UART::rx_send() {
