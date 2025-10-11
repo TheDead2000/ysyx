@@ -39,6 +39,7 @@ void UART::update_gui() { // everything is done in update_state()
 void UART::tx_receive() {
   uart_divisor_cnt = divisor - 1;
   uint8_t tx = *p_tx;
+  printf("altxdata:%x\n",tx_data);
   if (tx_state == 0) { // idle
     if (!tx) { // start bit
       tx_data = 0;
@@ -46,7 +47,6 @@ void UART::tx_receive() {
     }
   } else if (tx_state >= 1 && tx_state <= 8) { // data
     tx_data = (tx << 7) | (tx_data >> 1);  // data bit
-    printf("betxdata:%x\n",tx_data);
     tx_state ++;
   } else if (tx_state == 9) {
     if (tx) { // stop bit
