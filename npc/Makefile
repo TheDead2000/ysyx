@@ -124,7 +124,7 @@ OBJ_DIR := ./obj_dir
 BIN := ${OBJ_DIR}/V${TOP_MODULE}
 
 
-com:${CSRC} ${VSRC} $(SRC_AUTO_BIND)
+com:${CSRC} ${VSRC} 
 	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}
 
 # com:${CSRC} ${VSRC} $(NVBOARD_ARCHIVE)
