@@ -60,6 +60,7 @@ VM_USER_LDLIBS = \
 	-lLLVM-11 \
 	-flto \
 	-fuse-ld=gold \
+	/home/zy/ysyx-workbench/nvboard/build/nvboard.a \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \

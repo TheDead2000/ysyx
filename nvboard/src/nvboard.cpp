@@ -23,10 +23,11 @@ void nvboard_update() {
 
   extern bool is_kb_idle;
   if (unlikely(!is_kb_idle)) kb_update();
-
+    printf("test\n");
   extern int16_t uart_divisor_cnt;
   extern bool is_uart_rx_idle;
   if (unlikely((-- uart_divisor_cnt) < 0)) {
+    printf("test\n");
     uart_tx_receive();
     if (unlikely(!is_uart_rx_idle)) uart_rx_send();
   }

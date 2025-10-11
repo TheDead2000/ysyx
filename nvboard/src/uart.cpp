@@ -38,7 +38,7 @@ void UART::update_gui() { // everything is done in update_state()
 
 void UART::tx_receive() {
   uart_divisor_cnt = divisor - 1;
-
+  printf("receive\n");
   uint8_t tx = *p_tx;
   if (tx_state == 0) { // idle
     if (!tx) { // start bit
