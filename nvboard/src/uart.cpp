@@ -12,7 +12,6 @@ UART::UART(SDL_Renderer *rend, int cnt, int init_val, int ct, int x, int y, int 
     Component(rend, cnt, init_val, ct),
     tx_state(0), rx_state(0), divisor(16), need_update_gui(false) {
   term = new Term(rend, x, y, w, h);
-  printf("init uart\n");
   SDL_Rect *rect_ptr = new SDL_Rect;
   *rect_ptr = (SDL_Rect){x, y, w, h};
   set_rect(rect_ptr, 0);
@@ -53,7 +52,7 @@ void UART::tx_receive() {
     if (tx) { // stop bit
       tx_state = 0;
       term->feed_ch(tx_data);
-      printf("%x\n",tx_data);
+      printf("receive:%x\n",tx_data);
       need_update_gui = true;
     }
   }
