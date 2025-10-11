@@ -124,11 +124,11 @@ OBJ_DIR := ./obj_dir
 BIN := ${OBJ_DIR}/V${TOP_MODULE}
 
 
-com:${CSRC} ${VSRC} 
-	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}
+# com:${CSRC} ${VSRC} 
+# 	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}
 
-# com:${CSRC} ${VSRC} $(NVBOARD_ARCHIVE)
-# 	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS} 
+com:${CSRC} ${VSRC} $(NVBOARD_ARCHIVE)
+	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS} 
 
 all: default
 	@echo "Write this Makefile by your self."
