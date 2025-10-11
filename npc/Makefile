@@ -1,4 +1,5 @@
 
+include $(NVBOARD_HOME)/scripts/nvboard.mk
 TOP_MODULE := ysyxSoCFull
 # TOP_MODULE := top
 SOC_HOME ?= /home/zy/ysyx-workbench/ysyxSoC
@@ -16,9 +17,10 @@ ifeq ($(TOP_MODULE),ysyxSoCFull)
     VSRC += $(SOC_HOME)/build/ysyxSoCFull.v
     SRC_AUTO_BIND = ${NPC_HOME}/nvboardbind/bind.cpp
     NXDC_FILE = ${NPC_HOME}/nvboardbind/soc.nxdc
-$(info Found UART sources: $(PERIP_SRC))
+# $(info Found UART sources: $(PERIP_SRC))
 $(SRC_AUTO_BIND): $(NXDC_FILE)
 	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+    CSRC += $(SRC_AUTO_BIND)
 endif
 
 
@@ -91,11 +93,17 @@ LLVM_FLAGS += -Ofast  -fexceptions
 GCC_LIB = -lreadline \
 		  -ldl \
 		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
-		  ${NVBOARD_HOME}/build/nvboard.a \
 		  -lSDL2 \
 		  -lSDL2_image \
 		  -lSDL2_ttf
 
+# GCC_LIB = -lreadline \
+# 		  -ldl \
+# 		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
+# 		  ${NVBOARD_HOME}/build/nvboard.a \
+# 		  -lSDL2 \
+# 		  -lSDL2_image \
+# 		  -lSDL2_ttf
 # GCC_LIB = -lreadline \
 # 		  -ldl \
 # 		  ${NVBOARD_HOME}/build/nvboard.a \
@@ -110,9 +118,6 @@ GCC_CFLAGS :=  $(addprefix -CFLAGS ,${GCC_INC_PATH})
 GCC_CFLAGS += $(addprefix -CFLAGS ,${LLVM_FLAGS})
 GCC_FLAGS := ${GCC_CFLAGS} ${GCC_LDFLAGS}
 
-include $(NVBOARD_HOME)/scripts/nvboard.mk
-$(SRC_AUTO_BIND): $(NXDC_FILE)
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 # run info:
 OBJ_DIR := ./obj_dir
 BIN := ${OBJ_DIR}/V${TOP_MODULE}
@@ -120,8 +125,8 @@ BIN := ${OBJ_DIR}/V${TOP_MODULE}
 
 
 
-com:${CSRC} ${VSRC} $(SRC_AUTO_BIND) $(SRC_AUTO_BIND)
-	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS}  ${SRC_AUTO_BIND}
+com:${CSRC} ${VSRC} $(NVBOARD_ARCHIVE)
+	@verilator ${VERILATOR_FLAGS} ${CSRC} ${VSRC} ${GCC_FLAGS} $(NVBOARD_ARCHIVE)
 
 all: default
 	@echo "Write this Makefile by your self."
