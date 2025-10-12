@@ -76,7 +76,9 @@ void video_test() {
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     printf("upt %d\n",upt);
     if (upt - last > 1000 / FPS) {
+      printf("update be\n");
       update();
+      printf("redrawbe\n");
       redraw();
       last = upt;
       fps ++;
