@@ -16,6 +16,8 @@ static int used[N][N];
 static uint32_t color_buf[32 * 32];
 
 void redraw() {
+  printf("w:%d\n",io_read(AM_GPU_CONFIG).width);
+  printf("h:%d\n",io_read(AM_GPU_CONFIG).height);
   int w = io_read(AM_GPU_CONFIG).width / N;
   int h = io_read(AM_GPU_CONFIG).height / N;
   int block_size = w * h;
