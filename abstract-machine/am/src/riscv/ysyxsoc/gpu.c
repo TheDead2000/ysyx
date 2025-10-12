@@ -13,11 +13,11 @@ void __am_gpu_init() {
   // Width = (config >> 16) & 0x0000ffff;
   // Height = config & 0x0000ffff;
   // printf("%d %d\n",Width,Height);
-  uint32_t *fb = (uint32_t *)(uintptr_t)VGA_FB_ADDR;
-  for (int i = 0; i < Width * Height; i ++){
-    fb[i] = 0;
-  } 
-  outl(VGA_SYNC_ADDR, 1);
+  // uint32_t *fb = (uint32_t *)(uintptr_t)VGA_FB_ADDR;
+  // for (int i = 0; i < Width * Height; i ++){
+  //   fb[i] = 0;
+  // } 
+  // outl(VGA_SYNC_ADDR, 1);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
