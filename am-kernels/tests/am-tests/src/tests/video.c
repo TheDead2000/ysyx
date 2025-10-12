@@ -80,6 +80,7 @@ void video_test() {
       redraw();
       last = upt;
       fps ++;
+      printf("fps:%d\n",fps);
     }
     if (upt - fps_last > 1000) {
       // display fps every 1s
