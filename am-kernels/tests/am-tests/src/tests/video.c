@@ -29,7 +29,7 @@ void redraw() {
       for (k = 0; k < block_size; k ++) {
         color_buf[k] = canvas[y][x];
       }
-      io_write(AM_GPU_FBDRAW, x * w, y * h, color_buf, w, h, false);
+      io_write(AM_GPU_FBDRAW, x * w, y * h, color_buf, w, h, true);
     }
     printf("y=%d\n",y);
   }
