@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include <string.h>
-int sw = 0, sh = 0;
+static int sw = 0, sh = 0;
 void __am_gpu_status(AM_GPU_STATUS_T *status) { status->ready = true; }
 void __am_gpu_init() {
   // int i;
