@@ -69,7 +69,7 @@ void UART::rx_send() {
     rx_state ++;
   } else if (rx_state >= 1 && rx_state <= 8) { // data
     pin_poke(UART_RX, rx_data & 1);  // data bit
-    printf("rx_data %x\n",rx_data);
+    // printf("rx_data %x\n",rx_data);
     rx_data >>= 1;
     rx_state ++;
   } else if (rx_state == 9) {
