@@ -96,7 +96,7 @@ void VysyxSoCFull___024root__trace_chg_sub_0(VysyxSoCFull___024root* vlSelf, Ver
     }
     if (VL_UNLIKELY(vlSelf->__Vm_traceActivity[3U])) {
         bufp->chgBit(oldp+37,((1U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__axi42apb__DOT__state))));
-        bufp->chgBit(oldp+38,((1U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__lvga__DOT__mvga__DOT__vga_apb_state))));
+        bufp->chgBit(oldp+38,(vlSelf->ysyxSoCFull__DOT__asic__DOT___lvga_auto_in_pready));
         bufp->chgIData(oldp+39,(((vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__data
                                   [3U] << 0x18U) | 
                                  ((vlSelf->ysyxSoCFull__DOT__asic__DOT__lpsram__DOT__mpsram__DOT__u0__DOT__MR__DOT__data
