@@ -31,7 +31,7 @@ void redraw() {
       }
       io_write(AM_GPU_FBDRAW, x * w, y * h, color_buf, w, h, false);
     }
-    printf("y=%d\n");
+    printf("y=%d\n",y);
   }
   printf("for end\n");
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
