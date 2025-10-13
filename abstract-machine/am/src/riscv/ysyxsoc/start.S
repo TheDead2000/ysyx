@@ -55,7 +55,12 @@ _do_bl_ss:
   la a2, _erodata       # 结束地址（运行地址结束）
   jal _bl_ss_load_align4
   # ----------------------------
-
+  
+  # 复制 .rodata.extra 段（包含实际数据）
+  la a0, _rodata_extra
+  la a1, _rodata_extra_load
+  la a2, _erodata_extra
+  jal _bl_ss_load_align4
 
   la a0, _bss_start
   la a2, _ebss
