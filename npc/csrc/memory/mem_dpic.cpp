@@ -64,10 +64,10 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 #define PSRAM_END   0x9fffffff
 #define PSRAM_MSIZE (PSRAM_END+1-PSRAM_START)
 
-uint32_t* guest_to_host(uint32_t paddr) { 
+uint8_t* guest_to_host(uint32_t paddr) { 
 
-  if(paddr >= PSRAM_START && paddr <= PSRAM_END){
-    return psram + (paddr - PSRAM_START);
+if(paddr >= PSRAM_START && paddr <= PSRAM_END){
+    return psram + paddr - PSRAM_START;
   } else {
     printf("Invalid Address: 0x%0x\n", paddr);
     assert(0);
@@ -76,7 +76,7 @@ uint32_t* guest_to_host(uint32_t paddr) {
 }
 
 void _pmem_write(uint32_t addr, uint32_t data, int len) {
-  uint32_t * paddr = guest_to_host(addr);
+  uint8_t * paddr = guest_to_host(addr);
   switch (len) {
     case 1: *(uint8_t  *)paddr = data; return;
     case 2: *(uint16_t *)paddr = data; return;
@@ -85,7 +85,7 @@ void _pmem_write(uint32_t addr, uint32_t data, int len) {
 }
 
 uint32_t _pmem_read(uint32_t addr, int len) {
-  uint32_t * paddr =  guest_to_host(addr);
+  uint8_t * paddr = (uint8_t*) guest_to_host(addr);
   switch (len) {
     case 1: return *(uint8_t  *)paddr;
     case 2: return *(uint16_t *)paddr;
@@ -98,9 +98,8 @@ extern "C" void psram_read(int32_t addr, int32_t *data) {
   addr = PSRAM_START + addr; // SPI2PSRAM only cares low 24bits i.e. 16MB
   if(addr>=PSRAM_START && addr<=PSRAM_END) {
     // addr = addr & ~0x3u;
-    // printf("psram_read addr: 0x%08x\n", addr);
     *data = _pmem_read(addr, 4);
-     //printf("psram_read addr: 0x%08x data: 0x%08x\n", addr, *data);
+    // printf("psram_read addr: 0x%08x data: 0x%08x\n", addr, *data);
   }
 }
 
@@ -109,7 +108,6 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
   if(addr>=PSRAM_START && addr<=PSRAM_END) {
     // addr = addr & ~0x3u;
     uint32_t wdata = data >> ((8-mask)*4);
-     //printf("psram_write addr: 0x%08x data: 0x%08x mask: 0x%08x wdata: 0x%08x\n", addr, data, mask, wdata);
     _pmem_write(addr, wdata, mask/2);
     // printf("psram_write addr: 0x%08x data: 0x%08x\n", addr, data);
   }

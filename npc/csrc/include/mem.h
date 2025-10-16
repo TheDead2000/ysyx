@@ -16,5 +16,5 @@ uint32_t mem_read(uint32_t pc);
 extern uint32_t *mrom;
 extern uint32_t *flash;
 extern uint32_t *mem;
-extern uint32_t *psram;
+extern uint8_t *psram;
 extern word_t mem_size;

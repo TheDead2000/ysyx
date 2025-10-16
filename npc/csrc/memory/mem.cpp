@@ -20,7 +20,7 @@ uint32_t *mrom;
 // 16MB flash
 uint32_t *flash;
 // 4MB
-uint32_t *psram;
+uint8_t *psram;
 
 word_t mem_size = 84;
 
@@ -69,7 +69,7 @@ void init_flash_img(char *img_file) {
 void init_mem() {
   mrom = (uint32_t *)malloc(4 * 1024 * sizeof(uint8_t));
   flash = (uint32_t *)malloc(128 * 1024 * 1024 * sizeof(uint8_t));
-  psram = (uint32_t *)malloc(4 * 1024 * 1024 * sizeof(uint8_t));
+  psram = (uint8_t *)malloc(4 * 1024 * 1024 * sizeof(uint8_t));
   mem = (uint32_t *)malloc(16 * 1024 * 1024 * sizeof(uint8_t));
 }
 void free_mem() {
