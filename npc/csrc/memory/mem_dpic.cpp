@@ -75,13 +75,30 @@ uint32_t* guest_to_host(uint32_t paddr) {
   }
 }
 
+// void _pmem_write(uint32_t addr, uint32_t data, int len) {
+//   uint32_t * paddr = guest_to_host(addr);
+//   switch (len) {
+//     case 1: *(uint8_t  *)paddr = data; return;
+//     case 2: *(uint16_t *)paddr = data; return;
+//     case 4: *(uint32_t *)paddr = data; return;
+//   }
+// }
+
 void _pmem_write(uint32_t addr, uint32_t data, int len) {
-  uint32_t * paddr = guest_to_host(addr);
-  switch (len) {
-    case 1: *(uint8_t  *)paddr = data; return;
-    case 2: *(uint16_t *)paddr = data; return;
-    case 4: *(uint32_t *)paddr = data; return;
-  }
+    // 处理非对齐访问
+    if ((addr & 0x3) != 0 || len < 4) {
+        // 字节级写入
+        uint8_t *byte_ptr = (uint8_t*)guest_to_host(addr & ~0x3u);
+        uint32_t offset = addr & 0x3u;
+        
+        for (int i = 0; i < len; i++) {
+            byte_ptr[offset + i] = (data >> (i * 8)) & 0xFF;
+        }
+    } else {
+        // 对齐的4字节写入
+        uint32_t *paddr = guest_to_host(addr);
+        *paddr = data;
+    }
 }
 
 uint32_t _pmem_read(uint32_t addr, int len) {
@@ -104,18 +121,41 @@ extern "C" void psram_read(int32_t addr, int32_t *data) {
   }
 }
 
+// extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
+//   addr = PSRAM_START + addr; // SPI2FLASH only cares low 24bits i.e. 16MB
+//   if(addr>=PSRAM_START && addr<=PSRAM_END) {
+//     // addr = addr & ~0x3u;
+//     uint32_t wdata = data >> ((8-mask)*4);
+//      printf("psram_write addr: 0x%08x data: 0x%08x mask: 0x%08x wdata: 0x%08x\n", addr, data, mask, wdata);
+//     _pmem_write(addr, wdata, mask/2);
+//     // printf("psram_write addr: 0x%08x data: 0x%08x\n", addr, data);
+//   }
+// }
+
 extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
-  addr = PSRAM_START + addr; // SPI2FLASH only cares low 24bits i.e. 16MB
-  if(addr>=PSRAM_START && addr<=PSRAM_END) {
-    // addr = addr & ~0x3u;
-    uint32_t wdata = data >> ((8-mask)*4);
-     printf("psram_write addr: 0x%08x data: 0x%08x mask: 0x%08x wdata: 0x%08x\n", addr, data, mask, wdata);
-    _pmem_write(addr, wdata, mask/2);
-    // printf("psram_write addr: 0x%08x data: 0x%08x\n", addr, data);
-  }
+    addr = PSRAM_START + addr;
+    
+    if(addr >= PSRAM_START && addr <= PSRAM_END) {
+        // mask现在表示写入的字节数
+        int write_len = mask & 0x3;
+        if (write_len == 0) write_len = 4;  // 默认4字节
+        
+        // 提取正确的字节数据
+        uint32_t wdata;
+        switch(write_len) {
+            case 1: wdata = data & 0xFF; break;
+            case 2: wdata = data & 0xFFFF; break;
+            case 3: wdata = data & 0xFFFFFF; break;
+            case 4: wdata = data; break;
+            default: wdata = data; break;
+        }
+        
+        printf("psram_write addr: 0x%08x data: 0x%08x bytes: %d wdata: 0x%08x\n", 
+               addr, data, write_len, wdata);
+        
+        _pmem_write(addr, wdata, write_len);
+    }
 }
-
-
 
 
 extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, int32_t size, int32_t* rdata) {
