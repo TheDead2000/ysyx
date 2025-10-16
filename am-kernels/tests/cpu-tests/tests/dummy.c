@@ -18,10 +18,8 @@ int main() {
   // putch('\n');
   // printf("%s",str);
   // printf("%s",str);
-  printf("hello,world!\n");
-  putch('f');
-  putch('t');
-  putch('h');
+  static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
+  printf("get ch %c \n",(p ++));
   while(1);
   return 0;
 }

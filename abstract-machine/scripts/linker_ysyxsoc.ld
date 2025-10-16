@@ -79,7 +79,9 @@ _erodata_load = _rodata_load + SIZEOF(.rodata);
   _edata_extra = DEFINED(_edata_extra) ? _edata_extra : 0;
   _data_extra_load = DEFINED(_data_extra_load) ? _data_extra_load : 0;
   _edata_extra_load = DEFINED(_edata_extra_load) ? _edata_extra_load : 0;
-
+_rodata_extra = DEFINED(_rodata_extra) ? _rodata_extra :0;
+_rodata_extra_load = DEFINED(_rodata_extra_load) ? _rodata_extra_load :0;
+_erodata_extra = DEFINED(_erodata_extra) ? _erodata_extra :0;
   .bss (NOLOAD) : ALIGN(4) {
     _bss_start = .;
 
