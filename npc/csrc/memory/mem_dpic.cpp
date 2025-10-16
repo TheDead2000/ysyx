@@ -98,7 +98,7 @@ extern "C" void psram_read(int32_t addr, int32_t *data) {
   addr = PSRAM_START + addr; // SPI2PSRAM only cares low 24bits i.e. 16MB
   if(addr>=PSRAM_START && addr<=PSRAM_END) {
     // addr = addr & ~0x3u;
-    printf("psram_read addr: 0x%08x\n", addr);
+    // printf("psram_read addr: 0x%08x\n", addr);
     *data = _pmem_read(addr, 4);
     // printf("psram_read addr: 0x%08x data: 0x%08x\n", addr, *data);
   }
@@ -109,7 +109,7 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
   if(addr>=PSRAM_START && addr<=PSRAM_END) {
     // addr = addr & ~0x3u;
     uint32_t wdata = data >> ((8-mask)*4);
-    printf("psram_write addr: 0x%08x data: 0x%08x mask: 0x%08x wdata: 0x%08x\n", addr, data, mask, wdata);
+    // printf("psram_write addr: 0x%08x data: 0x%08x mask: 0x%08x wdata: 0x%08x\n", addr, data, mask, wdata);
     _pmem_write(addr, wdata, mask/2);
     // printf("psram_write addr: 0x%08x data: 0x%08x\n", addr, data);
   }
