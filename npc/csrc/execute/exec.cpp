@@ -135,7 +135,7 @@ int run(int step) {
       nemu_state.state = NEMU_RUNNING;
     }
     uint32_t pc = PC_STRUCT;
-    // printf("PC_STRUCT=%x\n",pc);
+    printf("PC_STRUCT=%x\n",pc);
     single_inst();
     // tfp->flush();
     g_nr_guest_inst++;
