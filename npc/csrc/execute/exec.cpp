@@ -104,11 +104,11 @@ void init_runtime() {
 #else
   dut = new VysyxSoCFull; // Initialize the DUT instance
 #endif
-//   Verilated::traceEverOn(true); // 启用波形追踪
-//   tfp = new VerilatedVcdC;
-//   dut->trace(tfp, 99); // 跟踪99级信号
-//   printf("Trace file is generated at ./build/waveform.vcd\n");
-//  tfp->open("./waveform.vcd");
+  Verilated::traceEverOn(true); // 启用波形追踪
+  tfp = new VerilatedVcdC;
+  dut->trace(tfp, 99); // 跟踪99级信号
+  printf("Trace file is generated at ./build/waveform.vcd\n");
+ tfp->open("./waveform.vcd");
   // MUXDEF(CONFIG_WAVE_FORM, tfp->open("./build/waveform.vcd");
   //        , tfp->open("/dev/null");) // 打开VCD文件
 #ifndef NPC
