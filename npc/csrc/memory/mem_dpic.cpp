@@ -68,7 +68,7 @@ extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, 
     uint32_t index = addr;
     if (wen) {
         // 写操作
-        printf("w_addr:%x psram_write :%x\n",addr,wdata);
+        printf("w_addr:%x psram_write :%x size :%d\n",addr,wdata,size);
         switch (size) {
             case 1: // 字节写
                 psram[index] = wdata & 0xFF;
@@ -89,7 +89,7 @@ extern "C" void psram_wr(int32_t addr, int32_t wen, int32_t ren, int32_t wdata, 
       }
     if (ren) {
         // 读操作
-        printf("r_addr%x psram_read:%x\n",addr,*rdata);
+        printf("r_addr%x psram_read:%x size:%d\n",addr,*rdata,size);
         switch (size) {
             case 1: // 字节读
                 *rdata = psram[index];
