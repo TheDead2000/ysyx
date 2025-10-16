@@ -52,6 +52,7 @@ extern "C" void psram_write(int32_t addr, int32_t data, int32_t mask) {
 
     uint32_t wdata = data >> ((8-mask)*4);
     printf("psram wdata %x\n",wdata);
+    printf("psram write addr :%x data:%x mask:%x\n",addr,wdata,mask);
     ((uint8_t *)psram)[addr - 0x80000000] = data;
     switch ( mask/2) {
     case 1: ((uint8_t *)psram)[addr - 0x80000000] = data;return;
