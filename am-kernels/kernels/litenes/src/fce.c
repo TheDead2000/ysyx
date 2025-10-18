@@ -63,6 +63,7 @@ int fce_load_rom(char *rom) {
 
   // Copying CHR pages into MMC and PPU
   int i;
+  printf("ready to copy\n");
   for (i = 0; i < fce_rom_header->chr_block_count; i++) {
     byte *blk = romread(0x2000);
     mmc_append_chr_rom_page(blk);
@@ -71,14 +72,19 @@ int fce_load_rom(char *rom) {
       ppu_copy(0x0000, blk, 0x2000);
     }
   }
+  printf("copy done\n");
 
   return 0;
 }
 
 void fce_init() {
+  printf("Initializing FCE...\n");
   cpu_init();
+  printf("CPU initialized.\n");
   ppu_init();
+  printf("PPU initialized.\n");
   ppu_set_mirroring(fce_rom_header->rom_type & 1);
+  printf("Mirroring set.\n");
   cpu_reset();
 }
 
@@ -113,6 +119,7 @@ void fce_run() {
 
     nr_draw ++;
     int upt = uptime_ms();
+    printf("upt=%d,gtime=%d\n",upt,gtime);
     if (upt - last > 1000) {
       last = upt;
       for (int i = 0; i < 80; i++) putch('\b');
