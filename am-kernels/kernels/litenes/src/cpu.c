@@ -571,6 +571,7 @@ void cpu_init() {
 
 void cpu_reset() {
   cpu.PC = cpu_reset_interrupt_address();
+  printf("CPU Reset to Address: %04X\n", cpu.PC);
   cpu.SP -= 3;
   cpu.P |= interrupt_flag;
 }

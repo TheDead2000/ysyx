@@ -86,6 +86,7 @@ void fce_init() {
   ppu_set_mirroring(fce_rom_header->rom_type & 1);
   printf("Mirroring set.\n");
   cpu_reset();
+  printf("FCE initialization complete.\n");
 }
 
 static int gtime;
@@ -98,6 +99,7 @@ void wait_for_frame() {
   int cur = uptime_ms();
   while (cur - gtime < 1000 / FPS) {
     cur = uptime_ms();
+    printf("cur=%d,gtime=%d\n",cur,gtime);
   }
   gtime = cur;
 }
