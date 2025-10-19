@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#define FPS          30
+#define FPS          10
 #define SCR_W       256
 #define SCR_H       240
 #define FRAME_SKIP    1
