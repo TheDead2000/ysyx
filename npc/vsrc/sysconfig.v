@@ -222,3 +222,46 @@
 `define _AXI_AWCACHE_WRITE_BACK_WRITE_ALLOCATE 4'b1111
 `define _AXI_AWCACHE_WRITE_BACK_READ_AND_WRITE_ALLOCATE 4'b1111
 
+// SV32 页表项格式（32位）
+`define PTE_V_MASK      32'h00000001  // Valid
+`define PTE_R_MASK      32'h00000002  // Read
+`define PTE_W_MASK      32'h00000004  // Write  
+`define PTE_X_MASK      32'h00000008  // Execute
+`define PTE_U_MASK      32'h00000010  // User
+`define PTE_G_MASK      32'h00000020  // Global
+`define PTE_A_MASK      32'h00000040  // Accessed
+`define PTE_D_MASK      32'h00000080  // Dirty
+`define PTE_RSW_MASK    32'h00000300  // Reserved for software
+`define PTE_PPN0_MASK   32'h003FF000  // PPN[0] (10 bits)
+`define PTE_PPN1_MASK   32'hFFC00000  // PPN[1] (12 bits)
+
+// 权限位位置
+`define PTE_V_BIT       0
+`define PTE_R_BIT       1
+`define PTE_W_BIT       2  
+`define PTE_X_BIT       3
+`define PTE_U_BIT       4
+`define PTE_G_BIT       5
+`define PTE_A_BIT       6
+`define PTE_D_BIT       7
+
+// PPN 字段偏移
+`define PTE_PPN0_OFFSET 12
+`define PTE_PPN1_OFFSET 22
+
+// 虚拟地址字段
+`define VPN0_OFFSET     12
+`define VPN0_WIDTH      10
+`define VPN1_OFFSET     22
+`define VPN1_WIDTH      10
+
+// 页大小
+`define PAGE_SIZE_4KB   12'h1000
+`define PAGE_SIZE_4MB   22'h400000
+
+// SATP 寄存器格式
+`define SATP_MODE_BIT   31
+`define SATP_ASID_OFFSET 22
+`define SATP_ASID_WIDTH 9
+`define SATP_PPN_OFFSET 0
+`define SATP_PPN_WIDTH  22

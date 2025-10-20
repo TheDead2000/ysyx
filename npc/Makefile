@@ -46,6 +46,7 @@ SPI_RTL_DIR := $(abspath $(SOC_HOME)/perip/spi/rtl)
 VERILATOR_INC_PATH := -I./vsrc \
 			-I./vsrc/usr \
 			-I./vsrc/lib \
+			-I./vsrc/mmu \
 			-I$(UART_RTL_DIR) \
 			-I$(SPI_RTL_DIR)
 

@@ -67,6 +67,45 @@ pc_reg u_pc_reg (
     .pc_o             (inst_addr)
 );
 
+
+
+/**********============ MMU 相关信号 ============*************/
+// IMMU 信号
+wire [31:0] immu_req_vaddr;
+wire immu_req_ready;
+wire [31:0] immu_resp_paddr;
+wire immu_resp_valid;
+wire immu_resp_page_fault;
+wire immu_mem_req;
+wire [31:0] immu_mem_addr;
+wire [31:0] immu_mem_rdata;
+wire immu_mem_rvalid;
+
+// DMMU 信号  
+wire [31:0] dmmu_req_vaddr;
+wire dmmu_req_ready;
+wire dmmu_is_store;
+wire [31:0] dmmu_resp_paddr;
+wire dmmu_resp_valid;
+wire dmmu_resp_page_fault;
+wire dmmu_mem_req;
+wire [31:0] dmmu_mem_addr;
+wire [31:0] dmmu_mem_rdata;
+wire dmmu_mem_rvalid;
+
+// CSR 到 MMU 的配置 (SV32)
+wire [21:0] csr_satp_ppn;      // 22位 PPN
+wire [8:0] csr_asid;           // 9位 ASID
+wire csr_sum;
+wire csr_enable_sv32;          // 启用 SV32
+wire csr_enable_lsvm;
+wire csr_mxr;
+wire csr_tvm;
+wire csr_tw;
+wire csr_tsr;
+wire mmu_flush;
+
+
 /*******************ifu***************************/
 wire if_rdata_valid;  // 读数据是否准备好
 wire [`XLEN-1:0] if_rdata;  // 返回到读取的数据
@@ -87,7 +126,7 @@ wire [`XLEN-1:0] pdt_tag;
 wire which_pdt_o; 
 wire [`HISLEN-1:0] history_o;
 
-// 新增：EXU反馈信号
+// EXU反馈信号
 wire pdt_correct;        // 预测是否正确
 wire which_pdt_fb;       // 预测使用的预测器类型
 wire [`HISLEN-1:0] history_fb;   // 预测时使用的历史记录
@@ -131,7 +170,33 @@ ifu ifu (
   /* to if/id */
   .inst_addr_o(inst_addr_if),
   .inst_data_o(inst_data_if),
-  .trap_bus_o(trap_bus_if)
+  .trap_bus_o(trap_bus_if),
+
+  // ============ MMU 接口 (SV32) ============
+  // CSR 到 MMU 配置
+  .mmu_enable_i(csr_enable_sv32),           // 统一命名
+  .mmu_satp_ppn_i(csr_satp_ppn),
+  .mmu_satp_asid_i(csr_asid),
+  .mmu_mxr_i(csr_mxr),
+  .mmu_sum_i(csr_sum),
+  
+  // MMU 请求接口
+  .mmu_req_vaddr_o(immu_req_vaddr),         // 统一命名
+  .mmu_req_valid_o(immu_req_ready),
+  
+  // MMU 响应接口
+  .mmu_resp_paddr_i(immu_resp_paddr),       // 统一命名
+  .mmu_resp_valid_i(immu_resp_valid),
+  .mmu_page_fault_i(immu_resp_page_fault),
+  
+  // 内存接口（用于页表遍历）
+  .mmu_mem_req_o(immu_mem_req),             // 统一命名
+  .mmu_mem_addr_o(immu_mem_addr),
+  .mmu_mem_rdata_i(immu_mem_rdata),
+  .mmu_mem_rvalid_i(immu_mem_rvalid),
+  
+  // 控制信号
+  .mmu_flush_i(mmu_flush)
 );
 
 //if_id moudle
@@ -585,18 +650,15 @@ wire [11:0] csr_idx_id;               // 来自ID阶段的CSR读地址
 wire [31:0] csr_data_csr;             // CSR读数据输出
  wire exc_csr_valid_mem;
 
-  memory lsu (
+lsu lsu (
       .clk            (clk),
       .rst            (rst),
       /* from ex/mem */
       .inst_addr_i    (pc_ex_mem),
       .inst_data_i    (inst_data_ex_mem),
       .rd_idx_i       (rd_idx_ex_mem),
-      // input  [         `INST_LEN-1:0] rs1_data_i,
       .rs2_data_i     (rs2_data_ex_mem),
-      // input  [      `IMM_LEN-1:0] imm_data_i,
       .mem_op_i       (mem_op_ex_mem),
-      // 访存操作码
       .exc_alu_data_i (alu_data_ex_mem),
       //csr
       .csr_addr_i(csr_addr_ex_mem),
@@ -634,8 +696,88 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
       .mem_wdata_o(mem_wdata),
       .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
       .ls_valid_o(ls_valid),
-      .ram_stall_valid_mem_o(ram_stall_valid_mem)
+      .ram_stall_valid_mem_o(ram_stall_valid_mem),
+
+  // ============ MMU 接口 (SV32) ============
+  // CSR 到 MMU 配置
+  .mmu_enable_i(csr_enable_sv32),           // 统一命名
+  .mmu_satp_ppn_i(csr_satp_ppn),
+  .mmu_satp_asid_i(csr_asid),
+  .mmu_mxr_i(csr_mxr),
+  .mmu_sum_i(csr_sum),
+  
+  // MMU 请求接口
+  .mmu_req_vaddr_o(dmmu_req_vaddr),         // 统一命名
+  .mmu_req_valid_o(dmmu_req_ready),
+  .mmu_is_store_o(dmmu_is_store),
+  
+  // MMU 响应接口
+  .mmu_resp_paddr_i(dmmu_resp_paddr),       // 统一命名
+  .mmu_resp_valid_i(dmmu_resp_valid),
+  .mmu_page_fault_i(dmmu_resp_page_fault),
+  
+  // 内存接口（用于页表遍历）
+  .mmu_mem_req_o(dmmu_mem_req),             // 统一命名
+  .mmu_mem_addr_o(dmmu_mem_addr),
+  .mmu_mem_rdata_i(dmmu_mem_rdata),
+  .mmu_mem_rvalid_i(dmmu_mem_rvalid),
+  
+  // 控制信号
+  .mmu_flush_i(mmu_flush)
   );
+
+
+  // memory lsu (
+  //     .clk            (clk),
+  //     .rst            (rst),
+  //     /* from ex/mem */
+  //     .inst_addr_i    (pc_ex_mem),
+  //     .inst_data_i    (inst_data_ex_mem),
+  //     .rd_idx_i       (rd_idx_ex_mem),
+  //     // input  [         `INST_LEN-1:0] rs1_data_i,
+  //     .rs2_data_i     (rs2_data_ex_mem),
+  //     // input  [      `IMM_LEN-1:0] imm_data_i,
+  //     .mem_op_i       (mem_op_ex_mem),
+  //     // 访存操作码
+  //     .exc_alu_data_i (alu_data_ex_mem),
+  //     //csr
+  //     .csr_addr_i(csr_addr_ex_mem),
+  //     .exc_csr_data_i(csr_writedata_ex_mem),
+  //     .exc_csr_valid_i(csr_writevalid_ex_mem),
+
+  //     .csr_addr_o(csr_addr_mem),  // csr 写回地址
+  //     .exc_csr_data_o(exc_csr_data_mem),  // csr 写回数据
+  //     .exc_csr_valid_o(exc_csr_valid_mem),  // 写回数据有效位
+
+  //    /* clint 接口 */
+  //     .clint_addr_o(clint_addr),
+  //     .clint_valid_o(clint_valid),
+  //     .clint_write_valid_o(clint_write_valid),
+  //     .clint_wdata_o(clint_wdata),
+  //     .clint_rdata_i(clint_rdata),
+
+  //     // TARP 总线
+  //     .trap_bus_i     (trap_bus_ex_mem),
+
+  //     /* to mem/wb */
+  //     .inst_addr_o(pc_mem),
+  //     .inst_data_o(inst_data_mem),
+  //     .mem_data_o(mem_data_mem),  // gpr写回数据，同时送回 id 阶段（bypass）
+  //     .rd_idx_o(rd_idx_mem),  // gpr 写回地址
+  //     .trap_bus_o(trap_bus_mem),  /* TARP 总线 */
+
+  //     // dcache 接口
+  //     .mem_addr_o(mem_addr),
+  //     .mem_addr_valid_o(mem_addr_valid),
+  //     .mem_mask_o(mem_mask),
+  //     .mem_write_valid_o(mem_write_valid),
+  //     .mem_data_ready_i(mem_data_ready),
+  //     .mem_rdata_i(mem_rdata),
+  //     .mem_wdata_o(mem_wdata),
+  //     .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
+  //     .ls_valid_o(ls_valid),
+  //     .ram_stall_valid_mem_o(ram_stall_valid_mem)
+  // );
 
 /**********************  mem/wb 阶段 **************************/
 
@@ -828,7 +970,14 @@ CSRs rv32_csr_regfile(
     .io_sie(csr_sie),
     .io_sip(csr_sip),
     .io_satp(csr_satp),
-    .io_privilege(csr_privilege)
+    .io_privilege(csr_privilege),
+    
+    // 新增 MMU 控制信号
+    .io_mxr(csr_mxr),
+    .io_sum(csr_sum),
+    .io_tvm(csr_tvm),
+    .io_tw(csr_tw),
+    .io_tsr(csr_tsr)
 );
 
 
@@ -1031,15 +1180,6 @@ wire [7:0] icache_arb_rlen;
   wire [`XLEN-1:0] ram_wdata_dcache;  // 写入的数据
   wire [3:0] ram_wsize_dcache;
   wire [7:0] ram_wlen_dcache;
-
-
- 
-
-
-
-
-
-
 
 
 
@@ -1479,5 +1619,31 @@ wire [7:0] dcache_arb_rlen;
       .io_sram7_rdata(io_sram7_rdata)
 );
 `endif 
+
+// ============ CSR 到 MMU 配置转换 (SV32) ============
+// 从 CSR 寄存器提取 MMU 配置信号 (SV32)
+assign csr_satp_ppn = csr_satp[21:0];        // SV32 的 PPN 是 22 位
+assign csr_asid = csr_satp[30:22];           // SV32 的 ASID 是 9 位
+assign csr_enable_sv32 = (csr_satp[31] == 1'b1) && (csr_privilege != 2'b11); // 非 M 模式且 SATP.MODE=SV32
+assign csr_enable_lsvm = csr_enable_sv32;    // 简化处理
+
+assign mmu_flush = flush_clint[`CTRLBUS_IF_ID] || flush_clint[`CTRLBUS_ID_EX]; // 刷新时同时刷新 MMU
+
+// ============ MMU 内存请求仲裁器 ============
+wire mmu_arb_req;
+wire [31:0] mmu_arb_addr;
+wire mmu_arb_rvalid;
+wire [31:0] mmu_arb_rdata;
+
+// 简单的 MMU 内存请求仲裁
+assign mmu_arb_req = immu_mem_req | dmmu_mem_req;
+assign mmu_arb_addr = immu_mem_req ? immu_mem_addr : dmmu_mem_addr;
+
+// 响应分发
+assign immu_mem_rvalid = mmu_arb_rvalid && immu_mem_req;
+assign dmmu_mem_rvalid = mmu_arb_rvalid && dmmu_mem_req;
+assign immu_mem_rdata = mmu_arb_rdata;
+assign dmmu_mem_rdata = mmu_arb_rdata;
+
 
 endmodule
