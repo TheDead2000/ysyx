@@ -173,6 +173,7 @@ module ifu (
     wire [31:0] _inst_data = if_rdata_i;
     
     // 访存暂停逻辑
+    // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
     assign inst_data_o = _inst_data;
