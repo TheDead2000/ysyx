@@ -8,4 +8,4 @@
 #define CONFIG_ITRACE  1 
 #define CONFIG_ITRACE_COND 1 
 #define CONFIG_WATCHPOINT  0 
-// #define CONFIG_WAVE_FORM 0
+#define CONFIG_WAVE_FORM 1
