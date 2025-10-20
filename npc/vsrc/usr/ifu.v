@@ -200,11 +200,6 @@ module ifu (
     end
     assign trap_bus_o = _if_trap_bus;
     
-    // ============ 分支预测接口（保持不变） ============
-    assign bpu_pc_o = inst_addr_i;
-    assign bpu_pc_valid_o = 1'b1;
-    assign history_o = ex_history_i;
-
 endmodule
 
 
