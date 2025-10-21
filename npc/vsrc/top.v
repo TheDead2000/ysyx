@@ -326,7 +326,6 @@ idu idu (
 
     .csr_op_o(csr_op_id),
 
-
     .inst_addr_o(inst_addr_id),
     .inst_data_o(inst_data_id),
     // 请求暂停流水线 to ctrl
@@ -550,6 +549,13 @@ exu exu (
     /************************to id *************************************/
     .exc_op_o       (exc_op_ex),
 
+    .amo_op_o(amo_op_ex),
+    .amo_valid_o(amo_valid_ex),
+    .amo_rs2_data_o(amo_rs2_data_ex),
+    .amo_result_i(amo_result_mem),
+    .amo_done_i(amo_done_mem),
+
+
     // 请求暂停流水线
     // .ram_stall_valid_mem_i(ram_stall_valid_mem),  // mem 阶段访存暂停
     .jump_hazard_valid_o(jump_hazard_valid),
@@ -557,6 +563,13 @@ exu exu (
     /* TARP 总线 */
     .trap_bus_o         (trap_bus_ex)
 );
+
+  wire [         `AMOOP_LEN-1:0 ] amo_op_ex;          // 原子操作码
+  wire                               amo_valid_ex;    // 原子操作有效
+  wire [           `INST_LEN-1:0 ] amo_rs2_data_ex;   // 原子操作的rs2数据
+
+  wire [           `INST_LEN-1:0 ] amo_result_mem;    // 原子操作结果
+  wire                               amo_done_mem;    // 原子操作完成
 
 
   wire [             `INST_LEN-1:0]  pc_ex_mem;
@@ -575,6 +588,10 @@ exu exu (
   wire csr_writevalid_ex_mem;
   wire [`CSR_REG_ADDRWIDTH-1:0] csr_addr_ex_mem;
 
+  wire [`AMOOP_LEN-1:0] amo_op_ex_mem;
+  wire amo_valid_ex_mem;
+  wire [`XLEN-1:0] amo_rs2_data_ex_mem;
+
   ex_mem ex2mem(
       .clk                    (clk),
       .rst                    (rst),
@@ -589,6 +606,14 @@ exu exu (
       .alu_data_ex_mem_i      (exc_alu_data_ex),
       .pc_op_ex_mem_i         (pc_op_ex),
       .mem_op_ex_mem_i        (mem_op_ex),
+
+      .amo_op_ex_mem_i(amo_op_ex),
+      .amo_valid_ex_mem_i(amo_valid_ex),
+      .amo_rs2_data_ex_mem_i(amo_rs2_data_ex),
+
+      .amo_op_ex_mem_o(amo_op_ex_mem),
+      .amo_valid_ex_mem_o(amo_valid_ex_mem),
+      .amo_rs2_data_ex_mem_o(amo_rs2_data_ex_mem),
 
       .csr_writedata_ex_mem_i (exc_csr_data_ex),
       .csr_writevalid_ex_mem_i(exc_csr_valid_ex),
@@ -697,6 +722,14 @@ lsu lsu (
       .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
+
+
+    .amo_op_i(amo_op_ex_mem),
+    .amo_valid_i(amo_valid_ex_mem),
+    .amo_rs2_data_i(amo_rs2_data_ex_mem),
+    .amo_result_o(amo_result_mem),
+    .amo_done_o(amo_done_mem),
+
 
   // ============ MMU 接口 (SV32) ============
   // CSR 到 MMU 配置

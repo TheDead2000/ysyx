@@ -78,7 +78,15 @@ module lsu (
     input wire mmu_mem_rvalid_i,         // 内存读数据有效
     
     // 控制信号
-    input wire mmu_flush_i              // 刷新 MMU
+    input wire mmu_flush_i,              // 刷新 MMU
+
+    // ============ 原子操作信号 ============
+    input  [`AMOOP_LEN-1:0] amo_op_i,         // 原子操作码
+    input                   amo_valid_i,      // 原子操作有效
+    input  [31:0]           amo_rs2_data_i,   // 原子操作的rs2数据
+    output [31:0]           amo_result_o,     // 原子操作结果
+    output                  amo_done_o       // 原子操作完成
+
 );
 
     // ============ 原有 LSU 逻辑 ============
@@ -102,6 +110,35 @@ module lsu (
     wire _isload = (_memop_lb |_memop_lbu |_memop_lh|_memop_lhu| _memop_lw);
     wire _isstore = (_memop_sb  | _memop_sh | _memop_sw);
 
+    // 原子操作识别
+    wire _memop_lr_w = (mem_op_i == `MEMOP_LR_W);
+    wire _memop_sc_w = (mem_op_i == `MEMOP_SC_W);
+    wire _memop_amo = (mem_op_i == `MEMOP_AMO);
+
+    // 原子操作类型细分
+    wire _amo_lr_w = _memop_lr_w;
+    wire _amo_sc_w = _memop_sc_w;
+    wire _amo_swap = _memop_amo & (amo_op_i == `AMOOP_SWAP);
+    wire _amo_add  = _memop_amo & (amo_op_i == `AMOOP_ADD);
+    wire _amo_xor  = _memop_amo & (amo_op_i == `AMOOP_XOR);
+    wire _amo_and  = _memop_amo & (amo_op_i == `AMOOP_AND);
+    wire _amo_or   = _memop_amo & (amo_op_i == `AMOOP_OR);
+    wire _amo_min  = _memop_amo & (amo_op_i == `AMOOP_MIN);
+    wire _amo_max  = _memop_amo & (amo_op_i == `AMOOP_MAX);
+    wire _amo_minu = _memop_amo & (amo_op_i == `AMOOP_MINU);
+    wire _amo_maxu = _memop_amo & (amo_op_i == `AMOOP_MAXU);
+    
+    // 原子操作也属于加载和存储
+    wire _is_amo_load = _memop_lr_w;
+    wire _is_amo_store = _memop_sc_w;
+    wire _is_amo = _memop_lr_w | _memop_sc_w ;
+    
+
+
+
+
+
+
     // ============ MMU 实例化 ============
     wire mmu_resp_valid;
     wire mmu_page_fault;
@@ -115,8 +152,8 @@ module lsu (
         
         // 请求接口
         .mmu_vaddr_i(exc_alu_data_i),    // 使用 ALU 计算的地址
-        .mmu_req_valid_i(_isload | _isstore),
-        .mmu_is_store_i(_isstore),
+        .mmu_req_valid_i(_isload | _isstore| _is_amo),
+        .mmu_is_store_i(_isstore| _is_amo_store),
         .mmu_is_inst_i(1'b0),            // 数据访问
         
         // 响应接口
@@ -143,16 +180,133 @@ module lsu (
     
     // ============ MMU 接口连接 - 统一命名 ============
     assign mmu_req_vaddr_o = exc_alu_data_i;
-    assign mmu_req_valid_o = (_isload | _isstore);
-    assign mmu_is_store_o = _isstore;
+    assign mmu_req_valid_o = (_isload | _isstore | _is_amo);
+    assign mmu_is_store_o = _isstore | _is_amo_store;
     
     assign mmu_mem_req_o = mmu_mem_req;
     assign mmu_mem_addr_o = mmu_mem_addr;
     
     // ============ 地址选择逻辑 ============
-    wire use_mmu = mmu_enable_i && (_isload | _isstore);
+    wire use_mmu = mmu_enable_i && (_isload | _isstore | _is_amo) ;
     wire [31:0] final_addr = use_mmu ? mmu_resp_paddr_i : exc_alu_data_i;
     
+  // 原子操作状态
+    localparam [1:0] AMO_IDLE = 2'b00;
+    localparam [1:0] AMO_LOAD = 2'b01;
+    localparam [1:0] AMO_STORE = 2'b10;
+    
+    reg [1:0] amo_state;
+    reg [31:0] amo_result;
+    reg amo_done;
+
+    reg [31:0] loaded_value;       // 原子操作加载的值
+    reg        reserved_valid;     // 保留地址有效标志
+    reg [31:0] reserved_addr;      // LR保留的地址
+
+    // 原子操作计算
+    reg [31:0] amo_calc_result;
+    
+    // AMO操作计算
+    always @(*) begin
+        case (amo_op_i)
+            `AMOOP_SWAP: amo_calc_result = amo_rs2_data_i;  // 直接交换
+            `AMOOP_ADD:  amo_calc_result = loaded_value + amo_rs2_data_i;
+            `AMOOP_XOR:  amo_calc_result = loaded_value ^ amo_rs2_data_i;
+            `AMOOP_AND:  amo_calc_result = loaded_value & amo_rs2_data_i;
+            `AMOOP_OR:   amo_calc_result = loaded_value | amo_rs2_data_i;
+            `AMOOP_MIN:  amo_calc_result = ($signed(loaded_value) < $signed(amo_rs2_data_i)) ? loaded_value : amo_rs2_data_i;
+            `AMOOP_MAX:  amo_calc_result = ($signed(loaded_value) > $signed(amo_rs2_data_i)) ? loaded_value : amo_rs2_data_i;
+            `AMOOP_MINU: amo_calc_result = (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
+            `AMOOP_MAXU: amo_calc_result = (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
+            default:     amo_calc_result = amo_rs2_data_i;
+        endcase
+    end
+
+// SC指令成功条件：地址匹配且保留有效
+    wire sc_success = _amo_sc_w & reserved_valid & (reserved_addr == final_addr);
+    
+    /* verilator lint_off CASEINCOMPLETE */
+    // 原子操作状态机
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            amo_state <= AMO_IDLE;
+            reserved_valid <= 1'b0;
+            reserved_addr <= 32'b0;
+            loaded_value <= 32'b0;
+            amo_result <= 32'b0;
+            amo_done <= 1'b0;
+        end else begin
+            amo_done <= 1'b0;
+            
+            case (amo_state)
+                AMO_IDLE: begin
+                    if (amo_valid_i) begin
+                        if (_amo_lr_w) begin
+                            // LR.W: 加载并设置保留
+                            amo_state <= AMO_LOAD;
+                            reserved_addr <= final_addr;
+                            reserved_valid <= 1'b1;
+                        end else if (_amo_sc_w) begin
+                            // SC.W: 检查保留并条件存储
+                            amo_state <= AMO_STORE;
+                            amo_result <= sc_success ? 32'b0 : 32'b1;  // 成功返回0，失败返回1
+                        end else if (_memop_amo) begin
+                            // AMO操作: 先加载
+                            amo_state <= AMO_LOAD;
+                        end
+                    end
+                end
+                
+                AMO_LOAD: begin
+                    if (mem_data_ready_i) begin
+                        loaded_value <= mem_rdata_i;
+                        if (_amo_lr_w) begin
+                            // LR.W完成
+                            amo_result <= mem_rdata_i;
+                            amo_done <= 1'b1;
+                            amo_state <= AMO_IDLE;
+                        end else if (_memop_amo) begin
+                            // AMO操作加载完成，进入存储阶段
+                            amo_state <= AMO_STORE;
+                        end
+                    end
+                end
+                
+                AMO_STORE: begin
+                    if (mem_data_ready_i) begin
+                        if (_amo_sc_w) begin
+                            // SC.W完成，无论成功失败都清除保留
+                            reserved_valid <= 1'b0;
+                            amo_done <= 1'b1;
+                            amo_state <= AMO_IDLE;
+                        end else if (_memop_amo) begin
+                            // AMO操作存储完成
+                            amo_result <= loaded_value;  // 返回原始值
+                             reserved_valid <= 1'b0;      // 清除保留
+                            amo_done <= 1'b1;
+                            amo_state <= AMO_IDLE;
+                        end
+                    end
+                end
+            endcase
+            
+            // 清除保留的条件（除了SC成功存储外）
+            if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
+                // 任何非SC的存储操作都会清除保留
+                reserved_valid <= 1'b0;
+            end
+        end
+    end
+    
+    assign amo_result_o = amo_result;
+    assign amo_done_o = amo_done;
+
+
+
+
+
+
+
     // ============ 原有访存逻辑（使用 MMU 翻译后的地址） ============
     wire ls1byte = _memop_lb | _memop_lbu | _memop_sb;
     wire ls2byte = _memop_lh | _memop_lhu | _memop_sh;
@@ -175,43 +329,81 @@ module lsu (
                       (final_addr == `MTIMECMP_ADDR_LOW)  |
                       (final_addr == `MTIMECMP_ADDR_HIGH);
 
-    wire clint_write_valid = _isstore;
+     wire clint_write_valid = _isstore & ~_is_amo;  // 原子操作不支持CLINT
     wire [31:0] clint_wdata = rs2_data_i;
 
     assign clint_addr_o = clint_addr;
-    assign clint_valid_o = clint_valid;
+    assign clint_valid_o = clint_valid & ~_is_amo;  // 原子操作不支持CLINT
     assign clint_write_valid_o = clint_write_valid;
     assign clint_wdata_o = clint_wdata;
 
     // dcache 接口
-    wire ls_valid = _isload | _isstore;
+    wire ls_valid = _isload | _isstore | _is_amo;
+    wire [31:0] store_data;
+    assign store_data = _is_amo_store ? 
+                       (_amo_sc_w ? rs2_data_i : amo_calc_result) :  // SC或AMO存储
+                       rs2_data_i;                                   // 普通存储
+    
     assign mem_addr_o = final_addr;
     assign mem_mask_o = mem_write_valid_o ? wmask : rmask;
     
-    // 写数据生成
+    // 写数据生成（原子操作总是字对齐）
     assign mem_wdata_o = 
-        (addr_last2 == 2'b00) ? rs2_data_i :
-        (addr_last2 == 2'b01) ? {rs2_data_i[23:0], 8'b0} :
-        (addr_last2 == 2'b10) ? {rs2_data_i[15:0], 16'b0} :
-        {rs2_data_i[7:0], 24'b0};
+        _is_amo ? store_data : (  // 原子操作直接使用计算后的数据
+            (addr_last2 == 2'b00) ? store_data :
+            (addr_last2 == 2'b01) ? {store_data[23:0], 8'b0} :
+            (addr_last2 == 2'b10) ? {store_data[15:0], 16'b0} :
+            {store_data[7:0], 24'b0}
+        );
 
-    assign mem_addr_valid_o = ls_valid & (~mem_data_ready_i) & (~clint_valid);
-    assign mem_write_valid_o = _isstore & mem_addr_valid_o;
+
+     wire load_valid = (_isload | _amo_lr_w | (_memop_amo & (amo_state == AMO_LOAD)));
+    wire store_valid = (_isstore | _amo_sc_w | (_memop_amo & (amo_state == AMO_STORE)));
+
+    assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i);
+    assign mem_write_valid_o = store_valid & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
     assign mem_size_o = ls_size;
     
+
+
     // 读数据处理
     wire [31:0] mem_rdata = mem_data_ready_i ? mem_rdata_i : 32'b0;
-    assign mem_data_o = 
-        ({32{_isload}} & mem_rdata) |
-        ({32{_memop_none}} & exc_alu_data_i);
+    
+        // 输出数据选择
+    reg [31:0] mem_data_out;
+    always @(*) begin
+        if (_is_amo) begin
+            mem_data_out = amo_result;  // 原子操作结果
+        end else if (_isload) begin
+            // 普通加载操作
+            case (mem_op_i)
+                `MEMOP_LB:  mem_data_out = {{24{mem_rdata[7]}}, mem_rdata[7:0]};
+                `MEMOP_LBU: mem_data_out = {24'b0, mem_rdata[7:0]};
+                `MEMOP_LH:  mem_data_out = {{16{mem_rdata[15]}}, mem_rdata[15:0]};
+                `MEMOP_LHU: mem_data_out = {16'b0, mem_rdata[15:0]};
+                `MEMOP_LW:  mem_data_out = mem_rdata;
+                default:    mem_data_out = mem_rdata;
+            endcase
+        end else begin
+            mem_data_out = exc_alu_data_i;  // 非访存指令
+        end
+    end
+    
+    assign mem_data_o = mem_data_out;
+    
+    // assign mem_data_o = 
+    //     ({32{_isload}} & mem_rdata) |
+    //     ({32{_memop_none}} & exc_alu_data_i);
 
-    /* stall_req */
-    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i);
+     /* stall_req */
+    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i) | 
+                                  (amo_valid_i & ~amo_done);  // 原子操作未完成时暂停
 
-    // ============ TRAP 处理（增加页错误） ============
-    wire _load_page_fault = mmu_page_fault_i && _isload && mmu_resp_valid_i;
-    wire _store_page_fault = mmu_page_fault_i && _isstore && mmu_resp_valid_i;
+    // ============ TRAP 处理（增加原子操作异常） ============
+    wire _load_page_fault = mmu_page_fault_i && (_isload | _amo_lr_w) && mmu_resp_valid_i;
+    wire _store_page_fault = mmu_page_fault_i && (_isstore | _is_amo_store) && mmu_resp_valid_i;
+    wire _amo_misaligned = _is_amo && (final_addr[1:0] != 2'b00);  // 原子操作必须字对齐
 
     reg [`TRAP_BUS] _mem_trap_bus;
     integer i;
@@ -221,6 +413,8 @@ module lsu (
                 _mem_trap_bus[i] = _load_page_fault;
             end else if (i == `TRAP_STORE_PAGE_FAULT) begin
                 _mem_trap_bus[i] = _store_page_fault;
+            end else if (i == `TRAP_AMO_MISALIGN) begin
+                _mem_trap_bus[i] = _amo_misaligned;
             end else begin
                 _mem_trap_bus[i] = trap_bus_i[i];
             end

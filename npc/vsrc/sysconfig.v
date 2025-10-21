@@ -31,13 +31,15 @@
 `define TRAP_LOAD_PAGE_FAULT 13
 `define TRAP_RESERVED1 14
 `define TRAP_STORE_PAGE_FAULT 15
+`define TRAP_AMO_MISALIGN 16
+`define TRAP_AMO_ACCESS 17
 
 
-`define TRAP_MRET 16 // 把 MRET 当成 trap
-`define TRAP_SRET 17
-`define TRAP_EBREAK 18 // 把 EBREAK 当成 trap
-`define TRAP_FENCEI 19 // 把 fencei 当成 trap,复用线路
-`define TRAP_LEN 20
+`define TRAP_MRET 18 // 把 MRET 当成 trap
+`define TRAP_SRET 19
+`define TRAP_EBREAK 20 // 把 EBREAK 当成 trap
+`define TRAP_FENCEI 21 // 把 fencei 当成 trap,复用线路
+`define TRAP_LEN 22
 `define TRAP_BUS `TRAP_LEN-1:0
 
 
@@ -50,7 +52,7 @@
 
 
 /* ALU 操作码 */
-`define ALUOP_LEN 25
+`define ALUOP_LEN 32
 
 `define ALUOP_NONE 'd0
 `define ALUOP_ADD 'd1
@@ -81,9 +83,12 @@
 `define ALUOP_DIVU 'd22
 `define ALUOP_REM 'd23
 `define ALUOP_REMU 'd24
+`define ALUOP_AMOSWAP 'd25
+`define ALUOP_AMOADD 'd26
+
 
 /* exc 操作码 */
-`define EXCOP_LEN 13
+`define EXCOP_LEN 14
 
 `define EXCOP_NONE 'd0
 `define EXCOP_AUIPC 'd1
@@ -98,7 +103,7 @@
 `define EXCOP_OPREG 'd10
 `define EXCOP_OP32 'd11
 `define EXCOP_CSR 'd12
-
+`define EXCOP_AMO 'd13
 
 /* mem操作码 */
 `define MEMOP_LEN 4
@@ -115,6 +120,26 @@
 `define MEMOP_SB `MEMOP_LEN'd6
 `define MEMOP_SH `MEMOP_LEN'd7
 `define MEMOP_SW `MEMOP_LEN'd8
+`define MEMOP_LR_W `MEMOP_LEN'd9
+`define MEMOP_SC_W `MEMOP_LEN'd10
+`define MEMOP_AMO `MEMOP_LEN'd11
+
+`define AMOOP_LEN 11
+`define AMOOP_LR  `AMOOP_LEN'd0
+`define AMOOP_SC  `AMOOP_LEN'd1
+`define AMOOP_SWAP `AMOOP_LEN'd2
+`define AMOOP_XOR `AMOOP_LEN'd3
+`define AMOOP_AND `AMOOP_LEN'd4
+`define AMOOP_OR  `AMOOP_LEN'd5
+`define AMOOP_MIN `AMOOP_LEN'd6
+`define AMOOP_MAX `AMOOP_LEN'd7
+`define AMOOP_MINU `AMOOP_LEN'd8
+`define AMOOP_MAXU `AMOOP_LEN'd9
+`define AMOOP_ADD `AMOOP_LEN'd10
+
+
+
+
 
 /* PC操作码 */
 `define PCOP_LEN 4

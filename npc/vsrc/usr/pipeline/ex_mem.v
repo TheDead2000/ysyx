@@ -17,6 +17,16 @@ module ex_mem (
     input [         `PCOP_LEN-1:0] pc_op_ex_mem_i,
     input [        `MEMOP_LEN-1:0] mem_op_ex_mem_i,
 
+
+    input      [        `AMOOP_LEN-1:0] amo_op_ex_mem_i,         // 原子操作码
+    input                              amo_valid_ex_mem_i,       // 原子操作有效
+    input      [          `INST_LEN-1:0] amo_rs2_data_ex_mem_i,   // 原子操作的rs2数据
+
+    output      [        `AMOOP_LEN-1:0] amo_op_ex_mem_o,         // 原子操作码
+    output                              amo_valid_ex_mem_o,       // 原子操作有效
+    output      [          `INST_LEN-1:0] amo_rs2_data_ex_mem_o,   // 原子操作的rs2数据
+
+
     /* TARP 总线 */
     input [`TRAP_BUS] trap_bus_ex_mem_i,
 
@@ -62,6 +72,52 @@ module ex_mem (
       .wen (reg_wen)
   );
   assign inst_addr_ex_mem_o = _pc_ex_mem_q;
+
+
+  wire [`AMOOP_LEN-1:0] _amo_op_ex_mem_i =  amo_op_ex_mem_i;
+  reg [`AMOOP_LEN-1:0] _amo_op_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (`AMOOP_LEN),
+      .RESET_VAL(`AMOOP_LEN'b0)
+  ) u_amo_op_ex_mem_i (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_amo_op_ex_mem_i),
+      .dout(_amo_op_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign amo_op_ex_mem_o = _amo_op_ex_mem_q;
+
+
+  wire _amo_valid_ex_mem_i =  amo_valid_ex_mem_i;
+  reg  _amo_valid_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(1'b0)
+  ) u_amo_valid_ex_mem_i (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_amo_valid_ex_mem_i),
+      .dout(_amo_valid_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign amo_valid_ex_mem_o = _amo_valid_ex_mem_q;
+
+
+  wire [`INST_LEN-1:0] _amo_rs2_data_ex_mem_i =  amo_rs2_data_ex_mem_i;
+  reg [`INST_LEN-1:0] _amo_rs2_data_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (`INST_LEN),
+      .RESET_VAL(`INST_LEN'b0)
+  ) u_amo_rs2_data_ex_mem_i (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_amo_rs2_data_ex_mem_i),
+      .dout(_amo_rs2_data_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign amo_rs2_data_ex_mem_o = _amo_rs2_data_ex_mem_q;
+
 
 
   /* inst_data 寄存器 */

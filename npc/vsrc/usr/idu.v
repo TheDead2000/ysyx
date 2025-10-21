@@ -67,6 +67,8 @@ localparam [31:0] MASK_OPCODE = 32'b0000000_00000_00000_000_00000_1111111;
 localparam [31:0] MASK_FUNC3  = 32'b0000000_00000_00000_111_00000_1111111;
 localparam [31:0] MASK_FUNC7  = 32'b1111111_00000_00000_111_00000_1111111;
 localparam [31:0] MASK_ALL    = 32'hFFFFFFFF;
+// 添加原子指令掩码（关注func5和opcode）
+localparam [31:0] MASK_AMO = 32'b11111_00_00000_00000_111_00000_1111111;
 
 // rv32 I
 localparam [31:0] LUI_VAL    = 32'b0000000_00000_00000_000_00000_0110111;
@@ -133,6 +135,18 @@ localparam [31:0] DIV_VAL =    32'b0000001_00000_00000_100_00000_0110011;
 localparam [31:0] DIVU_VAL =    32'b0000001_00000_00000_101_00000_0110011;
 localparam [31:0] REM_VAL =    32'b0000001_00000_00000_110_00000_0110011;
 localparam [31:0] REMU_VAL =    32'b0000001_00000_00000_111_00000_0110011;
+/******************RV32A*****************/
+localparam [31:0] LR_W_VAL      = 32'b00010_00_00000_00000_010_00000_0101111;
+localparam [31:0] SC_W_VAL      = 32'b00011_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOSWAP_W_VAL = 32'b00001_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOADD_W_VAL  = 32'b00000_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOXOR_W_VAL  = 32'b00100_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOAND_W_VAL  = 32'b01100_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOOR_W_VAL   = 32'b01000_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOMIN_W_VAL  = 32'b10000_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOMAX_W_VAL  = 32'b10100_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOMINU_W_VAL = 32'b11000_00_00000_00000_010_00000_0101111;
+localparam [31:0] AMOMAXU_W_VAL = 32'b11100_00_00000_00000_010_00000_0101111;
 
   assign inst_addr_o = inst_addr_i;
   assign inst_data_o = inst_data_i;
@@ -224,6 +238,19 @@ wire _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
 wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
 wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
 wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
+//RV32A
+wire _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
+wire _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
+wire _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
+wire _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
+wire _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
+wire _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
+wire _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
+wire _inst_amomin_w  = match(_inst, MASK_AMO, AMOMIN_W_VAL);
+wire _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
+wire _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
+wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
+
 
    wire _type_lui = _inst_lui;
    wire _type_auipc = _inst_auipc;
@@ -244,6 +271,10 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
                       _inst_csrrw | _inst_csrrs | _inst_csrrc |
                       _inst_csrrwi | _inst_csrrsi | _inst_csrrci;
   
+  wire _type_amo = _inst_lr_w | _inst_sc_w | _inst_amoswap_w | _inst_amoadd_w |
+                 _inst_amoxor_w | _inst_amoand_w | _inst_amoor_w |
+                 _inst_amomin_w | _inst_amomax_w | _inst_amominu_w | _inst_amomaxu_w;
+
 
   wire _R_type = _type_Reg;
   wire _I_type = _type_load | _type_Imm_add | _type_jalr | _type_system;
@@ -258,15 +289,15 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
   wire _csr_imm_valid = (_inst_csrrci | _inst_csrrsi | _inst_csrrwi);
 
   // I 型指令中, CSR 立即数占了 rs1 的位置
-  wire _isNeed_rs1 = (_R_type | _I_type | _S_type | _B_type) & (~_csr_imm_valid);
-  wire _isNeed_rs2 = (_R_type | _S_type | _B_type);
-  wire _isNeed_rd = (_R_type | _I_type | _U_type | _J_type);
+  wire _isNeed_rs1 = (_R_type | _I_type | _S_type | _B_type | _type_amo) & (~_csr_imm_valid);
+  wire _isNeed_rs2 = (_R_type | _S_type | _B_type | _type_amo) & (~_inst_lr_w); // LR.W不需要rs2
+  wire _isNeed_rd = (_R_type | _I_type | _U_type | _J_type | _type_amo);
   wire _isNeed_csr = (_inst_csrrc|_inst_csrrci|_inst_csrrs|_inst_csrrsi|_inst_csrrw|_inst_csrrwi);
   
   wire [`REG_ADDRWIDTH-1:0] _rs1_idx = (_isNeed_rs1) ? _rs1 : 5'b0;
   wire [`REG_ADDRWIDTH-1:0] _rs2_idx = (_isNeed_rs2) ? _rs2 : 5'b0;
   wire [`REG_ADDRWIDTH-1:0] _rd_idx = (_isNeed_rd) ? _rd : 5'b0;
- wire [`CSR_REG_ADDRWIDTH-1:0] _csr_idx = (_isNeed_csr) ? _csr : `CSR_REG_ADDRWIDTH'b0;
+  wire [`CSR_REG_ADDRWIDTH-1:0] _csr_idx = (_isNeed_csr) ? _csr : `CSR_REG_ADDRWIDTH'b0;
 
   /* assign 实现多路选择器：根据指令类型选立即数 */
   wire [`IMM_LEN-1:0] _imm_data = ({`IMM_LEN{_I_type}}&_immI) |
@@ -385,8 +416,16 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
   wire _alu_divu = _inst_divu;
   wire _alu_rem = _inst_rem;
   wire _alu_remu = _inst_remu;
-
-
+//原子指令
+wire _alu_amoswap = _inst_amoswap_w;
+wire _alu_amoadd  = _inst_amoadd_w;
+wire _alu_amoxor  = _inst_amoxor_w;
+wire _alu_amoand  = _inst_amoand_w;
+wire _alu_amoor   = _inst_amoor_w;
+wire _alu_amomin  = _inst_amomin_w;
+wire _alu_amomax  = _inst_amomax_w;
+wire _alu_amominu = _inst_amominu_w;
+wire _alu_amomaxu = _inst_amomaxu_w;
  // // ALU 计算结果是否需要符号扩展,放在 execute 下实现
   // wire _alu_sext = _type_op_imm_32 | _type_op_32;
   //多路选择器
@@ -394,20 +433,20 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
   assign _alu_op[`ALUOP_NONE] = 'b0;  // TODO 以后处理
   assign _alu_op[`ALUOP_ADD] = _alu_add;
   assign _alu_op[`ALUOP_SUB] = _alu_sub;
-  assign _alu_op[`ALUOP_XOR] = _alu_xor;
-  assign _alu_op[`ALUOP_OR] = _alu_or;
-  assign _alu_op[`ALUOP_AND] = _alu_and;
+  assign _alu_op[`ALUOP_XOR] = _alu_xor | _alu_amoxor;
+  assign _alu_op[`ALUOP_OR] = _alu_or | _alu_amoor;
+  assign _alu_op[`ALUOP_AND] = _alu_and | _alu_amoand;
   assign _alu_op[`ALUOP_SLL] = _alu_sll;
   assign _alu_op[`ALUOP_SRL] = _alu_srl;
   assign _alu_op[`ALUOP_SRA] = _alu_sra;
-  assign _alu_op[`ALUOP_SLT] = _alu_slt;
-  assign _alu_op[`ALUOP_SLTU] = _alu_sltu;
+  assign _alu_op[`ALUOP_SLT] = _alu_slt | _alu_amomin;
+  assign _alu_op[`ALUOP_SLTU] = _alu_sltu | _alu_amominu;
   assign _alu_op[`ALUOP_BEQ] = _alu_beq;
   assign _alu_op[`ALUOP_BNE] = _alu_bne;
   assign _alu_op[`ALUOP_BLT] = _alu_blt;
-  assign _alu_op[`ALUOP_BGE] = _alu_bge;
+  assign _alu_op[`ALUOP_BGE] = _alu_bge | _alu_amomax;
   assign _alu_op[`ALUOP_BLTU] = _alu_bltu;
-  assign _alu_op[`ALUOP_BGEU] = _alu_bgeu;
+  assign _alu_op[`ALUOP_BGEU] = _alu_bgeu | _alu_amomaxu;
   assign _alu_op[`ALUOP_MUL] = _alu_mul;
   assign _alu_op[`ALUOP_MULH] = _alu_mulh;
   assign _alu_op[`ALUOP_MULHSU] = _alu_mulhsu;
@@ -417,6 +456,8 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
   assign _alu_op[`ALUOP_REM] = _alu_rem;
   assign _alu_op[`ALUOP_REMU] = _alu_remu;
                                   
+assign _alu_op[`ALUOP_AMOSWAP] = _alu_amoswap;
+assign _alu_op[`ALUOP_AMOADD] = _alu_amoadd;
 
   assign alu_op_o = _alu_op;
 
@@ -433,6 +474,7 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
                                   ({`EXCOP_LEN{_type_Reg}}&`EXCOP_OPREG) |
                                   //({`EXCOP_LEN{_type_op_32}}&`EXCOP_OP32) |
                                   ({`EXCOP_LEN{_isNeed_csr}}&`EXCOP_CSR) |
+                                  ({`EXCOP_LEN{_type_amo}}&`EXCOP_AMO) |  // 添加原子操作类型
                                   ({`EXCOP_LEN{_NONE_type}} & `EXCOP_NONE);
 
   assign exc_op_o = _exc_op;
@@ -446,7 +488,10 @@ wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
                                    ({`MEMOP_LEN{_inst_lw}}&`MEMOP_LW)|
                                    ({`MEMOP_LEN{_inst_sb}}&`MEMOP_SB)|
                                    ({`MEMOP_LEN{_inst_sh}}&`MEMOP_SH)|
-                                   ({`MEMOP_LEN{_inst_sw}}&`MEMOP_SW);
+                                   ({`MEMOP_LEN{_inst_sw}}&`MEMOP_SW)|
+                                   ({`MEMOP_LEN{_inst_lr_w}}&`MEMOP_LR_W)|
+                                   ({`MEMOP_LEN{_inst_sc_w}}&`MEMOP_SC_W)|
+                                   ({`MEMOP_LEN{_type_amo & ~_inst_lr_w & ~_inst_sc_w}}&`MEMOP_AMO);
   assign mem_op_o = _mem_op;
 
   assign pc_op_o  = `PCOP_LEN'b0;

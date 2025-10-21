@@ -79,6 +79,20 @@ module exu (
     output jump_hazard_valid_o,
     output alu_mul_div_valid_o,
 
+
+/********************** to ex/mem **************************/
+output      [        `AMOOP_LEN-1:0] amo_op_o,         // 原子操作码
+output                              amo_valid_o,       // 原子操作有效
+output      [          `INST_LEN-1:0] amo_rs2_data_o,   // 原子操作的rs2数据
+
+/************************* from mem ************************/
+// 添加原子操作结果反馈
+input       [          `INST_LEN-1:0] amo_result_i,     // 原子操作结果
+input                               amo_done_i,        // 原子操作完成
+
+
+
+
     /* TARP 总线 */
     output wire [`TRAP_BUS] trap_bus_o
 );
@@ -108,6 +122,39 @@ module exu (
   wire _excop_reg = (exc_op_i == `EXCOP_OPREG);
   wire _excop_csr = (exc_op_i == `EXCOP_CSR);
   wire _excop_none = (exc_op_i == `EXCOP_NONE);
+
+  wire _excop_amo = (exc_op_i == `EXCOP_AMO);
+  wire is_amo_inst = _excop_amo;
+
+// 原子操作类型判断
+wire _amo_lr_w = (mem_op_i == `MEMOP_LR_W);
+wire _amo_sc_w = (mem_op_i == `MEMOP_SC_W);
+wire _amo_swap = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AMOSWAP];
+wire _amo_add  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AMOADD];
+wire _amo_xor  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_XOR];
+wire _amo_and  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AND];
+wire _amo_or   = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_OR];
+wire _amo_min  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_SLT];
+wire _amo_max  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_BGE];
+wire _amo_minu = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_SLTU];
+wire _amo_maxu = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_BGEU];
+
+
+wire [`AMOOP_LEN-1:0] _amo_op =    ({`AMOOP_LEN{_amo_lr_w}}&`AMOOP_LR)|
+                                   ({`AMOOP_LEN{_amo_sc_w}}&`AMOOP_SC)|
+                                   ({`AMOOP_LEN{_amo_swap}}&`AMOOP_SWAP)|
+                                   ({`AMOOP_LEN{_amo_xor}}&`AMOOP_XOR)|
+                                   ({`AMOOP_LEN{_amo_and}}&`AMOOP_AND)|
+                                   ({`AMOOP_LEN{_amo_or}}&`AMOOP_OR)|
+                                   ({`AMOOP_LEN{_amo_min}}&`AMOOP_MIN)|
+                                   ({`AMOOP_LEN{_amo_max}}&`AMOOP_MAX)|
+                                   ({`AMOOP_LEN{_amo_minu}}&`AMOOP_MINU)|
+                                   ({`AMOOP_LEN{_amo_maxu}}&`AMOOP_MAXU);
+assign amo_op_o = _amo_op;
+
+
+
+
 
   /*****************************branch 操作********************************/
   wire is_branch_inst = _excop_branch | _excop_jal | _excop_jalr;
@@ -151,12 +198,12 @@ module exu (
       2'b00; 
   // ================== PC重定向接口 ==================
   assign redirect_pc_o = redirect_pc;
-  assign redirect_pc_valid_o = bpu_pc_wrong;  // 仅当预测错误时重定向PC
+  assign redirect_pc_valid_o = bpu_pc_wrong  & ~is_amo_inst;  // 仅当预测错误时重定向PC
   
   // 跳转冒险信号（通知流水线刷新）
   assign jump_hazard_valid_o = bpu_pc_wrong;
 
-  wire _rs1_rs2 = _excop_reg | _excop_branch;
+  wire _rs1_rs2 = _excop_reg | _excop_branch | _excop_amo;
   wire _rs1_imm = _excop_imm | _excop_load | _excop_store;
   wire _pc_4 = _excop_jal | _excop_jalr;
   wire _pc_imm12 = _excop_auipc;
@@ -194,7 +241,16 @@ module exu (
 
   assign alu_mul_div_valid_o = alu_stall_req;
 
-  assign exc_alu_data_o =  _alu_out;
+wire [`INST_LEN-1:0] _exc_alu_data;
+wire _exc_alu_data = (_excop_amo & ~_amo_lr_w) ? amo_result_i : _alu_out;
+
+assign exc_alu_data_o = _exc_alu_data;
+
+// 原子操作控制信号输出
+assign amo_valid_o = is_amo_inst;
+assign amo_rs2_data_o = rs2_data_i;
+wire amo_stall_req = is_amo_inst & ~amo_done_i;
+
 
   /***************************** CSR 执行操作 **************************/
 
@@ -218,11 +274,19 @@ module exu (
 
   reg [`TRAP_BUS] _exc_trap_bus;
   integer i;
-  always @(*) begin
+always @(*) begin
     for (i = 0; i < `TRAP_LEN; i = i + 1) begin
-      _exc_trap_bus[i] = trap_bus_i[i];
+        if (i == `TRAP_AMO_MISALIGN) begin
+            // 检查原子操作地址对齐（原子操作要求字对齐）
+            _exc_trap_bus[i] = is_amo_inst & (rs1_data_i[1:0] != 2'b00);
+        end else if (i == `TRAP_AMO_ACCESS) begin
+            // 原子操作访问异常（由内存阶段设置）
+            _exc_trap_bus[i] = trap_bus_i[i];
+        end else begin
+            _exc_trap_bus[i] = trap_bus_i[i];
+        end
     end
-  end
+end
   assign trap_bus_o = _exc_trap_bus;
   
 
