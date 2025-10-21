@@ -5,7 +5,7 @@
 `define REG_NUM 32          //寄存器个数
 `define REG_ADDRWIDTH 5     //寄存器地址宽度
 // `define PC_RESET_ADDR `CPU_WIDTH'h80000000
-`define PC_RESET_ADDR `CPU_WIDTH'ha0000000
+`define PC_RESET_ADDR `CPU_WIDTH'h30000000
 `define XLEN_BUS 31:0
 
 `define INST_NOP 32'h00000013           //ADDI x0, x0, 0
