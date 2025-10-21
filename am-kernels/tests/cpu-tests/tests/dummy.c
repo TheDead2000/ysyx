@@ -10,8 +10,8 @@ void test_amoswap() {
     uint32_t new_value = 0xABCDEF00;
     uint32_t old_value;
     
-    printf("Initial memory value: 0x%08X\n", memory_value);
-    printf("New value to swap: 0x%08X\n", new_value);
+    printf("Initial memory value: 0x%x\n", memory_value);
+    printf("New value to swap: 0x%x\n", new_value);
     
     // 使用正确的地址加载方式
     __asm__ volatile (
