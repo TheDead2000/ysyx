@@ -269,7 +269,7 @@ always @(posedge clk or posedge rst) begin
             end
             
             AMO_STORE: begin
-                    $display("amocalcresult:%x,amo_rs2_data_i\n",amo_calc_result,amo_rs2_data_i);
+                    $display("amocalcresult:%x,amo_rs2_data_i:%x\n",amo_calc_result,amo_rs2_data_i);
                 if (mem_data_ready_i) begin
                     if (_amo_sc_w) begin
                         amo_result <= sc_success ? 32'b0 : 32'b1;
