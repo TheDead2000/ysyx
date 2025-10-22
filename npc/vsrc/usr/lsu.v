@@ -170,8 +170,9 @@ module lsu (
     // ============ 原子操作状态机 ============
     localparam [1:0] AMO_IDLE = 2'b00;
     localparam [1:0] AMO_LOAD = 2'b01;
-    localparam [1:0] AMO_STORE = 2'b10;
-    
+    localparam [1:0] AMO_CALC = 2'b10;
+    localparam [1:0] AMO_STORE = 2'b11;
+
     reg [1:0] amo_state;
     reg [31:0] amo_result;
     reg amo_done;
@@ -214,7 +215,7 @@ always @(posedge clk or posedge rst) begin
         amo_calc_result <= 32'b0;
     end else begin
         amo_done <= 1'b0;
-        /* verilator lint_off CASEINCOMPLETE */
+        
         case (amo_state)
             AMO_IDLE: begin
                 if (amo_valid_i) begin
@@ -236,28 +237,35 @@ always @(posedge clk or posedge rst) begin
                 if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
                     
-                    // 在加载完成后立即计算原子操作结果
-                    case (amo_op_i)
-                        `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
-                        `AMOOP_ADD:  amo_calc_result <= mem_rdata_i + amo_rs2_data_i;
-                        `AMOOP_XOR:  amo_calc_result <= mem_rdata_i ^ amo_rs2_data_i;
-                        `AMOOP_AND:  amo_calc_result <= mem_rdata_i & amo_rs2_data_i;
-                        `AMOOP_OR:   amo_calc_result <= mem_rdata_i | amo_rs2_data_i;
-                        `AMOOP_MIN:  amo_calc_result <= signed_less_than ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MINU: amo_calc_result <= (mem_rdata_i < amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MAXU: amo_calc_result <= (mem_rdata_i > amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
-                        default:     amo_calc_result <= amo_rs2_data_i;
-                    endcase
-                    
                     if (_amo_lr_w) begin
+                        // LR.W: 直接返回加载的值
                         amo_result <= mem_rdata_i;
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
                     end else if (_memop_amo) begin
-                        amo_state <= AMO_STORE;
+                        // AMO操作: 进入计算状态
+                        amo_state <= AMO_CALC;
                     end
                 end
+            end
+            
+            AMO_CALC: begin
+                // 在计算状态进行原子操作计算
+                case (amo_op_i)
+                    `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
+                    `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i;
+                    `AMOOP_XOR:  amo_calc_result <= loaded_value ^ amo_rs2_data_i;
+                    `AMOOP_AND:  amo_calc_result <= loaded_value & amo_rs2_data_i;
+                    `AMOOP_OR:   amo_calc_result <= loaded_value | amo_rs2_data_i;
+                    `AMOOP_MIN:  amo_calc_result <= signed_less_than ? loaded_value : amo_rs2_data_i;
+                    `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? loaded_value : amo_rs2_data_i;
+                    `AMOOP_MINU: amo_calc_result <= (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
+                    `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
+                    default:     amo_calc_result <= amo_rs2_data_i;
+                endcase
+                
+                // 计算完成后进入存储状态
+                amo_state <= AMO_STORE;
             end
             
             AMO_STORE: begin
@@ -283,6 +291,24 @@ always @(posedge clk or posedge rst) begin
         end
     end
 end
+
+// ============ 有符号比较逻辑 ============
+wire signed_less_than;
+wire signed_greater_than;
+
+assign signed_less_than = 
+    (loaded_value[31] & ~amo_rs2_data_i[31]) ? 1'b1 :
+    (~loaded_value[31] & amo_rs2_data_i[31]) ? 1'b0 :
+    (loaded_value[31] & amo_rs2_data_i[31]) ?
+        (loaded_value[30:0] > amo_rs2_data_i[30:0]) :
+        (loaded_value[30:0] < amo_rs2_data_i[30:0]);
+
+assign signed_greater_than = 
+    (loaded_value[31] & ~amo_rs2_data_i[31]) ? 1'b0 :
+    (~loaded_value[31] & amo_rs2_data_i[31]) ? 1'b1 :
+    (loaded_value[31] & amo_rs2_data_i[31]) ?
+        (loaded_value[30:0] < amo_rs2_data_i[30:0]) :
+        (loaded_value[30:0] > amo_rs2_data_i[30:0]);
     
     assign amo_result_o = amo_result;
     assign amo_done_o = amo_done;
