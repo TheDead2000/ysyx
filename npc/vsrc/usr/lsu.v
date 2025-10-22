@@ -239,14 +239,14 @@ always @(posedge clk or posedge rst) begin
                     // 在加载完成后立即计算原子操作结果
                     case (amo_op_i)
                         `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
-                        `AMOOP_ADD:  amo_calc_result <= mem_rdata_i + amo_rs2_data_i;
-                        `AMOOP_XOR:  amo_calc_result <= mem_rdata_i ^ amo_rs2_data_i;
-                        `AMOOP_AND:  amo_calc_result <= mem_rdata_i & amo_rs2_data_i;
-                        `AMOOP_OR:   amo_calc_result <= mem_rdata_i | amo_rs2_data_i;
-                        `AMOOP_MIN:  amo_calc_result <= signed_less_than ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MINU: amo_calc_result <= (mem_rdata_i < amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
-                        `AMOOP_MAXU: amo_calc_result <= (mem_rdata_i > amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
+                        `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i;
+                        `AMOOP_XOR:  amo_calc_result <= loaded_value ^ amo_rs2_data_i;
+                        `AMOOP_AND:  amo_calc_result <= loaded_value & amo_rs2_data_i;
+                        `AMOOP_OR:   amo_calc_result <= loaded_value | amo_rs2_data_i;
+                        `AMOOP_MIN:  amo_calc_result <= signed_less_than ? loaded_value : amo_rs2_data_i;
+                        `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? loaded_value : amo_rs2_data_i;
+                        `AMOOP_MINU: amo_calc_result <= (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
+                        `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
                         default:     amo_calc_result <= amo_rs2_data_i;
                     endcase
                     
