@@ -218,8 +218,6 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (mem_data_ready_i) begin
-                    loaded_value <= mem_rdata_i;
                 if (amo_valid_i) begin
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
@@ -234,10 +232,11 @@ always @(posedge clk or posedge rst) begin
                     end
                 end
             end
-            end
             
             AMO_LOAD: begin
-                    
+                if (mem_data_ready_i) begin
+                    loaded_value <= mem_rdata_i;
+                    $display("loaded_value:%x\n",loaded_value);
                     if (_amo_lr_w) begin
                         // LR.W: 直接返回加载的值
                         amo_result <= mem_rdata_i;
@@ -248,12 +247,13 @@ always @(posedge clk or posedge rst) begin
                         amo_state <= AMO_CALC;
                     end
                 end
+            end
             
             AMO_CALC: begin
                 // 在计算状态进行原子操作计算
                 case (amo_op_i)
                     `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
-                    `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i;
+                    `AMOOP_ADD:  begin amo_calc_result <= loaded_value + amo_rs2_data_i; $display("amo_op_i loaded_value:%x\n",loaded_value);end
                     `AMOOP_XOR:  amo_calc_result <= loaded_value ^ amo_rs2_data_i;
                     `AMOOP_AND:  amo_calc_result <= loaded_value & amo_rs2_data_i;
                     `AMOOP_OR:   amo_calc_result <= loaded_value | amo_rs2_data_i;
