@@ -238,25 +238,23 @@ always @(posedge clk or posedge rst) begin
                     
                     // 在加载完成后立即计算原子操作结果
                     case (amo_op_i)
-                        `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
-                        `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i;
-                        `AMOOP_XOR:  amo_calc_result <= loaded_value ^ amo_rs2_data_i;
-                        `AMOOP_AND:  amo_calc_result <= loaded_value & amo_rs2_data_i;
-                        `AMOOP_OR:   amo_calc_result <= loaded_value | amo_rs2_data_i;
-                        `AMOOP_MIN:  amo_calc_result <= signed_less_than ? loaded_value : amo_rs2_data_i;
-                        `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? loaded_value : amo_rs2_data_i;
-                        `AMOOP_MINU: amo_calc_result <= (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
-                        `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
-                        default:     amo_calc_result <= amo_rs2_data_i;
+                        `AMOOP_SWAP: begin amo_calc_result <= amo_rs2_data_i;  amo_state <= AMO_STORE; end
+                        `AMOOP_ADD:  begin amo_calc_result <= loaded_value + amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_XOR:  begin amo_calc_result <= loaded_value ^ amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_AND:  begin amo_calc_result <= loaded_value & amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_OR:   begin amo_calc_result <= loaded_value | amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_MIN:  begin amo_calc_result <= signed_less_than ? loaded_value : amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_MAX:  begin amo_calc_result <= signed_greater_than ? loaded_value : amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_MINU: begin amo_calc_result <= (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        `AMOOP_MAXU: begin amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i; amo_state <= AMO_STORE; end
+                        default:     begin amo_calc_result <= amo_rs2_data_i; amo_state <= AMO_STORE; end
                     endcase
                     
                     if (_amo_lr_w) begin
                         amo_result <= mem_rdata_i;
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
-                    end else if (_memop_amo) begin
-                        amo_state <= AMO_STORE;
-                    end
+                    end 
                 end
             end
             
