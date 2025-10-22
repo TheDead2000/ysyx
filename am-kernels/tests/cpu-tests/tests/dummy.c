@@ -50,7 +50,7 @@ int main() {
   // printf("get ch %c \n",(*p++));
   // while(1);
   test_amoswap();
-
+  while(1);
   return 0;
 }
 // int main() {
