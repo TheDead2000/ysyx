@@ -264,7 +264,7 @@ always @(posedge clk or posedge rst) begin
                     `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
                     default:     amo_calc_result <= amo_rs2_data_i;
                 endcase
-                
+                $display("amocalcresult:%x\n",amo_calc_result);
                 // 计算完成后进入存储状态
                 amo_state <= AMO_STORE;
             end
