@@ -129,15 +129,15 @@ input                               amo_done_i,        // 原子操作完成
 // 原子操作类型判断
 wire _amo_lr_w = (mem_op_i == `MEMOP_LR_W);
 wire _amo_sc_w = (mem_op_i == `MEMOP_SC_W);
-wire _amo_swap = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AMOSWAP];
-wire _amo_add  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AMOADD];
-wire _amo_xor  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_XOR];
-wire _amo_and  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_AND];
-wire _amo_or   = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_OR];
-wire _amo_min  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_SLT];
-wire _amo_max  = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_BGE];
-wire _amo_minu = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_SLTU];
-wire _amo_maxu = (mem_op_i == `MEMOP_AMO) & alu_op_i[`ALUOP_BGEU];
+wire _amo_swap =  alu_op_i[`ALUOP_AMOSWAP];
+wire _amo_add  =  alu_op_i[`ALUOP_AMOADD];
+wire _amo_xor  =  alu_op_i[`ALUOP_XOR];
+wire _amo_and  =  alu_op_i[`ALUOP_AND];
+wire _amo_or   =  alu_op_i[`ALUOP_OR];
+wire _amo_min  =  alu_op_i[`ALUOP_SLT];
+wire _amo_max  =  alu_op_i[`ALUOP_BGE];
+wire _amo_minu =  alu_op_i[`ALUOP_SLTU];
+wire _amo_maxu =  alu_op_i[`ALUOP_BGEU];
 
 
 wire [`AMOOP_LEN-1:0] _amo_op =    ({`AMOOP_LEN{_amo_lr_w}}&`AMOOP_LR)|
@@ -203,7 +203,7 @@ assign amo_op_o = _amo_op;
   // 跳转冒险信号（通知流水线刷新）
   assign jump_hazard_valid_o = bpu_pc_wrong;
 
-  wire _rs1_rs2 = _excop_reg | _excop_branch | _excop_amo;
+  wire _rs1_rs2 = _excop_reg | _excop_branch | _excop_amo;  //for amo_lc_w is not fit
   wire _rs1_imm = _excop_imm | _excop_load | _excop_store;
   wire _pc_4 = _excop_jal | _excop_jalr;
   wire _pc_imm12 = _excop_auipc;

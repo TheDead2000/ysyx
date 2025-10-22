@@ -56,6 +56,22 @@ module alu_top (
   wire _aluop_rem = (alu_op_i[`ALUOP_REM]);
   wire _aluop_remu = (alu_op_i[`ALUOP_REMU]);
 
+  wire _aluop_amoswap = (alu_op_i[`ALUOP_AMOSWAP]);
+  wire _aluop_amoadd  = (alu_op_i[`ALUOP_AMOADD]);
+  wire _aluop_amoxor  = (alu_op_i[`ALUOP_AMOXOR]);
+  wire _aluop_amoand  = (alu_op_i[`ALUOP_AMOAND]);
+  wire _aluop_amoor   = (alu_op_i[`ALUOP_AMOOR]);
+  wire _aluop_amomin  = (alu_op_i[`ALUOP_AMOMIN]);
+  wire _aluop_amomax  = (alu_op_i[`ALUOP_AMOMAX]);
+  wire _aluop_amominu = (alu_op_i[`ALUOP_AMOMINU]);
+  wire _aluop_amomaxu = (alu_op_i[`ALUOP_AMOMAXU]);
+  
+  wire is_amo = _aluop_amoswap | _aluop_amoadd | _aluop_amoxor |
+                _aluop_amoand | _aluop_amoor  | _aluop_amomin |
+                _aluop_amomax | _aluop_amominu| _aluop_amomaxu ;
+  
+
+
 
   wire _isCMP =   _aluop_slt | _aluop_bgeu |
                   _aluop_sltu |_aluop_beq |
@@ -212,7 +228,8 @@ module alu_top (
                                 ({`XLEN{_aluop_mul}}&_inst_mul_result) |
                                 ({`XLEN{_aluop_mulh|_aluop_mulhsu|_aluop_mulhu}}&_inst_mulh_mulhsu_mulhu_result) |
                                 ({`XLEN{_aluop_div|_aluop_divu}}&_inst_div_divu_ret)|
-                                ({`XLEN{_aluop_rem|_aluop_remu}}&_inst_rem_remu_ret);
+                                ({`XLEN{_aluop_rem|_aluop_remu}}&_inst_rem_remu_ret)|
+                                ({`XLEN{is_amo}}&alu_a_i);
 
   /* 选择最后输出 */
   assign alu_out_o = (_isCMP) ? {31'b0, _compare_out} : _alu_out;

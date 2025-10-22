@@ -431,22 +431,23 @@ wire _alu_amomaxu = _inst_amomaxu_w;
   //多路选择器
  wire [`ALUOP_LEN-1:0] _alu_op;
   assign _alu_op[`ALUOP_NONE] = 'b0;  // TODO 以后处理
-  assign _alu_op[`ALUOP_ADD] = _alu_add;
+  assign _alu_op[`ALUOP_ADD] = _alu_add ;
   assign _alu_op[`ALUOP_SUB] = _alu_sub;
-  assign _alu_op[`ALUOP_XOR] = _alu_xor | _alu_amoxor;
-  assign _alu_op[`ALUOP_OR] = _alu_or | _alu_amoor;
-  assign _alu_op[`ALUOP_AND] = _alu_and | _alu_amoand;
+  assign _alu_op[`ALUOP_XOR] = _alu_xor ;
+  assign _alu_op[`ALUOP_OR] = _alu_or ;
+  assign _alu_op[`ALUOP_AND] = _alu_and ;
   assign _alu_op[`ALUOP_SLL] = _alu_sll;
   assign _alu_op[`ALUOP_SRL] = _alu_srl;
   assign _alu_op[`ALUOP_SRA] = _alu_sra;
-  assign _alu_op[`ALUOP_SLT] = _alu_slt | _alu_amomin;
-  assign _alu_op[`ALUOP_SLTU] = _alu_sltu | _alu_amominu;
+  assign _alu_op[`ALUOP_SLT] = _alu_slt ;
+  assign _alu_op[`ALUOP_SLTU] = _alu_sltu;
   assign _alu_op[`ALUOP_BEQ] = _alu_beq;
   assign _alu_op[`ALUOP_BNE] = _alu_bne;
   assign _alu_op[`ALUOP_BLT] = _alu_blt;
-  assign _alu_op[`ALUOP_BGE] = _alu_bge | _alu_amomax;
+  assign _alu_op[`ALUOP_BGE] = _alu_bge ;
   assign _alu_op[`ALUOP_BLTU] = _alu_bltu;
-  assign _alu_op[`ALUOP_BGEU] = _alu_bgeu | _alu_amomaxu;
+  assign _alu_op[`ALUOP_BGEU] = _alu_bgeu;
+  
   assign _alu_op[`ALUOP_MUL] = _alu_mul;
   assign _alu_op[`ALUOP_MULH] = _alu_mulh;
   assign _alu_op[`ALUOP_MULHSU] = _alu_mulhsu;
@@ -454,10 +455,17 @@ wire _alu_amomaxu = _inst_amomaxu_w;
   assign _alu_op[`ALUOP_DIV] = _alu_div;
   assign _alu_op[`ALUOP_DIVU] = _alu_divu;
   assign _alu_op[`ALUOP_REM] = _alu_rem;
-  assign _alu_op[`ALUOP_REMU] = _alu_remu;
-                                  
-assign _alu_op[`ALUOP_AMOSWAP] = _alu_amoswap;
-assign _alu_op[`ALUOP_AMOADD] = _alu_amoadd;
+  assign _alu_op[`ALUOP_REMU] = _alu_remu;   
+
+  assign _alu_op[`ALUOP_AMOSWAP] = _alu_amoswap;
+  assign _alu_op[`ALUOP_AMOADD]  = _alu_amoadd;
+  assign _alu_op[`ALUOP_AMOXOR]  = _alu_amoxor;
+  assign _alu_op[`ALUOP_AMOAND]  = _alu_amoand;
+  assign _alu_op[`ALUOP_AMOOR]   = _alu_amoor;
+  assign _alu_op[`ALUOP_AMOMIN]  = _alu_amomin;
+  assign _alu_op[`ALUOP_AMOMAX]  = _alu_amomax;
+  assign _alu_op[`ALUOP_AMOMINU] = _alu_amominu;
+  assign _alu_op[`ALUOP_AMOMAXU] = _alu_amomaxu;  
 
   assign alu_op_o = _alu_op;
 
