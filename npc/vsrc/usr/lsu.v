@@ -264,12 +264,12 @@ always @(posedge clk or posedge rst) begin
                     `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
                     default:     amo_calc_result <= amo_rs2_data_i;
                 endcase
-                $display("amocalcresult:%x\n",amo_calc_result);
                 // 计算完成后进入存储状态
                 amo_state <= AMO_STORE;
             end
             
             AMO_STORE: begin
+                               $display("amocalcresult:%x\n",amo_calc_result);
                 if (mem_data_ready_i) begin
                     if (_amo_sc_w) begin
                         amo_result <= sc_success ? 32'b0 : 32'b1;
@@ -277,6 +277,7 @@ always @(posedge clk or posedge rst) begin
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
                     end else if (_memop_amo) begin
+                                       $display("amocalcresult:%x\n",amo_calc_result);
                         amo_result <= loaded_value;
                         reserved_valid <= 1'b0;
                         amo_done <= 1'b1;
