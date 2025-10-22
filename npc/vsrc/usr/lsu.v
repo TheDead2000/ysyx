@@ -226,17 +226,18 @@ always @(posedge clk or posedge rst) begin
                     end else if (_amo_sc_w) begin
                         amo_state <= AMO_STORE;
                     end else if (_memop_amo) begin
+                        if(mem_data_ready_i) begin
+                        loaded_value <= mem_rdata_i;
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
                         reserved_valid <= 1'b1;
+                        end
                     end
                 end
             end
             
             AMO_LOAD: begin
                 if (mem_data_ready_i) begin
-                    loaded_value <= mem_rdata_i;
-                    
                     if (_amo_lr_w) begin
                         // LR.W: 直接返回加载的值
                         amo_result <= mem_rdata_i;
