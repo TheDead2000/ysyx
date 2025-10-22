@@ -24,8 +24,8 @@ void test_amoswap() {
     );
     
     printf("After amoswap.w:\n");
-    printf("Memory now contains: 0x%08X\n", memory_value);
-    printf("Returned old value: 0x%08X\n", old_value);
+    printf("Memory now contains: 0x%x\n", memory_value);
+    printf("Returned old value: 0x%x\n", old_value);
 }
 
 

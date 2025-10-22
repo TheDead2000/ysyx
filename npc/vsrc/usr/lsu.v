@@ -223,76 +223,80 @@ module lsu (
     
     /* verilator lint_off CASEINCOMPLETE */
     // 原子操作状态机
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            amo_state <= AMO_IDLE;
-            reserved_valid <= 1'b0;
-            reserved_addr <= 32'b0;
-            loaded_value <= 32'b0;
-            amo_result <= 32'b0;
-            amo_done <= 1'b0;
-        end else begin
-            amo_done <= 1'b0;
-            
-            case (amo_state)
-                AMO_IDLE: begin
-                    if (amo_valid_i) begin
-                        if (_amo_lr_w) begin
-                            // LR.W: 加载并设置保留
-                            amo_state <= AMO_LOAD;
-                            reserved_addr <= final_addr;
-                            reserved_valid <= 1'b1;
-                        end else if (_amo_sc_w) begin
-                            // SC.W: 检查保留并条件存储
-                            amo_state <= AMO_STORE;
-                            amo_result <= sc_success ? 32'b0 : 32'b1;  // 成功返回0，失败返回1
-                        end else if (_memop_amo) begin
-                            // AMO操作: 先加载
-                            amo_state <= AMO_LOAD;
-                        end
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        amo_state <= AMO_IDLE;
+        reserved_valid <= 1'b0;
+        reserved_addr <= 32'b0;
+        loaded_value <= 32'b0;
+        amo_result <= 32'b0;
+        amo_done <= 1'b0;
+    end else begin
+        amo_done <= 1'b0;
+        
+        case (amo_state)
+            AMO_IDLE: begin
+                if (amo_valid_i) begin
+                    if (_amo_lr_w) begin
+                        // LR.W: 加载并设置保留
+                        amo_state <= AMO_LOAD;
+                        reserved_addr <= final_addr;
+                        reserved_valid <= 1'b1;
+                    end else if (_amo_sc_w) begin
+                        // SC.W: 检查保留并条件存储
+                        amo_state <= AMO_STORE;
+                        // 注意：SC的结果在存储阶段确定
+                        // amo_result <= sc_success ? 32'b0 : 32'b1;
+                    end else if (_memop_amo) begin
+                        // AMO操作: 先加载
+                        amo_state <= AMO_LOAD;
+                        reserved_addr <= final_addr;
+                        reserved_valid <= 1'b1;
                     end
                 end
-                
-                AMO_LOAD: begin
-                    if (mem_data_ready_i) begin
-                        loaded_value <= mem_rdata_i;
-                        if (_amo_lr_w) begin
-                            // LR.W完成
-                            amo_result <= mem_rdata_i;
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end else if (_memop_amo) begin
-                            // AMO操作加载完成，进入存储阶段
-                            amo_state <= AMO_STORE;
-                        end
-                    end
-                end
-                
-                AMO_STORE: begin
-                    if (mem_data_ready_i) begin
-                        if (_amo_sc_w) begin
-                            // SC.W完成，无论成功失败都清除保留
-                            reserved_valid <= 1'b0;
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end else if (_memop_amo) begin
-                            // AMO操作存储完成
-                            amo_result <= loaded_value;  // 返回原始值
-                             reserved_valid <= 1'b0;      // 清除保留
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end
-                    end
-                end
-            endcase
-            
-            // 清除保留的条件（除了SC成功存储外）
-            if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
-                // 任何非SC的存储操作都会清除保留
-                reserved_valid <= 1'b0;
             end
+            
+            AMO_LOAD: begin
+                if (mem_data_ready_i) begin
+                    loaded_value <= mem_rdata_i;
+                    if (_amo_lr_w) begin
+                        // LR.W完成
+                        amo_result <= mem_rdata_i;  // 返回加载的值
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end else if (_memop_amo) begin
+                        // AMO操作加载完成，进入存储阶段
+                        amo_state <= AMO_STORE;
+                    end
+                end
+            end
+            
+            AMO_STORE: begin
+                if (mem_data_ready_i) begin
+                    if (_amo_sc_w) begin
+                        // SC.W完成
+                        amo_result <= sc_success ? 32'b0 : 32'b1;  // 成功返回0，失败返回1
+                        reserved_valid <= 1'b0;  // 清除保留
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end else if (_memop_amo) begin
+                        // AMO操作存储完成
+                        amo_result <= loaded_value;  // 返回原始值
+                        reserved_valid <= 1'b0;      // 清除保留
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end
+                end
+            end
+        endcase
+        
+        // 清除保留的条件（除了SC成功存储外）
+        if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
+            // 任何非SC的存储操作都会清除保留
+            reserved_valid <= 1'b0;
         end
     end
+end
     
     assign amo_result_o = amo_result;
     assign amo_done_o = amo_done;

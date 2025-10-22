@@ -238,13 +238,10 @@ assign amo_op_o = _amo_op;
       .compare_out_o(_compare_out),
       .alu_stall_req_o(alu_stall_req)
   );
-
+  
+  assign exc_alu_data_o = _alu_out;
   assign alu_mul_div_valid_o = alu_stall_req;
 
-wire [`INST_LEN-1:0] _exc_alu_data;
-wire _exc_alu_data = (_excop_amo & ~_amo_lr_w) ? amo_result_i : _alu_out;
-
-assign exc_alu_data_o = _exc_alu_data;
 
 // 原子操作控制信号输出
 assign amo_valid_o = is_amo_inst;
