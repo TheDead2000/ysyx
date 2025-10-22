@@ -200,90 +200,89 @@ module lsu (
             (loaded_value[30:0] < amo_rs2_data_i[30:0]) :
             (loaded_value[30:0] > amo_rs2_data_i[30:0]);
 
-    // AMO操作计算
-    always @(*) begin
-        case (amo_op_i)
-            `AMOOP_SWAP: amo_calc_result = amo_rs2_data_i;
-            `AMOOP_ADD:  amo_calc_result = loaded_value + amo_rs2_data_i;
-            `AMOOP_XOR:  amo_calc_result = loaded_value ^ amo_rs2_data_i;
-            `AMOOP_AND:  amo_calc_result = loaded_value & amo_rs2_data_i;
-            `AMOOP_OR:   amo_calc_result = loaded_value | amo_rs2_data_i;
-            `AMOOP_MIN:  amo_calc_result = signed_less_than ? loaded_value : amo_rs2_data_i;
-            `AMOOP_MAX:  amo_calc_result = signed_greater_than ? loaded_value : amo_rs2_data_i;
-            `AMOOP_MINU: amo_calc_result = (loaded_value < amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
-            `AMOOP_MAXU: amo_calc_result = (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
-            default:     amo_calc_result = amo_rs2_data_i;
-        endcase
-    end
-
     // SC指令成功条件
     wire sc_success = _amo_sc_w & reserved_valid & (reserved_addr == final_addr);
     
-    // 原子操作状态机
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            amo_state <= AMO_IDLE;
-            reserved_valid <= 1'b0;
-            reserved_addr <= 32'b0;
-            loaded_value <= 32'b0;
-            amo_result <= 32'b0;
-            amo_done <= 1'b0;
-        end else begin
-            amo_done <= 1'b0;
-            /* verilator lint_off CASEINCOMPLETE */
-            case (amo_state)
-                AMO_IDLE: begin
-                    if (amo_valid_i) begin
-                        if (_amo_lr_w) begin
-                            amo_state <= AMO_LOAD;
-                            reserved_addr <= final_addr;
-                            reserved_valid <= 1'b1;
-                        end else if (_amo_sc_w) begin
-                            amo_state <= AMO_STORE;
-                        end else if (_memop_amo) begin
-                            amo_state <= AMO_LOAD;
-                            reserved_addr <= final_addr;
-                            reserved_valid <= 1'b1;
-                        end
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        amo_state <= AMO_IDLE;
+        reserved_valid <= 1'b0;
+        reserved_addr <= 32'b0;
+        loaded_value <= 32'b0;
+        amo_result <= 32'b0;
+        amo_done <= 1'b0;
+        amo_calc_result <= 32'b0;
+    end else begin
+        amo_done <= 1'b0;
+        /* verilator lint_off CASEINCOMPLETE */
+        case (amo_state)
+            AMO_IDLE: begin
+                if (amo_valid_i) begin
+                    if (_amo_lr_w) begin
+                        amo_state <= AMO_LOAD;
+                        reserved_addr <= final_addr;
+                        reserved_valid <= 1'b1;
+                    end else if (_amo_sc_w) begin
+                        amo_state <= AMO_STORE;
+                    end else if (_memop_amo) begin
+                        amo_state <= AMO_LOAD;
+                        reserved_addr <= final_addr;
+                        reserved_valid <= 1'b1;
                     end
                 end
-                
-                AMO_LOAD: begin
-                    if (mem_data_ready_i) begin
-                        loaded_value <= mem_rdata_i;
-                        if (_amo_lr_w) begin
-                            amo_result <= mem_rdata_i;
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end else if (_memop_amo) begin
-                            amo_state <= AMO_STORE;
-                        end
-                    end
-                end
-                
-                AMO_STORE: begin
-                    if (mem_data_ready_i) begin
-                        if (_amo_sc_w) begin
-                            amo_result <= sc_success ? 32'b0 : 32'b1;
-                            reserved_valid <= 1'b0;
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end else if (_memop_amo) begin
-                            amo_result <= loaded_value;
-                            reserved_valid <= 1'b0;
-                            amo_done <= 1'b1;
-                            amo_state <= AMO_IDLE;
-                        end
-                    end
-                end
-            endcase
-            
-            // 清除保留的条件
-            if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
-                reserved_valid <= 1'b0;
             end
+            
+            AMO_LOAD: begin
+                if (mem_data_ready_i) begin
+                    loaded_value <= mem_rdata_i;
+                    
+                    // 在加载完成后立即计算原子操作结果
+                    case (amo_op_i)
+                        `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
+                        `AMOOP_ADD:  amo_calc_result <= mem_rdata_i + amo_rs2_data_i;
+                        `AMOOP_XOR:  amo_calc_result <= mem_rdata_i ^ amo_rs2_data_i;
+                        `AMOOP_AND:  amo_calc_result <= mem_rdata_i & amo_rs2_data_i;
+                        `AMOOP_OR:   amo_calc_result <= mem_rdata_i | amo_rs2_data_i;
+                        `AMOOP_MIN:  amo_calc_result <= signed_less_than ? mem_rdata_i : amo_rs2_data_i;
+                        `AMOOP_MAX:  amo_calc_result <= signed_greater_than ? mem_rdata_i : amo_rs2_data_i;
+                        `AMOOP_MINU: amo_calc_result <= (mem_rdata_i < amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
+                        `AMOOP_MAXU: amo_calc_result <= (mem_rdata_i > amo_rs2_data_i) ? mem_rdata_i : amo_rs2_data_i;
+                        default:     amo_calc_result <= amo_rs2_data_i;
+                    endcase
+                    
+                    if (_amo_lr_w) begin
+                        amo_result <= mem_rdata_i;
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end else if (_memop_amo) begin
+                        amo_state <= AMO_STORE;
+                    end
+                end
+            end
+            
+            AMO_STORE: begin
+                if (mem_data_ready_i) begin
+                    if (_amo_sc_w) begin
+                        amo_result <= sc_success ? 32'b0 : 32'b1;
+                        reserved_valid <= 1'b0;
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end else if (_memop_amo) begin
+                        amo_result <= loaded_value;
+                        reserved_valid <= 1'b0;
+                        amo_done <= 1'b1;
+                        amo_state <= AMO_IDLE;
+                    end
+                end
+            end
+        endcase
+        
+        // 清除保留的条件
+        if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
+            reserved_valid <= 1'b0;
         end
     end
+end
     
     assign amo_result_o = amo_result;
     assign amo_done_o = amo_done;
