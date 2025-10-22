@@ -131,13 +131,9 @@ module lsu (
     // 原子操作也属于加载和存储
     wire _is_amo_load = _memop_lr_w;
     wire _is_amo_store = _memop_sc_w;
-    wire _is_amo = _memop_lr_w | _memop_sc_w ;
+    wire _is_amo = _memop_lr_w | _memop_sc_w |_amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
+                   _amo_min | _amo_max | _amo_minu | _amo_maxu;
     
-
-
-
-
-
 
     // ============ MMU 实例化 ============
     wire mmu_resp_valid;
@@ -258,19 +254,22 @@ module lsu (
                 end
                 
                 AMO_LOAD: begin
-                        loaded_value <= mem_rdata;
+                    if (mem_data_ready_i) begin
+                        loaded_value <= mem_rdata_i;
                         if (_amo_lr_w) begin
                             // LR.W完成
-                            amo_result <= mem_rdata;
+                            amo_result <= mem_rdata_i;
                             amo_done <= 1'b1;
                             amo_state <= AMO_IDLE;
                         end else if (_memop_amo) begin
                             // AMO操作加载完成，进入存储阶段
                             amo_state <= AMO_STORE;
                         end
+                    end
                 end
                 
                 AMO_STORE: begin
+                    if (mem_data_ready_i) begin
                         if (_amo_sc_w) begin
                             // SC.W完成，无论成功失败都清除保留
                             reserved_valid <= 1'b0;
@@ -283,6 +282,7 @@ module lsu (
                             amo_done <= 1'b1;
                             amo_state <= AMO_IDLE;
                         end
+                    end
                 end
             endcase
             
