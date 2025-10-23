@@ -251,7 +251,7 @@ always @(posedge clk or posedge rst) begin
             
             AMO_CALC: begin
                 // 在计算状态进行原子操作计算
-                $display("AMO_CALC loaded_value:%x\n",loaded_value);
+                $display("amo_op %x AMO_CALC loaded_value:%x\n",amo_op_i,loaded_value);
                 case (amo_op_i)
                     `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
                     `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i; 

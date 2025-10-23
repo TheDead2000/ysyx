@@ -239,17 +239,19 @@ wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
 wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
 wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
 //RV32A
-wire _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
-wire _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
-wire _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
-wire _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
-wire _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
-wire _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
-wire _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
-wire _inst_amomin_w  = match(_inst, MASK_AMO, AMOMIN_W_VAL);
-wire _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
-wire _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
-wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
+reg _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
+reg _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
+reg _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
+reg _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
+reg _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
+reg _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
+reg _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
+reg _inst_amomin_w  = match(_inst, MASK_AMO, AMOMIN_W_VAL);
+reg _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
+reg _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
+reg _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
+
+
 
 
    wire _type_lui = _inst_lui;
@@ -447,7 +449,7 @@ wire _alu_amomaxu = _inst_amomaxu_w;
   assign _alu_op[`ALUOP_BGE] = _alu_bge ;
   assign _alu_op[`ALUOP_BLTU] = _alu_bltu;
   assign _alu_op[`ALUOP_BGEU] = _alu_bgeu;
-  
+
   assign _alu_op[`ALUOP_MUL] = _alu_mul;
   assign _alu_op[`ALUOP_MULH] = _alu_mulh;
   assign _alu_op[`ALUOP_MULHSU] = _alu_mulhsu;
