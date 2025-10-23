@@ -10,8 +10,8 @@ void test_amosc_basic() {
     uint32_t new_value = 0xABCDEF00;
     uint32_t result;
     
-    printf("Initial memory value: 0x%08X\n", memory_value);
-    printf("New value to store conditionally: 0x%08X\n", new_value);
+    printf("Initial memory value: 0x%x\n", memory_value);
+    printf("New value to store conditionally: 0x%x\n", new_value);
     
     // 首先使用 lr.w 加载保留
     // 然后使用 sc.w 条件存储
@@ -26,8 +26,8 @@ void test_amosc_basic() {
     );
     
     printf("After amosc.w:\n");
-    printf("Memory now contains: 0x%08X\n", memory_value);
-    printf("SC result: %u (0 = success, 1 = failure)\n", result);
+    printf("Memory now contains: 0x%x\n", memory_value);
+    printf("SC result: %x (0 = success, 1 = failure)\n", result);
     
     // 解释结果
     if (result == 0) {
