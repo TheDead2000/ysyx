@@ -55,6 +55,9 @@ module idu (
     // 请求暂停流水线
     output _load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
+
+    output wire _inst_amoadd_w_o,
+    output wire _inst_amoswap_w_o,
     
     // ================== 新增BPU前递信号 ==================
     output wire id_ras_push_valid_o,        // ID阶段检测到CALL指令
@@ -239,19 +242,20 @@ wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
 wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
 wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
 //RV32A
-reg _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
-reg _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
-reg _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
-reg _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
-reg _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
-reg _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
-reg _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
-reg _inst_amomin_w  = match(_inst, MASK_AMO, AMOMIN_W_VAL);
-reg _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
-reg _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
-reg _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
+wire _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
+wire _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
+wire _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
+wire _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
+wire _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
+wire _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
+wire _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
+wire _inst_amomin_w  = match(_inst, MASK_AMO, AMOMIN_W_VAL);
+wire _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
+wire _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
+wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
 
-
+assign _inst_amoadd_w_o =_inst_amoadd_w;
+assign _inst_amoswap_w_o =_inst_amoswap_w;
 
 
    wire _type_lui = _inst_lui;

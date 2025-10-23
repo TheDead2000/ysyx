@@ -307,7 +307,9 @@ idu idu (
     .rs2_data_o(rs2_data_id),
     .imm_data_o(imm_data_id),
 
-
+    ._inst_amoadd_w_o(_inst_amoadd_w_o),
+    ._inst_amoswap_w_o(_inst_amoswap_w_o),
+    
     /* CSR 译码结果：to id/ex*/
     .csr_imm_o(csr_imm_id),
     .csr_imm_valid_o(csr_imm_valid_id),
@@ -367,6 +369,9 @@ wire bpu_pdt_res_id_ex;
 wire bpu_which_pdt_id_ex;
 wire [`XLEN-1:0] bpu_pdt_tag_id_ex;
 wire [`HISLEN-1:0] bpu_history_id_ex;
+
+wire _inst_amoadd_w_o;
+wire _inst_amoswap_w_o;
 
 id_ex id2ex (
     .clk                  (clk),
@@ -429,6 +434,8 @@ id_ex id2ex (
     .csr_idx_id_ex_o      (csr_idx_id_ex),
     .csr_data_id_ex_o     (csr_readdata_id_ex),
     .csr_op_id_ex_o       (csr_op_id_ex),
+
+
 
     .rs1_data_id_ex_o     (rs1_data_id_ex),
     .rs2_data_id_ex_o     (rs2_data_id_ex),
