@@ -131,19 +131,20 @@ wire _amo_lr_w = (mem_op_i == `MEMOP_LR_W);
 wire _amo_sc_w = (mem_op_i == `MEMOP_SC_W);
 wire _amo_swap =  alu_op_i[`ALUOP_AMOSWAP];
 wire _amo_add  =  alu_op_i[`ALUOP_AMOADD];
-wire _amo_xor  =  alu_op_i[`ALUOP_XOR];
-wire _amo_and  =  alu_op_i[`ALUOP_AND];
-wire _amo_or   =  alu_op_i[`ALUOP_OR];
-wire _amo_min  =  alu_op_i[`ALUOP_SLT];
-wire _amo_max  =  alu_op_i[`ALUOP_BGE];
-wire _amo_minu =  alu_op_i[`ALUOP_SLTU];
-wire _amo_maxu =  alu_op_i[`ALUOP_BGEU];
+wire _amo_xor  =  alu_op_i[`ALUOP_AMOXOR];
+wire _amo_and  =  alu_op_i[`ALUOP_AMOAND];
+wire _amo_or   =  alu_op_i[`ALUOP_AMOOR];
+wire _amo_min  =  alu_op_i[`ALUOP_AMOMIN];
+wire _amo_max  =  alu_op_i[`ALUOP_AMOMAX];
+wire _amo_minu =  alu_op_i[`ALUOP_AMOMINU];
+wire _amo_maxu =  alu_op_i[`ALUOP_AMOMAXU];
 
 
 wire [`AMOOP_LEN-1:0] _amo_op =    ({`AMOOP_LEN{_amo_lr_w}}&`AMOOP_LR)|
                                    ({`AMOOP_LEN{_amo_sc_w}}&`AMOOP_SC)|
                                    ({`AMOOP_LEN{_amo_swap}}&`AMOOP_SWAP)|
                                    ({`AMOOP_LEN{_amo_xor}}&`AMOOP_XOR)|
+                                   ({`AMOOP_LEN{_amo_add}}&`AMOOP_ADD)|
                                    ({`AMOOP_LEN{_amo_and}}&`AMOOP_AND)|
                                    ({`AMOOP_LEN{_amo_or}}&`AMOOP_OR)|
                                    ({`AMOOP_LEN{_amo_min}}&`AMOOP_MIN)|
