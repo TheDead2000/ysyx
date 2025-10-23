@@ -1,178 +1,218 @@
 #include <am.h>
 #include <stdio.h>
 #include <klib.h>
-
-void test_amoand() {
-    printf("Testing amoand.w instruction (atomic AND)...\n");
+// 测试 amosc.w 的基本功能
+void test_amosc_basic() {
+    printf("Testing amosc.w instruction (atomic store conditional)...\n");
     
     // 初始化内存位置
-    uint32_t memory_value;
-    uint32_t and_value;
-    uint32_t old_value;
+    uint32_t memory_value = 0x12345678;
+    uint32_t new_value = 0xABCDEF00;
+    uint32_t result;
     
-    // 测试用例1：清除特定位
-    printf("\nTest case 1: Clear specific bits\n");
-    memory_value = 0xFFFFFFFF;
-    and_value = 0xFFFF0000;  // 清除低16位
+    printf("Initial memory value: 0x%08X\n", memory_value);
+    printf("New value to store conditionally: 0x%08X\n", new_value);
     
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("AND mask: 0x%x\n", and_value);
-    
+    // 首先使用 lr.w 加载保留
+    // 然后使用 sc.w 条件存储
     __asm__ volatile (
         "mv x16, %[addr]\n"           // 将内存地址移动到x16
-        "mv x17, %[and_val]\n"        // 将与掩码移动到x17
-        "amoand.w %[old_val], x17, (x16)\n"  // 执行原子与操作
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [and_val] "r" (and_value)
-        : "x16", "x17", "memory"
+        "lr.w x15, (x16)\n"           // 加载保留
+        "mv x17, %[new_val]\n"        // 将新值移动到x17
+        "sc.w %[result], x17, (x16)\n"  // 执行条件存储
+        : [result] "=r" (result)
+        : [addr] "r" (&memory_value), [new_val] "r" (new_value)
+        : "x15", "x16", "x17", "memory"
     );
     
-    printf("After amoand.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-    printf("Expected result: 0x%x\n", 0xFFFFFFFF & 0xFFFF0000);
+    printf("After amosc.w:\n");
+    printf("Memory now contains: 0x%08X\n", memory_value);
+    printf("SC result: %u (0 = success, 1 = failure)\n", result);
     
-    // 测试用例2：设置特定位为0
-    printf("\nTest case 2: Clear specific bits from pattern\n");
-    memory_value = 0x12345678;
-    and_value = 0x0000FFFF;  // 保留低16位，清除高16位
-    
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("AND mask: 0x%x\n", and_value);
-    
-    __asm__ volatile (
-        "mv x16, %[addr]\n"
-        "mv x17, %[and_val]\n"
-        "amoand.w %[old_val], x17, (x16)\n"
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [and_val] "r" (and_value)
-        : "x16", "x17", "memory"
-    );
-    
-    printf("After amoand.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-    printf("Expected result: 0x%x\n", 0x12345678 & 0x0000FFFF);
-    
-    // 测试用例3：与0操作（清零）
-    printf("\nTest case 3: Clear all bits (AND with 0)\n");
-    memory_value = 0xABCD1234;
-    and_value = 0x00000000;
-    
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("AND mask: 0x%x\n", and_value);
-    
-    __asm__ volatile (
-        "mv x16, %[addr]\n"
-        "mv x17, %[and_val]\n"
-        "amoand.w %[old_val], x17, (x16)\n"
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [and_val] "r" (and_value)
-        : "x16", "x17", "memory"
-    );
-    
-    printf("After amoand.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-    printf("Expected result: 0x%x\n", 0xABCD1234 & 0x00000000);
-    
-    // 测试用例4：与全1操作（保持不变）
-    printf("\nTest case 4: Preserve all bits (AND with 0xFFFFFFFF)\n");
-    memory_value = 0x12345678;
-    and_value = 0xFFFFFFFF;
-    
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("AND mask: 0x%x\n", and_value);
-    
-    __asm__ volatile (
-        "mv x16, %[addr]\n"
-        "mv x17, %[and_val]\n"
-        "amoand.w %[old_val], x17, (x16)\n"
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [and_val] "r" (and_value)
-        : "x16", "x17", "memory"
-    );
-    
-    printf("After amoand.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-    printf("Expected result: 0x%x\n", 0x12345678 & 0xFFFFFFFF);
-}
-
-void test_amoand_bit_manipulation() {
-    printf("\nTesting amoand.w for bit manipulation...\n");
-    
-    uint32_t flags_register = 0xFF;  // 假设所有标志位都设置
-    uint32_t old_flags;
-    
-    printf("Initial flags register: 0x%02X (binary: ", flags_register);
-    for (int i = 7; i >= 0; i--) {
-        printf("%d", (flags_register >> i) & 1);
+    // 解释结果
+    if (result == 0) {
+        printf("SC succeeded - memory was updated\n");
+    } else {
+        printf("SC failed - memory was not updated\n");
     }
-    printf(")\n");
-    
-    // 清除第2位和第5位
-    uint32_t clear_mask = ~((1 << 2) | (1 << 5));
-    
-    printf("Clear mask to remove bits 2 and 5: 0x%02X\n", clear_mask);
-    
-    __asm__ volatile (
-        "mv x16, %[addr]\n"
-        "mv x17, %[mask]\n"
-        "amoand.w %[old_val], x17, (x16)\n"
-        : [old_val] "=r" (old_flags)
-        : [addr] "r" (&flags_register), [mask] "r" (clear_mask)
-        : "x16", "x17", "memory"
-    );
-    
-    printf("After clearing bits 2 and 5:\n");
-    printf("Flags register: 0x%02X (binary: ", flags_register);
-    for (int i = 7; i >= 0; i--) {
-        printf("%d", (flags_register >> i) & 1);
-    }
-    printf(")\n");
-    printf("Returned old value: 0x%02X\n", old_flags);
 }
-
-void test_amoand_multiple_ops() {
-    printf("\nTesting multiple amoand.w operations...\n");
-    
-    uint32_t shared_var = 0xFFFFFFFF;
-    uint32_t masks[] = {0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF};
-    uint32_t old_values[4];
-    int num_ops = 4;
-    
-    printf("Initial shared variable: 0x%x\n", shared_var);
-    
-    for (int i = 0; i < num_ops; i++) {
-        __asm__ volatile (
-            "mv x16, %[addr]\n"
-            "mv x17, %[mask]\n"
-            "amoand.w %[old_val], x17, (x16)\n"
-            : [old_val] "=r" (old_values[i])
-            : [addr] "r" (&shared_var), [mask] "r" (masks[i])
-            : "x16", "x17", "memory"
-        );
-        
-        printf("Operation %d: AND with 0x%x, old value = 0x%x, new value = 0x%x\n", 
-               i, masks[i], old_values[i], shared_var);
-    }
-    
-    printf("Final shared variable: 0x%x\n", shared_var);
-    printf("Expected result: 0x%x\n", 0x00000000);
-}
-
-int main() {
-    printf("RISC-V amoand.w Instruction Test\n");
-    printf("================================\n");
-    
-    test_amoand();
-    test_amoand_bit_manipulation();
-    test_amoand_multiple_ops();
-    
-    printf("\nAll tests completed.\n");
+int main ()
+{
+    test_amosc_basic();
+    while(1);
     return 0;
 }
+// void test_amoand() {
+//     printf("Testing amoand.w instruction (atomic AND)...\n");
+    
+//     // 初始化内存位置
+//     uint32_t memory_value;
+//     uint32_t and_value;
+//     uint32_t old_value;
+    
+//     // 测试用例1：清除特定位
+//     printf("\nTest case 1: Clear specific bits\n");
+//     memory_value = 0xFFFFFFFF;
+//     and_value = 0xFFFF0000;  // 清除低16位
+    
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("AND mask: 0x%x\n", and_value);
+    
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
+//         "mv x17, %[and_val]\n"        // 将与掩码移动到x17
+//         "amoand.w %[old_val], x17, (x16)\n"  // 执行原子与操作
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [and_val] "r" (and_value)
+//         : "x16", "x17", "memory"
+//     );
+    
+//     printf("After amoand.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+//     printf("Expected result: 0x%x\n", 0xFFFFFFFF & 0xFFFF0000);
+    
+//     // 测试用例2：设置特定位为0
+//     printf("\nTest case 2: Clear specific bits from pattern\n");
+//     memory_value = 0x12345678;
+//     and_value = 0x0000FFFF;  // 保留低16位，清除高16位
+    
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("AND mask: 0x%x\n", and_value);
+    
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"
+//         "mv x17, %[and_val]\n"
+//         "amoand.w %[old_val], x17, (x16)\n"
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [and_val] "r" (and_value)
+//         : "x16", "x17", "memory"
+//     );
+    
+//     printf("After amoand.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+//     printf("Expected result: 0x%x\n", 0x12345678 & 0x0000FFFF);
+    
+//     // 测试用例3：与0操作（清零）
+//     printf("\nTest case 3: Clear all bits (AND with 0)\n");
+//     memory_value = 0xABCD1234;
+//     and_value = 0x00000000;
+    
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("AND mask: 0x%x\n", and_value);
+    
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"
+//         "mv x17, %[and_val]\n"
+//         "amoand.w %[old_val], x17, (x16)\n"
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [and_val] "r" (and_value)
+//         : "x16", "x17", "memory"
+//     );
+    
+//     printf("After amoand.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+//     printf("Expected result: 0x%x\n", 0xABCD1234 & 0x00000000);
+    
+//     // 测试用例4：与全1操作（保持不变）
+//     printf("\nTest case 4: Preserve all bits (AND with 0xFFFFFFFF)\n");
+//     memory_value = 0x12345678;
+//     and_value = 0xFFFFFFFF;
+    
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("AND mask: 0x%x\n", and_value);
+    
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"
+//         "mv x17, %[and_val]\n"
+//         "amoand.w %[old_val], x17, (x16)\n"
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [and_val] "r" (and_value)
+//         : "x16", "x17", "memory"
+//     );
+    
+//     printf("After amoand.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+//     printf("Expected result: 0x%x\n", 0x12345678 & 0xFFFFFFFF);
+// }
+
+// void test_amoand_bit_manipulation() {
+//     printf("\nTesting amoand.w for bit manipulation...\n");
+    
+//     uint32_t flags_register = 0xFF;  // 假设所有标志位都设置
+//     uint32_t old_flags;
+    
+//     printf("Initial flags register: 0x%02X (binary: ", flags_register);
+//     for (int i = 7; i >= 0; i--) {
+//         printf("%d", (flags_register >> i) & 1);
+//     }
+//     printf(")\n");
+    
+//     // 清除第2位和第5位
+//     uint32_t clear_mask = ~((1 << 2) | (1 << 5));
+    
+//     printf("Clear mask to remove bits 2 and 5: 0x%02X\n", clear_mask);
+    
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"
+//         "mv x17, %[mask]\n"
+//         "amoand.w %[old_val], x17, (x16)\n"
+//         : [old_val] "=r" (old_flags)
+//         : [addr] "r" (&flags_register), [mask] "r" (clear_mask)
+//         : "x16", "x17", "memory"
+//     );
+    
+//     printf("After clearing bits 2 and 5:\n");
+//     printf("Flags register: 0x%02X (binary: ", flags_register);
+//     for (int i = 7; i >= 0; i--) {
+//         printf("%d", (flags_register >> i) & 1);
+//     }
+//     printf(")\n");
+//     printf("Returned old value: 0x%02X\n", old_flags);
+// }
+
+// void test_amoand_multiple_ops() {
+//     printf("\nTesting multiple amoand.w operations...\n");
+    
+//     uint32_t shared_var = 0xFFFFFFFF;
+//     uint32_t masks[] = {0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF};
+//     uint32_t old_values[4];
+//     int num_ops = 4;
+    
+//     printf("Initial shared variable: 0x%x\n", shared_var);
+    
+//     for (int i = 0; i < num_ops; i++) {
+//         __asm__ volatile (
+//             "mv x16, %[addr]\n"
+//             "mv x17, %[mask]\n"
+//             "amoand.w %[old_val], x17, (x16)\n"
+//             : [old_val] "=r" (old_values[i])
+//             : [addr] "r" (&shared_var), [mask] "r" (masks[i])
+//             : "x16", "x17", "memory"
+//         );
+        
+//         printf("Operation %d: AND with 0x%x, old value = 0x%x, new value = 0x%x\n", 
+//                i, masks[i], old_values[i], shared_var);
+//     }
+    
+//     printf("Final shared variable: 0x%x\n", shared_var);
+//     printf("Expected result: 0x%x\n", 0x00000000);
+// }
+
+// int main() {
+//     printf("RISC-V amoand.w Instruction Test\n");
+//     printf("================================\n");
+    
+//     test_amoand();
+//     test_amoand_bit_manipulation();
+//     test_amoand_multiple_ops();
+    
+//     printf("\nAll tests completed.\n");
+//     return 0;
+// }
 
 // void test_amominu() {
 //     printf("Testing amominu.w instruction (unsigned min)...\n");
