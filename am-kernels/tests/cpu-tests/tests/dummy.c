@@ -115,7 +115,7 @@ void test_amominu_edge_cases() {
         : "x16", "x17", "memory"
     );
     
-    printf("Memory: 0x%X, Compare: 0x%X, Result: 0x%X, Old: 0x%X\n", 
+    printf("Memory: 0x%x, Compare: 0x%x, Result: 0x%x, Old: 0x%x\n", 
            0xFFFFFFFF, 0xFFFFFFFE, memory_value, old_value);
 }
 
