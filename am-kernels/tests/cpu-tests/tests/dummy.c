@@ -14,8 +14,8 @@ void test_amominu() {
     memory_value = 100;
     compare_value = 200;
     
-    printf("Initial memory value: %u\n", memory_value);
-    printf("Compare value: %u\n", compare_value);
+    printf("Initial memory value: %d\n", memory_value);
+    printf("Compare value: %d\n", compare_value);
     
     __asm__ volatile (
         "mv x16, %[addr]\n"           // 将内存地址移动到x16
@@ -27,17 +27,17 @@ void test_amominu() {
     );
     
     printf("After amominu.w:\n");
-    printf("Memory now contains: %u (min of %u and %u)\n", 
+    printf("Memory now contains: %d (min of %d and %d)\n", 
            memory_value, old_value, compare_value);
-    printf("Returned old value: %u\n", old_value);
+    printf("Returned old value: %d\n", old_value);
     
     // 测试用例2：比较值小于内存值
     printf("\nTest case 2: Compare value < memory value\n");
     memory_value = 200;
     compare_value = 50;
     
-    printf("Initial memory value: %u\n", memory_value);
-    printf("Compare value: %u\n", compare_value);
+    printf("Initial memory value: %d\n", memory_value);
+    printf("Compare value: %d\n", compare_value);
     
     __asm__ volatile (
         "mv x16, %[addr]\n"
@@ -49,17 +49,17 @@ void test_amominu() {
     );
     
     printf("After amominu.w:\n");
-    printf("Memory now contains: %u (min of %u and %u)\n", 
+    printf("Memory now contains: %d (min of %d and %d)\n", 
            memory_value, old_value, compare_value);
-    printf("Returned old value: %u\n", old_value);
+    printf("Returned old value: %d\n", old_value);
     
     // 测试用例3：比较值等于内存值
     printf("\nTest case 3: Compare value == memory value\n");
     memory_value = 150;
     compare_value = 150;
     
-    printf("Initial memory value: %u\n", memory_value);
-    printf("Compare value: %u\n", compare_value);
+    printf("Initial memory value: %d\n", memory_value);
+    printf("Compare value: %d\n", compare_value);
     
     __asm__ volatile (
         "mv x16, %[addr]\n"
@@ -71,9 +71,9 @@ void test_amominu() {
     );
     
     printf("After amominu.w:\n");
-    printf("Memory now contains: %u (min of %u and %u)\n", 
+    printf("Memory now contains: %d (min of %d and %d)\n", 
            memory_value, old_value, compare_value);
-    printf("Returned old value: %u\n", old_value);
+    printf("Returned old value: %d\n", old_value);
 }
 
 void test_amominu_edge_cases() {
@@ -98,7 +98,7 @@ void test_amominu_edge_cases() {
         : "x16", "x17", "memory"
     );
     
-    printf("Memory: %u, Compare: %u, Result: %u, Old: %u\n", 
+    printf("Memory: %d, Compare: %d, Result: %d, Old: %d\n", 
            0, compare_value, memory_value, old_value);
     
     // 测试用例2：最大值
@@ -127,7 +127,7 @@ void test_amominu_multiple_ops() {
     uint32_t old_values[5];
     int num_ops = 5;
     
-    printf("Initial shared variable: %u\n", shared_var);
+    printf("Initial shared variable: %d\n", shared_var);
     
     for (int i = 0; i < num_ops; i++) {
         __asm__ volatile (
@@ -139,12 +139,12 @@ void test_amominu_multiple_ops() {
             : "x16", "x17", "memory"
         );
         
-        printf("Operation %d: compare with %u, old value = %u, new value = %u\n", 
+        printf("Operation %d: compare with %d, old value = %d, new value = %d\n", 
                i, compare_values[i], old_values[i], shared_var);
     }
     
-    printf("Final shared variable: %u\n", shared_var);
-    printf("Expected minimum: %u\n", 300); // 所有值中的最小值
+    printf("Final shared variable: %d\n", shared_var);
+    printf("Expected minimum: %d\n", 300); // 所有值中的最小值
 }
 
 int main() {
