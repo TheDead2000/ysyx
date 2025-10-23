@@ -55,9 +55,6 @@ module idu (
     // 请求暂停流水线
     output _load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
-
-    output wire _inst_amoadd_w_o,
-    output wire _inst_amoswap_w_o,
     
     // ================== 新增BPU前递信号 ==================
     output wire id_ras_push_valid_o,        // ID阶段检测到CALL指令
@@ -163,7 +160,8 @@ localparam [31:0] AMOMAXU_W_VAL = 32'b11100_00_00000_00000_010_00000_0101111;
   wire [4:0] _rs1 = _inst[19:15];
   wire [4:0] _rs2 = _inst[24:20];
   wire [6:0] _func7 = _inst[31:25];
-  
+  wire [4:0] _func5 = _inst[31:27];
+
   wire [`CSR_REG_ADDRWIDTH-1:0] _csr = _inst[31:20];  // CSR 地址
   wire [`IMM_LEN-1:0] _immCSR = {27'b0, _inst[19:15]};
 // 不同指令类型的立即数
@@ -241,11 +239,28 @@ wire _inst_div    = match(_inst,MASK_FUNC7,DIV_VAL);
 wire _inst_divu    = match(_inst,MASK_FUNC7,DIVU_VAL);
 wire _inst_rem    = match(_inst,MASK_FUNC7,REM_VAL);
 wire _inst_remu    = match(_inst,MASK_FUNC7,REMU_VAL);
+
+
+wire func5_00000 = (_func5 == 5'b00000);
+wire func5_00001 = (_func5 == 5'b00001);
+wire func5_00010 = (_func5 == 5'b00010);
+wire func5_00011 = (_func5 == 5'b00011);
+wire func5_00100 = (_func5 == 5'b00100);
+wire func5_01000 = (_func5 == 5'b01000);
+wire func5_01100 = (_func5 == 5'b01100);
+wire func5_10000 = (_func5 == 5'b10000);
+wire func5_10100 = (_func5 == 5'b10100);
+wire func5_11000 = (_func5 == 5'b11000);
+wire func5_11100 = (_func5 == 5'b11100);
+
+wire amo_func3_010 = (_func3 == 3'b010);
+wire amo_opcode = (_opcode == 7'b0101111);
+
 //RV32A
 wire _inst_lr_w      = match(_inst, MASK_AMO, LR_W_VAL);
 wire _inst_sc_w      = match(_inst, MASK_AMO, SC_W_VAL);
-wire _inst_amoswap_w = match(_inst, MASK_AMO, AMOSWAP_W_VAL);
-wire _inst_amoadd_w  = match(_inst, MASK_AMO, AMOADD_W_VAL);
+wire _inst_amoswap_w = func5_00001 & amo_func3_010 & amo_opcode;
+wire _inst_amoadd_w  = func5_00000 & amo_func3_010 & amo_opcode;
 wire _inst_amoxor_w  = match(_inst, MASK_AMO, AMOXOR_W_VAL);
 wire _inst_amoand_w  = match(_inst, MASK_AMO, AMOAND_W_VAL);
 wire _inst_amoor_w   = match(_inst, MASK_AMO, AMOOR_W_VAL);
@@ -254,8 +269,6 @@ wire _inst_amomax_w  = match(_inst, MASK_AMO, AMOMAX_W_VAL);
 wire _inst_amominu_w = match(_inst, MASK_AMO, AMOMINU_W_VAL);
 wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
 
-assign _inst_amoadd_w_o =_inst_amoadd_w;
-assign _inst_amoswap_w_o =_inst_amoswap_w;
 
 
    wire _type_lui = _inst_lui;
