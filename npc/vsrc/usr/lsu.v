@@ -412,19 +412,11 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-wire amo_load_req = (_amo_lr_w & (amo_state == AMO_LOAD)) | 
-                   (_memop_amo & (amo_state == AMO_LOAD));
-
-wire amo_store_req = (_amo_sc_w & (amo_state == AMO_STORE)) | 
-                    (_memop_amo & (amo_state == AMO_STORE));
-
-// 统一的访存请求信号
-wire load_request = (_isload & ~_is_amo) | amo_load_req;
-wire store_request = (_isstore & ~_is_amo) | amo_store_req;
+    wire load_valid = (_isload | _amo_lr_w | (_memop_amo & (amo_state == AMO_LOAD)));
+    wire store_valid = (_isstore | _amo_sc_w | (_memop_amo & (amo_state == AMO_STORE)));
     
-   assign mem_addr_valid_o = (load_request | store_request) & 
-                          ~mem_data_ready_i & ~clint_valid ;  // 计算状态不发起访存
-assign mem_write_valid_o = store_request & mem_addr_valid_o;
+    assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
+    assign mem_write_valid_o = store_valid & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
     assign mem_size_o = ls_size;
 
