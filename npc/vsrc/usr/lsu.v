@@ -449,8 +449,7 @@ assign signed_greater_than =
     assign mem_data_o = mem_data_out;
 
     // stall请求
-    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i) | 
-                                  (amo_valid_i & ~amo_done);
+    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i);
 
     // ============ TRAP 处理 ============
     wire _load_page_fault = mmu_page_fault_i && (_isload | _amo_lr_w) && mmu_resp_valid_i;
