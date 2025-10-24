@@ -30,7 +30,7 @@ void test_amosc_basic() {
     printf("SC result: %x (0 = success, 1 = failure)\n", result);
     
     // 解释结果
-    if (result == 0) {
+    if (result == new_value) {
         printf("SC succeeded - memory was updated\n");
     } else {
         printf("SC failed - memory was not updated\n");
