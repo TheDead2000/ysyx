@@ -90,9 +90,6 @@ output      [          `INST_LEN-1:0] amo_rs2_data_o,   // 原子操作的rs2数
 input       [          `INST_LEN-1:0] amo_result_i,     // 原子操作结果
 input                               amo_done_i,        // 原子操作完成
 
-
-
-
     /* TARP 总线 */
     output wire [`TRAP_BUS] trap_bus_o
 );
@@ -155,6 +152,28 @@ assign amo_op_o = _amo_op;
 
 
 
+ // 原子操作数据前递逻辑
+    wire amo_forward_valid = amo_done_i;
+    
+    // ALU输入数据选择（包含原子操作前递）
+    wire [31:0] rs1_data_forwarded = 
+        amo_forward_valid ? amo_result_i : rs1_data_i;
+    
+    wire [31:0] rs2_data_forwarded = 
+        amo_forward_valid ? amo_result_i : rs2_data_i;
+
+    // 使用前递后的数据
+    wire [`XLEN_BUS] _alu_in1 = 
+        ({`XLEN{_rs1_rs2 | _rs1_imm}} & rs1_data_forwarded) |
+        ({`XLEN{_pc_4 | _pc_imm12}} & inst_addr_i) |
+        ({`XLEN{_none_imm12|_none_csr}} & `XLEN'b0);
+        
+    wire [`XLEN_BUS] _alu_in2 = 
+        ({`XLEN{_rs1_rs2}} & rs2_data_forwarded) |
+        ({`XLEN{_rs1_imm}} & imm_data_i) |
+        ({`XLEN{_none_csr}} & csr_data_i) |
+        ({`XLEN{_pc_4}} & `XLEN'd4)   |
+        ({`XLEN{_pc_imm12|_none_imm12}} & _imm_aui_auipc);
 
 
   /*****************************branch 操作********************************/
@@ -213,16 +232,7 @@ assign amo_op_o = _amo_op;
 
   wire [`IMM_LEN-1:0] _imm_aui_auipc = {imm_data_i[`IMM_LEN-1:12], 12'b0};
 
-  // ALU 第一个操作数
-  wire [`XLEN_BUS] _alu_in1 = ({`XLEN{_rs1_rs2 | _rs1_imm}}&rs1_data_i) |
-                                       ({`XLEN{_pc_4 | _pc_imm12}}&inst_addr_i) |
-                                       ({`XLEN{_none_imm12|_none_csr}}&`XLEN'b0);
-  // ALU 第二个操作数
-  wire [`XLEN_BUS] _alu_in2 = ({`XLEN{_rs1_rs2}}&rs2_data_i) |
-                                       ({`XLEN{_rs1_imm}}&imm_data_i) |
-                                       ({`XLEN{_none_csr}}&csr_data_i) |
-                                       ({`XLEN{_pc_4}}&`XLEN'd4)   |
-                                       ({`XLEN{_pc_imm12|_none_imm12}}&_imm_aui_auipc);
+
 
   wire [31:0] _alu_out;
   wire _compare_out;
