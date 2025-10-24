@@ -298,6 +298,8 @@ always @(posedge clk or posedge rst) begin
             
             AMO_STORE: begin
                 $display("AMO_STORE: calc_result=%h, sc_success=%b", amo_calc_result, sc_success);
+                
+                if (mem_data_ready_i) begin
                     if (_amo_sc_w) begin
                         amo_result <= sc_success ? 32'b0 : 32'b1;
                         reserved_valid <= 1'b0;
@@ -313,6 +315,9 @@ always @(posedge clk or posedge rst) begin
                     end else begin
                         amo_state <= AMO_IDLE;
                     end
+                end else begin
+                    $display("AMO_STORE: Waiting for mem_data_ready_i");
+                end
             end
             
             default: begin
@@ -444,7 +449,8 @@ assign signed_greater_than =
     assign mem_data_o = mem_data_out;
 
     // stall请求
-    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i) | !amo_done ;
+    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i) | 
+                                  (amo_valid_i & ~amo_done);
 
     // ============ TRAP 处理 ============
     wire _load_page_fault = mmu_page_fault_i && (_isload | _amo_lr_w) && mmu_resp_valid_i;
