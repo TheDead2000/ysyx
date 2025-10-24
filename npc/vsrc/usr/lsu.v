@@ -231,7 +231,7 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (amo_valid_rising) begin  // 添加 !amo_done 条件
+                if (amo_valid_rising) begin
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
@@ -412,8 +412,8 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-    wire load_valid = (_isload | _amo_lr_w | (_memop_amo & (amo_state == AMO_LOAD)));
-    wire store_valid = (_isstore | _amo_sc_w | (_memop_amo & (amo_state == AMO_STORE)));
+    wire load_valid = (_isload | _amo_lr_w | _memop_amo);
+    wire store_valid = (_isstore | _amo_sc_w);
     
     assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;
