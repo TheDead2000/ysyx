@@ -547,6 +547,17 @@ exu exu (
     //to pc_reg
     .redirect_pc_o        (redirect_pc),
     .redirect_pc_valid_o  (redirect_pc_valid),
+
+
+
+
+    //mem bypass
+    .rs1_idx_i(rs1_idx_id_ex),
+    .rs2_idx_i(rs2_idx_id_ex),
+    .mem_rd_addr_i(rd_idx_mem),
+
+
+
     // 同时送给 ID 和 EX/MEM
     /************************to id *************************************/
     .exc_op_o       (exc_op_ex),

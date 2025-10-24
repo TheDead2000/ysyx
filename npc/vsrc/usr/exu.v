@@ -9,6 +9,8 @@ module exu (
     input       [         `INST_LEN-1:0] inst_data_i,
     // gpr 译码结果
     input       [    `REG_ADDRWIDTH-1:0] rd_idx_i,
+    input      [    `REG_ADDRWIDTH-1:0] rs1_idx_i,
+    input      [    `REG_ADDRWIDTH-1:0] rs2_idx_i,
     input       [          `INST_LEN-1:0] rs1_data_i,
     input       [          `INST_LEN-1:0] rs2_data_i,
     input       [          `IMM_LEN-1:0] imm_data_i,
@@ -74,6 +76,9 @@ module exu (
     /************************to pc_reg ******************************************/
     output [`INST_LEN-1:0] redirect_pc_o,
     output                 redirect_pc_valid_o, 
+
+    input [    `REG_ADDRWIDTH-1:0 ] mem_rd_addr_i,
+
     // 请求暂停流水线
     // input wire ram_stall_valid_mem_i,
     output jump_hazard_valid_o,
@@ -153,14 +158,12 @@ assign amo_op_o = _amo_op;
 
 
  // 原子操作数据前递逻辑
-    wire amo_forward_valid = amo_done_i;
-    
-    // ALU输入数据选择（包含原子操作前递）
-    wire [31:0] rs1_data_forwarded = 
-        amo_forward_valid ? amo_result_i : rs1_data_i;
-    
-    wire [31:0] rs2_data_forwarded = 
-        amo_forward_valid ? amo_result_i : rs2_data_i;
+  wire _rs1_mem_bypass_valid = (rs1_idx_i == mem_rd_addr_i) && (rs1_idx_i!=0);
+  wire _rs2_mem_bypass_valid = (rs2_idx_i == mem_rd_addr_i) && (rs2_idx_i!=0);
+  wire [`INST_LEN-1:0] rs1_data_forwarded = (_rs1_mem_bypass_valid)?amo_result_i:rs1_data_i;
+  // 优先级选择权 ex > mem > wb > gpr
+  wire [`INST_LEN-1:0] rs2_data_forwarded = (_rs2_mem_bypass_valid)?amo_result_i:rs2_data_i;
+
 
     // 使用前递后的数据
     wire [`XLEN_BUS] _alu_in1 = 

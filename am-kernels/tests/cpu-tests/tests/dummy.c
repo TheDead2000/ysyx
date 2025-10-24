@@ -413,7 +413,7 @@ void test_data_forwarding() {
     uint32_t *a6_ptr = &memory_location;
     
     printf("Before amoswap.w:\n");
-    printf("  Memory[%p] = 0x%08X (%x)\n", a6_ptr, memory_location, memory_location);
+    printf("  Memory[%p] = 0x%x (%x)\n", a6_ptr, memory_location, memory_location);
     
     // 模拟你的汇编代码序列
     __asm__ volatile (
@@ -429,9 +429,9 @@ void test_data_forwarding() {
     );
     
     printf("After amoswap.w:\n");
-    printf("  a6 = 0x%08X (%x)  [should be the OLD memory value]\n", a6_value, a6_value);
-    printf("  a7 = 0x%08X (%x)  [should remain unchanged]\n", a7_value, a7_value);
-    printf("  Memory[%p] = 0x%08X (%x)  [should be the NEW value from a7]\n", 
+    printf("  a6 = 0x%x (%x)  [should be the OLD memory value]\n", a6_value, a6_value);
+    printf("  a7 = 0x%x (%x)  [should remain unchanged]\n", a7_value, a7_value);
+    printf("  Memory[%p] = 0x%x (%x)  [should be the NEW value from a7]\n", 
            a6_ptr, memory_location, memory_location);
     
     // 验证结果
@@ -459,10 +459,74 @@ void test_data_forwarding() {
     }
 }
 
+void test_data_hazards() {
+    printf("\nTesting Additional Data Hazard Scenarios...\n");
+    
+    uint32_t data = 0x12345678;
+    uint32_t *ptr = &data;
+    uint32_t results[4];
+    
+    // 场景1: 连续使用同一寄存器
+    printf("Scenario 1: Sequential register usage\n");
+    __asm__ volatile (
+        "mv a6, %[ptr]\n"           // a6 = ptr
+        "li a7, 0x11111111\n"       // a7 = value1
+        "amoswap.w a6, a7, (a6)\n"  // a6 gets old mem, mem gets a7
+        "mv %[r0], a6\n"            // save a6 immediately
+        "li a7, 0x22222222\n"       // new value to a7
+        "amoswap.w a6, a7, (a6)\n"  // use a6 again as address
+        "mv %[r1], a6\n"            // save result
+        : [r0] "=r" (results[0]),
+          [r1] "=r" (results[1])
+        : [ptr] "r" (ptr)
+        : "a6", "a7", "memory"
+    );
+    
+    printf("  First amoswap: a6 = 0x%x, memory = 0x%x\n", results[0], data);
+    printf("  Second amoswap: a6 = 0x%x, memory = 0x%x\n", results[1], data);
+    
+    // 重置
+    data = 0x12345678;
+    
+    // 场景2: 测试RAW (Read After Write)  hazard
+    printf("\nScenario 2: RAW hazard test\n");
+    __asm__ volatile (
+        "mv a6, %[ptr]\n"           // a6 = ptr
+        "li a7, 0xAAAAAAAA\n"       // a7 = value
+        "amoswap.w a6, a7, (a6)\n"  // a6 gets old value
+        "addi a6, a6, 1\n"          // RAW: use a6 right after it's written
+        "mv %[r2], a6\n"            // save result
+        : [r2] "=r" (results[2])
+        : [ptr] "r" (ptr)
+        : "a6", "a7", "memory"
+    );
+    
+    printf("  After amoswap + addi: a6 = 0x%x\n", results[2]);
+    printf("  Expected: 0x12345679 (old value + 1)\n");
+    
+    // 场景3: 测试WAW (Write After Write) hazard
+    printf("\nScenario 3: WAW hazard test\n");
+    data = 0x1000;
+    __asm__ volatile (
+        "mv a6, %[ptr]\n"           // a6 = ptr
+        "li a7, 0x2000\n"           // a7 = value1
+        "li t0, 0x3000\n"           // t0 = value2
+        "amoswap.w a6, a7, (a6)\n"  // a6 gets old mem value
+        "mv a6, t0\n"               // WAW: immediately overwrite a6
+        "mv %[r3], a6\n"            // save final a6
+        : [r3] "=r" (results[3])
+        : [ptr] "r" (ptr)
+        : "a6", "a7", "t0", "memory"
+    );
+    
+    printf("  Final a6 = 0x%x\n", results[3]);
+    printf("  Memory = 0x%x\n", data);
+}
 
 int main() {
     test_data_forwarding();
-    //test_amoswap();
+    for(int i = 0; i < 1000000; i++);
+    test_data_hazards();
     while(1);
     return 0;
 }
