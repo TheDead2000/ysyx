@@ -158,21 +158,21 @@ assign amo_op_o = _amo_op;
 
 
  // 原子操作数据前递逻辑
-  wire _rs1_mem_bypass_valid = (rs1_idx_i == mem_rd_addr_i) && (rs1_idx_i!=0);
-  wire _rs2_mem_bypass_valid = (rs2_idx_i == mem_rd_addr_i) && (rs2_idx_i!=0);
-  wire [`INST_LEN-1:0] rs1_data_forwarded = (_rs1_mem_bypass_valid)?amo_result_i:rs1_data_i;
-  // 优先级选择权 ex > mem > wb > gpr
-  wire [`INST_LEN-1:0] rs2_data_forwarded = (_rs2_mem_bypass_valid)?amo_result_i:rs2_data_i;
+  // wire _rs1_mem_bypass_valid = (rs1_idx_i == mem_rd_addr_i) && (rs1_idx_i!=0);
+  // wire _rs2_mem_bypass_valid = (rs2_idx_i == mem_rd_addr_i) && (rs2_idx_i!=0);
+  // wire [`INST_LEN-1:0] rs1_data_forwarded = (_rs1_mem_bypass_valid)?amo_result_i:rs1_data_i;
+  // // 优先级选择权 ex > mem > wb > gpr
+  // wire [`INST_LEN-1:0] rs2_data_forwarded = (_rs2_mem_bypass_valid)?amo_result_i:rs2_data_i;
 
 
     // 使用前递后的数据
     wire [`XLEN_BUS] _alu_in1 = 
-        ({`XLEN{_rs1_rs2 | _rs1_imm}} & rs1_data_forwarded) |
+        ({`XLEN{_rs1_rs2 | _rs1_imm}} & rs1_data_i) |
         ({`XLEN{_pc_4 | _pc_imm12}} & inst_addr_i) |
         ({`XLEN{_none_imm12|_none_csr}} & `XLEN'b0);
         
     wire [`XLEN_BUS] _alu_in2 = 
-        ({`XLEN{_rs1_rs2}} & rs2_data_forwarded) |
+        ({`XLEN{_rs1_rs2}} & rs2_data_i) |
         ({`XLEN{_rs1_imm}} & imm_data_i) |
         ({`XLEN{_none_csr}} & csr_data_i) |
         ({`XLEN{_pc_4}} & `XLEN'd4)   |
