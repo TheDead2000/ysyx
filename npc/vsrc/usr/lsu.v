@@ -211,10 +211,10 @@ always @(posedge clk or posedge rst) begin
         reserved_addr <= 32'b0;
         loaded_value <= 32'b0;
         amo_result <= 32'b0;
-        amo_done <= 1'b0;
+        amo_done = 1'b0;
         amo_calc_result <= 32'b0;
     end else begin
-        amo_done <= 1'b0;
+        amo_done = 1'b0;
         
         case (amo_state)
             AMO_IDLE: begin
@@ -244,7 +244,7 @@ always @(posedge clk or posedge rst) begin
                     if (_amo_lr_w) begin
                         // LR.W: 直接返回加载的值并完成
                         amo_result <= mem_rdata_i;
-                        amo_done <= 1'b1;
+                        amo_done = 1'b1;
                         amo_state <= AMO_IDLE;
                         $display("LR.W: Complete, result=%h", mem_rdata_i);
                     end else if (_memop_amo) begin
@@ -290,13 +290,13 @@ always @(posedge clk or posedge rst) begin
                     if (_amo_sc_w) begin
                         amo_result <= sc_success ? 32'b0 : 32'b1;
                         reserved_valid <= 1'b0;
-                        amo_done <= 1'b1;
+                        amo_done = 1'b1;
                         amo_state <= AMO_IDLE;
                         $display("SC.W: Complete, result=%h", sc_success ? 32'b0 : 32'b1);
                     end else if (_memop_amo) begin
                         amo_result <= loaded_value;  // AMO操作返回原始值
                         reserved_valid <= 1'b0;
-                        amo_done <= 1'b1;
+                        amo_done = 1'b1;
                         amo_state <= AMO_IDLE;
                         $display("AMO: Complete, result=%h", loaded_value);
                     end else begin
