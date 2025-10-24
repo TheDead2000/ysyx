@@ -1,44 +1,68 @@
 #include <am.h>
 #include <stdio.h>
 #include <klib.h>
-// 测试 amosc.w 的基本功能
-void test_amosc_basic() {
-    printf("Testing amosc.w instruction (atomic store conditional)...\n");
+void test_li_a7() {
+    printf("Testing 'li a7, 1' instruction...\n");
     
-    // 初始化内存位置
-    uint32_t memory_value = 0x12345678;
-    uint32_t new_value = 0xABCDEF00;
-    uint32_t result;
+    uint32_t a7_value;
     
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("New value to store conditionally: 0x%x\n", new_value);
-    
-    // 首先使用 lr.w 加载保留
-    // 然后使用 sc.w 条件存储
+    // 使用内联汇编执行 li a7, 1
     __asm__ volatile (
-        "mv x16, %[addr]\n"           // 将内存地址移动到x16
-        "lr.w x15, (x16)\n"           // 加载保留
-        "mv x17, %[new_val]\n"        // 将新值移动到x17
-        "sc.w %[result], x17, (x16)\n"  // 执行条件存储
-        : [result] "=r" (result)
-        : [addr] "r" (&memory_value), [new_val] "r" (new_value)
-        : "x15", "x16", "x17", "memory"
+        "li a7, 1\n"           // 将立即数1加载到a7寄存器
+        "mv %0, a7\n"          // 将a7的值移动到输出变量
+        : "=r" (a7_value)      // 输出操作数
+        :                      // 没有输入操作数
+        : "a7"                 // 告诉编译器a7寄存器被修改
     );
     
-    printf("After amosc.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("SC result: %x (0 = success, 1 = failure)\n", result);
+    printf("After 'li a7, 1': a7 = %u\n", a7_value);
     
-    // 解释结果
-    if (result == 0) {
-        printf("SC succeeded - memory was updated\n");
+    // 验证结果
+    if (a7_value == 1) {
+        printf("✓ Test PASSED: a7 correctly set to 1\n");
     } else {
-        printf("SC failed - memory was not updated\n");
+        printf("✗ Test FAILED: a7 = %u, expected 1\n", a7_value);
     }
 }
+
+// 测试 amosc.w 的基本功能
+// void test_amosc_basic() {
+//     printf("Testing amosc.w instruction (atomic store conditional)...\n");
+    
+//     // 初始化内存位置
+//     uint32_t memory_value = 0x12345678;
+//     uint32_t new_value = 0xABCDEF00;
+//     uint32_t result;
+    
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("New value to store conditionally: 0x%x\n", new_value);
+    
+//     // 首先使用 lr.w 加载保留
+//     // 然后使用 sc.w 条件存储
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
+//         "lr.w x15, (x16)\n"           // 加载保留
+//         "mv x17, %[new_val]\n"        // 将新值移动到x17
+//         "sc.w %[result], x17, (x16)\n"  // 执行条件存储
+//         : [result] "=r" (result)
+//         : [addr] "r" (&memory_value), [new_val] "r" (new_value)
+//         : "x15", "x16", "x17", "memory"
+//     );
+    
+//     printf("After amosc.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("SC result: %x (0 = success, 1 = failure)\n", result);
+    
+//     // 解释结果
+//     if (result == 0) {
+//         printf("SC succeeded - memory was updated\n");
+//     } else {
+//         printf("SC failed - memory was not updated\n");
+//     }
+// }
 int main ()
 {
-    test_amosc_basic();
+    test_li_a7();
     while(1);
     return 0;
 }
