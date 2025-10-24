@@ -218,17 +218,20 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (amo_valid_i) begin
+                if (amo_valid_i && !amo_done) begin  // 添加 !amo_done 条件
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
                         reserved_valid <= 1'b1;
+                        $display("LR.W: Enter AMO_LOAD, addr=%h", final_addr);
                     end else if (_amo_sc_w) begin
                         amo_state <= AMO_STORE;
+                        $display("SC.W: Enter AMO_STORE, addr=%h", final_addr);
                     end else if (_memop_amo) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
                         reserved_valid <= 1'b1;
+                        $display("AMO: Enter AMO_LOAD, op=%h, addr=%h", amo_op_i, final_addr);
                     end
                 end
             end
@@ -236,22 +239,32 @@ always @(posedge clk or posedge rst) begin
             AMO_LOAD: begin
                 if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
-                    $display("loaded_value:%x\n",loaded_value);
+                    $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
+                    
                     if (_amo_lr_w) begin
-                        // LR.W: 直接返回加载的值
+                        // LR.W: 直接返回加载的值并完成
                         amo_result <= mem_rdata_i;
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
+                        $display("LR.W: Complete, result=%h", mem_rdata_i);
                     end else if (_memop_amo) begin
                         // AMO操作: 进入计算状态
                         amo_state <= AMO_CALC;
+                        $display("AMO: Move to AMO_CALC");
+                    end else begin
+                        // 其他情况回到IDLE
+                        amo_state <= AMO_IDLE;
                     end
+                end else begin
+                    $display("AMO_LOAD: Waiting for mem_data_ready_i");
                 end
             end
             
             AMO_CALC: begin
                 // 在计算状态进行原子操作计算
-                $display("amo_op %x AMO_CALC loaded_value:%x\n",amo_op_i,loaded_value);
+                $display("AMO_CALC: amo_op=%h, loaded_value=%h, rs2_data=%h", 
+                         amo_op_i, loaded_value, amo_rs2_data_i);
+                         
                 case (amo_op_i)
                     `AMOOP_SWAP: amo_calc_result <= amo_rs2_data_i;
                     `AMOOP_ADD:  amo_calc_result <= loaded_value + amo_rs2_data_i; 
@@ -264,31 +277,51 @@ always @(posedge clk or posedge rst) begin
                     `AMOOP_MAXU: amo_calc_result <= (loaded_value > amo_rs2_data_i) ? loaded_value : amo_rs2_data_i;
                     default:     amo_calc_result <= amo_rs2_data_i;
                 endcase
+                
                 // 计算完成后进入存储状态
                 amo_state <= AMO_STORE;
+                $display("AMO_CALC: Move to AMO_STORE, calc_result=%h", amo_calc_result);
             end
             
             AMO_STORE: begin
-                    $display("amocalcresult:%x,amo_rs2_data_i:%x\n",amo_calc_result,amo_rs2_data_i);
+                $display("AMO_STORE: calc_result=%h, sc_success=%b", amo_calc_result, sc_success);
+                
                 if (mem_data_ready_i) begin
                     if (_amo_sc_w) begin
                         amo_result <= sc_success ? 32'b0 : 32'b1;
                         reserved_valid <= 1'b0;
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
+                        $display("SC.W: Complete, result=%h", sc_success ? 32'b0 : 32'b1);
                     end else if (_memop_amo) begin
-                        amo_result <= loaded_value;
+                        amo_result <= loaded_value;  // AMO操作返回原始值
                         reserved_valid <= 1'b0;
                         amo_done <= 1'b1;
                         amo_state <= AMO_IDLE;
+                        $display("AMO: Complete, result=%h", loaded_value);
+                    end else begin
+                        amo_state <= AMO_IDLE;
                     end
+                end else begin
+                    $display("AMO_STORE: Waiting for mem_data_ready_i");
                 end
+            end
+            
+            default: begin
+                amo_state <= AMO_IDLE;
             end
         endcase
         
-        // 清除保留的条件
-        if ((_isstore & ~_amo_sc_w) && reserved_valid) begin
+        // 清除保留的条件 - 任何非SC.W的存储操作都会清除保留位
+        if ((_isstore && !_amo_sc_w) && reserved_valid) begin
             reserved_valid <= 1'b0;
+            $display("Clear reservation due to non-SC store");
+        end
+        
+        // 调试信息
+        if (amo_valid_i && amo_state == AMO_IDLE) begin
+            $display("New AMO request: lr_w=%b, sc_w=%b, amo=%b, op=%h", 
+                     _amo_lr_w, _amo_sc_w, _memop_amo, amo_op_i);
         end
     end
 end
