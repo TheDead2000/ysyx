@@ -1,29 +1,6 @@
 #include <am.h>
 #include <stdio.h>
 #include <klib.h>
-void test_li_a7() {
-    printf("Testing 'li a7, 1' instruction...\n");
-    
-    uint32_t a7_value = 0;
-    
-    // 使用内联汇编执行 li a7, 1
-    __asm__ volatile (
-        "li a7, 1\n"           // 将立即数1加载到a7寄存器
-        "mv %0, a7\n"          // 将a7的值移动到输出变量
-        : "=r" (a7_value)      // 输出操作数
-        :                      // 没有输入操作数
-        : "a7"                 // 告诉编译器a7寄存器被修改
-    );
-    
-    printf("After 'li a7, 1': a7 = %x\n", a7_value);
-    
-    // 验证结果
-    if (a7_value == 1) {
-        printf("✓ Test PASSED: a7 correctly set to 1\n");
-    } else {
-        printf("✗ Test FAILED: a7 = %x, expected 1\n", a7_value);
-    }
-}
 
 // 测试 amosc.w 的基本功能
 // void test_amosc_basic() {
@@ -60,12 +37,7 @@ void test_li_a7() {
 //         printf("SC failed - memory was not updated\n");
 //     }
 // }
-int main ()
-{
-    test_li_a7();
-    while(1);
-    return 0;
-}
+
 // void test_amoand() {
 //     printf("Testing amoand.w instruction (atomic AND)...\n");
     
@@ -196,34 +168,6 @@ int main ()
 //     }
 //     printf(")\n");
 //     printf("Returned old value: 0x%02X\n", old_flags);
-// }
-
-// void test_amoand_multiple_ops() {
-//     printf("\nTesting multiple amoand.w operations...\n");
-    
-//     uint32_t shared_var = 0xFFFFFFFF;
-//     uint32_t masks[] = {0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF};
-//     uint32_t old_values[4];
-//     int num_ops = 4;
-    
-//     printf("Initial shared variable: 0x%x\n", shared_var);
-    
-//     for (int i = 0; i < num_ops; i++) {
-//         __asm__ volatile (
-//             "mv x16, %[addr]\n"
-//             "mv x17, %[mask]\n"
-//             "amoand.w %[old_val], x17, (x16)\n"
-//             : [old_val] "=r" (old_values[i])
-//             : [addr] "r" (&shared_var), [mask] "r" (masks[i])
-//             : "x16", "x17", "memory"
-//         );
-        
-//         printf("Operation %d: AND with 0x%x, old value = 0x%x, new value = 0x%x\n", 
-//                i, masks[i], old_values[i], shared_var);
-//     }
-    
-//     printf("Final shared variable: 0x%x\n", shared_var);
-//     printf("Expected result: 0x%x\n", 0x00000000);
 // }
 
 // int main() {
@@ -424,32 +368,38 @@ int main ()
 //     printf("Returned old value: 0x%x\n", old_value);
 //     printf("Expected new value: 0x%x\n", 0x12345678 + 0x00000100);
 // }
-// void test_amoswap() {
-//     printf("Testing amoswap.w instruction (fixed version)...\n");
-    
-//     // 初始化内存位置和寄存器值
-//     uint32_t memory_value = 0x12345678;
-//     uint32_t new_value = 0xABCDEF00;
-//     uint32_t old_value;
-    
-//     printf("Initial memory value: 0x%x\n", memory_value);
-//     printf("New value to swap: 0x%x\n", new_value);
-    
-//     // 使用正确的地址加载方式
-//     __asm__ volatile (
-//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
-//         "mv x17, %[new_val]\n"        // 将新值移动到x17
-//         "amoswap.w %[old_val], x17, (x16)\n"  // 执行原子交换，结果保存到old_val
-//         : [old_val] "=r" (old_value)
-//         : [addr] "r" (&memory_value), [new_val] "r" (new_value)
-//         : "x16", "x17", "memory"
-//     );
-    
-//     printf("After amoswap.w:\n");
-//     printf("Memory now contains: 0x%x\n", memory_value);
-//     printf("Returned old value: 0x%x\n", old_value);
-// }
 
+void test_amoswap() {
+    printf("Testing amoswap.w instruction (fixed version)...\n");
+    
+    // 初始化内存位置和寄存器值
+    uint32_t memory_value = 0x12345678;
+    uint32_t new_value = 0xABCDEF00;
+    uint32_t old_value;
+    
+    printf("Initial memory value: 0x%x\n", memory_value);
+    printf("New value to swap: 0x%x\n", new_value);
+    
+    // 使用正确的地址加载方式
+    __asm__ volatile (
+        "mv x16, %[addr]\n"           // 将内存地址移动到x16
+        "mv x17, %[new_val]\n"        // 将新值移动到x17
+        "amoswap.w %[old_val], x17, (x16)\n"  // 执行原子交换，结果保存到old_val
+        : [old_val] "=r" (old_value)
+        : [addr] "r" (&memory_value), [new_val] "r" (new_value)
+        : "x16", "x17", "memory"
+    );
+    
+    printf("After amoswap.w:\n");
+    printf("Memory now contains: 0x%x\n", memory_value);
+    printf("Returned old value: 0x%x\n", old_value);
+}
+
+int main() {
+    test_amoswap();
+    while(1);
+    return 0;
+}
 
 // int main() {
 //   // const char *str = "hello,world!\n";
