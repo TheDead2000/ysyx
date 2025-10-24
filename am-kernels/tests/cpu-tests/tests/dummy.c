@@ -2,48 +2,48 @@
 #include <stdio.h>
 #include <klib.h>
 
-// 测试 amosc.w 的基本功能
-// void test_amosc_basic() {
-//     printf("Testing amosc.w instruction (atomic store conditional)...\n");
+//测试 amosc.w 的基本功能
+void test_amosc_basic() {
+    printf("Testing amosc.w instruction (atomic store conditional)...\n");
     
-//     // 初始化内存位置
-//     uint32_t memory_value = 0x12345678;
-//     uint32_t new_value = 0xABCDEF00;
-//     uint32_t result;
+    // 初始化内存位置
+    uint32_t memory_value = 0x12345678;
+    uint32_t new_value = 0xABCDEF00;
+    uint32_t result;
     
-//     printf("Initial memory value: 0x%x\n", memory_value);
-//     printf("New value to store conditionally: 0x%x\n", new_value);
+    printf("Initial memory value: 0x%x\n", memory_value);
+    printf("New value to store conditionally: 0x%x\n", new_value);
     
-//     // 首先使用 lr.w 加载保留
-//     // 然后使用 sc.w 条件存储
-//     __asm__ volatile (
-//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
-//         "lr.w x15, (x16)\n"           // 加载保留
-//         "mv x17, %[new_val]\n"        // 将新值移动到x17
-//         "sc.w %[result], x17, (x16)\n"  // 执行条件存储
-//         : [result] "=r" (result)
-//         : [addr] "r" (&memory_value), [new_val] "r" (new_value)
-//         : "x15", "x16", "x17", "memory"
-//     );
+    // 首先使用 lr.w 加载保留
+    // 然后使用 sc.w 条件存储
+    __asm__ volatile (
+        "mv x16, %[addr]\n"           // 将内存地址移动到x16
+        "lr.w x15, (x16)\n"           // 加载保留
+        "mv x17, %[new_val]\n"        // 将新值移动到x17
+        "sc.w %[result], x17, (x16)\n"  // 执行条件存储
+        : [result] "=r" (result)
+        : [addr] "r" (&memory_value), [new_val] "r" (new_value)
+        : "x15", "x16", "x17", "memory"
+    );
     
-//     printf("After amosc.w:\n");
-//     printf("Memory now contains: 0x%x\n", memory_value);
-//     printf("SC result: %x (0 = success, 1 = failure)\n", result);
+    printf("After amosc.w:\n");
+    printf("Memory now contains: 0x%x\n", memory_value);
+    printf("SC result: %x (0 = success, 1 = failure)\n", result);
     
-//     // 解释结果
-//     if (result == 0) {
-//         printf("SC succeeded - memory was updated\n");
-//     } else {
-//         printf("SC failed - memory was not updated\n");
-//     }
-// }
+    // 解释结果
+    if (result == 0) {
+        printf("SC succeeded - memory was updated\n");
+    } else {
+        printf("SC failed - memory was not updated\n");
+    }
+}
 
-// int main() {
+int main() {
     
-//     test_amosc_basic();
-//     while(1);
-//     return 0;
-// }
+    test_amosc_basic();
+    while(1);
+    return 0;
+}
 
 // void test_amoand() {
 //     printf("Testing amoand.w instruction (atomic AND)...\n");
@@ -349,65 +349,65 @@
 // }
 
 
-void test_amoadd() {
-    printf("Testing amoadd.w instruction...\n");
+// void test_amoadd() {
+//     printf("Testing amoadd.w instruction...\n");
     
-    // 初始化内存位置和要加的值
-    uint32_t memory_value = 0x12345678;
-    uint32_t add_value = 0x00000100;  // 加256
-    uint32_t old_value;
+//     // 初始化内存位置和要加的值
+//     uint32_t memory_value = 0x12345678;
+//     uint32_t add_value = 0x00000100;  // 加256
+//     uint32_t old_value;
     
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("Value to add: 0x%x\n", add_value);
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("Value to add: 0x%x\n", add_value);
     
-    // 使用正确的地址加载方式
-    __asm__ volatile (
-        "mv x16, %[addr]\n"           // 将内存地址移动到x16
-        "mv x17, %[add_val]\n"        // 将要加的值移动到x17
-        "amoadd.w %[old_val], x17, (x16)\n"  // 执行原子加法，结果保存到old_val
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [add_val] "r" (add_value)
-        : "x16", "x17", "memory"
-    );
+//     // 使用正确的地址加载方式
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
+//         "mv x17, %[add_val]\n"        // 将要加的值移动到x17
+//         "amoadd.w %[old_val], x17, (x16)\n"  // 执行原子加法，结果保存到old_val
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [add_val] "r" (add_value)
+//         : "x16", "x17", "memory"
+//     );
     
-    printf("After amoadd.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-    printf("Expected new value: 0x%x\n", 0x12345678 + 0x00000100);
-}
+//     printf("After amoadd.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+//     printf("Expected new value: 0x%x\n", 0x12345678 + 0x00000100);
+// }
 
-void test_amoswap() {
-    printf("Testing amoswap.w instruction (fixed version)...\n");
+// void test_amoswap() {
+//     printf("Testing amoswap.w instruction (fixed version)...\n");
     
-    // 初始化内存位置和寄存器值
-    uint32_t memory_value = 0x12345678;
-    uint32_t new_value = 0xABCDEF00;
-    uint32_t old_value;
+//     // 初始化内存位置和寄存器值
+//     uint32_t memory_value = 0x12345678;
+//     uint32_t new_value = 0xABCDEF00;
+//     uint32_t old_value;
     
-    printf("Initial memory value: 0x%x\n", memory_value);
-    printf("New value to swap: 0x%x\n", new_value);
+//     printf("Initial memory value: 0x%x\n", memory_value);
+//     printf("New value to swap: 0x%x\n", new_value);
     
-    // 使用正确的地址加载方式
-    __asm__ volatile (
-        "mv x16, %[addr]\n"           // 将内存地址移动到x16
-        "mv x17, %[new_val]\n"        // 将新值移动到x17
-        "amoswap.w %[old_val], x17, (x16)\n"  // 执行原子交换，结果保存到old_val
-        : [old_val] "=r" (old_value)
-        : [addr] "r" (&memory_value), [new_val] "r" (new_value)
-        : "x16", "x17", "memory"
-    );
+//     // 使用正确的地址加载方式
+//     __asm__ volatile (
+//         "mv x16, %[addr]\n"           // 将内存地址移动到x16
+//         "mv x17, %[new_val]\n"        // 将新值移动到x17
+//         "amoswap.w %[old_val], x17, (x16)\n"  // 执行原子交换，结果保存到old_val
+//         : [old_val] "=r" (old_value)
+//         : [addr] "r" (&memory_value), [new_val] "r" (new_value)
+//         : "x16", "x17", "memory"
+//     );
     
-    printf("After amoswap.w:\n");
-    printf("Memory now contains: 0x%x\n", memory_value);
-    printf("Returned old value: 0x%x\n", old_value);
-}
+//     printf("After amoswap.w:\n");
+//     printf("Memory now contains: 0x%x\n", memory_value);
+//     printf("Returned old value: 0x%x\n", old_value);
+// }
 
-int main() {
-    test_amoadd();
-    test_amoswap();
-    while(1);
-    return 0;
-}
+// int main() {
+//     test_amoadd();
+//     test_amoswap();
+//     while(1);
+//     return 0;
+// }
 
 // int main() {
 //   // const char *str = "hello,world!\n";
