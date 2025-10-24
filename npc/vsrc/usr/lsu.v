@@ -218,7 +218,7 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (amo_valid_i && !amo_done) begin  // 添加 !amo_done 条件
+                if (amo_valid_i & !amo_done) begin  // 添加 !amo_done 条件
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
@@ -320,8 +320,8 @@ always @(posedge clk or posedge rst) begin
         
         // 调试信息
         if (amo_valid_i && amo_state == AMO_IDLE) begin
-            $display("New AMO request: lr_w=%b, sc_w=%b, amo=%b, op=%h", 
-                     _amo_lr_w, _amo_sc_w, _memop_amo, amo_op_i);
+            $display("New AMO request: lr_w=%b, sc_w=%b, mem_op_i=%x, op=%h", 
+                     _amo_lr_w, _amo_sc_w, mem_op_i, amo_op_i);
         end
     end
 end
