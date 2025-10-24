@@ -4,7 +4,7 @@
 void test_li_a7() {
     printf("Testing 'li a7, 1' instruction...\n");
     
-    uint32_t a7_value;
+    uint32_t a7_value = 0;
     
     // 使用内联汇编执行 li a7, 1
     __asm__ volatile (
@@ -15,13 +15,13 @@ void test_li_a7() {
         : "a7"                 // 告诉编译器a7寄存器被修改
     );
     
-    printf("After 'li a7, 1': a7 = %u\n", a7_value);
+    printf("After 'li a7, 1': a7 = %x\n", a7_value);
     
     // 验证结果
     if (a7_value == 1) {
         printf("✓ Test PASSED: a7 correctly set to 1\n");
     } else {
-        printf("✗ Test FAILED: a7 = %u, expected 1\n", a7_value);
+        printf("✗ Test FAILED: a7 = %x, expected 1\n", a7_value);
     }
 }
 
