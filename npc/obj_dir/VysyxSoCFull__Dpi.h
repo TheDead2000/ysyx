@@ -16,7 +16,7 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:291:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:309:32
     extern void bpu_count(svBit bpu_ret);
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/flash/flash.v:84:30
     extern void flash_read(int addr, int* data);

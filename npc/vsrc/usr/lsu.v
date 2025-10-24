@@ -218,7 +218,7 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (!amo_done) begin  // 添加 !amo_done 条件
+                if (amo_valid_i && !amo_done) begin  // 添加 !amo_done 条件
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;
