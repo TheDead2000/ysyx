@@ -422,10 +422,8 @@ wire amo_store_req = (_amo_sc_w & (amo_state == AMO_STORE)) |
 wire load_request = (_isload & ~_is_amo) | amo_load_req;
 wire store_request = (_isstore & ~_is_amo) | amo_store_req;
     
-   assign mem_addr_valid_o = ((load_request | store_request) & 
-                          ~mem_data_ready_i & 
-                          ~clint_valid & 
-                          (amo_state != AMO_CALC));  // 计算状态不发起访存
+   assign mem_addr_valid_o = (load_request | store_request) & 
+                          ~mem_data_ready_i & ~clint_valid ;  // 计算状态不发起访存
 assign mem_write_valid_o = store_request & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
     assign mem_size_o = ls_size;
