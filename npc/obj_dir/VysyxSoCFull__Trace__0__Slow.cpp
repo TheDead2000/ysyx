@@ -1775,7 +1775,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+6829,"rs1_data_id", false,-1, 31,0);
     tracep->declBus(c+6830,"rs2_data_id", false,-1, 31,0);
     tracep->declBus(c+6086,"imm_data_id", false,-1, 31,0);
-    tracep->declQuad(c+6609,"alu_op_id", false,-1, 33,0);
+    tracep->declQuad(c+6609,"alu_op_id", false,-1, 35,0);
     tracep->declBus(c+6611,"mem_op_id", false,-1, 3,0);
     tracep->declBus(c+6612,"exc_op_id", false,-1, 13,0);
     tracep->declBus(c+7051,"pc_op_id", false,-1, 3,0);
@@ -1803,7 +1803,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+608,"rs1_data_id_ex", false,-1, 31,0);
     tracep->declBus(c+6621,"rs2_data_id_ex", false,-1, 31,0);
     tracep->declBus(c+609,"imm_data_id_ex", false,-1, 31,0);
-    tracep->declQuad(c+6622,"alu_op_id_ex", false,-1, 33,0);
+    tracep->declQuad(c+6622,"alu_op_id_ex", false,-1, 35,0);
     tracep->declBus(c+6624,"mem_op_id_ex", false,-1, 3,0);
     tracep->declBus(c+6625,"exc_op_id_ex", false,-1, 13,0);
     tracep->declBus(c+610,"pc_op_id_ex", false,-1, 3,0);
@@ -2529,7 +2529,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6631,"exc_csr_valid_o", false,-1);
     tracep->declBus(c+6618,"exc_csr_addr_o", false,-1, 11,0);
     tracep->declBus(c+6630,"exc_csr_data_o", false,-1, 31,0);
-    tracep->declQuad(c+6622,"alu_op_i", false,-1, 33,0);
+    tracep->declQuad(c+6622,"alu_op_i", false,-1, 35,0);
     tracep->declBus(c+6624,"mem_op_i", false,-1, 3,0);
     tracep->declBus(c+6625,"exc_op_i", false,-1, 13,0);
     tracep->declBus(c+610,"pc_op_i", false,-1, 3,0);
@@ -2584,7 +2584,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+7022,"rst", false,-1);
     tracep->declBus(c+6683,"alu_a_i", false,-1, 31,0);
     tracep->declBus(c+6684,"alu_b_i", false,-1, 31,0);
-    tracep->declQuad(c+6622,"alu_op_i", false,-1, 33,0);
+    tracep->declQuad(c+6622,"alu_op_i", false,-1, 35,0);
     tracep->declBus(c+6626,"alu_out_o", false,-1, 31,0);
     tracep->declBit(c+6685,"compare_out_o", false,-1);
     tracep->declBit(c+6632,"alu_stall_req_o", false,-1);
@@ -10848,7 +10848,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+616,"bpu_pdt_tag_id_ex_o", false,-1, 31,0);
     tracep->declBus(c+6829,"rs1_data_id_ex_i", false,-1, 31,0);
     tracep->declBus(c+6830,"rs2_data_id_ex_i", false,-1, 31,0);
-    tracep->declQuad(c+6609,"alu_op_id_ex_i", false,-1, 33,0);
+    tracep->declQuad(c+6609,"alu_op_id_ex_i", false,-1, 35,0);
     tracep->declBus(c+6611,"mem_op_id_ex_i", false,-1, 3,0);
     tracep->declBus(c+6612,"exc_op_id_ex_i", false,-1, 13,0);
     tracep->declBus(c+7051,"pc_op_id_ex_i", false,-1, 3,0);
@@ -10861,7 +10861,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+609,"imm_data_id_ex_o", false,-1, 31,0);
     tracep->declBus(c+608,"rs1_data_id_ex_o", false,-1, 31,0);
     tracep->declBus(c+6621,"rs2_data_id_ex_o", false,-1, 31,0);
-    tracep->declQuad(c+6622,"alu_op_id_ex_o", false,-1, 33,0);
+    tracep->declQuad(c+6622,"alu_op_id_ex_o", false,-1, 35,0);
     tracep->declBus(c+6624,"mem_op_id_ex_o", false,-1, 3,0);
     tracep->declBus(c+6625,"exc_op_id_ex_o", false,-1, 13,0);
     tracep->declBus(c+610,"pc_op_id_ex_o", false,-1, 3,0);
@@ -10873,8 +10873,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7053,"RESET_VAL", false,-1, 31,0);
     tracep->declBit(c+6986,"clk", false,-1);
     tracep->declBit(c+19,"rst", false,-1);
-    tracep->declQuad(c+6609,"din", false,-1, 33,0);
-    tracep->declQuad(c+6622,"dout", false,-1, 33,0);
+    tracep->declQuad(c+6609,"din", false,-1, 35,0);
+    tracep->declQuad(c+6622,"dout", false,-1, 35,0);
     tracep->declBit(c+18,"wen", false,-1);
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_bpu_history_id_ex ");
@@ -11095,7 +11095,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+6630,"ex_csr_writedata_i", false,-1, 31,0);
     tracep->declBus(c+6879,"mem_rd_data_i", false,-1, 31,0);
     tracep->declBus(c+620,"mem_rd_addr_i", false,-1, 4,0);
-    tracep->declQuad(c+6609,"alu_op_o", false,-1, 33,0);
+    tracep->declQuad(c+6609,"alu_op_o", false,-1, 35,0);
     tracep->declBus(c+6611,"mem_op_o", false,-1, 3,0);
     tracep->declBus(c+6612,"exc_op_o", false,-1, 13,0);
     tracep->declBus(c+7051,"pc_op_o", false,-1, 3,0);

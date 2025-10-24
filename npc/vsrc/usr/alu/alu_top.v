@@ -66,9 +66,14 @@ module alu_top (
   wire _aluop_amominu = (alu_op_i[`ALUOP_AMOMINU]);
   wire _aluop_amomaxu = (alu_op_i[`ALUOP_AMOMAXU]);
   
+  wire _aluop_amo_lr  = (alu_op_i[`ALUOP_AMO_LR]);
+  wire _aluop_amo_sc  = (alu_op_i[`ALUOP_AMO_SC]);
+
+
   wire is_amo = _aluop_amoswap | _aluop_amoadd | _aluop_amoxor |
                 _aluop_amoand | _aluop_amoor  | _aluop_amomin |
-                _aluop_amomax | _aluop_amominu| _aluop_amomaxu ;
+                _aluop_amomax | _aluop_amominu| _aluop_amomaxu 
+                | _aluop_amo_sc  | _aluop_amo_lr ;
   
 
 

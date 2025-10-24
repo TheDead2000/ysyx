@@ -445,6 +445,9 @@ wire _alu_amomin  = _inst_amomin_w;
 wire _alu_amomax  = _inst_amomax_w;
 wire _alu_amominu = _inst_amominu_w;
 wire _alu_amomaxu = _inst_amomaxu_w;
+wire _alu_amo_lr = _inst_lr_w;
+wire _alu_amo_sc = _inst_sc_w;
+
  // // ALU 计算结果是否需要符号扩展,放在 execute 下实现
   // wire _alu_sext = _type_op_imm_32 | _type_op_32;
   //多路选择器
@@ -485,6 +488,9 @@ wire _alu_amomaxu = _inst_amomaxu_w;
   assign _alu_op[`ALUOP_AMOMAX]  = _alu_amomax;
   assign _alu_op[`ALUOP_AMOMINU] = _alu_amominu;
   assign _alu_op[`ALUOP_AMOMAXU] = _alu_amomaxu;  
+  assign _alu_op[`ALUOP_AMO_LR] = _alu_amo_lr;
+  assign _alu_op[`ALUOP_AMO_SC] = _alu_amo_sc;
+
 
   assign alu_op_o = _alu_op;
 

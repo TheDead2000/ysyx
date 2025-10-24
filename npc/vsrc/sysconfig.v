@@ -52,7 +52,7 @@
 
 
 /* ALU 操作码 */
-`define ALUOP_LEN 34
+`define ALUOP_LEN 36
 
 `define ALUOP_NONE 'd0
 `define ALUOP_ADD 'd1
@@ -92,7 +92,8 @@
 `define ALUOP_AMOMAX 'd31
 `define ALUOP_AMOMINU 'd32
 `define ALUOP_AMOMAXU 'd33
-
+`define ALUOP_AMO_LR 'd34
+`define ALUOP_AMO_SC 'd35
 /* exc 操作码 */
 `define EXCOP_LEN 14
 
