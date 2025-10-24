@@ -263,7 +263,6 @@ always @(posedge clk or posedge rst) begin
 end
 
 assign amo_valid_o = amo_valid_reg;
-
 assign amo_rs2_data_o = rs2_data_i;
 wire amo_stall_req = is_amo_inst & ~amo_done_i;
 
