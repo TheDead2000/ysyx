@@ -245,7 +245,7 @@ assign amo_op_o = _amo_op;
 
 
 // 原子操作控制信号输出
-assign amo_valid_o = is_amo_inst & ~amo_done_i;
+assign amo_valid_o = is_amo_inst;
 assign amo_rs2_data_o = rs2_data_i;
 wire amo_stall_req = is_amo_inst & ~amo_done_i;
 
