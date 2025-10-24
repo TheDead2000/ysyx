@@ -412,11 +412,21 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-    wire load_valid = (_isload | _amo_lr_w | (_memop_amo & (amo_state == AMO_LOAD)));
-    wire store_valid = (_isstore | _amo_sc_w | (_memop_amo & (amo_state == AMO_STORE)));
+wire amo_load_req = (_amo_lr_w & (amo_state == AMO_LOAD)) | 
+                   (_memop_amo & (amo_state == AMO_LOAD));
+
+wire amo_store_req = (_amo_sc_w & (amo_state == AMO_STORE)) | 
+                    (_memop_amo & (amo_state == AMO_STORE));
+
+// 统一的访存请求信号
+wire load_request = (_isload & ~_is_amo) | amo_load_req;
+wire store_request = (_isstore & ~_is_amo) | amo_store_req;
     
-    assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
-    assign mem_write_valid_o = store_valid & mem_addr_valid_o;
+   assign mem_addr_valid_o = ((load_request | store_request) & 
+                          ~mem_data_ready_i & 
+                          ~clint_valid & 
+                          (amo_state != AMO_CALC));  // 计算状态不发起访存
+assign mem_write_valid_o = store_request & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
     assign mem_size_o = ls_size;
 
@@ -449,8 +459,13 @@ assign signed_greater_than =
     assign mem_data_o = mem_data_out;
 
     // stall请求
-    assign ram_stall_valid_mem_o = mem_addr_valid_o | (use_mmu & ~mmu_resp_valid_i) | 
-                                  (amo_valid_i & ~amo_done);
+assign ram_stall_valid_mem_o = 
+    // 普通访存请求未完成
+    (mem_addr_valid_o) |
+    // MMU 转换未完成  
+    (use_mmu & ~mmu_resp_valid_i) |
+    // 原子操作未完成且不在空闲状态
+    ((amo_state != AMO_IDLE) & ~amo_done);
 
     // ============ TRAP 处理 ============
     wire _load_page_fault = mmu_page_fault_i && (_isload | _amo_lr_w) && mmu_resp_valid_i;
