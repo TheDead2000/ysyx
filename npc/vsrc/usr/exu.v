@@ -245,24 +245,7 @@ assign amo_op_o = _amo_op;
 
 
 // 原子操作控制信号输出
-// 简单的握手协议
-reg amo_valid_reg;
-
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        amo_valid_reg <= 1'b0;
-    end else begin
-        if (is_amo_inst && !amo_valid_reg) begin
-            // 新的原子操作开始
-            amo_valid_reg <= 1'b1;
-        end else if (amo_done_i && amo_valid_reg) begin
-            // 原子操作完成
-            amo_valid_reg <= 1'b0;
-        end
-    end
-end
-
-assign amo_valid_o = amo_valid_reg;
+assign amo_valid_o = is_amo_inst;
 assign amo_rs2_data_o = rs2_data_i;
 wire amo_stall_req = is_amo_inst & ~amo_done_i;
 

@@ -201,6 +201,19 @@ module lsu (
             (loaded_value[30:0] < amo_rs2_data_i[30:0]) :
             (loaded_value[30:0] > amo_rs2_data_i[30:0]);
 
+    // 添加边沿检测逻辑
+reg amo_valid_prev;
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        amo_valid_prev <= 1'b0;
+    end else begin
+        amo_valid_prev <= amo_valid_i;
+    end
+end
+
+wire amo_valid_rising = amo_valid_i && !amo_valid_prev;
+    
+    
     // SC指令成功条件
     wire sc_success = _amo_sc_w & reserved_valid & (reserved_addr == final_addr);
     
@@ -218,7 +231,7 @@ always @(posedge clk or posedge rst) begin
         
         case (amo_state)
             AMO_IDLE: begin
-                if (amo_valid_i && !amo_done) begin  // 添加 !amo_done 条件
+                if (amo_valid_rising) begin  // 添加 !amo_done 条件
                     if (_amo_lr_w) begin
                         amo_state <= AMO_LOAD;
                         reserved_addr <= final_addr;

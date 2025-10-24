@@ -727,7 +727,7 @@ lsu lsu (
 
 
     .amo_op_i(amo_op_ex_mem),
-    .amo_valid_i(amo_valid_ex),
+    .amo_valid_i(amo_valid_ex_mem),
     .amo_rs2_data_i(amo_rs2_data_ex_mem),
     .amo_result_o(amo_result_mem),
     .amo_done_o(amo_done_mem),

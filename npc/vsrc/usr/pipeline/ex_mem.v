@@ -89,19 +89,19 @@ module ex_mem (
   assign amo_op_ex_mem_o = _amo_op_ex_mem_q;
 
 
-//   wire _amo_valid_ex_mem_i =  amo_valid_ex_mem_i;
-//   reg  _amo_valid_ex_mem_q;
-//   regTemplate #(
-//       .WIDTH    (1),
-//       .RESET_VAL(1'b0)
-//   ) u_amo_valid_ex_mem_i (
-//       .clk (clk),
-//       .rst (reg_rst),
-//       .din (_amo_valid_ex_mem_i),
-//       .dout(_amo_valid_ex_mem_q),
-//       .wen (reg_wen)
-//   );
-//   assign amo_valid_ex_mem_o = _amo_valid_ex_mem_q;
+  wire _amo_valid_ex_mem_i =  amo_valid_ex_mem_i;
+  reg  _amo_valid_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(1'b0)
+  ) u_amo_valid_ex_mem_i (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_amo_valid_ex_mem_i),
+      .dout(_amo_valid_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign amo_valid_ex_mem_o = _amo_valid_ex_mem_q;
 
 
   wire [`INST_LEN-1:0] _amo_rs2_data_ex_mem_i =  amo_rs2_data_ex_mem_i;
