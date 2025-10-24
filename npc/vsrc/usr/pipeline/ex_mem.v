@@ -99,7 +99,7 @@ module ex_mem (
       .rst (reg_rst),
       .din (_amo_valid_ex_mem_i),
       .dout(_amo_valid_ex_mem_q),
-      .wen (reg_wen)
+      .wen (1'b1)
   );
   assign amo_valid_ex_mem_o = _amo_valid_ex_mem_q;
 

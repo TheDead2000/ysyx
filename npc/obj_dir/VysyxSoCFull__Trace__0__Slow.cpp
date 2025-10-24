@@ -2402,7 +2402,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+15,"rst", false,-1);
     tracep->declBus(c+7021,"din", false,-1, 0,0);
     tracep->declBus(c+6633,"dout", false,-1, 0,0);
-    tracep->declBit(c+14,"wen", false,-1);
+    tracep->declBit(c+7051,"wen", false,-1);
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_csr_addr_ex_mem_id ");
     tracep->declBus(c+7144,"WIDTH", false,-1, 31,0);
