@@ -123,9 +123,10 @@ module lsu (
     wire _isstore = (_memop_sb  | _memop_sh | _memop_sw);
     
     // 原子操作也属于加载和存储
-    wire _is_amo_load = _memop_lr_w | _memop_amo;
-    wire _is_amo_store = _memop_sc_w | _memop_amo;
-    wire _is_amo = _memop_lr_w | _memop_sc_w | _memop_amo;
+    wire _is_amo_load = _memop_lr_w ;
+    wire _is_amo_store = _memop_sc_w ;
+    wire _is_amo =  _amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
+                    _amo_min | _amo_max | _amo_minu | _amo_maxu;
 
     // ============ MMU 实例化 ============
     wire mmu_resp_valid;
@@ -138,7 +139,7 @@ module lsu (
         .clk(clk),
         .rst_n(~rst),
         .mmu_vaddr_i(exc_alu_data_i),
-        .mmu_req_valid_i(_isload | _isstore | _is_amo),
+        .mmu_req_valid_i(_isload | _isstore | _is_amo_load | _is_amo_store),
         .mmu_is_store_i(_isstore | _is_amo_store),
         .mmu_is_inst_i(1'b0),
         .mmu_paddr_o(mmu_paddr),
@@ -158,13 +159,13 @@ module lsu (
     
     // ============ MMU 接口连接 ============
     assign mmu_req_vaddr_o = exc_alu_data_i;
-    assign mmu_req_valid_o = (_isload | _isstore | _is_amo);
+    assign mmu_req_valid_o = (_isload | _isstore | _is_amo_load | _is_amo_store);
     assign mmu_is_store_o = _isstore | _is_amo_store;
     assign mmu_mem_req_o = mmu_mem_req;
     assign mmu_mem_addr_o = mmu_mem_addr;
 
     // ============ 地址选择逻辑 ============
-    wire use_mmu = mmu_enable_i && (_isload | _isstore | _is_amo);
+    wire use_mmu = mmu_enable_i && (_isload | _isstore | _is_amo_load | _is_amo_store);
     wire [31:0] final_addr = use_mmu ? mmu_resp_paddr_i : exc_alu_data_i;
 
     // ============ 原子操作状态机 ============
@@ -391,7 +392,7 @@ assign signed_greater_than =
     assign clint_wdata_o = clint_wdata;
 
     // dcache 接口
-    wire ls_valid = _isload | _isstore | _is_amo;
+    wire ls_valid = _isload | _isstore | _is_amo_load | _is_amo_store | _is_amo;
     
     // 原子操作存储数据选择
     wire [31:0] store_data;
@@ -404,7 +405,7 @@ assign signed_greater_than =
     
     // 写数据生成
     assign mem_wdata_o = 
-        _is_amo ? store_data : (
+        (_is_amo | _is_amo_store)? store_data : (
             (addr_last2 == 2'b00) ? store_data :
             (addr_last2 == 2'b01) ? {store_data[23:0], 8'b0} :
             (addr_last2 == 2'b10) ? {store_data[15:0], 16'b0} :
@@ -412,7 +413,7 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-    wire load_valid = (_isload | _amo_lr_w | _memop_amo);
+    wire load_valid = (_isload | _amo_lr_w | _is_amo);
     wire store_valid = (_isstore | _amo_sc_w);
     
     assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
@@ -437,7 +438,8 @@ assign signed_greater_than =
     // 输出数据选择
     reg [31:0] mem_data_out;
     always @(*) begin
-        if (_is_amo) begin
+        if (_is_amo | _is_amo_store | _is_amo_load) begin
+            $display("Output AMO result: %h", amo_result);
             mem_data_out = amo_result;
         end else if (_isload) begin
             mem_data_out = mem_rdata_ext;
