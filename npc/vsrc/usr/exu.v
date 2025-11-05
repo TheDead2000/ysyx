@@ -165,20 +165,6 @@ assign amo_op_o = _amo_op;
   // wire [`INST_LEN-1:0] rs2_data_forwarded = (_rs2_mem_bypass_valid)?amo_result_i:rs2_data_i;
 
 
-    // 使用前递后的数据
-    wire [`XLEN_BUS] _alu_in1 = 
-        ({`XLEN{_rs1_rs2 | _rs1_imm}} & rs1_data_i) |
-        ({`XLEN{_pc_4 | _pc_imm12}} & inst_addr_i) |
-        ({`XLEN{_none_imm12|_none_csr}} & `XLEN'b0);
-        
-    wire [`XLEN_BUS] _alu_in2 = 
-        ({`XLEN{_rs1_rs2}} & rs2_data_i) |
-        ({`XLEN{_rs1_imm}} & imm_data_i) |
-        ({`XLEN{_none_csr}} & csr_data_i) |
-        ({`XLEN{_pc_4}} & `XLEN'd4)   |
-        ({`XLEN{_pc_imm12|_none_imm12}} & _imm_aui_auipc);
-
-
   /*****************************branch 操作********************************/
   wire is_branch_inst = _excop_branch | _excop_jal | _excop_jalr;
   wire jump_taken = (_excop_branch & _compare_out) | (_excop_jal | _excop_jalr);
@@ -234,9 +220,16 @@ assign amo_op_o = _amo_op;
   wire _none_csr = _excop_csr;  //保存原来的 csr csr->rd
 
   wire [`IMM_LEN-1:0] _imm_aui_auipc = {imm_data_i[`IMM_LEN-1:12], 12'b0};
-
-
-
+  
+  // ALU 第一个操作数
+  wire [         31:0] _alu_in1 = ({`XLEN{_rs1_rs2 | _rs1_imm}}&rs1_data_i) |
+                                       ({`XLEN{_pc_4 | _pc_imm12}}&inst_addr_i) |
+                                       ({`XLEN{_none_imm12}}&`XLEN'b0);
+  // ALU 第二个操作数
+  wire [         31:0] _alu_in2 = ({`XLEN{_rs1_rs2}}&rs2_data_i) |
+                                       ({`XLEN{_rs1_imm}}&imm_data_i) |
+                                       ({`XLEN{_pc_4}}&`XLEN'd4)   |
+                                       ({`XLEN{_pc_imm12|_none_imm12}}&_imm_aui_auipc);
   wire [31:0] _alu_out;
   wire _compare_out;
   wire alu_stall_req;
