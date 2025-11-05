@@ -215,6 +215,28 @@ end
 
 wire amo_valid_rising = amo_valid_i && !amo_valid_prev;
     
+
+reg amo_mem_req;
+reg amo_mem_write;
+
+// 在状态机中设置内存请求
+always @(*) begin
+    case (amo_state)
+        AMO_LOAD: begin
+            amo_mem_req = 1'b1;
+            amo_mem_write = 1'b0;
+        end
+        AMO_STORE: begin
+            amo_mem_req = 1'b1;
+            amo_mem_write = 1'b1;
+        end
+        default: begin
+            amo_mem_req = 1'b0;
+            amo_mem_write = 1'b0;
+        end
+    endcase
+end
+
     
     // SC指令成功条件
     wire sc_success = _amo_sc_w & reserved_valid & (reserved_addr == final_addr);
@@ -417,8 +439,8 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-    wire load_valid = (_isload | _amo_lr_w | _is_amo);
-    wire store_valid = (_isstore | _amo_sc_w | _is_amo_store);
+wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
+wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
     
     assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;
