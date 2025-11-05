@@ -336,7 +336,7 @@ wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
   assign csr_imm_o = _immCSR;
 
 /******************************************冲突处理***************************************************/
-  wire _pre_inst_is_load = (id_ex_exc_op_i == `EXCOP_LOAD);
+  wire _pre_inst_is_load = (id_ex_exc_op_i == `EXCOP_LOAD) |  (id_ex_exc_op_i == `EXCOP_AMO);;
 
   // 0 号寄存器特殊处理，不然出错
   wire _rs1_idx_not_zero = (_rs1_idx != `REG_ADDRWIDTH'b0);
