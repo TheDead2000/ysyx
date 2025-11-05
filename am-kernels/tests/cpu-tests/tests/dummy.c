@@ -551,8 +551,8 @@ void test_data_forwarding_amo() {
 // }
 
 int main() {
-    //test_amo_load_only();
-    test_amoswap_basic();
+    /est_amo_load_only();
+    //test_amoswap_basic();
     //for(int i = 0; i < 190990; i++) ;
     //test_data_forwarding_amo();
     while(1);
