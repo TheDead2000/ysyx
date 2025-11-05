@@ -402,61 +402,60 @@
 //     printf("Returned old value: 0x%x\n", old_value);
 // }
 
-void test_data_forwarding() {
-    printf("Testing Data Forwarding Scenario...\n");
-    printf("Initial: a6 points to memory containing 0, a7 = 1\n");
-    printf("Executing: amoswap.w a6, a7, (a6)\n\n");
+void test_amoswap_basic() {
+    printf("Testing AMOSWAP Basic Functionality...\n");
     
-    // 初始化内存和寄存器状态
-    uint32_t memory_location = 0;
-    uint32_t a6_value, a7_value, result;
-    uint32_t *a6_ptr = &memory_location;
+    volatile uint32_t memory_location = 0xABCD;
+    uint32_t a6_value, a7_value;
     
-    printf("Before amoswap.w:\n");
-    printf("  Memory[%p] = 0x%x (%x)\n", a6_ptr, memory_location, memory_location);
+    printf("Before: memory = 0x%x, will set a7 = 0x1234\n", memory_location);
     
-    // 模拟你的汇编代码序列
     __asm__ volatile (
-        "mv a6, %[addr]\n"           // a6 = 内存地址
-        "li a7, 1\n"                 // a7 = 1
-        "amoswap.w a6, a7, (a6)\n"   // 关键指令：原子交换
-        "mv %[a6_out], a6\n"         // 保存结果a6
-        "mv %[a7_out], a7\n"         // 保存结果a7
+        "mv a6, %[mem_addr]\n"           // 将内存地址加载到a6
+        "li a7, 0x1234\n"               
+        "amoswap.w a6, a7, (a6)\n"      
+        "mv %[a6_out], a6\n"             
+        "mv %[a7_out], a7\n"             
         : [a6_out] "=r" (a6_value),
           [a7_out] "=r" (a7_value)
-        : [addr] "r" (a6_ptr)
+        : [mem_addr] "r" (&memory_location)
         : "a6", "a7", "memory"
     );
     
-    printf("After amoswap.w:\n");
-    printf("  a6 = 0x%x (%x)  [should be the OLD memory value]\n", a6_value, a6_value);
-    printf("  a7 = 0x%x (%x)  [should remain unchanged]\n", a7_value, a7_value);
-    printf("  Memory[%p] = 0x%x (%x)  [should be the NEW value from a7]\n", 
-           a6_ptr, memory_location, memory_location);
+    printf("After AMOSWAP:\n");
+    printf("  a6 (old memory value) = 0x%x\n", a6_value);
+    printf("  a7 (should be unchanged) = 0x%x\n", a7_value);  
+    printf("  memory (new value) = 0x%x\n", memory_location);
     
-    // 验证结果
-    int success = 1;
+    int success = (a6_value == 0xABCD) && 
+                  (a7_value == 0x1234) && 
+                  (memory_location == 0x1234);
     
-    if (a6_value != 0) {
-        printf(" ERROR: a6 should be 0 (old memory value), but got %x\n", a6_value);
-        success = 0;
-    }
+    printf("Test %s!\n", success ? "PASSED" : "FAILED");
+}
+
+void test_data_forwarding_amo() {
+    printf("Testing Data Forwarding for AMO operations...\n");
     
-    if (a7_value != 1) {
-        printf(" ERROR: a7 should remain 1, but got %x\n", a7_value);
-        success = 0;
-    }
+    volatile uint32_t mem = 0x1000;
+    uint32_t result1, result2;
     
-    if (memory_location != 1) {
-        printf(" ERROR: Memory should be 1 (from a7), but got %x\n", memory_location);
-        success = 0;
-    }
+    __asm__ volatile (
+        "li t0, 0x2000\n"           
+        "addi t1, t0, 0x100\n"      
+        "mv t2, %[mem_addr]\n"           // 修改这里：使用mv加载地址
+        "li t3, 0x5555\n"           
+        "amoswap.w t4, t3, (t2)\n"  
+        "add %[r1], t1, zero\n"     
+        "add %[r2], t4, zero\n"     
+        : [r1] "=r" (result1),
+          [r2] "=r" (result2)
+        : [mem_addr] "r" (&mem)
+        : "t0", "t1", "t2", "t3", "t4", "memory"
+    );
     
-    if (success) {
-        printf(" Data forwarding test PASSED!\n");
-    } else {
-        printf(" Data forwarding test FAILED!\n");
-    }
+    printf("Data forwarding test: result1=0x%x, result2=0x%x\n", result1, result2);
+    printf("Expected: result1=0x2100, result2=0x1000\n");
 }
 
 // void test_data_hazards() {
@@ -524,7 +523,9 @@ void test_data_forwarding() {
 // }
 
 int main() {
-    test_data_forwarding();
+    test_amoswap_basic();
+    for(int i = 0; i < 190990; i++) ;
+    test_data_forwarding_amo();
     while(1);
     return 0;
 }
