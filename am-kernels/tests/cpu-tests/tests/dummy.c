@@ -549,9 +549,64 @@ void test_data_forwarding_amo() {
 //     printf("  Final a6 = 0x%x\n", results[3]);
 //     printf("  Memory = 0x%x\n", data);
 // }
-
+void test_amoadd_aqrl() {
+    printf("Testing AMOADD.W.AQRL Instruction...\n");
+    
+    // 初始化内存和寄存器
+    volatile uint32_t memory_location = 0x1000;
+    uint32_t a0_value, a5_value, a3_value, a2_value;
+    uintptr_t addr = (uintptr_t)&memory_location;
+    
+    printf("Before AMOADD:\n");
+    printf("  memory = 0x%x (0x1000)\n", memory_location);
+    printf("  Will set a5 = 0x2000 (value to add)\n");
+    
+    __asm__ volatile (
+        "mv a0, %[addr]\n"           // a0 = 内存地址
+        "li a5, 0x2000\n"            // a5 = 要加的值
+        "amoadd.w.aqrl a3, a5, (a0)\n" // 原子加法：a3←内存旧值，内存←内存+a5
+        "srli a2, a3, 0x10\n"        // a2 = a3 >> 16
+        "mv %[a0_out], a0\n"         // 保存寄存器值
+        "mv %[a5_out], a5\n"         
+        "mv %[a3_out], a3\n"         
+        "mv %[a2_out], a2\n"         
+        : [a0_out] "=r" (a0_value),
+          [a5_out] "=r" (a5_value),
+          [a3_out] "=r" (a3_value),
+          [a2_out] "=r" (a2_value),
+          "+m" (memory_location)     // 告诉编译器内存会被修改
+        : [addr] "r" (addr)
+        : "a0", "a5", "a3", "a2"
+    );
+    
+    printf("After AMOADD:\n");
+    printf("  a0 (address) = 0x%x\n", a0_value);
+    printf("  a5 (add value) = 0x%x (should be unchanged 0x2000)\n", a5_value);
+    printf("  a3 (old memory value) = 0x%x (should be 0x1000)\n", a3_value);
+    printf("  a2 (a3 >> 16) = 0x%x (should be 0x0000)\n", a2_value);
+    printf("  memory (new value) = 0x%x (should be 0x3000)\n", memory_location);
+    
+    // 验证结果
+    int success = (a0_value == addr) &&              // a0应该保持地址不变
+                  (a5_value == 0x2000) &&            // a5应该保持不变
+                  (a3_value == 0x1000) &&            // a3应该是内存旧值
+                  (a2_value == 0x0000) &&            // a2应该是a3右移16位
+                  (memory_location == 0x3000);       // 内存应该是0x1000 + 0x2000
+    
+    printf("Test %s!\n", success ? "PASSED" : "FAILED");
+    
+    if (!success) {
+        printf("Detailed analysis:\n");
+        printf("  Expected memory: 0x1000 + 0x2000 = 0x3000\n");
+        printf("  Actual memory: 0x%x\n", memory_location);
+        printf("  Expected a3: 0x1000\n");
+        printf("  Actual a3: 0x%x\n", a3_value);
+        printf("  a3 >> 16 = 0x%x\n", a3_value >> 16);
+    }
+}
 int main() {
-    /est_amo_load_only();
+    test_amoadd_aqrl();
+    //test_amo_load_only();
     //test_amoswap_basic();
     //for(int i = 0; i < 190990; i++) ;
     //test_data_forwarding_amo();
