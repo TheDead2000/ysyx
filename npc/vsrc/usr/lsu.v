@@ -254,7 +254,7 @@ always @(posedge clk or posedge rst) begin
             AMO_LOAD: begin
                 if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
-                    //$display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
+                    $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
                     
                     if (_amo_lr_w) begin
                         // LR.W: 直接返回加载的值并完成
@@ -271,7 +271,7 @@ always @(posedge clk or posedge rst) begin
                         amo_state <= AMO_IDLE;
                     end
                 end else begin
-                    //$display("AMO_LOAD: Waiting for mem_data_ready_i");
+                    $display("AMO_LOAD: Waiting for mem_data_ready_i");
                 end
             end
             
