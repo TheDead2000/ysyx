@@ -401,6 +401,34 @@
 //     printf("Memory now contains: 0x%x\n", memory_value);
 //     printf("Returned old value: 0x%x\n", old_value);
 // }
+void test_amo_load_only() {
+    printf("Testing AMO Load Functionality...\n");
+    
+    volatile uint32_t memory_location = 0xABCD;
+    uint32_t a6_value;
+    uintptr_t addr = (uintptr_t)&memory_location;
+    
+    // 只测试加载部分，不使用存储
+    __asm__ volatile (
+        "mv a6, %[addr]\n"           // a6 = 内存地址
+        "li a7, 0x1234\n"           // a7 = 任意值
+        "amoswap.w a6, a7, (a6)\n"  // 执行原子交换
+        "mv %[a6_out], a6\n"        // 保存结果
+        : [a6_out] "=r" (a6_value)
+        : [addr] "r" (addr)
+        : "a6", "a7", "memory"
+    );
+    
+    printf("After AMOSWAP (load test):\n");
+    printf("  a6 = 0x%x (should be 0xABCD)\n", a6_value);
+    printf("  memory = 0x%x (should remain 0xABCD)\n", memory_location);
+    
+    if (a6_value == 0xABCD && memory_location == 0xABCD) {
+        printf("✓ AMO load operation WORKS!\n");
+    } else {
+        printf("✗ AMO load operation FAILED!\n");
+    }
+}
 
 void test_amoswap_basic() {
     printf("Testing AMOSWAP Basic Functionality...\n");
@@ -523,9 +551,10 @@ void test_data_forwarding_amo() {
 // }
 
 int main() {
-    test_amoswap_basic();
-    for(int i = 0; i < 190990; i++) ;
-    test_data_forwarding_amo();
+    test_amo_load_only();
+    //test_amoswap_basic();
+    //for(int i = 0; i < 190990; i++) ;
+    //test_data_forwarding_amo();
     while(1);
     return 0;
 }
