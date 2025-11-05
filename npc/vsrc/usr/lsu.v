@@ -257,6 +257,7 @@ always @(posedge clk or posedge rst) begin
     $display("  mem_addr_o = 0x%h", mem_addr_o);
     $display("  mem_addr_valid_o = %b", mem_addr_valid_o);
     $display("  mem_write_valid_o = %b", mem_write_valid_o);
+                        $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
                 if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
                     $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
