@@ -554,7 +554,7 @@ void test_amoadd_aqrl() {
     printf("Testing AMOADD.W.AQRL Instruction...\n");
     
     // 初始化内存和寄存器
-    volatile uint32_t memory_location = 0x1000;
+    uint32_t memory_location = 0x1000;
     uint32_t a0_value, a5_value, a3_value, a2_value;
     uintptr_t addr = (uintptr_t)&memory_location;
     
