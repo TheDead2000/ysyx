@@ -125,9 +125,13 @@ module lsu (
     // 原子操作也属于加载和存储
     wire _is_amo_load = _memop_lr_w ;
     wire _is_amo_store = _memop_amo & ~_amo_lr_w;  // 除了LR.W，其他的AMO操作都需要存储
-
     wire _is_amo =  _amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
                     _amo_min | _amo_max | _amo_minu | _amo_maxu;
+    wire normal_load_valid = _isload;
+    wire normal_store_valid = _isstore;
+    wire amo_load_valid = (_amo_lr_w | _is_amo) & (amo_state == AMO_LOAD);
+    wire amo_store_valid = (_amo_sc_w | _is_amo_store) & (amo_state == AMO_STORE);
+
 
     // ============ MMU 实例化 ============
     wire mmu_resp_valid;
@@ -417,8 +421,8 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-    wire load_valid = (_isload | _amo_lr_w | _is_amo);
-    wire store_valid = (_isstore | _amo_sc_w | _is_amo_store);
+    wire load_valid = normal_load_valid | amo_load_valid;
+    wire store_valid = normal_store_valid | amo_store_valid;
     
     assign mem_addr_valid_o = (load_valid | store_valid) & (~mem_data_ready_i) & (~clint_valid);
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;

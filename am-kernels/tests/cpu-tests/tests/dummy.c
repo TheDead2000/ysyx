@@ -608,7 +608,6 @@ void test_amoadd_aqrl() {
 
 
 int main() {
-    //test_simple_load();
     test_amoadd_aqrl();
     //test_amo_load_only();
     //test_amoswap_basic();
