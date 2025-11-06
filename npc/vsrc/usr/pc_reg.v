@@ -84,8 +84,8 @@ always @(posedge clk) begin
     $display("PC_JUMP: from %h to %h, time=%t", 
              _pc_current, branch_pc_i, $time);
   end
-  $display("PC_CYCLE: current=%h, next=%h, time=%t", 
-           _pc_current, pc_next_o, $time);
+  // $display("PC_CYCLE: current=%h, next=%h, time=%t", 
+  //          _pc_current, pc_next_o, $time);
 end
 
 endmodule
