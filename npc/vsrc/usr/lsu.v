@@ -341,7 +341,7 @@ AMO_STORE: begin
             amo_done <= 1'b1;
             amo_state <= AMO_IDLE;
         end else if (_memop_amo) begin
-            amo_result <= amo_calc_result;
+            amo_result <= loaded_value;
             reserved_valid <= 1'b0;
             amo_done <= 1'b1;
             amo_state <= AMO_IDLE;
