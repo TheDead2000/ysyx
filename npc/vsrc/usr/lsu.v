@@ -280,7 +280,7 @@ always @(posedge clk or posedge rst) begin
     $display("  mem_addr_o = 0x%h", mem_addr_o);
     $display("  mem_addr_valid_o = %b", mem_addr_valid_o);
     $display("  mem_write_valid_o = %b", mem_write_valid_o);
-                if (mem_wdata_ready_i) begin
+                if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
                     $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
                     
@@ -334,7 +334,7 @@ AMO_STORE: begin
     $display("  mem_wdata_o = 0x%h", mem_wdata_o);
     $display("  store_data = 0x%h", store_data);
     
-    if (mem_data_ready_i) begin
+    if (mem_wdata_ready_i) begin
         $display("AMO_STORE: Storage completed successfully");
         if (_amo_sc_w) begin
             amo_result <= sc_success ? 32'b0 : 32'b1;

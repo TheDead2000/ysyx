@@ -367,7 +367,7 @@ module dcache_top (
         UNCACHE_WRITE: begin
           if (_ram_waddr_valid_dcache_o & arb_wready) begin
             _ram_waddr_valid_dcache_o <= 0;
-            dcache_data_ready         <= 1;  // 完成信号
+            dcache_wdata_ready         <= 1;  // 完成信号
             dcache_state              <= CACHE_IDLE;
             // $display("mem_size:%x mem_write:%x\n",mem_size_i,mem_wdata_i);
           end
@@ -460,7 +460,7 @@ module dcache_top (
   assign mem_rdata_o = (uncache) ? uncache_rdata : dcache_rdata;
 
   assign mem_data_ready_o = dcache_data_ready && (dcache_state == CACHE_IDLE);
-
+  assign mem_wdata_ready_o = dcache_wdata_ready && (dcache_state == CACHE_IDLE);
   assign arb_araddr = _ram_raddr_dcache_o;
   assign arb_arvalid = _ram_raddr_valid_dcache_o;
   //assign ram_rmask_dcache_o = _ram_rmask_dcache_o;
@@ -1197,7 +1197,6 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
   assign mem_rdata_o = (uncache) ? uncache_rdata : dcache_rdata;
 
   assign mem_data_ready_o = dcache_data_ready && (dcache_state == CACHE_IDLE);
-  assign mem_wdata_ready_o = dcache_wdata_ready && (dcache_state == CACHE_IDLE);
   assign ram_raddr_dcache_o = _ram_raddr_dcache_o;
   assign ram_raddr_valid_dcache_o = _ram_raddr_valid_dcache_o;
   assign ram_rmask_dcache_o = _ram_rmask_dcache_o;
