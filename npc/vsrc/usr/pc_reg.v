@@ -81,8 +81,8 @@ module pc_reg (
 
 always @(posedge clk) begin
   if (branch_pc_valid_i) begin
-    $display("PC_JUMP: from %h to %h, time=%t", 
-             _pc_current, branch_pc_i, $time);
+    $display("PC_JUMP: from %h to %h", 
+             _pc_current, branch_pc_i);
   end
   // $display("PC_CYCLE: current=%h, next=%h, time=%t", 
   //          _pc_current, pc_next_o, $time);
