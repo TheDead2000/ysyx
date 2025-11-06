@@ -167,6 +167,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root___ctor_var_reset(VysyxSoCFull___024root
     vlSelf->ysyxSoCFull__DOT___asic_psram_ce_n = 0;
     vlSelf->ysyxSoCFull__DOT___asic_sdram_a = 0;
     vlSelf->ysyxSoCFull__DOT____Vcellinp__flash__ss = 0;
+    vlSelf->ysyxSoCFull__DOT__asic__DOT___axi4frag_auto_in_rresp = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT___axi4frag_auto_out_awid = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT___axi4frag_auto_out_awaddr = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT___axi4frag_auto_out_wdata = 0;
