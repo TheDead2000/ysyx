@@ -11360,6 +11360,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+6375,"phys_pc", false,-1, 31,0);
     tracep->declBit(c+6376,"pending_redirect", false,-1);
     tracep->declBus(c+7154,"i", false,-1, 31,0);
+    tracep->declBus(c+6594,"if_pc", false,-1, 31,0);
     tracep->pushNamePrefix("ifu_mmu ");
     tracep->declBit(c+6991,"clk", false,-1);
     tracep->declBit(c+7028,"rst_n", false,-1);
