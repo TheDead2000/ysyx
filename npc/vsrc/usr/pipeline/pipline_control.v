@@ -23,7 +23,7 @@ module pipline_control (
   //stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB
   localparam load_use_flush = 6'b000100;
   localparam load_use_stall = 6'b000011;
-  localparam jump_flush = 6'b001110;
+  localparam jump_flush = 6'b000110;
   localparam jump_stall = 6'b000010;
   localparam mul_div_flush = 6'b001000;
   localparam mul_div_stall = 6'b000111;
@@ -71,7 +71,7 @@ module pipline_control (
     end 
     else if(ram_stall_req_if) begin
         _stall = ram_mem_stall;
-        _flush = ram_if_flush;
+        _flush = 6'b000000;;
         end
       // 中断|异常,(发生在 mem 阶段)
      else if(trap_flush_valid_wb_i) begin
@@ -102,7 +102,7 @@ module pipline_control (
     end 
     else
     if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
-    _stall = 6'b000011;
+    _stall = 6'b000111;
     _flush = 6'b000000;
     end
      else
