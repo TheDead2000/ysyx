@@ -23,8 +23,8 @@ module pipline_control (
   //stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB
   localparam load_use_flush = 6'b000100;
   localparam load_use_stall = 6'b000011;
-  localparam jump_flush = 6'b000110;
-  localparam jump_stall = 6'b000001;
+  localparam jump_flush = 6'b001110;
+  localparam jump_stall = 6'b000010;
   localparam mul_div_flush = 6'b001000;
   localparam mul_div_stall = 6'b000111;
   localparam trap_csr_flush = 6'b001110;
