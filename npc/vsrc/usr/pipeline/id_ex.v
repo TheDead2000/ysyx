@@ -160,8 +160,8 @@ module id_ex (
   wire [`XLEN-1:0] _pc_id_ex_d = inst_addr_id_ex_i;
   reg [`XLEN-1:0] _pc_id_ex_q;
   regTemplate #(
-      .WIDTH    (`XLEN),
-      .RESET_VAL(`XLEN'b0)
+      .WIDTH    (`INST_LEN),
+      .RESET_VAL(`INST_NOP)
   ) u_pc_id_ex (
       .clk (clk),
       .rst (reg_rst),

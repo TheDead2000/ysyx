@@ -11008,7 +11008,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_pc_id_ex ");
     tracep->declBus(c+7125,"WIDTH", false,-1, 31,0);
-    tracep->declBus(c+7058,"RESET_VAL", false,-1, 31,0);
+    tracep->declBus(c+7150,"RESET_VAL", false,-1, 31,0);
     tracep->declBit(c+6991,"clk", false,-1);
     tracep->declBit(c+19,"rst", false,-1);
     tracep->declBus(c+593,"din", false,-1, 31,0);
