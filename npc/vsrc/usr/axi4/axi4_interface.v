@@ -321,19 +321,19 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
             r_ready <= 1;  // 准备接收读数据
           end
         end
-        AXI_RDATA: begin  // 支持突发传输
-          if (axi_r_handshake) begin : wait_for_r_handshake
-            if (axi_r_last_i) begin  // 最后一个数据传输完成
-              axi_rstate <= AXI_RIDLE;
-              _arb_rlast_o <= 1;
-              r_ready <= 0;  // 数据握手成功后拉低
-            end
-            _arb_rdata_o <= axi_r_data_i;
-            _arb_rdata_ready_o <= 1;
-          end else begin  // 没有接收到数据
-            _arb_rdata_ready_o <= 0;
-          end
-        end
+AXI_RDATA: begin
+  if (axi_r_handshake) begin
+    _arb_rdata_o <= axi_r_data_i;
+    _arb_rdata_ready_o <= 1;
+    
+    if (axi_r_last_i) begin
+      axi_rstate <= AXI_RIDLE;
+      _arb_rlast_o <= 1;
+      r_ready <= 0;
+    end
+  end
+  // 移除else分支，保持ready信号直到下一个状态转换
+end
         default: begin
           axi_rstate <= AXI_RIDLE;
         end
