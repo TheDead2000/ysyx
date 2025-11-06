@@ -343,7 +343,13 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
       endcase
     end
   end
-
+  
+always @(posedge clock) begin
+  if (axi_r_handshake) begin
+    $display("AXI_R_HANDSHAKE: data_i=%h, resp=%h, last=%b", 
+             axi_r_data_i, axi_r_resp_i, axi_r_last_i);
+  end
+end
   /********************类 sram 接口数据返回**************************/
 
   assign arb_rdata_o = _arb_rdata_o;
