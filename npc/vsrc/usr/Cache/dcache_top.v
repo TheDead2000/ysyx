@@ -238,6 +238,7 @@ module dcache_top (
             if (mem_write_valid_i) begin
               dcache_state              <= UNCACHE_WRITE;
               dcache_data_ready         <= 0;
+              dcache_wdata_ready         <= 0;
               _ram_waddr_dcache_o       <= mem_addr_i;  // 写地址
               _ram_waddr_valid_dcache_o <= 1;  // 地址有效
     case (mem_size_i)
