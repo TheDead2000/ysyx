@@ -200,15 +200,15 @@ module ifu (
     end
     assign trap_bus_o = _if_trap_bus;
 
-    wire [31:0] if_pc = inst_addr_i;
-always @(posedge clk) begin
-  if (if_pc >= 32'h0f000000 && if_pc < 32'h0f010000) begin
-    $display("IF_ACCESS_BOOT: pc=%h, time=%t", if_pc, $time);
-  end
-  if (if_pc >= 32'h30000000 && if_pc < 32'h30010000) begin
-    $display("IF_ACCESS_MAIN: pc=%h, time=%t", if_pc, $time);
-  end
-end
+    // wire [31:0] if_pc = inst_addr_i;
+// always @(posedge clk) begin
+//   if (if_pc >= 32'h0f000000 && if_pc < 32'h0f010000) begin
+//     $display("IF_ACCESS_BOOT: pc=%h, time=%t", if_pc, $time);
+//   end
+//   if (if_pc >= 32'h30000000 && if_pc < 32'h30010000) begin
+//     $display("IF_ACCESS_MAIN: pc=%h, time=%t", if_pc, $time);
+//   end
+// end
 endmodule
 
 
