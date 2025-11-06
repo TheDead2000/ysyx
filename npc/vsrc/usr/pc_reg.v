@@ -69,8 +69,7 @@ module pc_reg (
   );
 
   // next pc,为 icache 的访存地址, stall 时,保持上一个 pc 的值
-assign pc_next_o = (branch_pc_valid_i | clint_pc_valid_i) ? _pc_next : 
-                   stall_valid_i ? _pc_current : _pc_next_d;
+  assign pc_next_o = stall_valid_i ? _pc_current : _pc_next_d;
 
   assign pc_o = _pc_current;
   assign read_req_o = _read_req;
