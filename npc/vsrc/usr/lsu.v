@@ -444,8 +444,8 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
-wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
+wire load_valid = (_isload | _amo_lr_w | _is_amo | (amo_mem_req & ~amo_mem_write));
+wire store_valid = (_isstore | _is_amo_store );
     
     assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid);
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;
