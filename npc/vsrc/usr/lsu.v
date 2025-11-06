@@ -324,29 +324,34 @@ always @(posedge clk or posedge rst) begin
                 //$display("AMO_CALC: Move to AMO_STORE, calc_result=%h", amo_calc_result);
             end
             
-            AMO_STORE: begin
-                //$display("AMO_STORE: calc_result=%h, sc_success=%b", amo_calc_result, sc_success);
-                
-                if (mem_data_ready_i) begin
-                    if (_amo_sc_w) begin
-                        amo_result <= sc_success ? 32'b0 : 32'b1;
-                        reserved_valid <= 1'b0;
-                        amo_done <= 1'b1;
-                        amo_state <= AMO_IDLE;
-                        //$display("SC.W: Complete, result=%h", sc_success ? 32'b0 : 32'b1);
-                    end else if (_memop_amo) begin
-                        amo_result <= loaded_value;  // AMO操作返回原始值
-                        reserved_valid <= 1'b0;
-                        amo_done <= 1'b1;
-                        amo_state <= AMO_IDLE;
-                        //$display("AMO: Complete, result=%h", loaded_value);
-                    end else begin
-                        amo_state <= AMO_IDLE;
-                    end
-                end else begin
-                    //$display("AMO_STORE: Waiting for mem_data_ready_i");
-                end
-            end
+AMO_STORE: begin
+    $display("=== AMO_STORE State ===");
+    $display("  final_addr = 0x%h", final_addr);
+    $display("  amo_calc_result = 0x%h", amo_calc_result);
+    $display("  mem_addr_valid_o = %b", mem_addr_valid_o);
+    $display("  mem_write_valid_o = %b", mem_write_valid_o);
+    $display("  mem_wdata_o = 0x%h", mem_wdata_o);
+    $display("  store_data = 0x%h", store_data);
+    
+    if (mem_data_ready_i) begin
+        $display("AMO_STORE: Storage completed successfully");
+        if (_amo_sc_w) begin
+            amo_result <= sc_success ? 32'b0 : 32'b1;
+            reserved_valid <= 1'b0;
+            amo_done <= 1'b1;
+            amo_state <= AMO_IDLE;
+        end else if (_memop_amo) begin
+            amo_result <= amo_calc_result;
+            reserved_valid <= 1'b0;
+            amo_done <= 1'b1;
+            amo_state <= AMO_IDLE;
+        end else begin
+            amo_state <= AMO_IDLE;
+        end
+    end else begin
+        $display("AMO_STORE: Waiting for mem_data_ready_i");
+    end
+end
             
             default: begin
                 amo_state <= AMO_IDLE;
