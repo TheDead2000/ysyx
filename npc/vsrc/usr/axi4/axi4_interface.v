@@ -344,15 +344,15 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
     end
   end
 
-always @(posedge clock) begin
-  if (axi_ar_handshake) begin
-    $display("AXI_AR_REQ: addr=%h", axi_ar_addr_o);
-  end
-  if (axi_r_handshake) begin
-    $display("AXI_R_RSP: addr=%h, data=%h", 
-             arb_read_addr_i, axi_r_data_i);
-  end
-end
+// always @(posedge clock) begin
+//   if (axi_ar_handshake) begin
+//     $display("AXI_AR_REQ: addr=%h", axi_ar_addr_o);
+//   end
+//   if (axi_r_handshake) begin
+//     $display("AXI_R_RSP: addr=%h, data=%h", 
+//              arb_read_addr_i, axi_r_data_i);
+//   end
+// end
   /********************类 sram 接口数据返回**************************/
 
   assign arb_rdata_o = _arb_rdata_o;
