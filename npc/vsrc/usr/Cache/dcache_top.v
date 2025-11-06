@@ -214,6 +214,7 @@ module dcache_top (
                 if (dirty_bit_read) begin  // 需要写回
                   dcache_state <= CACHE_WRITE_BACK;
                   dcache_data_ready <= 0;
+                  dcache_wdata_ready <= 0;
                   _ram_waddr_dcache_o <= {dcache_tag_read, cache_line_idx, 6'b0};  // 写地址
                   _ram_waddr_valid_dcache_o <= 1;  // 地址有效
                   _ram_wmask_dcache_o <= 4'b_1111;  // 写掩码
@@ -224,6 +225,7 @@ module dcache_top (
                 end else begin  // 不需要写回
                   dcache_state              <= CACHE_MISS_ALLOCATE;
                   dcache_data_ready         <= 0;
+                  dcache_wdata_ready <= 0;
                   _ram_raddr_dcache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
                   _ram_raddr_valid_dcache_o <= 1;  // 地址有效
                   _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
@@ -278,6 +280,7 @@ module dcache_top (
 
           end else begin
             dcache_data_ready <= 0;
+            dcache_wdata_ready <= 0;
             _ram_raddr_valid_dcache_o <= 0;
             _ram_waddr_valid_dcache_o <= 0;
             dcache_tag_wen <= 0;
