@@ -46,6 +46,7 @@ module lsu (
     output mem_write_valid_o,
     output [3:0] mem_size_o,
     input mem_data_ready_i,
+    input mem_wdata_ready_i,
     input [31:0] mem_rdata_i,
     output [31:0] mem_wdata_o,
     
@@ -279,7 +280,7 @@ always @(posedge clk or posedge rst) begin
     $display("  mem_addr_o = 0x%h", mem_addr_o);
     $display("  mem_addr_valid_o = %b", mem_addr_valid_o);
     $display("  mem_write_valid_o = %b", mem_write_valid_o);
-                if (mem_data_ready_i) begin
+                if (mem_wdata_ready_i) begin
                     loaded_value <= mem_rdata_i;
                     $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
                     
@@ -444,8 +445,8 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-wire load_valid = (_isload | _amo_lr_w | _is_amo | (amo_mem_req & ~amo_mem_write));
-wire store_valid = (_isstore | _is_amo_store );
+wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
+wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
     
     assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid);
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;

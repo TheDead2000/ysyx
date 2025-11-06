@@ -671,6 +671,7 @@ exu exu (
   wire [3:0] mem_size;  // 数据大小
   wire mem_write_valid;  // 1'b1,表示写;1'b0 表示读 
   wire mem_data_ready;  // 读/写 数据是否准备好
+  wire mem_wdata_ready;  // 写数据是否准备好
   wire ram_stall_valid_mem;
 
   /* clint 接口 */
@@ -730,6 +731,7 @@ lsu lsu (
       .mem_mask_o(mem_mask),
       .mem_write_valid_o(mem_write_valid),
       .mem_data_ready_i(mem_data_ready),
+      .mem_wdata_ready_i(mem_wdata_ready),
       .mem_rdata_i(mem_rdata),
       .mem_wdata_o(mem_wdata),
       .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
@@ -1128,6 +1130,7 @@ wire [7:0] icache_arb_rlen;
       .mem_wdata_i(mem_wdata),  // 写数据
       .mem_rdata_o(mem_rdata),  // dcache 返回读数据
       .mem_data_ready_o(mem_data_ready),
+      .mem_wdata_ready_o(mem_wdata_ready),  // 写数据是否准备好
       .mem_size_i(mem_size),
       // dcache 读数据是否准备好(未准备好需要暂停流水线)
 

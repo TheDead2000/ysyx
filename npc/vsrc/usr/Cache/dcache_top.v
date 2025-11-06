@@ -24,7 +24,7 @@ module dcache_top (
     input [`XLEN-1:0] mem_wdata_i,  // 写数据
     output [`XLEN-1:0] mem_rdata_o,  // dcache 返回读数据
     output mem_data_ready_o,  // dcache 读数据是否准备好(未准备好需要暂停流水线)
-    
+    output mem_wdata_ready_o,  // dcache 写数据是否准备好(未准备好需要暂停流水线)
     // axi4_arb 接口 - 连接到 axi4_arb 模块
   
     // input arb_awready,
@@ -109,6 +109,7 @@ module dcache_top (
 
 
   reg dcache_data_ready;
+  reg dcache_wdata_ready;
   // cache<-->mem 端口 
   reg [`XLEN-1:0] _ram_raddr_dcache_o;
   reg _ram_raddr_valid_dcache_o;
@@ -1042,7 +1043,7 @@ module dcache_top (
         UNCACHE_WRITE: begin
           if (_ram_waddr_valid_dcache_o & ram_wdata_ready_dcache_i) begin
             _ram_waddr_valid_dcache_o <= 0;
-            dcache_data_ready         <= 1;  // 完成信号
+            dcache_wdata_ready         <= 1;  // 完成信号
             dcache_state              <= CACHE_IDLE;
           end
         end
@@ -1196,7 +1197,7 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
   assign mem_rdata_o = (uncache) ? uncache_rdata : dcache_rdata;
 
   assign mem_data_ready_o = dcache_data_ready && (dcache_state == CACHE_IDLE);
-
+  assign mem_wdata_ready_o = dcache_wdata_ready && (dcache_state == CACHE_IDLE);
   assign ram_raddr_dcache_o = _ram_raddr_dcache_o;
   assign ram_raddr_valid_dcache_o = _ram_raddr_valid_dcache_o;
   assign ram_rmask_dcache_o = _ram_rmask_dcache_o;
