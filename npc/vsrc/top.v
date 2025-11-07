@@ -295,7 +295,7 @@ idu idu (
 
     .ex_csr_writeaddr_i(exc_csr_addr_ex),
     .ex_csr_writedata_i(exc_csr_data_ex),
-
+    .exc_csr_valid_i(exc_csr_valid_ex),
     /* from mem bypass */
     .mem_rd_data_i(mem_data_mem),
     .mem_rd_addr_i(rd_idx_mem),
