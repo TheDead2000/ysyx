@@ -28,7 +28,7 @@ extern "C" {
     extern void psram_read(int addr, int* data);
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/psram/psram.v:112:30
     extern void psram_write(int addr, int data, int mask);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:646:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:650:32
     extern void set_csr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:894:32
     extern void set_diffpc(int nextpc, int inst, svBit commit_valid);

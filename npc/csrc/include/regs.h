@@ -41,7 +41,8 @@
   dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__if2id__DOT___inst_addr_if_id_q
 // 寄存器访问宏
 #define GET_REG(dut, regnum) (dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__rv32_gpr_regfile__DOT__rf[regnum])
-
+#define GET_CSR_REG(dut, regnum)                                                      \
+  (dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__rv32_csr_regfile__DOT__csr_regs[regnum])
 // 特定寄存器宏
 #define REG_0_STRUCT 0
 #define REG_1_STRUCT GET_REG(dut, 1)
@@ -75,6 +76,35 @@
 #define REG_29_STRUCT GET_REG(dut, 29)
 #define REG_30_STRUCT GET_REG(dut, 30)
 #define REG_31_STRUCT GET_REG(dut, 31)
+
+
+#define CSR_REG0_STRUCT GET_CSR_REG(dut, 0)
+#define CSR_REG1_STRUCT GET_CSR_REG(dut, 1)
+#define CSR_REG2_STRUCT GET_CSR_REG(dut, 2)
+#define CSR_REG3_STRUCT GET_CSR_REG(dut, 3)
+#define CSR_REG4_STRUCT GET_CSR_REG(dut, 4)
+#define CSR_REG5_STRUCT GET_CSR_REG(dut, 5)
+#define CSR_REG6_STRUCT GET_CSR_REG(dut, 6)
+#define CSR_REG7_STRUCT GET_CSR_REG(dut, 7)
+#define CSR_REG8_STRUCT GET_CSR_REG(dut, 8)
+#define CSR_REG9_STRUCT GET_CSR_REG(dut, 9)
+#define CSR_REG10_STRUCT GET_CSR_REG(dut, 10)
+#define CSR_REG11_STRUCT GET_CSR_REG(dut, 11)
+#define CSR_REG12_STRUCT GET_CSR_REG(dut, 12)
+#define CSR_REG13_STRUCT GET_CSR_REG(dut, 13)
+#define CSR_REG14_STRUCT GET_CSR_REG(dut, 14)
+#define CSR_REG15_STRUCT GET_CSR_REG(dut, 15)
+#define CSR_REG16_STRUCT GET_CSR_REG(dut, 16)
+#define CSR_REG17_STRUCT GET_CSR_REG(dut, 17)
+#define CSR_REG18_STRUCT GET_CSR_REG(dut, 18)
+#define CSR_REG19_STRUCT GET_CSR_REG(dut, 19)
+#define CSR_REG20_STRUCT GET_CSR_REG(dut, 20)
+#define CSR_REG21_STRUCT GET_CSR_REG(dut, 21)
+#define CSR_REG22_STRUCT GET_CSR_REG(dut, 22)
+#define CSR_REG23_STRUCT GET_CSR_REG(dut, 23)
+#define CSR_REG24_STRUCT GET_CSR_REG(dut, 24)
+
+
 // #define IFU_STATE                                                              \
 //   dut->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__ifu__DOT__state
 

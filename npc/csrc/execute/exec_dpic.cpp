@@ -140,41 +140,41 @@ extern "C" void set_csr_ptr(const svOpenArrayHandle csr_array) {
     }
 }
 
-// 辅助函数：获取CSR寄存器值
-uint32_t get_csr_value(int csr_index) {
-    if (!global_csr_array || csr_index < 0) {
-        return 0;
-    }
+// // 辅助函数：获取CSR寄存器值
+// uint32_t get_csr_value(int csr_index) {
+//     if (!global_csr_array || csr_index < 0) {
+//         return 0;
+//     }
     
-    int array_size = svSize(global_csr_array, 1);
-    if (csr_index >= array_size) {
-        return 0;
-    }
+//     int array_size = svSize(global_csr_array, 1);
+//     if (csr_index >= array_size) {
+//         return 0;
+//     }
     
-    void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
-    if (!elem_ptr) {
-        return 0;
-    }
+//     void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
+//     if (!elem_ptr) {
+//         return 0;
+//     }
     
-    return *reinterpret_cast<uint32_t*>(elem_ptr);
-}
+//     return *reinterpret_cast<uint32_t*>(elem_ptr);
+// }
 
 // 辅助函数：设置CSR寄存器值
-void set_csr_value(int csr_index, uint32_t value) {
-    if (!global_csr_array || csr_index < 0) {
-        return;
-    }
+// void set_csr_value(int csr_index, uint32_t value) {
+//     if (!global_csr_array || csr_index < 0) {
+//         return;
+//     }
     
-    int array_size = svSize(global_csr_array, 1);
-    if (csr_index >= array_size) {
-        return;
-    }
+//     int array_size = svSize(global_csr_array, 1);
+//     if (csr_index >= array_size) {
+//         return;
+//     }
     
-    void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
-    if (elem_ptr) {
-        *reinterpret_cast<uint32_t*>(elem_ptr) = value;
-    }
-}
+//     void* elem_ptr = svGetArrElemPtr1(global_csr_array, csr_index);
+//     if (elem_ptr) {
+//         *reinterpret_cast<uint32_t*>(elem_ptr) = value;
+//     }
+// }
 
 extern "C" void set_gpr_ptr(const svOpenArrayHandle gpr_array) {
     // 这里可以实现类似的逻辑来处理GPR寄存器数组

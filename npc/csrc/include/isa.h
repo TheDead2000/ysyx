@@ -13,6 +13,7 @@
 
 typedef struct {
   word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
+  word_t csr_gpr[25];
   vaddr_t pc;
 } CPU_state;
 

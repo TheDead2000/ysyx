@@ -611,7 +611,7 @@ module CSRs(
 
   /************仿真使用：传递CSR寄存器指针************/
   // 创建一个包含所有CSR寄存器的数组
-  reg [31:0] csr_regs [0:22];
+  reg [31:0] csr_regs [0:24];
   
   // 将CSR寄存器映射到数组
   always @(*) begin
@@ -640,6 +640,10 @@ module CSRs(
     csr_regs[20] = {31'b0, io_tvm};  // index 20: TVM
     csr_regs[21] = {31'b0, io_tw};   // index 21: TW
     csr_regs[22] = {31'b0, io_tsr};  // index 22: TSR
+
+    csr_regs[23] = mscratchReg; // index 23: mscratch
+    csr_regs[24] = pmpcfg0Reg;  // index 24: pmpcfg0
+
   end
   
   // DPI-C函数声明

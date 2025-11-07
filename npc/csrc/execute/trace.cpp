@@ -67,6 +67,35 @@ int update_reg_state() {
   cpu->gpr[29] = REG_29_STRUCT;
   cpu->gpr[30] = REG_30_STRUCT;
   cpu->gpr[31] = REG_31_STRUCT;
+
+  cpu->csr_gpr[0] = CSR_REG0_STRUCT;
+  cpu->csr_gpr[1] = CSR_REG1_STRUCT;
+  cpu->csr_gpr[2] = CSR_REG2_STRUCT;
+  cpu->csr_gpr[3] = CSR_REG3_STRUCT;
+  cpu->csr_gpr[4] = CSR_REG4_STRUCT;
+  cpu->csr_gpr[5] = CSR_REG5_STRUCT;
+  cpu->csr_gpr[6] = CSR_REG6_STRUCT;
+  cpu->csr_gpr[7] = CSR_REG7_STRUCT;
+  cpu->csr_gpr[8] = CSR_REG8_STRUCT;
+  cpu->csr_gpr[9] = CSR_REG9_STRUCT;
+  cpu->csr_gpr[10] = CSR_REG10_STRUCT;
+  cpu->csr_gpr[11] = CSR_REG11_STRUCT;
+  cpu->csr_gpr[12] = CSR_REG12_STRUCT;
+  cpu->csr_gpr[13] = CSR_REG13_STRUCT;
+  cpu->csr_gpr[14] = CSR_REG14_STRUCT;
+  cpu->csr_gpr[15] = CSR_REG15_STRUCT;
+  cpu->csr_gpr[16] = CSR_REG16_STRUCT;
+  cpu->csr_gpr[17] = CSR_REG17_STRUCT;
+  cpu->csr_gpr[18] = CSR_REG18_STRUCT;
+  cpu->csr_gpr[19] = CSR_REG19_STRUCT;
+  cpu->csr_gpr[20] = CSR_REG20_STRUCT;
+  cpu->csr_gpr[21] = CSR_REG21_STRUCT;
+  cpu->csr_gpr[22] = CSR_REG22_STRUCT;
+  cpu->csr_gpr[23] = CSR_REG23_STRUCT;
+  cpu->csr_gpr[24] = CSR_REG24_STRUCT;
+
+
+
 #endif
   return 0;
 }
@@ -108,6 +137,33 @@ int init_reg_state() {
   cpu->gpr[30] = REG_30_STRUCT;
   cpu->gpr[31] = REG_31_STRUCT;
 #endif
+  cpu->csr_gpr[0] = CSR_REG0_STRUCT;
+  cpu->csr_gpr[1] = CSR_REG1_STRUCT;
+  cpu->csr_gpr[2] = CSR_REG2_STRUCT;
+  cpu->csr_gpr[3] = CSR_REG3_STRUCT;
+  cpu->csr_gpr[4] = CSR_REG4_STRUCT;
+  cpu->csr_gpr[5] = CSR_REG5_STRUCT;
+  cpu->csr_gpr[6] = CSR_REG6_STRUCT;
+  cpu->csr_gpr[7] = CSR_REG7_STRUCT;
+  cpu->csr_gpr[8] = CSR_REG8_STRUCT;
+  cpu->csr_gpr[9] = CSR_REG9_STRUCT;
+  cpu->csr_gpr[10] = CSR_REG10_STRUCT;
+  cpu->csr_gpr[11] = CSR_REG11_STRUCT;
+  cpu->csr_gpr[12] = CSR_REG12_STRUCT;
+  cpu->csr_gpr[13] = CSR_REG13_STRUCT;
+  cpu->csr_gpr[14] = CSR_REG14_STRUCT;
+  cpu->csr_gpr[15] = CSR_REG15_STRUCT;
+  cpu->csr_gpr[16] = CSR_REG16_STRUCT;
+  cpu->csr_gpr[17] = CSR_REG17_STRUCT;
+  cpu->csr_gpr[18] = CSR_REG18_STRUCT;
+  cpu->csr_gpr[19] = CSR_REG19_STRUCT;
+  cpu->csr_gpr[20] = CSR_REG20_STRUCT;
+  cpu->csr_gpr[21] = CSR_REG21_STRUCT;
+  cpu->csr_gpr[22] = CSR_REG22_STRUCT;
+  cpu->csr_gpr[23] = CSR_REG23_STRUCT;
+  cpu->csr_gpr[24] = CSR_REG24_STRUCT;
+
+
   return 0;
 }
 
