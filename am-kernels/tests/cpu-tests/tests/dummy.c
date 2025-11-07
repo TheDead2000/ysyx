@@ -429,62 +429,98 @@
 //         printf("✗ AMO load operation FAILED!\n");
 //     }
 // }
-
-void test_amoswap_basic() {
-    printf("Testing AMOSWAP Basic Functionality...\n");
+void test_csrw_mscratch() {
+    printf("Testing 'csrw mscratch, tp' instruction...\n");
     
-    volatile uint32_t memory_location = 0xABCD;
-    uint32_t a6_value, a7_value;
+    uint32_t tp_value, mscratch_value;
     
-    printf("Before: memory = 0x%x, will set a7 = 0x1234\n", memory_location);
+    // 设置 tp 寄存器为测试值
+    uint32_t test_value = 0x12345678;
     
+    printf("Setting tp = 0x%x\n", test_value);
+    
+    // 执行 csrw mscratch, tp
     __asm__ volatile (
-        "mv a6, %[mem_addr]\n"           // 将内存地址加载到a6
-        "li a7, 0x1234\n"               
-        "amoswap.w a6, a7, (a6)\n"      
-        "mv %[a6_out], a6\n"             
-        "mv %[a7_out], a7\n"             
-        : [a6_out] "=r" (a6_value),
-          [a7_out] "=r" (a7_value)
-        : [mem_addr] "r" (&memory_location)
-        : "a6", "a7", "memory"
+        "mv tp, %[test_val]\n"       // 设置 tp 为测试值
+        "csrw mscratch, tp\n"        // 将 tp 写入 mscratch
+        "nop\n"                     // 插入一个 nop 以确保写入完成
+        "nop\n"
+        "nop\n"
+        "csrr %[mscratch], mscratch\n" // 读取 mscratch 到变量
+        "mv %[tp_val], tp\n"         // 读取 tp 到变量
+        : [mscratch] "=r" (mscratch_value),
+          [tp_val] "=r" (tp_value)
+        : [test_val] "r" (test_value)
+        : "tp"
     );
     
-    printf("After AMOSWAP:\n");
-    printf("  a6 (old memory value) = 0x%x\n", a6_value);
-    printf("  a7 (should be unchanged) = 0x%x\n", a7_value);  
-    printf("  memory (new value) = 0x%x\n", memory_location);
+    printf("After csrw mscratch, tp:\n");
+    printf("  tp = 0x%x\n", tp_value);
+    printf("  mscratch = 0x%x\n", mscratch_value);
     
-    int success = (a6_value == 0xABCD) && 
-                  (a7_value == 0x1234) && 
-                  (memory_location == 0x1234);
-    
-    printf("Test %s!\n", success ? "PASSED" : "FAILED");
+    // 验证结果
+    if (mscratch_value == test_value && tp_value == test_value) {
+        printf("✅ Test PASSED: mscratch correctly set to tp value\n");
+    } else {
+        printf("❌ Test FAILED: mscratch = 0x%x, expected 0x%x\n", 
+               mscratch_value, test_value);
+    }
 }
+// void test_amoswap_basic() {
+//     printf("Testing AMOSWAP Basic Functionality...\n");
+    
+//     volatile uint32_t memory_location = 0xABCD;
+//     uint32_t a6_value, a7_value;
+    
+//     printf("Before: memory = 0x%x, will set a7 = 0x1234\n", memory_location);
+    
+//     __asm__ volatile (
+//         "mv a6, %[mem_addr]\n"           // 将内存地址加载到a6
+//         "li a7, 0x1234\n"               
+//         "amoswap.w a6, a7, (a6)\n"      
+//         "mv %[a6_out], a6\n"             
+//         "mv %[a7_out], a7\n"             
+//         : [a6_out] "=r" (a6_value),
+//           [a7_out] "=r" (a7_value)
+//         : [mem_addr] "r" (&memory_location)
+//         : "a6", "a7", "memory"
+//     );
+    
+//     printf("After AMOSWAP:\n");
+//     printf("  a6 (old memory value) = 0x%x\n", a6_value);
+//     printf("  a7 (should be unchanged) = 0x%x\n", a7_value);  
+//     printf("  memory (new value) = 0x%x\n", memory_location);
+    
+//     int success = (a6_value == 0xABCD) && 
+//                   (a7_value == 0x1234) && 
+//                   (memory_location == 0x1234);
+    
+//     printf("Test %s!\n", success ? "PASSED" : "FAILED");
+// }
 
-void test_data_forwarding_amo() {
-    printf("Testing Data Forwarding for AMO operations...\n");
+// void test_data_forwarding_amo() {
+//     printf("Testing Data Forwarding for AMO operations...\n");
     
-    volatile uint32_t mem = 0x1000;
-    uint32_t result1, result2;
+//     volatile uint32_t mem = 0x1000;
+//     uint32_t result1, result2;
     
-    __asm__ volatile (
-        "li t0, 0x2000\n"           
-        "addi t1, t0, 0x100\n"      
-        "mv t2, %[mem_addr]\n"           // 修改这里：使用mv加载地址
-        "li t3, 0x5555\n"           
-        "amoswap.w t4, t3, (t2)\n"  
-        "add %[r1], t1, zero\n"     
-        "add %[r2], t4, zero\n"     
-        : [r1] "=r" (result1),
-          [r2] "=r" (result2)
-        : [mem_addr] "r" (&mem)
-        : "t0", "t1", "t2", "t3", "t4", "memory"
-    );
+//     __asm__ volatile (
+//         "li t0, 0x2000\n"           
+//         "addi t1, t0, 0x100\n"      
+//         "mv t2, %[mem_addr]\n"           // 修改这里：使用mv加载地址
+//         "li t3, 0x5555\n"           
+//         "amoswap.w t4, t3, (t2)\n"  
+//         "add %[r1], t1, zero\n"     
+//         "add %[r2], t4, zero\n"     
+//         : [r1] "=r" (result1),
+//           [r2] "=r" (result2)
+//         : [mem_addr] "r" (&mem)
+//         : "t0", "t1", "t2", "t3", "t4", "memory"
+//     );
     
-    printf("Data forwarding test: result1=0x%x, result2=0x%x\n", result1, result2);
-    printf("Expected: result1=0x2100, result2=0x1000\n");
-}
+//     printf("Data forwarding test: result1=0x%x, result2=0x%x\n", result1, result2);
+//     printf("Expected: result1=0x2100, result2=0x1000\n");
+// }
 
 // void test_data_hazards() {
 //     printf("\nTesting Additional Data Hazard Scenarios...\n");
@@ -608,7 +644,8 @@ void test_amoadd_aqrl() {
 
 
 int main() {
-    test_amoadd_aqrl();
+    test_csrw_mscratch();
+    //test_amoadd_aqrl();
     //test_amo_load_only();
     //test_amoswap_basic();
     //for(int i = 0; i < 190990; i++) ;
