@@ -284,7 +284,7 @@ idu idu (
 
     /* from csr regs */
     .csr_data_i(csr_data_csr),
-
+    
 
     /* from id/ex stage */
     .id_ex_exc_op_i (exc_op_id_ex), // 上一条指令的类型，用于判断上一条指令是否是访存指令
