@@ -350,9 +350,9 @@ wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
   wire _rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
   // wb stage bypass was enabled in gpr
 // CSR数据前递：如果当前指令需要读取的寄存器正是EX阶段CSR指令要写入的寄存器
-/* verilator lint_off WIDTHEXPAND */
-wire _csr_rs1_forward = (_rs1_idx == ex_csr_writeaddr_i) && _rs1_idx_not_zero ;
-wire _csr_rs2_forward = (_rs2_idx == ex_csr_writeaddr_i) && _rs2_idx_not_zero ;
+
+wire _csr_rs1_forward = (_rs1_idx == ex_rd_addr_i) && _rs1_idx_not_zero ;
+wire _csr_rs2_forward = (_rs2_idx == ex_rd_addr_i) && _rs2_idx_not_zero ;
 
 // exc stage bypass  
 wire _rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
