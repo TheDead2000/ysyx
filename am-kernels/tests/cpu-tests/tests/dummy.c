@@ -452,7 +452,7 @@ void test_csrr_and_load() {
     
     printf("Test structure layout:\n");
     printf("  Base address: %x\n", &test_data);
-    printf("  Offset 36 (0x24): %x\n", (char*)&test_data + 36);
+    printf("  Offset 36 (0x24): %x\n", (char*)&test_data + 40);
     printf("  Expected value at offset 36: 0x%x\n", test_data.special_value);
     
     // 验证偏移计算
@@ -469,7 +469,7 @@ __asm__ volatile (
     "nop\n"
     "nop\n"
     "csrr a5, mscratch\n"
-    "lw a5, 36(a5)\n"
+    "lw a5, 40(a5)\n"
     "mv %[result], a5\n"
     "csrr %[mscratch], mscratch\n"
     : [result] "=r" (a5_result),
