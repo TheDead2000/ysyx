@@ -36,7 +36,7 @@ module execute_csr (
 
 
   assign csr_exe_data_o = _csr_exe_data_o;
-  assign csr_exe_data_valid_o = ~(_csr_none | _csr_read);  // 读取不写回
+  assign csr_exe_data_valid_o = ~(_csr_none);  // 读取不写回
 
 
 endmodule

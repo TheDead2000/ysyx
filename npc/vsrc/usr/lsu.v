@@ -467,10 +467,20 @@ wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
         .ext_data_o (mem_rdata_ext)
     );
 
+    wire [4:0] csr_rd = inst_data_i[11:7];
+    
+    // CSR 指令需要写入 rd 的条件：rd != 0 且是 CSR 读取类指令
+    // csrrw, csrrs, csrrc, csrrwi, csrrsi, csrrci 当 rd != 0 时需要写回
+    wire csr_need_write_rd = exc_csr_valid_i && (csr_rd != 5'b0);
+
     // 输出数据选择
     reg [31:0] mem_data_out;
     always @(*) begin
-        if (_is_amo | _is_amo_store | _is_amo_load) begin
+         if (csr_need_write_rd) begin
+            // CSR读取指令：将CSR的值写入rd（当rd != 0时）
+            mem_data_out = exc_csr_data_i;
+        end 
+        else if (_is_amo | _is_amo_store | _is_amo_load) begin
             //$display("Output AMO result: %h", amo_result);
             mem_data_out = amo_result;
         end else if (_isload) begin
