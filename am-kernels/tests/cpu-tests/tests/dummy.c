@@ -429,43 +429,105 @@
 //         printf("✗ AMO load operation FAILED!\n");
 //     }
 // }
-void test_csrw_mscratch() {
-    printf("Testing 'csrw mscratch, tp' instruction...\n");
+// 定义测试数据结构，确保有36字节偏移的字段
+typedef struct {
+    uint32_t data[10];  // 40字节，确保偏移36在范围内
+    uint32_t special_value;  // 这个将在偏移36的位置
+} test_struct_t;
+
+// 测试 csrr a5, mscratch + lw a5, 36(a5) 指令序列
+void test_csrr_and_load() {
+    printf("Testing 'csrr a5, mscratch; lw a5, 36(a5)' instruction sequence...\n");
     
-    uint32_t tp_value, mscratch_value;
+    // 创建测试结构并初始化
+    test_struct_t test_data = {
+        .data = {0x11111111, 0x22222222, 0x33333333, 0x44444444, 
+                 0x55555555, 0x66666666, 0x77777777, 0x88888888,
+                 0x99999999, 0xAAAAAAAA},
+        .special_value = 0x12345678  // 这个值在偏移36的位置
+    };
     
-    // 设置 tp 寄存器为测试值
-    uint32_t test_value = 0x12345678;
+    uint32_t a5_result;
+    uint32_t mscratch_value;
     
-    printf("Setting tp = 0x%x\n", test_value);
+    printf("Test structure layout:\n");
+    printf("  Base address: %x\n", &test_data);
+    printf("  Offset 36 (0x24): %x\n", (char*)&test_data + 36);
+    printf("  Expected value at offset 36: 0x%x\n", test_data.special_value);
     
-    // 执行 csrw mscratch, tp
-    __asm__ volatile (
-        "mv tp, %[test_val]\n"       // 设置 tp 为测试值
-        "csrw mscratch, tp\n"        // 将 tp 写入 mscratch
-        "nop\n"                     // 插入一个 nop 以确保写入完成
-        "nop\n"
-        "nop\n"
-        "csrr %[mscratch], mscratch\n" // 读取 mscratch 到变量
-        "mv %[tp_val], tp\n"         // 读取 tp 到变量
-        : [mscratch] "=r" (mscratch_value),
-          [tp_val] "=r" (tp_value)
-        : [test_val] "r" (test_value)
-        : "tp"
-    );
+    // 验证偏移计算
+    uint32_t *offset_36_ptr = (uint32_t*)((char*)&test_data + 36);
+    printf("  Actual value at offset 36: 0x%x\n", *offset_36_ptr);
     
-    printf("After csrw mscratch, tp:\n");
-    printf("  tp = 0x%x\n", tp_value);
+    // 执行指令序列
+__asm__ volatile (
+    "mv a5, %[addr]\n"        // 将地址传入a5
+    "csrw mscratch, a5\n"
+    "nop\n"
+    "nop\n"
+    "nop\n"
+    "nop\n"
+    "nop\n"
+    "csrr a5, mscratch\n"
+    "lw a5, 36(a5)\n"
+    "mv %[result], a5\n"
+    "csrr %[mscratch], mscratch\n"
+    : [result] "=r" (a5_result),
+      [mscratch] "=r" (mscratch_value)
+    : [addr] "r" (&test_data)
+    : "a5"
+);
+    
+    printf("\nAfter instruction sequence:\n");
+    printf("  a5 = 0x%x\n", a5_result);
     printf("  mscratch = 0x%x\n", mscratch_value);
+    printf("  Expected a5 = 0x%x\n", test_data.special_value);
     
     // 验证结果
-    if (mscratch_value == test_value && tp_value == test_value) {
-        printf("✅ Test PASSED: mscratch correctly set to tp value\n");
+    if (a5_result == test_data.special_value) {
+        printf("✅ Test PASSED: Correct value loaded from mscratch + 36 offset\n");
     } else {
-        printf("❌ Test FAILED: mscratch = 0x%x, expected 0x%x\n", 
-               mscratch_value, test_value);
+        printf("❌ Test FAILED: a5 = 0x%x, expected 0x%x\n", 
+               a5_result, test_data.special_value);
     }
 }
+// void test_csrw_mscratch() {
+//     printf("Testing 'csrw mscratch, tp' instruction...\n");
+    
+//     uint32_t tp_value, mscratch_value;
+    
+//     // 设置 tp 寄存器为测试值
+//     uint32_t test_value = 0x12345678;
+    
+//     printf("Setting tp = 0x%x\n", test_value);
+    
+//     // 执行 csrw mscratch, tp
+//     __asm__ volatile (
+//         "mv tp, %[test_val]\n"       // 设置 tp 为测试值
+//         "csrw mscratch, tp\n"        // 将 tp 写入 mscratch
+//         "nop\n"                     // 插入一个 nop 以确保写入完成
+//         "nop\n"
+//         "nop\n"
+//         "csrr %[mscratch], mscratch\n" // 读取 mscratch 到变量
+//         "mv %[tp_val], tp\n"         // 读取 tp 到变量
+//         : [mscratch] "=r" (mscratch_value),
+//           [tp_val] "=r" (tp_value)
+//         : [test_val] "r" (test_value)
+//         : "tp"
+//     );
+    
+//     printf("After csrw mscratch, tp:\n");
+//     printf("  tp = 0x%x\n", tp_value);
+//     printf("  mscratch = 0x%x\n", mscratch_value);
+    
+//     // 验证结果
+//     if (mscratch_value == test_value && tp_value == test_value) {
+//         printf("✅ Test PASSED: mscratch correctly set to tp value\n");
+//     } else {
+//         printf("❌ Test FAILED: mscratch = 0x%x, expected 0x%x\n", 
+//                mscratch_value, test_value);
+//     }
+// }
 // void test_amoswap_basic() {
 //     printf("Testing AMOSWAP Basic Functionality...\n");
     
@@ -644,7 +706,8 @@ void test_amoadd_aqrl() {
 
 
 int main() {
-    test_csrw_mscratch();
+    test_csrr_and_load();
+    //test_csrw_mscratch();
     //test_amoadd_aqrl();
     //test_amo_load_only();
     //test_amoswap_basic();
