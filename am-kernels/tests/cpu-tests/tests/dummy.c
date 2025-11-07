@@ -456,7 +456,7 @@ void test_csrr_and_load() {
     printf("  Expected value at offset 36: 0x%x\n", test_data.special_value);
     
     // 验证偏移计算
-    uint32_t *offset_36_ptr = (uint32_t*)((char*)&test_data + 36);
+    uint32_t *offset_36_ptr = (uint32_t*)((char*)&test_data + 40);
     printf("  Actual value at offset 36: 0x%x\n", *offset_36_ptr);
     
     // 执行指令序列
