@@ -752,7 +752,8 @@ void test_amoadd_aqrl() {
 
 
 int main() {
-    test_csrr_and_load();
+    test_atomic_cmpxchg();
+    //test_csrr_and_load();
     //test_csrw_mscratch();
     //test_amoadd_aqrl();
     //test_amo_load_only();
