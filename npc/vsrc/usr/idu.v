@@ -54,7 +54,7 @@ module idu (
     output [             `XLEN_BUS] csr_readdata_o,
 
     // 请求暂停流水线
-    output _load_use_valid_o,
+    output load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
     
     // ================== 新增BPU前递信号 ==================
@@ -383,7 +383,7 @@ wire [`INST_LEN-1:0] _rs2_data =
   // 输出指定
   assign rs1_data_o = _rs1_data;
   assign rs2_data_o = _rs2_data;
-  assign _load_use_valid_o = _load_use_data_hazard_valid;
+  assign load_use_valid_o = _load_use_data_hazard_valid;
 
   /***************CSR 寄存器冲突处理*****************/
   // TODO 添加 csr 数据旁路

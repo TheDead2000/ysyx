@@ -329,7 +329,7 @@ idu idu (
     .inst_addr_o(inst_addr_id),
     .inst_data_o(inst_data_id),
     // 请求暂停流水线 to ctrl
-    ._load_use_valid_o(load_use_valid),
+    .load_use_valid_o(load_use_valid),
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令

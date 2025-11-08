@@ -11111,6 +11111,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+602,"csr_imm_valid_o", false,-1);
     tracep->declBus(c+6621,"csr_idx_o", false,-1, 11,0);
     tracep->declBus(c+6622,"csr_readdata_o", false,-1, 31,0);
+    tracep->declBit(c+6624,"load_use_valid_o", false,-1);
     tracep->declBus(c+6625,"trap_bus_o", false,-1, 21,0);
     tracep->declBit(c+7035,"id_ras_push_valid_o", false,-1);
     tracep->declBus(c+603,"id_ras_push_data_o", false,-1, 31,0);
@@ -11217,7 +11218,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+598,"bpu_which_pdt_if_id_o", false,-1);
     tracep->declBus(c+600,"bpu_history_if_id_o", false,-1, 15,0);
     tracep->declBus(c+599,"bpu_pdt_tag_if_id_o", false,-1, 31,0);
-    tracep->declBus(c+1,"trap_bus_if_i", false,-1, 21,0);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11227,6 +11227,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBus(c+1,"trap_bus_if_i", false,-1, 21,0);
     tracep->declBus(c+593,"inst_addr_if_id_o", false,-1, 31,0);
     tracep->declBus(c+594,"inst_data_if_id_o", false,-1, 31,0);
     tracep->declBus(c+595,"trap_bus_if_id_o", false,-1, 21,0);
