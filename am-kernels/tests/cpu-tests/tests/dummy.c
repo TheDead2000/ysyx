@@ -494,45 +494,54 @@ __asm__ volatile (
 
 
 void test_atomic_cmpxchg() {
-    printf("Testing 'lr.w.aqrl a0, (a5); bne a0, a1, label' sequence...\n");
+    printf("Testing full atomic compare-and-swap loop...\n");
     
-    uint32_t memory_value;
-    uint32_t expected_value;
-    uint32_t a0_result;
-    uint32_t branch_taken = 0;
-    uint32_t *mem_ptr = &memory_value;
+    uint32_t shared_var;
+    uint32_t expected;
+    uint32_t desired;
+    uint32_t result;
+    uint32_t attempts = 0;
+    uint32_t max_attempts = 5;
     
-    // 测试用例1：内存值等于期望值（不跳转）
-    printf("\nTest case 1: Memory value == Expected value (no branch)\n");
-    memory_value = 0x12345678;
-    expected_value = 0x12345678;
+    // 测试用例1：一次成功
+    printf("\nTest case 1: Single attempt success\n");
+    shared_var = 0x1000;
+    expected = 0x1000;
+    desired = 0x2000;
+    uint32_t *mem_ptr = &shared_var;
     
-    printf("Initial memory: 0x%x\n", memory_value);
-    printf("Expected value: 0x%x\n", expected_value);
+    printf("Initial shared_var: 0x%08X\n", shared_var);
+    printf("Expected: 0x%08X, Desired: 0x%08X\n", expected, desired);
     
     __asm__ volatile (
-        "mv a5, %[mem_ptr]\n"       // a5 = 内存地址指针
+        "mv a5, %[mem_ptr]\n"       // a5 = 内存地址
         "li a1, %[expected]\n"      // a1 = 期望值
-        "lr.w.aqrl a0, (a5)\n"      // 原子加载到a0
-        "beq a0, a1, 1f\n"          // 如果不相等则跳转
-        "li %[branch], 0\n"         // 不跳转：设置branch=0
-        "j 2f\n"                    // 跳过跳转分支
-        "1:\n"
-        "li %[branch], 1\n"         // 跳转：设置branch=1
-        "2:\n"
-        : [branch] "=r" (branch_taken),
-          [a0] "=r" (a0_result)
+        "li a2, %[desired]\n"       // a2 = 新值
+        "1:\n"                      // 循环开始
+        "lr.w.aqrl a0, (a5)\n"      // 原子加载
+        "bne a0, a1, 2f\n"          // 如果不相等则跳转到失败
+        "sc.w.rl a4, a2, (a5)\n"    // 尝试条件存储
+        "bnez a4, 1b\n"             // 如果存储失败则重试
+        "j 3f\n"                    // 成功，跳转到结束
+        "2:\n"                      // 失败分支
+        "li a0, 0\n"                // 设置失败标志
+        "j 4f\n"
+        "3:\n"                      // 成功分支
+        "li a0, 1\n"                // 设置成功标志
+        "4:\n"
+        "mv %[result], a0\n"        // 保存结果
+        : [result] "=r" (result)
         : [mem_ptr] "r" (mem_ptr),
-          [expected] "i" (expected_value)
-        : "a0", "a1", "a5", "memory"
+          [expected] "i" (expected),
+          [desired] "i" (desired)
+        : "a0", "a1", "a2", "a4", "a5", "memory"
     );
     
-    printf("After lr.w.aqrl:\n");
-    printf("  a0 = 0x%x\n", a0_result);
-    printf("  Branch taken: %s\n", branch_taken ? "YES" : "NO");
+    printf("Result: %s\n", result ? "SUCCESS" : "FAILED");
+    printf("Final shared_var: 0x%08X\n", shared_var);
     
-    if (!branch_taken && a0_result == expected_value) {
-        printf("✅ Test 1 PASSED: No branch (values equal)\n");
+    if (result && shared_var == desired) {
+        printf("✅ Test 1 PASSED: CAS succeeded on first attempt\n");
     } else {
         printf("❌ Test 1 FAILED\n");
     }
