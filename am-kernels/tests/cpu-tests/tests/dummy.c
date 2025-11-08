@@ -514,7 +514,7 @@ void test_atomic_cmpxchg() {
         "mv a5, %[mem_ptr]\n"       // a5 = 内存地址指针
         "li a1, %[expected]\n"      // a1 = 期望值
         "lr.w.aqrl a0, (a5)\n"      // 原子加载到a0
-        "bne a0, a1, 1f\n"          // 如果不相等则跳转
+        "beq a0, a1, 1f\n"          // 如果不相等则跳转
         "li %[branch], 0\n"         // 不跳转：设置branch=0
         "j 2f\n"                    // 跳过跳转分支
         "1:\n"
