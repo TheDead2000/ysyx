@@ -510,8 +510,8 @@ void test_atomic_cmpxchg() {
     desired = 0x2000;
     uint32_t *mem_ptr = &shared_var;
     
-    printf("Initial shared_var: 0x%08X\n", shared_var);
-    printf("Expected: 0x%08X, Desired: 0x%08X\n", expected, desired);
+    printf("Initial shared_var: 0x%x\n", shared_var);
+    printf("Expected: 0x%x, Desired: 0x%x\n", expected, desired);
     
     __asm__ volatile (
         "mv a5, %[mem_ptr]\n"       // a5 = 内存地址
@@ -538,7 +538,7 @@ void test_atomic_cmpxchg() {
     );
     
     printf("Result: %s\n", result ? "SUCCESS" : "FAILED");
-    printf("Final shared_var: 0x%08X\n", shared_var);
+    printf("Final shared_var: 0x%x\n", shared_var);
     
     if (result && shared_var == desired) {
         printf("✅ Test 1 PASSED: CAS succeeded on first attempt\n");
