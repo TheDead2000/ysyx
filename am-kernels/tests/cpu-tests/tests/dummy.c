@@ -491,6 +491,52 @@ __asm__ volatile (
                a5_result, test_data.special_value);
     }
 }
+
+
+void test_atomic_cmpxchg() {
+    printf("Testing 'lr.w.aqrl a0, (a5); bne a0, a1, label' sequence...\n");
+    
+    uint32_t memory_value;
+    uint32_t expected_value;
+    uint32_t a0_result;
+    uint32_t branch_taken = 0;
+    uint32_t *mem_ptr = &memory_value;
+    
+    // 测试用例1：内存值等于期望值（不跳转）
+    printf("\nTest case 1: Memory value == Expected value (no branch)\n");
+    memory_value = 0x12345678;
+    expected_value = 0x12345678;
+    
+    printf("Initial memory: 0x%x\n", memory_value);
+    printf("Expected value: 0x%x\n", expected_value);
+    
+    __asm__ volatile (
+        "mv a5, %[mem_ptr]\n"       // a5 = 内存地址指针
+        "li a1, %[expected]\n"      // a1 = 期望值
+        "lr.w.aqrl a0, (a5)\n"      // 原子加载到a0
+        "bne a0, a1, 1f\n"          // 如果不相等则跳转
+        "li %[branch], 0\n"         // 不跳转：设置branch=0
+        "j 2f\n"                    // 跳过跳转分支
+        "1:\n"
+        "li %[branch], 1\n"         // 跳转：设置branch=1
+        "2:\n"
+        : [branch] "=r" (branch_taken),
+          [a0] "=r" (a0_result)
+        : [mem_ptr] "r" (mem_ptr),
+          [expected] "i" (expected_value)
+        : "a0", "a1", "a5", "memory"
+    );
+    
+    printf("After lr.w.aqrl:\n");
+    printf("  a0 = 0x%x\n", a0_result);
+    printf("  Branch taken: %s\n", branch_taken ? "YES" : "NO");
+    
+    if (!branch_taken && a0_result == expected_value) {
+        printf("✅ Test 1 PASSED: No branch (values equal)\n");
+    } else {
+        printf("❌ Test 1 FAILED\n");
+    }
+}
 // void test_csrw_mscratch() {
 //     printf("Testing 'csrw mscratch, tp' instruction...\n");
     
