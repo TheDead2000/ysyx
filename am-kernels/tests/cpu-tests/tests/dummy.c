@@ -576,7 +576,7 @@ void test_sc_basic() {
     );
     
     printf("After sc.w:\n");
-    printf("  SC result: %u (0 = success, 1 = failure)\n", sc_result);
+    printf("  SC result: %x (0 = success, 1 = failure)\n", sc_result);
     printf("  Memory: 0x%x\n", memory_location);
     
     if (sc_result == 0) {
