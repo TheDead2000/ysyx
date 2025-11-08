@@ -546,6 +546,46 @@ void test_atomic_cmpxchg() {
         printf("❌ Test 1 FAILED\n");
     }
 }
+
+void test_sc_basic() {
+    printf("Testing sc.w instruction basic functionality...\n");
+    
+    uint32_t memory_location = 0x12345678;
+    uint32_t *addr = &memory_location;
+    uint32_t sc_result;
+    uint32_t new_value = 0xABCDEF00;
+    
+    printf("Initial memory: 0x%x at %p\n", memory_location, addr);
+    printf("New value to store: 0x%x\n", new_value);
+    
+    // 使用 lr.w + sc.w 序列
+    __asm__ volatile (
+        "mv a0, %[addr]\n"           // a0 = 内存地址
+        "lr.w a1, (a0)\n"            // 加载保留
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        "mv a2, %[new_val]\n"        // a2 = 新值
+        "sc.w %[result], a2, (a0)\n" // 条件存储
+        : [result] "=r" (sc_result)
+        : [addr] "r" (addr),
+          [new_val] "r" (new_value)
+        : "a0", "a1", "a2", "memory"
+    );
+    
+    printf("After sc.w:\n");
+    printf("  SC result: %u (0 = success, 1 = failure)\n", sc_result);
+    printf("  Memory: 0x%x\n", memory_location);
+    
+    if (sc_result == 0) {
+        printf("✅ SC succeeded - memory updated to 0x%x\n", new_value);
+    } else {
+        printf("❌ SC failed - memory remains 0x%x\n", memory_location);
+    }
+}
+
 // void test_csrw_mscratch() {
 //     printf("Testing 'csrw mscratch, tp' instruction...\n");
     
@@ -761,7 +801,8 @@ void test_amoadd_aqrl() {
 
 
 int main() {
-    test_atomic_cmpxchg();
+    test_sc_basic();
+    //test_atomic_cmpxchg();
     //test_csrr_and_load();
     //test_csrw_mscratch();
     //test_amoadd_aqrl();
