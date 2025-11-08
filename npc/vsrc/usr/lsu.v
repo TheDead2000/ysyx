@@ -125,7 +125,7 @@ module lsu (
     
     // 原子操作也属于加载和存储
     wire _is_amo_load = _memop_lr_w ;
-    wire _is_amo_store = _memop_amo & ~_amo_lr_w;  // 除了LR.W，其他的AMO操作都需要存储
+    wire _is_amo_store = _memop_sc_w | _memop_amo & ~_amo_lr_w;  // 除了LR.W，其他的AMO操作都需要存储
 
     wire _is_amo =  _amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
                     _amo_min | _amo_max | _amo_minu | _amo_maxu;
