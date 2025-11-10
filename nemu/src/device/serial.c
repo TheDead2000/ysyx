@@ -23,6 +23,7 @@
 
 static uint8_t *serial_base = NULL;
 
+#define CONFIG_SERIAL_MMIO 0xa00003f8
 
 static void serial_putc(char ch) {
   MUXDEF(CONFIG_TARGET_AM, putch(ch), putc(ch, stderr));
