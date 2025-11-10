@@ -58,6 +58,9 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     //printf("cpu.csr[NEMU_CSR_SATP]=%#x\n", cpu.csr[NEMU_CSR_SATP] << 12+ PGT1_ID(vaddr) * 4);
     paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP]<< 12) + PGT1_ID(vaddr) * 4;   // 每个表项占 4 个字节，计算得到虚拟地址的一级页面表项地址
     PTE pte_1 = paddr_read(pte_1_addr, sizeof(PTE));
+    printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
+    printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
+    printf("vaddr=%x\n", vaddr);
     Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
 
     paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4; // 高 22 位是 PPN，physical page number, 物理页号. 但是在 4KB 页面的设置下，高两位被直接移出去了
