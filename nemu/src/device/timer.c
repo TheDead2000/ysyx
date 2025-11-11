@@ -17,6 +17,7 @@
 #include <device/alarm.h>
 #include <utils.h>
 
+#define CONFIG_RTC_MMIO 0xa0000048
 static uint32_t *rtc_port_base = NULL;
 
 static void rtc_io_handler(uint32_t offset, int len, bool is_write) {
