@@ -416,6 +416,7 @@ void ppu_init() {
         ppu_l_h_addition_flip_table[l][h][x] = (((h >> x) & 1) << 1) | ((l >> x) & 1);
       }
     }
+    printf("h=%d done\n", h);
   }
 }
 

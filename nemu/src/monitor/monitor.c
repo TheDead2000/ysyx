@@ -42,7 +42,8 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = "/home/zy/ysyx-workbench/fceux-am/build/fceux-riscv32e-npc.bin";
+static char *img_file = "/home/zy/ysyx-workbench/opensbi/build/platform/nemu/firmware/fw_payload.bin";
+// static char *img_file = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/mul-longlong-riscv32-npc.bin";
 static int difftest_port = 1234;
 
 static long load_img() {
@@ -123,7 +124,6 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);
-
   /* Initialize the simple debugger. */
   init_sdb();
 

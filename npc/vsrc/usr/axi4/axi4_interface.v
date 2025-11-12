@@ -323,6 +323,9 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
         end
         AXI_RDATA: begin  // 支持突发传输
           if (axi_r_handshake) begin : wait_for_r_handshake
+           if (axi_r_resp_i != 2'b00) begin // 检查是否为OKAY响应
+             $display("ERROR: AXI read response error: %b", axi_r_resp_i);
+            end
             if (axi_r_last_i) begin  // 最后一个数据传输完成
               axi_rstate <= AXI_RIDLE;
               _arb_rlast_o <= 1;
@@ -341,6 +344,15 @@ wire [7:0] burst_count_plus1 = burst_count + 1;
     end
   end
 
+// always @(posedge clock) begin
+//   if (axi_ar_handshake) begin
+//     $display("AXI_AR_REQ: addr=%h", axi_ar_addr_o);
+//   end
+//   if (axi_r_handshake) begin
+//     $display("AXI_R_RSP: addr=%h, data=%h", 
+//              arb_read_addr_i, axi_r_data_i);
+//   end
+// end
   /********************类 sram 接口数据返回**************************/
 
   assign arb_rdata_o = _arb_rdata_o;

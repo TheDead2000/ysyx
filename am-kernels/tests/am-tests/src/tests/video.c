@@ -16,20 +16,24 @@ static int used[N][N];
 static uint32_t color_buf[32 * 32];
 
 void redraw() {
+  printf("w:%d\n",io_read(AM_GPU_CONFIG).width);
+  printf("h:%d\n",io_read(AM_GPU_CONFIG).height);
   int w = io_read(AM_GPU_CONFIG).width / N;
   int h = io_read(AM_GPU_CONFIG).height / N;
   int block_size = w * h;
   assert((uint32_t)block_size <= LENGTH(color_buf));
-
+  printf("w %d h %d\n",w,h);
   int x, y, k;
   for (y = 0; y < N; y ++) {
     for (x = 0; x < N; x ++) {
       for (k = 0; k < block_size; k ++) {
         color_buf[k] = canvas[y][x];
       }
-      io_write(AM_GPU_FBDRAW, x * w, y * h, color_buf, w, h, false);
+      io_write(AM_GPU_FBDRAW, x * w, y * h, color_buf, w, h, true);
     }
+    printf("y=%d\n",y);
   }
+  printf("for end\n");
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
 }
 
@@ -71,14 +75,18 @@ void video_test() {
   unsigned long last = 0;
   unsigned long fps_last = 0;
   int fps = 0;
-
+  printf("video_test\n");
   while (1) {
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
+    printf("upt %d\n",upt);
     if (upt - last > 1000 / FPS) {
+      printf("update be\n");
       update();
+      printf("redrawbe\n");
       redraw();
       last = upt;
       fps ++;
+      printf("fps:%d\n",fps);
     }
     if (upt - fps_last > 1000) {
       // display fps every 1s

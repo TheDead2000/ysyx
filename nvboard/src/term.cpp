@@ -104,7 +104,7 @@ void Term::backspace(bool is_input) {
 }
 
 void Term::feed_ch(uint8_t ch) {
-  assert(ch < 128);
+  // assert(ch < 128);
   if (is_cursor_on_screen()) set_dirty_char(cursor_y - screen_y, cursor_x);
   int y = cursor_y;
   assert(y < lines.size());

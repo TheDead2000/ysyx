@@ -1,6 +1,6 @@
 `include "sysconfig.v"
 
-module ysyx_041514_icache_tag #(
+module icache_tag #(
     parameter TAG_LEN = 19,  // tag 长度
     parameter IDX_LEN = 7,   // 组号 长度
     parameter TAG_NUM = 128  // tag 个数
@@ -15,7 +15,7 @@ module ysyx_041514_icache_tag #(
 
   // 合并 valid 和 tag 到单个寄存器
   reg [TAG_LEN:0] icache_tag_regs [TAG_NUM-1:0];  // {valid, tag}
-
+ 
   // 读取逻辑
   wire [TAG_LEN:0] read_tag_full = icache_tag_regs[icache_index_i];
   wire valid_bit = read_tag_full[TAG_LEN];

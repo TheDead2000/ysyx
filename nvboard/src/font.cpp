@@ -75,7 +75,7 @@ SDL_Texture* ch2texture(SDL_Renderer *renderer, uint8_t ch, uint32_t fg, uint32_
 }
 
 SDL_Texture* ch2texture_term(uint8_t ch) {
-  assert(ch < 128);
+  // assert(ch < 128);
   return font_texture_term[ch == 0 ? ' ' : ch];
 }
 

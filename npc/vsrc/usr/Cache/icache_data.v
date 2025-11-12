@@ -1,7 +1,7 @@
 `include "sysconfig.v"
 
-
-module ysyx_041514_icache_data #(
+`ifndef YSYX_SOC
+module icache_data #(
     IDX_LEN = 7,  // 组号 长度
     BLK_LEN = 6   // 块内地址 长度
     // TAG_NUM = 64  // tag 个数
@@ -100,3 +100,4 @@ module ysyx_041514_icache_data #(
   assign Q11 = io_sram7_rdata;
 
 endmodule
+`endif

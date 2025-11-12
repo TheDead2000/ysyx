@@ -1,75 +1,140 @@
 #include <common.h>
-#include "syscall.h"
+#include <stdint.h>
+#include <fs.h>
 #include <sys/time.h>
+#include <proc.h>
+#include <memory.h>
+#include "syscall.h"
+#include "am.h"
+#include "amdev.h"
+#include "debug.h"
+#include "klib-macros.h"
+#include "sys/unistd.h"
 
-int fs_open(const char *pathname, int flags, int mode);
-size_t fs_read(int fd, void *buf, size_t len);
-size_t fs_write(int fd, const void *buf, size_t len);
-size_t fs_lseek(int fd, size_t offset, int whence);
-int fs_close(int fd);
+//#define CONFIG_STRACE
+// 宏定义的内部不能出现其他预处理指令, 宏不能被其他预处理指令中断
+/*#ifdef CONFIG_STRACE*/
+/*#define TRACE_CALL(func, a, ret) strace(func, a, ret)*/
+/*#else*/
+/*#define TRACE_CALL(func, a, ret)*/
+/*#endif*/
+
+#define SYSCALL_CASE(func) case SYS_##func: c->GPRx = sys_##func(a); strace(#func, a, c->GPRx); break;
+void naive_uload(PCB *pcb, const char *filename);
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+void switch_boot_pcb();
+
+static void strace(char *s, uintptr_t *a, uintptr_t ret) {
+#ifdef CONFIG_STRACE
+    Log("[strace]%s: a0=%x a1=%x a2=%x a3=%x, ret=%d", s, a[0], a[1], a[2], a[3], ret);
+#endif
+}
+
+/*static uintptr_t sys_execve(uintptr_t *a) {
+ *    const char *fname = (const char *)a[1];                                         
+ *    Log("Ready to load %s",fname); 
+ *    // 暂时不支持程序的输入参数
+ *    naive_uload(NULL, fname);
+ *    return 0;
+ *}*/
+
+static uintptr_t sys_execve(uintptr_t *a) {
+    const char *fname = (const char *)a[1];
+    char *const* argv = (char *const*)a[2];
+    char *const* envp = (char *const*)a[3];
+
+    Log("Ready to load %s",fname); 
+    return execve(fname, argv, envp);
+}
+
+static uintptr_t sys_exit(uintptr_t *a) {
+    Log("[strace]exit");                    // exit 系统调用使用 halt 函数实现的时候，直接就出去了，走不到 TRACE_CALL 的逻辑，所以手动在这里添加一个日志
+     //halt(a[1]);                             // syscall 除了第一个参数，还传递了第二个 status。所以第二个参数a[1]就是 status
+    return execve("/bin/nterm", NULL, NULL);
+}
+
+static uintptr_t sys_yield(uintptr_t *a) {
+    yield();                        // yield 执行过程中会触发 ecall 指令，即系统调用内再次调用 ecall 指令
+    return 0;
+}
+
+static uintptr_t sys_open(uintptr_t *a) {
+    const char *pathname = (const char *)a[1];
+    int flags = a[2];
+    int mode = a[3];
+    return fs_open(pathname, flags, mode);
+}
+
+static uintptr_t sys_read(uintptr_t *a) {
+    int fd = a[1];
+    void *buf = (void *)a[2];
+    size_t len = a[3];
+    return fs_read(fd, buf, len);
+}
+
+static uintptr_t sys_write(uintptr_t *a) {
+    int fd = a[1];
+    char *buf = (char *)a[2];
+    size_t cnt = a[3];
+    size_t num = cnt;
+    // 标准输出和标准错误
+    if (fd == 1 || fd == 2) {
+        while (cnt) {
+            putch(*(buf++));
+            cnt--;
+        }
+        return num - cnt;
+    }
+    // 输出到文件
+    return fs_write(fd, buf, cnt);
+}
+
+static uintptr_t sys_lseek(uintptr_t *a) {
+    return fs_lseek(a[1], a[2], a[3]);
+}
+
+static uintptr_t sys_close(uintptr_t *a) {
+    return fs_close(a[1]);
+}
+
+static uintptr_t sys_brk(uintptr_t *a) {
+    return mm_brk((uintptr_t)a[1]);
+    //return 0;                   // always succeed
+}
+
+static uintptr_t sys_gettimeofday(uintptr_t *a) {
+    struct timeval *tv = (struct timeval *)a[1];
+    struct timezone *tz = (struct timezone *)a[2];
+    uint64_t us = io_read(AM_TIMER_UPTIME).us;              // 微秒
+    if (tv) {
+        tv->tv_sec = us / (1000 * 1000);
+        tv->tv_usec = us % (1000 * 1000);                   // 余数微秒
+    }
+
+    if (tz) {
+
+    }
+    return 0;
+}
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
-  //int us = 0;
+  a[0] = c->GPR1;               // 系统调用号, a7 寄存器
+  a[1] = c->GPR2;
+  a[2] = c->GPR3;
+  a[3] = c->GPR4;
 
-  a[0] = c->GPR1;// 系统调用号
-  a[1] = c->GPR2;// 函数参数1
-  a[2] = c->GPR3;// 函数参数2
-  a[3] = c->GPR4;// 函数参数3
-
-  switch (c->GPR1) {
-    case SYS_exit:
-      // printf("[Strace - do_syscall] SYS_exit.\n");
-      // printf("c->GPR2:%d\n",c->GPR2);
-      halt(0);
-      break;
-    case SYS_yield:
-      printf("[Strace - do_syscall] SYS_yield.\n");
-      yield();
-      c->GPRx = 0;
-      break;
-    case SYS_brk:
-      // printf("[Strace - do_syscall] SYS_brk\n");
-      c->GPRx = 0;
-      break;
-    case SYS_open:
-      // printf("[Strace - do_syscall] SYS_open\n");
-      c->GPRx = fs_open((const char *)c->GPR2, c->GPR3, c->GPR4);
-      break;
-    case SYS_read:
-      // printf("[Strace - do_syscall] SYS_read\n");
-      c->GPRx = fs_read(c->GPR2, (void *)c->GPR3, c->GPR4);
-      break;
-    case SYS_write:
-      // printf("[Strace - do_syscall] SYS_write\n");
-      c->GPRx = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
-      break;
-    case SYS_lseek:
-      // printf("[Strace - do_syscall] SYS_lseek\n");
-      c->GPRx = fs_lseek(c->GPR2, c->GPR3, c->GPR4);
-      break;
-    case SYS_close:
-      // printf("[Strace - do_syscall] SYS_close\n");
-      c->GPRx = fs_close(c->GPR2);
-      break;
-    case SYS_gettimeofday:
-    // printf("SYS_gettimeofday a1:%d,a2:%d,a3:%d\n", a[1], a[2], a[3]);
-      struct timeval* tv = (struct timeval*)a[1];
-      int us = io_read(AM_TIMER_UPTIME).us;
-      // printf("us is %d\n",us);
-      tv->tv_sec = us / 1000000;
-      // printf("tv_sec is %d\n",tv->tv_sec);
-      tv->tv_usec = us % 1000000;
-      // printf("tv_usec is %d\n",tv->tv_usec );
-      c->GPRx = 0;
-      break;
-    case SYS_execve:
-      printf("execve!!!\n");
-      char *fname = (char *)c->GPR2;
-      naive_uload(NULL, fname);
-      c->GPRx = 0;
-      break;
-
-    default: panic("Unhandled syscall ID = %d", c->GPR1);
+  switch (a[0]) {
+      SYSCALL_CASE(exit);
+      SYSCALL_CASE(yield);
+      SYSCALL_CASE(write);
+      SYSCALL_CASE(brk);
+      SYSCALL_CASE(read);
+      SYSCALL_CASE(open);
+      SYSCALL_CASE(lseek);
+      SYSCALL_CASE(close);
+      SYSCALL_CASE(gettimeofday);
+      SYSCALL_CASE(execve);
+      default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }

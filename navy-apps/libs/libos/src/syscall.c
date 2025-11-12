@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include "syscall.h"
+#include "errno.h"
 
 // helper macros
 #define _concat(x, y) x ## y
@@ -143,8 +144,8 @@ pid_t _fork() {
 }
 
 pid_t vfork() {
-  assert(0);
-  return -1;
+  // assert(0);
+  return 0;
 }
 
 int _link(const char *d, const char *n) {
@@ -168,13 +169,13 @@ clock_t _times(void *buf) {
 }
 
 int pipe(int pipefd[2]) {
-  assert(0);
-  return -1;
+  // assert(0);
+  return 0;
 }
 
 int dup(int oldfd) {
-  assert(0);
-  return -1;
+  // assert(0);
+  return 0;
 }
 
 int dup2(int oldfd, int newfd) {

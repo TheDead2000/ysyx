@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-
+#include "local-include/reg.h"
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
 static const uint32_t img [] = {
@@ -25,6 +25,7 @@ static const uint32_t img [] = {
   0x00100073,  // ebreak (used as nemu_trap)
   0xdeadbeef,  // some data
 };
+#define SBI_SCRATCH_SIZE 1024
 
 static void restart() {
   /* Set the initial program counter. */
@@ -34,7 +35,16 @@ static void restart() {
   cpu.gpr[0] = 0;
 
   /* initialize mstatus */
-  // cpu.csr.mstatus = 0x00001800;
+  csr(NEMU_CSR_V_MSTATUS) = 0x1800;
+
+  csr(NEMU_CSR_V_MISA) = (1 << 30) | // MXL = 1 (32-bit)
+                         (1 << 8)  | // I extension
+                         (1 << 12) | // M extension  
+                         (1 << 0)  ; // A extension
+                         //(1 << 2)  | // C extension
+                         //(1 << 18) | // S extension
+                         //(1 << 20);  // U extension
+  cpu.PRIV=NEMU_PRIV_M;
 }
 
 void init_isa() {

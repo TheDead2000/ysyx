@@ -12,7 +12,6 @@ UART::UART(SDL_Renderer *rend, int cnt, int init_val, int ct, int x, int y, int 
     Component(rend, cnt, init_val, ct),
     tx_state(0), rx_state(0), divisor(16), need_update_gui(false) {
   term = new Term(rend, x, y, w, h);
-
   SDL_Rect *rect_ptr = new SDL_Rect;
   *rect_ptr = (SDL_Rect){x, y, w, h};
   set_rect(rect_ptr, 0);
@@ -39,7 +38,6 @@ void UART::update_gui() { // everything is done in update_state()
 
 void UART::tx_receive() {
   uart_divisor_cnt = divisor - 1;
-
   uint8_t tx = *p_tx;
   if (tx_state == 0) { // idle
     if (!tx) { // start bit
@@ -71,6 +69,7 @@ void UART::rx_send() {
     rx_state ++;
   } else if (rx_state >= 1 && rx_state <= 8) { // data
     pin_poke(UART_RX, rx_data & 1);  // data bit
+    // printf("rx_data %x\n",rx_data);
     rx_data >>= 1;
     rx_state ++;
   } else if (rx_state == 9) {

@@ -6,7 +6,7 @@ html:
 .PHONY: html
 
 ## 1. Basic Setup and Checks
-
+VME=1
 ### Default to build an application
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = app
@@ -48,7 +48,7 @@ ARCHIVE  = $(WORK_DIR)/build/$(NAME)-$(ISA).a
 ### Add default libraries for ISA != native
 ifneq ($(ISA), native)
 LIBS += libc libos libndl
-CFLAGS += -U_FORTIFY_SOURCE  # fix compile error in Newlib on ubuntu
+CFLAGS += -U_FORTIFY_SOURCE -Wno-implicit-function-declaration # fix compile error in Newlib on ubuntu
 else
 WL = -Wl,
 endif
@@ -166,8 +166,10 @@ $(CLEAN_ALL):
 .PHONY: clean-all $(CLEAN_ALL)
 
 ### Build fsimg and ramdisk for Nanos-lite
-APPS = nslider menu nterm bird pal
-TESTS = bmp-test
+# APPS = nslider menu nterm bird pal
+APPS = menu nterm bird pal nslider
+# APPS =  menu bird pal nterm nslider
+TESTS = dummy hello bmp-test
 
 fsimg: $(addprefix apps/, $(APPS)) $(addprefix tests/, $(TESTS))
 	-for t in $^; do $(MAKE) -s -C $(NAVY_HOME)/$$t install; done

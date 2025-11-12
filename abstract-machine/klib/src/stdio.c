@@ -2,91 +2,234 @@
 #include <klib.h>
 #include <klib-macros.h>
 #include <stdarg.h>
+// TODO: stdarg是如何实现的?
+// TODO:
+// 也许应该修改逻辑了，写入到一个缓冲区中，当有回车或者结束或者缓冲区满的时候刷新缓冲区，不要开3k个字符了!!!!!!
+#define BUFFER_LENGH 3000
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
+// #if defined(__NATIVE_USE_KLIB__)
+int print_num(char *out, size_t out_offset, int val);
+int print_str(char *out, size_t out_offset, char *val);
+int sprintf(char *out, const char *fmt, ...);
+int vsprintf(char *out, const char *fmt, va_list args);
+int print_num_hex(char *out, size_t out_offset, int unsigned val);
+int print_num_long(char *out, size_t out_offset, long val);
 
-char mybuf[4096];
-void putch(char ch);
+int printf_call_count = 0;
+  // putstr("fmt content: ");
+  //   printf_call_count++;
+  
+  // // 打印调用次数
+  // putch('[');
+  // putch('0' + printf_call_count);
+  // putch(']');
+  // putch(' ');
+
+
+  // const uint32_t *word_ptr = (const uint32_t*)fmt;
+  
+  // for(int i = 0; i < 10; i++) {
+  //   int word_index = i / 4;
+  //   int byte_offset = i % 4;
+  //   uint32_t word = word_ptr[word_index];
+  //   char c = (word >> (byte_offset * 8)) & 0xFF;
+    
+  //   if(c == '\0') break;
+    
+  //   putch(' ');
+  //   putch('i');
+  //   putch('=');
+  //   putch('0' + i);
+  //   putch(':');
+  //   putch(c);
+  //   putch('|');
+  // }
+  void test_flash_byte_access() {
+    // 测试直接访问 Flash 中的不同字节
+    const char *flash_str = (const char*)0x3000073c; // 你的字符串地址
+    
+    putch('F');
+    putch(':');
+    for(int i = 0; i < 13; i++) {
+        // 直接字节访问
+        char c = flash_str[i];
+        putch(c);
+        putch('|');
+    }
+
+    putch('\n');
+    putch('S');
+    const char *sdram_str = (const char*)0xa00005ec; // 你的字符串地址
+        
+    for(int i = 0; i < 13; i++) {
+        // 直接字节访问
+        char c = flash_str[i];
+        putch(c);
+        putch('|');
+    }
+
+}
+  //   const uint32_t *word_ptr = (const uint32_t*)fmt;
+  
+  // for(int i = 0; i < 10; i++) {
+  //   int word_index = i / 4;
+  //   int byte_offset = i % 4;
+  //   uint32_t word = word_ptr[word_index];
+  //   char c = (word >> (byte_offset * 8)) & 0xFF;
+    
+  //   if(c == '\0') break;
+    
+  //   putch(' ');
+  //   putch('i');
+  //   putch('=');
+  //   putch('0' + i);
+  //   putch(':');
+  //   putch(c);
+  //   putch('|');
+  // }
+  // test_flash_byte_access();
+  // putch('\n');
+  // putstr("fmt\n");
+  // for(int i = 0 ; i < 10 ;i++  )
+  // {
+  //   putch(fmt[i]);
+  // }
+
 
 int printf(const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    
-    int val = vsnprintf(mybuf, 4096, fmt, ap);
-    char *tmp = mybuf;
-    while (*tmp != 0) {
-        putch(*tmp);
-        tmp++;
-    }
-
-    va_end(ap);
-    return val;
-}
-
-int vsprintf(char *out, const char *fmt, va_list ap) {
-  panic("Not implemented");
-}
-
-int sprintf(char *out, const char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
+  //TODO
+  char out[BUFFER_LENGH];
+  va_list args;
+  va_start(args, fmt);
   
-  int val = vsnprintf(out, 1024, fmt, ap);
-  va_end(ap);
 
-  return val;
+  int len = vsprintf(out, fmt, args);
+  va_end(args);
+  putstr(out);
+  return len;
 }
 
-int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-    char *start = out;
-    while (n-- && *fmt != '\0') {
-        if (*fmt == '%') {
-            fmt++;
-            if (*fmt == 's') {
-                char *tmp_s = va_arg(ap, char*);
-                while (*tmp_s != '\0') {
-                    *out++ = *tmp_s++;
-                }
-            }
-            else if (*fmt == 'd') {
-                int tmp_int = va_arg(ap, int);
-                if (tmp_int < 0) {
-                    *out++ = '-';
-                    tmp_int = -1 * tmp_int;
-                }
-                int number = tmp_int;
-                int len  = 0;
-                do {
-                    number /= 10;
-                    len++;
-                } while (number);
-                out = out + len - 1;
-                int tmp_len = len;
-                while (tmp_len--) {
-                    int tmp = tmp_int % 10;
-                    *out-- = tmp + 48;
-                    tmp_int /= 10;
-                }
-                out += (len+1);
-            }
-            else if (*fmt == '%') {
-                *out++ = '%';
-            }
-            else if (*fmt == 'c') {
-                char tmp_char = va_arg(ap, int);
-                *out++ = tmp_char;
-            }
-            else {
-                return -1;
-            }
-        }
-        else {
-            *out++ = *fmt;
-        }
-        fmt++;
+int vsprintf(char *out, const char *fmt, va_list args)
+{
+  size_t out_offset = 0;
+  const char *p = fmt;
+
+  while (*p != '\0')
+  {
+    switch (*p)
+    {
+    case '\\':
+      break;
+    case '%':
+      p++;
+      switch (*(p))
+      {
+        case 'd':
+          out_offset = print_num(out, out_offset, va_arg(args, int));
+          break;
+        case 's':
+          out_offset = print_str(out, out_offset, va_arg(args, char *));
+          break;
+        case 'c':
+          out[out_offset++] = va_arg(args, int);
+          break;
+        case 'x':
+        case 'p':
+          out_offset = print_num_hex(out, out_offset, va_arg(args, int));
+          break;
+        case 'l':
+          p++;
+          if(*(p)=='d'){//%ld
+            out_offset=print_num_long(out, out_offset, va_arg(args, long));
+          }
+      }
+      break;
+    default:
+      out[out_offset++] = *p;
+      break;
     }
-    *out = '\0';
-    return out - start;
+    p++;
+  }
+  out[out_offset] = '\0';
+  return out_offset;
+}
+// TOW Helper Func Defined By Myself
+// 递归打印val
+int print_num(char *out, size_t out_offset, int val)
+{
+  if (val < 0)
+  {
+    out[out_offset++] = '-';
+    val = -val;
+  }
+  int append = val % 10;
+  if (val / 10 != 0)
+    out_offset = print_num(out, out_offset, val / 10);
+  out[out_offset] = append + '0';
+  return out_offset + 1;
+}
+int print_num_hex(char *out, size_t out_offset, unsigned int val)
+{
+
+  int append = val % 16;
+  if (val / 16 != 0)
+    out_offset = print_num_hex(out, out_offset, val / 16);
+  out[out_offset] = append <= 9 ? append + '0' : append - 10 + 'a';
+  return out_offset + 1;
+}
+int print_num_long(char *out, size_t out_offset, long val)
+{
+  if (val < 0)
+  {
+    out[out_offset++] = '-';
+    val = -val;
+  }
+  long append = val % 10;
+  if (val / 10 != 0)
+    out_offset = print_num(out, out_offset, val / 10);
+  out[out_offset] = append + '0';
+  return out_offset + 1;
+}
+// 打印字符串
+int print_str(char *out, size_t out_offset, char *val)
+{
+  size_t i = 0;
+
+  while (val[i] != '\0')
+  {
+    out[out_offset++] = val[i++];
+  }
+  return out_offset;
+}
+int sprintf(char *out, const char *fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  int len = vsprintf(out, fmt, args);
+  va_end(args);
+  return len;
+}
+
+int snprintf(char *out, size_t n, const char *fmt, ...) {
+
+  char buffer[BUFFER_LENGH];
+  va_list args;
+  va_start(args, fmt);
+  vsprintf(buffer, fmt, args);
+  va_end(args);
+  strncpy(out, buffer, n);
+  return n;
+  // panic("Not implemented1");
+}
+
+int vsnprintf(char *out, size_t n, const char *fmt, va_list ap)
+{
+  // panic("Not implemented2");
+  char buffer[BUFFER_LENGH];
+  vsprintf(buffer, fmt, ap);
+  strncpy(out, buffer, n);
+  return n;
 }
 
 #endif
