@@ -71,6 +71,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     paddr_write(pte_2_addr, 4, type == MEM_TYPE_WRITE ? pte_2 | PTE_A | PTE_D : pte_2 | PTE_A);
 
     paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
+    printf("pa=%x\n", pa);
     //Assert(pa == vaddr, "get physical address wrong, pa=%#x, va=%#x", pa, vaddr);
     return pa;
 }
