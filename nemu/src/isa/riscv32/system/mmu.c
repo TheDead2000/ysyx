@@ -55,6 +55,11 @@ typedef uint32_t PTE;
 #define OFFSET(val) (val & 0xfff)
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
+
+    if ( vaddr >= 0x81870000 && vaddr <= 0x8187ffff ) {
+      paddr_write(vaddr, len,  paddr_read(vaddr,len));
+    }
+    else{
     paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP] << 12) + PGT1_ID(vaddr) * 4;
     PTE pte_1 = paddr_read(pte_1_addr, sizeof(PTE));
     printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
@@ -96,5 +101,8 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
     printf("4KB page mapping: pa=%x\n", pa);
     return pa;
+    }
+
+
 }
 
