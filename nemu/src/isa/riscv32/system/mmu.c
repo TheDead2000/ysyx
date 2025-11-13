@@ -60,7 +60,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
     printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
     printf("vaddr=%x\n", vaddr);
-    //Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
+    Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
 
     // 检查一级页表项是否是叶子页表项（超级页）
     if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
@@ -74,6 +74,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
         } else {
             pte_1 |= PTE_A;
         }
+        printf("run here\n");
         paddr_write(pte_1_addr, 4, pte_1);
         return pa;
     }
