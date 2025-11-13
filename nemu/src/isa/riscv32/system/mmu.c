@@ -55,25 +55,45 @@ typedef uint32_t PTE;
 #define OFFSET(val) (val & 0xfff)
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-    //printf("cpu.csr[NEMU_CSR_SATP]=%#x\n", cpu.csr[NEMU_CSR_SATP] << 12+ PGT1_ID(vaddr) * 4);
-    paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP]<< 12) + PGT1_ID(vaddr) * 4;   // 每个表项占 4 个字节，计算得到虚拟地址的一级页面表项地址
+    paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP] << 12) + PGT1_ID(vaddr) * 4;
     PTE pte_1 = paddr_read(pte_1_addr, sizeof(PTE));
     printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
     printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
     printf("vaddr=%x\n", vaddr);
     Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
 
-    paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4; // 高 22 位是 PPN，physical page number, 物理页号. 但是在 4KB 页面的设置下，高两位被直接移出去了
+    // 检查一级页表项是否是叶子页表项（超级页）
+    if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
+        // 超级页映射：使用一级页表项的PPN和vaddr的22位偏移
+        paddr_t pa = (PTE_PPN(pte_1) << 12) | (vaddr & 0x3FFFFF);
+        printf("Super page mapping: pa=%x\n", pa);
+        // 更新访问和修改位
+        // 注意：对于超级页，我们更新一级页表项
+        if (type == MEM_TYPE_WRITE) {
+            pte_1 |= PTE_A | PTE_D;
+        } else {
+            pte_1 |= PTE_A;
+        }
+        paddr_write(pte_1_addr, 4, pte_1);
+        return pa;
+    }
+
+    // 否则，走二级页表
+    paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4;
     PTE pte_2 = paddr_read(pte_2_addr, sizeof(PTE));
     printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
-    printf("offset=%x\n", OFFSET(vaddr));
     Assert(pte_2 & PTE_V, "second class pte is not valid, vaddr=%x", vaddr);
-    // 记录访问、写入标志。0 是取指，1 是读取，2 是
-    paddr_write(pte_2_addr, 4, type == MEM_TYPE_WRITE ? pte_2 | PTE_A | PTE_D : pte_2 | PTE_A);
-    
+
+    // 记录访问、写入标志。0 是取指，1 是读取，2 是写入
+    if (type == MEM_TYPE_WRITE) {
+        pte_2 |= PTE_A | PTE_D;
+    } else {
+        pte_2 |= PTE_A;
+    }
+    paddr_write(pte_2_addr, 4, pte_2);
+
     paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
-    printf("pa=%x\n", pa);
-    //Assert(pa == vaddr, "get physical address wrong, pa=%#x, va=%#x", pa, vaddr);
+    printf("4KB page mapping: pa=%x\n", pa);
     return pa;
 }
 
