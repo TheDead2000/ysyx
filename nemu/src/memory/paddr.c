@@ -167,7 +167,7 @@ void paddr_write(paddr_t addr, int len, word_t data)
   IFDEF(CONFIG_MTRACE, record_pwrite(addr, len, data);)
   if (likely(in_pmem(addr)))
   {
-    printf("paddr_write: addr=%x, len=%d, data=%x\n", addr, len, data);
+    //printf("paddr_write: addr=%x, len=%d, data=%x\n", addr, len, data);
     pmem_write(addr, len, data);
     return;
   }
