@@ -57,7 +57,7 @@ typedef uint32_t PTE;
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 
     if ( vaddr >= 0x81870000 && vaddr <= 0x8187ffff ) {
-      paddr_write(vaddr, len,  paddr_read(vaddr,len));
+        return vaddr;
     }
     else{
     paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP] << 12) + PGT1_ID(vaddr) * 4;
