@@ -56,7 +56,7 @@ typedef uint32_t PTE;
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 
-    if ( vaddr >= 0x81870000 && vaddr <= 0x8187ffff ) {
+    if ( vaddr >= 0x81860000 && vaddr <= 0x8187ffff ) {
         return vaddr;
     }
     else{
