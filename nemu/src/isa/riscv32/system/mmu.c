@@ -68,7 +68,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
 
     // 检查一级页表项是否是叶子页表项（超级页）
-    if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
+    //if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
         // 超级页映射：使用一级页表项的PPN和vaddr的22位偏移
         paddr_t pa = (PTE_PPN(pte_1) << 12) | (vaddr & 0x3FFFFF);
         // printf("Super page mapping: pa=%x\n", pa);
@@ -85,23 +85,23 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     }
 
     // 否则，走二级页表
-    paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4;
-    PTE pte_2 = paddr_read(pte_2_addr, sizeof(PTE));
-    //printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
-    Assert(pte_2 & PTE_V, "second class pte is not valid, vaddr=%x", vaddr);
+    // paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4;
+    // PTE pte_2 = paddr_read(pte_2_addr, sizeof(PTE));
+    // //printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
+    // Assert(pte_2 & PTE_V, "second class pte is not valid, vaddr=%x", vaddr);
 
-    // 记录访问、写入标志。0 是取指，1 是读取，2 是写入
-    if (type == MEM_TYPE_WRITE) {
-        pte_2 |= PTE_A | PTE_D;
-    } else {
-        pte_2 |= PTE_A;
-    }
-    paddr_write(pte_2_addr, 4, pte_2);
+    // // 记录访问、写入标志。0 是取指，1 是读取，2 是写入
+    // if (type == MEM_TYPE_WRITE) {
+    //     pte_2 |= PTE_A | PTE_D;
+    // } else {
+    //     pte_2 |= PTE_A;
+    // }
+    // paddr_write(pte_2_addr, 4, pte_2);
 
-    paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
-    //printf("4KB page mapping: pa=%x\n", pa);
-    return pa;
-    }
+    // paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
+    // //printf("4KB page mapping: pa=%x\n", pa);
+    // return pa;
+    // }
 
 
 }
