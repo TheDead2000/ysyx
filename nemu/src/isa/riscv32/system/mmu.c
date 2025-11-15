@@ -87,7 +87,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     // 否则，走二级页表
     paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4;
     PTE pte_2 = paddr_read(pte_2_addr, sizeof(PTE));
-    printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
+    //printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
     Assert(pte_2 & PTE_V, "second class pte is not valid, vaddr=%x", vaddr);
 
     // 记录访问、写入标志。0 是取指，1 是读取，2 是写入
@@ -99,7 +99,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     paddr_write(pte_2_addr, 4, pte_2);
 
     paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
-    printf("4KB page mapping: pa=%x\n", pa);
+    //printf("4KB page mapping: pa=%x\n", pa);
     return pa;
     }
 
