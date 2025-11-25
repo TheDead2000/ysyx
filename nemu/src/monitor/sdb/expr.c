@@ -213,7 +213,7 @@ int32_t evaluate_the_expression(int start, int end)
         }
         else
         {
-          printf("reg %s is %x  %d\n", &tokens[start].str[1], temp_value, temp_value);
+          //printf("reg %s is %x  %d\n", &tokens[start].str[1], temp_value, temp_value);
           return temp_value;
         }
       }
