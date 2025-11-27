@@ -20,6 +20,12 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
       //printf("ifetch addr=%x, len=%d\n", addr, len);
   if (isa_mmu_check(addr, len, MEM_TYPE_IFETCH))
     addr = isa_mmu_translate(addr, len, MEM_TYPE_IFETCH);
+    if( (addr >= 0x81860000 && addr <= 0x8187ffff ) )
+    {
+      word_t data = paddr_read(addr, len);
+      printf("ifetch from device addr=%x, len=%d, data=%x\n", addr, len, data);
+      return data;
+    }
   return paddr_read(addr, len);
 }
 
@@ -35,5 +41,10 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
   // printf("vaddr_write: addr=%x, len=%d, data=%x\n", addr, len, data);
   if (isa_mmu_check(addr, len, MEM_TYPE_WRITE))
     addr = isa_mmu_translate(addr, len, MEM_TYPE_WRITE);
+    if( (addr >= 0x81860000 && addr <= 0x8187ffff ) )
+    {
+      printf("ifetch from device addr=%x, len=%d, data=%x\n", addr, len, data);
+      return data;
+    }
   paddr_write(addr, len, data);
 }
