@@ -37,7 +37,7 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
     addr = isa_mmu_translate(addr, len, MEM_TYPE_WRITE);
     if( (addr >= 0x81860000 && addr <= 0x8187ffff ) )
     {
-      printf("ifetch from device addr=%x, len=%d, data=%x\n", addr, len, data);
+      printf("write  from device addr=%x, len=%d, data=%x\n", addr, len, data);
       return data;
     }
   paddr_write(addr, len, data);
