@@ -63,9 +63,9 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     else{
     paddr_t pte_1_addr = (cpu.csr[NEMU_CSR_SATP] << 12) + PGT1_ID(vaddr) * 4;
     PTE pte_1 = paddr_read(pte_1_addr, sizeof(PTE));
-    printf("vaddr=%x\n", vaddr);
-    printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
-    printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
+    // printf("vaddr=%x\n", vaddr);
+    // printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
+    // printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
     Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
 
     // 检查一级页表项是否是叶子页表项（超级页）
