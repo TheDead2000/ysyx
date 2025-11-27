@@ -56,10 +56,7 @@ typedef uint32_t PTE;
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 
-    if ( vaddr== 0x81870308 || vaddr==0x81871238 || vaddr == 0x81871222                                                \
-         || vaddr == 0x818711f8  || vaddr==0x818711fc  || vaddr==0x818703d4                        \
-        || (vaddr>=0x81871223 && vaddr <=0x818712ff)
-         || (vaddr>=0x80000000 && vaddr <= 0x80040000) \
+    if ( (vaddr >= 0x81860000 && vaddr <= 0x8187ffff ) || (vaddr>=0x80000000 && vaddr <= 0x80040000) \
         || (vaddr >=0xa00003f8 && vaddr <=0xa00003ff)  || (vaddr>=0xa0000048 && vaddr <= 0xa000004f)  ) {
         return vaddr;
     }
@@ -91,7 +88,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     // 否则，走二级页表
     paddr_t pte_2_addr = (PTE_PPN(pte_1) << 12) + PGT2_ID(vaddr) * 4;
     PTE pte_2 = paddr_read(pte_2_addr, sizeof(PTE));
-    //printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
+    printf("pte_2_addr=%x, pte_2=%x\n", pte_2_addr, pte_2);
     Assert(pte_2 & PTE_V, "second class pte is not valid, vaddr=%x", vaddr);
 
     // 记录访问、写入标志。0 是取指，1 是读取，2 是写入
@@ -103,7 +100,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     paddr_write(pte_2_addr, 4, pte_2);
 
     paddr_t pa = PTE_PPN(pte_2) << 12 | OFFSET(vaddr);
-    //printf("4KB page mapping: pa=%x\n", pa);
+    printf("4KB page mapping: pa=%x\n", pa);
     return pa;
     }
 
