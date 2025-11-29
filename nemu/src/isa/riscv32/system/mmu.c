@@ -56,7 +56,7 @@ typedef uint32_t PTE;
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 
-    if ( (vaddr >= 0x81860000 && vaddr <= 0x8187ffff ) || (vaddr>=0x80000000 && vaddr <= 0x80040000) \
+    if ( (vaddr >= 0x80400098 && vaddr <= 0x804000ac ) || (vaddr>=0x80000000 && vaddr <= 0x80040000) \
         || (vaddr >=0xa00003f8 && vaddr <=0xa00003ff)  || (vaddr>=0xa0000048 && vaddr <= 0xa000004f)  ) {
         return vaddr;
     }
@@ -66,7 +66,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     // printf("vaddr=%x\n", vaddr);
     // printf("pte_1_addr=%x, pte_1=%x\n", pte_1_addr, pte_1);
     // printf("pte_1 & PTE_V=%x\n", pte_1 & PTE_V);
-    Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr=%x", vaddr);
+    Assert(pte_1 & PTE_V, "first class pte is not valid, vaddr==0x%x", vaddr);
 
     // 检查一级页表项是否是叶子页表项（超级页）
     if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
