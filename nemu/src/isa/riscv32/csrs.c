@@ -77,7 +77,9 @@ extern bool is_skip_ref;
 //csr操作
 void do_csr_op(uint32_t op, uint32_t csr_idx,uint32_t src,uint32_t rs,uint32_t rd,Decode *s){
   csr_idx&=0xfff;
-
+Log("csr_op: op=0x%x, csr_idx=0x%x, src=0x%x, rs=0x%x, rd=0x%x, pc=0x%x",
+    op, csr_idx, src, rs, rd, s->pc);
+Log("CSR(%x) = 0x%x", csr_idx, CSR(csr_idx));
 //当访问的CSR没有实现的时候抛出异常并与Spike做同步
 #define RAISE_ILLEGAL_INSTN \
   s->dnpc = isa_raise_intr(2, s->pc); \
