@@ -72,7 +72,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     if ((pte_1 & PTE_R) || (pte_1 & PTE_W) || (pte_1 & PTE_X)) {
         // 超级页映射：使用一级页表项的PPN和vaddr的22位偏移
         paddr_t pa = (PTE_PPN(pte_1) << 12) | (vaddr & 0x3FFFFF);
-        printf("Super page mapping: pa=%x\n", pa);
+        //printf("Super page mapping: pa=%x\n", pa);
         // 更新访问和修改位
         // 注意：对于超级页，我们更新一级页表项
         if (type == MEM_TYPE_WRITE) {
