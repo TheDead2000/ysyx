@@ -49,7 +49,7 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = "/home/zy/ysyx-workbench/opensbi/build/platform/nemu/firmware/fw_payload.bin";
+static char *img_file = "/home/zy/ysyx-workbench/opensbiori/build/platform/nemu/firmware/fw_payload.bin";
 // static char *elf_file = NULL;
 static int difftest_port = 1234;
 MUXDEF(CONFIG_SOC_DEVICE, bool soc_img = true;, bool soc_img = false;);
