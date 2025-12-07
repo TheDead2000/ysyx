@@ -98,8 +98,6 @@ void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
 }
 
 
-
-
 extern bool difftest_dut_csr_notexist;
 
 extern "C" {
