@@ -95,8 +95,8 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   void (*ref_difftest_init)(int,uint32_t*) = dlsym(handle, "difftest_init");
   assert(ref_difftest_init);
   
-  // ref_difftest_csrcpy = dlsym(handle, "difftest_csrcpy");
-  // assert(ref_difftest_csrcpy);
+  ref_difftest_csrcpy = dlsym(handle, "difftest_csrcpy");
+  assert(ref_difftest_csrcpy);
 
   ref_difftest_csr_notexist = dlsym(handle, "difftest_csr_notexist");
   assert(ref_difftest_csr_notexist);
