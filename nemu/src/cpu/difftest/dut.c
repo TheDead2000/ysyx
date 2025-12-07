@@ -76,8 +76,8 @@ void difftest_csr_notexist(){
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
 
-  void *handle;
-  handle = dlopen(ref_so_file, RTLD_LAZY);//打开传入的动态库文件
+  void* handle;
+  handle = dlopen(ref_so_file, RTLD_LAZY);
   assert(handle);
 
   ref_difftest_memcpy = dlsym(handle, "difftest_memcpy");
