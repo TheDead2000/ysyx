@@ -42,7 +42,7 @@ void sdb_set_batch_mode();
 
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
-static char *img_file = "/home/zy/ysyx-workbench/opensbiori/build/platform/nemu/firmware/fw_payload.bin";
+static char *img_file = "/home/zy/ysyx-workbench/opensbi/build/platform/nemu/firmware/fw_payload.bin";
 // static char *img_file = "/home/zy/ysyx-workbench/am-kernels/tests/cpu-tests/build/mul-longlong-riscv32-npc.bin";
 static int difftest_port = 1234;
 
