@@ -126,6 +126,20 @@ endmenu
 
 menu "Testing and Debugging"
 
+choice
+  prompt "Debug support"
+  default DEBUG_SDB
+config DEBUG_SDB
+  bool "using SDB (Dimple Debugger)"
+config DEBUG_GDB
+  select BREAKPOINT
+  bool "using GDB"
+endchoice
+
+config LOG
+  depends on TARGET_NATIVE_ELF
+  bool "Enable log"
+  default y
 
 config TRACE
   bool "Enable tracer"
@@ -150,6 +164,58 @@ config ITRACE_COND
   depends on ITRACE
   string "Only trace instructions when the condition is true"
   default "true"
+
+config WATCHPOINT
+  depends on TARGET_NATIVE_ELF 
+  depends on DEBUG_SDB
+  bool "Enable WatchPoint"
+  default y
+
+config BREAKPOINT
+  depends on TARGET_NATIVE_ELF
+  depends on DEBUG_GDB
+  bool "Enable BreakPoint"
+  default y
+
+config MTRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Enable MemoryTrace"
+  default n
+
+config FTRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Function call Trace"
+  default n
+
+config DTRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Device Trace"
+  default n
+
+config ETRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable Exception Trace"
+  default n
+
+config IRING
+  depends on TARGET_NATIVE_ELF
+  bool "Emable iring buf"
+  default n
+
+config PC_TRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable PC Trace"
+  default n
+
+config MMU_TRACE
+  depends on TARGET_NATIVE_ELF
+  bool "Emable MMU Trace"
+  default n
+
+config EXCEPTION_NEMU_STOP
+  depends on TARGET_NATIVE_ELF
+  bool "Stop NEMU when receved an exception"
+  default n
 
 
 config DIFFTEST

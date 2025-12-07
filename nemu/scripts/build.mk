@@ -12,6 +12,7 @@ BUILD_DIR = $(WORK_DIR)/build
 
 INC_PATH := $(WORK_DIR)/include $(INC_PATH)
 OBJ_DIR  = $(BUILD_DIR)/obj-$(NAME)$(SO)
+# PRE_PROSS_DIR  = $(BUILD_DIR)/pre-$(NAME)$(SO)
 BINARY   = $(BUILD_DIR)/$(NAME)$(SO)
 
 # Compilation flags
@@ -24,20 +25,27 @@ LD := $(CXX)
 INCLUDES = $(addprefix -I, $(INC_PATH))
 CFLAGS  := -O2 -MMD -g -Wall  $(INCLUDES) $(CFLAGS)
 LDFLAGS := -O2 $(LDFLAGS)
-
+# # -save-temps 保存所有中间文件
+# CFLAGS  := -Og -MMD -Wall -Werror -save-temps $(INCLUDES) $(CFLAGS)
+# LDFLAGS := -Og $(LDFLAGS)
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o) $(CXXSRC:%.cc=$(OBJ_DIR)/%.o)
+
+# $(PRE_PROSS_DIR)/%.c: %.c
+# 	@echo + CC $<
+# 	@mkdir -p $(dir $@)
+# 	@$(CC) -E $(CFLAGS) -c -o $@ $<
 
 # Compilation patterns
 $(OBJ_DIR)/%.o: %.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) -g $(CFLAGS) -c -o $@ $<
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 $(OBJ_DIR)/%.o: %.cc
 	@echo + CXX $<
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) $(CXXFLAGS) -c -o $@ $<
+	@$(CXX) -g $(CFLAGS) $(CXXFLAGS) -c -o $@ $<
 	$(call call_fixdep, $(@:.o=.d), $@)
 
 # Depencies
@@ -52,11 +60,6 @@ app: $(BINARY)
 $(BINARY):: $(OBJS) $(ARCHIVES)
 	@echo + LD $@
 	@$(LD) -o $@ $(OBJS) $(LDFLAGS) $(ARCHIVES) $(LIBS)
-
-gdb:
-	@echo + GDB $@
-	@$(CXX) $(CFLAGS) -g -o $(BINARY) $(OBJS) $(LDFLAGS) $(ARCHIVES) $(LIBS)
-	@echo "Run gdb with: gdb --args $(BINARY)"
 
 clean:
 	-rm -rf $(BUILD_DIR)

@@ -32,8 +32,6 @@ void init_isa();
 extern CPU_state cpu;
 void isa_reg_display();
 word_t isa_reg_str2val(const char *name, bool *success);
-int load_regs(FILE *fp);
-int save_regs(FILE *fp);
 
 // exec
 struct Decode;
@@ -51,11 +49,11 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type);
 // interrupt/exception
 vaddr_t isa_raise_intr(word_t NO, vaddr_t epc);
 #define INTR_EMPTY ((word_t)-1)
-#define IRQ_TIMER 0x80000007
 word_t isa_query_intr();
 
 // difftest
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
+bool isa_difftest_checkcsrs(word_t *ref_csr,vaddr_t pc); //自定义函数用来检查csr寄存器
 void isa_difftest_attach();
 
 #endif

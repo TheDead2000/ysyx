@@ -76,8 +76,8 @@ void difftest_csr_notexist(){
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
 
-  void* handle;
-  handle = dlopen(ref_so_file, RTLD_LAZY);
+  void *handle;
+  handle = dlopen(ref_so_file, RTLD_LAZY);//打开传入的动态库文件
   assert(handle);
 
   ref_difftest_memcpy = dlsym(handle, "difftest_memcpy");
@@ -133,8 +133,8 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     nemu_state.state = NEMU_ABORT;
     nemu_state.halt_pc = pc;
     isa_reg_display();
-    // void print_iringbuf();
-    // print_iringbuf();
+    void print_iringbuf();
+    print_iringbuf();
 
   }
 }
@@ -169,7 +169,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   ref_difftest_exec(1);
   ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-  // ref_difftest_csrcpy(csr_r);
+  ref_difftest_csrcpy(csr_r);
   checkregs(&ref_r, pc);
 }
 #else
