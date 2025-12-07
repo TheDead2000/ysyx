@@ -36,7 +36,6 @@ void print_all_entry(vaddr_t vaddr){
 }
 
 extern uint32_t stval_nextvalue;
-#define CONFIG_MMU_TRACE 1
 
 // page table walk
 // pta page table address
@@ -69,7 +68,8 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     //point to a 4MB's page
     vaddr_t offset = vaddr & 0x3FFFFF;
     if(offset+len>0x400000){
-      IFDEF(CONFIG_MMU_TRACE,Log("MMU_ADDR_CROSS_PAGE1"););
+      // IFDEF(CONFIG_MMU_TRACE,Log("MMU_ADDR_CROSS_PAGE1"););
+      Log("MMU_ADDR_CROSS_PAGE1");
       return MEM_RET_CROSS_PAGE;
     }
     pte = pte1;
@@ -89,7 +89,8 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     }
     // check bounds
     if (offset + len > 0x1000) {
-      IFDEF(CONFIG_MMU_TRACE,Log("CROSS_PAGE0"););
+      // IFDEF(CONFIG_MMU_TRACE,Log("CROSS_PAGE0"););
+      Log("CROSS_PAGE0");
       stval_nextvalue = vaddr;
       return MEM_RET_CROSS_PAGE;
     }
