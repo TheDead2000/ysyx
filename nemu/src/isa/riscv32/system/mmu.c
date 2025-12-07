@@ -73,12 +73,12 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
       return MEM_RET_CROSS_PAGE;
     }
     pte = pte1;
-    pa=(PTEM(pte1)) + offset;
+    pa=(PTEM(pte1)<<2) + offset;
   }else{
     IFDEF(CONFIG_MMU_TRACE,Log("GOING TO PTE0 AT:0x%x",vaddr););
     vaddr_t offset = vaddr & 0xFFF;
     //point to the next level
-    vaddr_t pta0 = (PTEM(pte1));
+    vaddr_t pta0 = (PTEM(pte1)<<2);
     uint32_t *ptea0 = (uint32_t *)guest_to_host(pta0 + vpn0*sizeof(uint32_t));
     uint32_t pte0 = *ptea0;
     IFDEF(CONFIG_MMU_TRACE,Log("PTE0:0x%x-0x%x",vaddr,pte0););
@@ -96,7 +96,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
     }
     //final page address
     pte = pte0;
-    pa = (PTEM(pte0)) + offset;
+    pa = (PTEM(pte0)<<2) + offset;
 
   }
 #define PTE_A 0x040
