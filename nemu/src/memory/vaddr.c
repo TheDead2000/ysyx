@@ -56,44 +56,35 @@ word_t vaddr_read(vaddr_t addr, int len) {
     break;
   }
 
-  // 处理内存访问失败（如权限错误）
+  // 处理内存访问失败
   if (paddr == MEM_RET_FAIL) {
     longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
   }
 
-  // 处理跨页访问：拆分访问为多个页内操作
+  // 处理跨页访问：逐字节读取（确保len=1，避免host_read断言）
   if (paddr == MEM_RET_CROSS_PAGE) {
-    word_t ret = 0;
-    int bytes_read = 0;
-    vaddr_t curr_addr = addr;
-    int curr_len = len;
-
-    while (curr_len > 0) {
-      // 计算当前页剩余的可访问字节数（4KB页边界）
-      vaddr_t page_end = (curr_addr & ~0xFFF) + 0x1000;
-      int chunk_len = page_end - curr_addr;
-      if (chunk_len > curr_len) chunk_len = curr_len;
-
-      // 翻译当前chunk的地址并读取
-      paddr_t chunk_paddr = isa_mmu_translate(curr_addr, chunk_len, NEMU_MEM_READ);
-      if (chunk_paddr == MEM_RET_FAIL) {
+    uint8_t ret_buf[8] = {0}; // 足够容纳最大len（4字节，RISC-V32）
+    // 逐字节遍历要读取的地址
+    for (int i = 0; i < len; i++) {
+      vaddr_t curr_vaddr = addr + i;
+      // 翻译当前字节的物理地址
+      paddr_t curr_paddr = isa_mmu_translate(curr_vaddr, 1, NEMU_MEM_READ);
+      if (curr_paddr == MEM_RET_FAIL) {
         longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
       }
-      assert(chunk_paddr != MEM_RET_CROSS_PAGE); // 单个chunk不会跨页
-
-      // 读取当前chunk的数据并拼接（小端模式，需注意字节序）
-      word_t chunk_data = paddr_read(chunk_paddr, chunk_len);
-      memcpy((uint8_t*)&ret + bytes_read, &chunk_data, chunk_len);
-
-      // 更新剩余长度和地址
-      bytes_read += chunk_len;
-      curr_addr += chunk_len;
-      curr_len -= chunk_len;
+      // 单个字节不会跨页，断言兜底
+      assert(curr_paddr != MEM_RET_CROSS_PAGE);
+      // 读取1字节（合法长度），存入缓冲区
+      ret_buf[i] = paddr_read(curr_paddr, 1);
     }
+    // 拼接字节为最终结果（小端模式，符合RISC-V规范）
+    word_t ret = 0;
+    memcpy(&ret, ret_buf, len);
     return ret;
   }
 
-  // 非跨页访问，直接读取
+  // 非跨页访问：先检查len是否合法，再读取
+  MUXDEF(CONFIG_RT_CHECK, assert(len == 1 || len == 2 || len == 4), );
   return paddr_read(paddr, len);
 }
 
