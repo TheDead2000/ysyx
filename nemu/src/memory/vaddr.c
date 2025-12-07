@@ -88,23 +88,45 @@ word_t vaddr_read(vaddr_t addr, int len) {
   return paddr_read(paddr, len);
 }
 
+
 void vaddr_write(vaddr_t addr, int len, word_t data) {
-  // paddr_write(addr, len, data);
-  paddr_t paddr=addr;
-  switch (isa_mmu_check(paddr, len, 0)) {
+  paddr_t paddr = addr;
+  switch (isa_mmu_check(paddr, len, 1)) {
   case MMU_DIRECT:
     break;
   case MMU_TRANSLATE:
-    paddr = isa_mmu_translate(addr,len,NEMU_MEM_WRITE);
+    paddr = isa_mmu_translate(addr, len, NEMU_MEM_WRITE);
     break;
   case MMU_FAIL:
     assert(0);
     break;
   }
-  assert(paddr != MEM_RET_CROSS_PAGE);
-  //assert(paddr != MEM_RET_FAIL);
-  if(paddr==MEM_RET_FAIL){
+
+  // 处理内存访问失败
+  if (paddr == MEM_RET_FAIL) {
     longjmp(memerr_jump_buffer, NEMU_MEMA_STOREERR);
   }
-  paddr_write(paddr, len,data);
+
+  // 处理跨页访问：逐字节写入（确保len=1，避免host_read断言）
+  if (paddr == MEM_RET_CROSS_PAGE) {
+    uint8_t *data_buf = (uint8_t *)&data;
+    // 逐字节遍历要写入的地址
+    for (int i = 0; i < len; i++) {
+      vaddr_t curr_vaddr = addr + i;
+      // 翻译当前字节的物理地址
+      paddr_t curr_paddr = isa_mmu_translate(curr_vaddr, 1, NEMU_MEM_WRITE);
+      if (curr_paddr == MEM_RET_FAIL) {
+        longjmp(memerr_jump_buffer, NEMU_MEMA_STOREERR);
+      }
+      // 单个字节不会跨页，断言兜底
+      assert(curr_paddr != MEM_RET_CROSS_PAGE);
+      // 写入1字节（合法长度）
+      paddr_write(curr_paddr, 1, data_buf[i]);
+    }
+    return;
+  }
+
+  // 非跨页访问：检查len合法性，再写入
+  MUXDEF(CONFIG_RT_CHECK, assert(len == 1 || len == 2 || len == 4), );
+  paddr_write(paddr, len, data);
 }
