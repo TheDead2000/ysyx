@@ -69,6 +69,7 @@ word_t vaddr_read(vaddr_t addr, int len) {
       vaddr_t curr_vaddr = addr + i;
       // 翻译当前字节的物理地址
       paddr_t curr_paddr = isa_mmu_translate(curr_vaddr, 1, NEMU_MEM_READ);
+      printf("read cross page vaddr:%x->paddr:%x\n",curr_vaddr,curr_paddr);
       if (curr_paddr == MEM_RET_FAIL) {
         longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
       }
@@ -115,6 +116,7 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
       vaddr_t curr_vaddr = addr + i;
       // 翻译当前字节的物理地址
       paddr_t curr_paddr = isa_mmu_translate(curr_vaddr, 1, NEMU_MEM_WRITE);
+      printf("write cross page vaddr:%x->paddr:%x\n",curr_vaddr,curr_paddr);
       if (curr_paddr == MEM_RET_FAIL) {
         longjmp(memerr_jump_buffer, NEMU_MEMA_STOREERR);
       }
