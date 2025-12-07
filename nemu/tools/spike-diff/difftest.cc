@@ -70,6 +70,15 @@ void sim_t::diff_set_regs(void* diff_context) {
   state->pc = ctx->pc;
 }
 
+void sim_t::diff_get_csrs(void* diff_context) {
+  word_t * csrs = (word_t*)diff_context;
+  for(int i=0;i<csr_list.num;i++){
+    csrs[i]=p->difftest_get_csr(csr_list.csr_idx[i]);
+  }
+}
+
+
+
 void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
   mmu_t* mmu = p->get_mmu();
   for (size_t i = 0; i < n; i++) {
@@ -93,6 +102,10 @@ __EXPORT void difftest_regcpy(void* dut, bool direction) {
   } else {
     s->diff_get_regs(dut);
   }
+}
+
+__EXPORT void difftest_csrcpy(word_t* csr_array) {
+  s->diff_get_csrs(csr_array);
 }
 
 __EXPORT void difftest_exec(uint64_t n) {
@@ -128,4 +141,8 @@ __EXPORT void difftest_raise_intr(uint64_t NO) {
   p->take_trap_public(t, state->pc);
 }
 
+}
+
+__EXPORT void difftest_csr_notexist(void) {
+  difftest_dut_csr_notexist = true;
 }
