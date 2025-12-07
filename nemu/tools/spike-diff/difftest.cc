@@ -97,6 +97,46 @@ void sim_t::diff_memcpy(reg_t dest, void* src, size_t n) {
   }
 }
 
+static word_t read_csr_by_index(state_t* state, int csr_idx) {
+    if (state == nullptr) return 0;
+
+    // CSR地址与state_t成员变量的映射
+    switch (csr_idx) {
+        // Machine模式CSR
+        case 0x300: return state->mstatus ? state->mstatus->read() : 0; // mstatus
+        case 0x301: return state->misa ? state->misa->read() : 0;       // misa
+        case 0x304: return state->mie ? state->mie->read() : 0;         // mie
+        case 0x305: return state->mtvec ? state->mtvec->read() : 0;     // mtvec
+        case 0x340: { /* mscratch 可能通过 csrmap 访问 */ 
+                     auto it = state->csrmap.find(csr_idx);
+                     return it != state->csrmap.end() ? it->second->read() : 0; }
+        case 0x341: return state->mepc ? state->mepc->read() : 0;       // mepc
+        case 0x342: return state->mcause ? state->mcause->read() : 0;   // mcause
+        case 0x343: return state->mtval ? state->mtval->read() : 0;     // mtval
+        case 0x344: return state->mip ? state->mip->read() : 0;         // mip
+        // Supervisor模式CSR (如果有)
+        case 0x180: return state->satp ? state->satp->read() : 0;       // satp
+        // ... 添加其他你在 csr_list 中定义的 CSR 索引
+        default:
+            // 尝试从 csrmap 中查找（对于一些通过map管理的CSR）
+            auto it = state->csrmap.find(csr_idx);
+            if (it != state->csrmap.end()) {
+                return it->second->read();
+            }
+            // 如果没有实现，可以返回0，但最好记录一下以便调试
+            // printf("Warning: CSR 0x%x not implemented for difftest.\n", csr_idx);
+            return 0;
+    }
+}
+
+void sim_t::diff_get_csr(void* diff_context) {
+    word_t* csrs = (word_t*)diff_context;
+    for(int i = 0; i < csr_list.num; i++) {
+        // 使用辅助函数，而不是 p->difftest_get_csr
+        csrs[i] = read_csr_by_index(state, csr_list.csr_idx[i]);
+    }
+}
+
 extern bool difftest_dut_csr_notexist;
 
 extern "C" {
