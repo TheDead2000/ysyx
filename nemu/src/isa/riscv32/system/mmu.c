@@ -136,7 +136,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   // check U (TODO)
   // G&A&D don't care!
 
-  if(vaddr==0xc01c83d0){
+  if(vaddr==0xc01c83d0 || vaddr==0xc0004964){
     Log("Translate_result:%x-%x",vaddr,pa);
   }
   // Log("Translate_result:%x-%x",vaddr,pa);
