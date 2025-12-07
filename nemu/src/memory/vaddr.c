@@ -45,22 +45,44 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
 
 word_t vaddr_read(vaddr_t addr, int len) {
   // return paddr_read(addr, len);
-  paddr_t paddr=addr;
+  paddr_t paddr = addr;
+  
   switch (isa_mmu_check(paddr, len, 0)) {
   case MMU_DIRECT:
     break;
   case MMU_TRANSLATE:
-    paddr = isa_mmu_translate(addr,len,NEMU_MEM_READ);
+    paddr = isa_mmu_translate(addr, len, NEMU_MEM_READ);
     break;
   case MMU_FAIL:
     assert(0);
     break;
   }
-  if(paddr==MEM_RET_FAIL){
+  
+  if(paddr == MEM_RET_FAIL){
     longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
   }
-  assert(paddr != MEM_RET_CROSS_PAGE );
-  //assert(paddr != MEM_RET_FAIL);
+  
+  // 处理跨页访问的情况
+  if(paddr == MEM_RET_CROSS_PAGE) {
+    // 分段读取：分别读取两个页面的数据
+    vaddr_t addr1 = addr;
+    vaddr_t addr2 = addr + (0x1000 - (addr & (0x1000 - 1)));
+    int len1 = addr2 - addr1;
+    int len2 = len - len1;
+    
+    // 确保不会再次跨页
+    assert(len1 > 0 && len1 <= len);
+    assert(len2 > 0 && len2 <= len);
+    
+    // 分别读取两个部分
+    word_t value1 = vaddr_read(addr1, len1);
+    word_t value2 = vaddr_read(addr2, len2);
+    
+    // 合并结果（小端序）
+    return value1 | (value2 << (len1 * 8));
+  }
+  
+  //assert(paddr != MEM_RET_CROSS_PAGE);
   return paddr_read(paddr, len);
 }
 
