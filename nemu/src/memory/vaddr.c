@@ -81,6 +81,7 @@ word_t vaddr_read(vaddr_t addr, int len) {
     // 拼接字节为最终结果（小端模式，符合RISC-V规范）
     word_t ret = 0;
     memcpy(&ret, ret_buf, len);
+    printf("read cross page result:%x\n",ret);
     return ret;
   }
 
@@ -125,6 +126,7 @@ void vaddr_write(vaddr_t addr, int len, word_t data) {
       // 写入1字节（合法长度）
       paddr_write(curr_paddr, 1, data_buf[i]);
     }
+    printf("write cross page data:%s\n",data_buf);
     return;
   }
 
