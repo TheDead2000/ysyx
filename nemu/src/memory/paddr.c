@@ -64,7 +64,7 @@ uint8_t *guest_to_host(paddr_t paddr)
 #ifdef CONFIG_HAS_PLIC
   if(MEM_IN(paddr, CONFIG_PLIC_MEM_BASE, CONFIG_PLIC_MEM_BASE+ CONFIG_PLIC_MEM_SIZE)){
     IFDEF(CONFIG_DIFFTEST,is_skip_ref = true;); 
-    //Log("accessing PLIC:(0x%x)",paddr);
+    Log("accessing PLIC:(0x%x)",paddr);
     return plic + paddr - CONFIG_PLIC_MEM_BASE;
   }
 #endif
@@ -167,7 +167,6 @@ void paddr_write(paddr_t addr, int len, word_t data)
   IFDEF(CONFIG_MTRACE, record_pwrite(addr, len, data);)
   if (likely(in_pmem(addr)))
   {
-    //printf("paddr_write: addr=%x, len=%d, data=%x\n", addr, len, data);
     pmem_write(addr, len, data);
     return;
   }
