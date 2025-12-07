@@ -36,7 +36,7 @@ void print_all_entry(vaddr_t vaddr){
 }
 
 extern uint32_t stval_nextvalue;
-#define CONFIG_MMU_TRACE
+#define CONFIG_MMU_TRACE 1
 
 // page table walk
 // pta page table address
