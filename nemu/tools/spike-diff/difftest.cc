@@ -129,7 +129,7 @@ static word_t read_csr_by_index(state_t* state, int csr_idx) {
     }
 }
 
-void sim_t::diff_get_csr(void* diff_context) {
+void sim_t::difftest_get_csr(void* diff_context) {
     word_t* csrs = (word_t*)diff_context;
     for(int i = 0; i < csr_list.num; i++) {
         // 使用辅助函数，而不是 p->difftest_get_csr
