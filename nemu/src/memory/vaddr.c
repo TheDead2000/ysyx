@@ -59,7 +59,7 @@ word_t vaddr_read(vaddr_t addr, int len) {
   if(paddr==MEM_RET_FAIL){
     longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
   }
-  // assert(paddr != MEM_RET_CROSS_PAGE );
+  assert(paddr != MEM_RET_CROSS_PAGE );
   //assert(paddr != MEM_RET_FAIL);
   return paddr_read(paddr, len);
 }
