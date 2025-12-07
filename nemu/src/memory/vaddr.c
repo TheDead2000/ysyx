@@ -44,9 +44,7 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
 }
 
 word_t vaddr_read(vaddr_t addr, int len) {
-  // return paddr_read(addr, len);
   paddr_t paddr = addr;
-  
   switch (isa_mmu_check(paddr, len, 0)) {
   case MMU_DIRECT:
     break;
@@ -57,32 +55,45 @@ word_t vaddr_read(vaddr_t addr, int len) {
     assert(0);
     break;
   }
-  
-  if(paddr == MEM_RET_FAIL){
+
+  // 处理内存访问失败（如权限错误）
+  if (paddr == MEM_RET_FAIL) {
     longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
   }
-  
-  // 处理跨页访问的情况
-  if(paddr == MEM_RET_CROSS_PAGE) {
-    // 分段读取：分别读取两个页面的数据
-    vaddr_t addr1 = addr;
-    vaddr_t addr2 = addr + (0x1000 - (addr & (0x1000 - 1)));
-    int len1 = addr2 - addr1;
-    int len2 = len - len1;
-    
-    // 确保不会再次跨页
-    assert(len1 > 0 && len1 <= len);
-    assert(len2 > 0 && len2 <= len);
-    
-    // 分别读取两个部分
-    word_t value1 = vaddr_read(addr1, len1);
-    word_t value2 = vaddr_read(addr2, len2);
-    
-    // 合并结果（小端序）
-    return value1 | (value2 << (len1 * 8));
+
+  // 处理跨页访问：拆分访问为多个页内操作
+  if (paddr == MEM_RET_CROSS_PAGE) {
+    word_t ret = 0;
+    int bytes_read = 0;
+    vaddr_t curr_addr = addr;
+    int curr_len = len;
+
+    while (curr_len > 0) {
+      // 计算当前页剩余的可访问字节数（4KB页边界）
+      vaddr_t page_end = (curr_addr & ~0xFFF) + 0x1000;
+      int chunk_len = page_end - curr_addr;
+      if (chunk_len > curr_len) chunk_len = curr_len;
+
+      // 翻译当前chunk的地址并读取
+      paddr_t chunk_paddr = isa_mmu_translate(curr_addr, chunk_len, NEMU_MEM_READ);
+      if (chunk_paddr == MEM_RET_FAIL) {
+        longjmp(memerr_jump_buffer, NEMU_MEMA_READERR);
+      }
+      assert(chunk_paddr != MEM_RET_CROSS_PAGE); // 单个chunk不会跨页
+
+      // 读取当前chunk的数据并拼接（小端模式，需注意字节序）
+      word_t chunk_data = paddr_read(chunk_paddr, chunk_len);
+      memcpy((uint8_t*)&ret + bytes_read, &chunk_data, chunk_len);
+
+      // 更新剩余长度和地址
+      bytes_read += chunk_len;
+      curr_addr += chunk_len;
+      curr_len -= chunk_len;
+    }
+    return ret;
   }
-  
-  //assert(paddr != MEM_RET_CROSS_PAGE);
+
+  // 非跨页访问，直接读取
   return paddr_read(paddr, len);
 }
 
