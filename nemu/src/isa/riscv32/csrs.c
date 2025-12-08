@@ -7,49 +7,35 @@
 
 
 #define MSTATUS_SSTATUS_SYNC 0xff8fe763
-static inline void update_mstatus(){
-  //NEMU_mstatus.bits.FS ==3 ||NEMU_mstatus.bits.VS == 3 || NEMU_mstatus.bits.XS ==3 ;
-  //((mstatus_t)(cpu.csr[NEMU_CSR_MSTATUS])).bits.SD=1;
-  NEMU_mstatus->bits.SD=NEMU_mstatus->bits.FS ==3 ||NEMU_mstatus->bits.VS == 3 || NEMU_mstatus->bits.XS ==3 ;
-  /*
-//update SD(mstatus 的 SD位依赖于FS/VS/XS)
-#define MSTATUS_FS_MASK  0x00006000  // FS 位于 bit [14:13]
-#define MSTATUS_FS_SHIFT 13
-#define MSTATUS_VS_MASK  0x00000600  // VS 位于 bit [10:9]
-#define MSTATUS_VS_SHIFT 9
-#define MSTATUS_XS_MASK  0x00018000  // XS 位于 bit [16:15]
-#define MSTATUS_XS_SHIFT 15
-#define MSTATUS_SD_MASK  0x80000000  // SD 位于 bit 31 (RV32)
-uint32_t mstatus = cpu.csr[NEMU_CSR_V_MSTATUS]; // 当前 mstatus 的值
-
-// 提取字段值（结果为 0-3）
-uint8_t fs = (mstatus & MSTATUS_FS_MASK) >> MSTATUS_FS_SHIFT;
-uint8_t vs = (mstatus & MSTATUS_VS_MASK) >> MSTATUS_VS_SHIFT;
-uint8_t xs = (mstatus & MSTATUS_XS_MASK) >> MSTATUS_XS_SHIFT;
-
-// 判断是否处于 Dirty 状态
-uint8_t is_fs_dirty = (fs == 3);
-uint8_t is_vs_dirty = (vs == 3);
-uint8_t is_xs_dirty = (xs == 3);
-
-// 计算 SD 位（逻辑或操作）
-uint8_t sd = is_fs_dirty || is_vs_dirty || is_xs_dirty;
-
-// 清除旧的 SD 位
-mstatus &= ~MSTATUS_SD_MASK;
-
-// 设置新的 SD 位
-mstatus |= (sd << 31);  
-cpu.csr[NEMU_CSR_V_MSTATUS]=mstatus;
-*/
-uint32_t sstatus = cpu.csr[NEMU_CSR_V_SSTATUS]; // 当前 mstatus 的值
- cpu.csr[NEMU_CSR_V_SSTATUS] = (sstatus & ~ MSTATUS_SSTATUS_SYNC)| (NEMU_mstatus->value & MSTATUS_SSTATUS_SYNC);
+static inline void update_mstatus() {
+    // ... 原有的 SD 位更新代码
+    
+    // 只同步中断使能位
+    uint32_t mstatus_val = cpu.csr[NEMU_CSR_V_MSTATUS];
+    uint32_t sstatus_val = cpu.csr[NEMU_CSR_V_SSTATUS];
+    
+    // mstatus.MIE (bit3) -> sstatus.SIE (bit1)
+    if (mstatus_val & (1 << 3)) {
+        sstatus_val |= (1 << 1);  // 设置 SIE
+    } else {
+        sstatus_val &= ~(1 << 1); // 清除 SIE
+    }
+    
+    cpu.csr[NEMU_CSR_V_SSTATUS] = sstatus_val;
 }
 
-void update_sstatus(){
-uint32_t sstatus = cpu.csr[NEMU_CSR_V_SSTATUS]; // 当前 mstatus 的值
-uint32_t mstatus = cpu.csr[NEMU_CSR_V_MSTATUS]; // 当前 mstatus 的值
- cpu.csr[NEMU_CSR_V_MSTATUS] = (mstatus & ~ MSTATUS_SSTATUS_SYNC)| (sstatus & MSTATUS_SSTATUS_SYNC);
+void update_sstatus() {
+    uint32_t sstatus_val = cpu.csr[NEMU_CSR_V_SSTATUS];
+    uint32_t mstatus_val = cpu.csr[NEMU_CSR_V_MSTATUS];
+    
+    // sstatus.SIE (bit1) -> mstatus.MIE (bit3)
+    if (sstatus_val & (1 << 1)) {
+        mstatus_val |= (1 << 3);  // 设置 MIE
+    } else {
+        mstatus_val &= ~(1 << 3); // 清除 MIE
+    }
+    
+    cpu.csr[NEMU_CSR_V_MSTATUS] = mstatus_val;
 }
 
 #define SIE_MIE_SYNC 0x222
