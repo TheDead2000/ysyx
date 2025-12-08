@@ -81,7 +81,7 @@ void init_timer() {
     mtime_val = 1000;
     mtimecmp_val = 100000; // 初始设置一个合理的值
     
-    add_mmio_map("clint", 0xa0000048, clint_base, 16, simple_clint_handler);
+    add_mmio_map("timer", 0xa0000048, clint_base, 16, simple_clint_handler);
     
     // 注册定时器处理函数
     add_alarm_handle(timer_tick);
