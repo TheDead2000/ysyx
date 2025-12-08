@@ -54,15 +54,17 @@ static void timer_tick() {
     mtime_val += 10000; // 增加的时间量
     
     // 检查是否应该触发中断
-    if (mtime_val >= mtimecmp_val) {
+    static uint64_t next_interrupt_time = 100000; // 初始值
+    
+    if (mtime_val >= next_interrupt_time) {
         cpu.csr[NEMU_CSR_MIP] |= (1 << 7); // 设置 MTIP 位
         interrupt_counter++;
         
-        Log("定时器中断触发 #%d: mtime=0x%lx, mtimecmp=0x%lx",interrupt_counter, mtime_val, mtimecmp_val);
+        IFDEF(CONFIG_DEBUG, Log("定时器中断触发 #%d: mtime=0x%lx, 下次中断在0x%lx", 
+              interrupt_counter, mtime_val, next_interrupt_time));
         
-        // 设置下一次中断时间（避免立即再次触发）
-        // 这里简单地将 mtimecmp 设置为 mtime + 一个固定值
-        mtimecmp_val = mtime_val + 10000000; // 大约1ms后再次触发
+        // 设置下一次中断时间
+        next_interrupt_time = mtime_val + 100000; // 大约10个tick后再次触发
     }
     
     // 每10次打印一次调试信息
@@ -77,7 +79,7 @@ void init_timer() {
     
     // 初始设置一些值，避免为0
     mtime_val = 1000;
-    mtimecmp_val = 0xFFFFFFFFFFFFFFFF;
+    mtimecmp_val = 100000; // 初始设置一个合理的值
     
     add_mmio_map("clint", 0xa0000048, clint_base, 16, simple_clint_handler);
     
