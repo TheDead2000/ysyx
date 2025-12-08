@@ -58,7 +58,7 @@ static void simulate_timer_tick() {
 
 void init_timer() {
     clint_base = (uint32_t *)new_space(16);
-    add_mmio_map("clint", 0xa0000048, clint_base, 16, simple_clint_handler);
+    add_mmio_map("timer", 0xa0000048, clint_base, 16, simple_clint_handler);
     
     // 启动模拟定时器
     add_alarm_handle(100);
