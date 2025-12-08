@@ -60,8 +60,7 @@ static void timer_tick() {
         cpu.csr[NEMU_CSR_MIP] |= (1 << 7); // 设置 MTIP 位
         interrupt_counter++;
         
-        IFDEF(CONFIG_DEBUG, Log("定时器中断触发 #%d: mtime=0x%lx, 下次中断在0x%lx", 
-              interrupt_counter, mtime_val, next_interrupt_time));
+        Log("定时器中断触发 #%d: mtime=0x%lx, 下次中断在0x%lx", interrupt_counter, mtime_val, next_interrupt_time);
         
         // 设置下一次中断时间
         next_interrupt_time = mtime_val + 100000; // 大约10个tick后再次触发
