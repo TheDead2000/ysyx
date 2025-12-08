@@ -65,7 +65,7 @@ static void timer_tick() {
     ensure_interrupt_enabled();
     
     // 每2个tick触发一次中断
-    if (tick_count % 2 == 0) {
+    if (tick_count % 10 == 0) {
         cpu.csr[NEMU_CSR_MIP] |= (1 << 7);
         interrupt_counter++;
         
