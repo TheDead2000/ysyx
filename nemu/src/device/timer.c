@@ -60,9 +60,6 @@ static void simulate_timer_tick(void *unused) {
         cpu.csr[NEMU_CSR_MIP] |= (1 << 7);
         IFDEF(CONFIG_DEBUG, Log("Timer interrupt triggered"));
     }
-    
-    // 重新安排自己
-    add_alarm_handle(simulate_timer_tick); // 每100微秒调用一次
 }
 
 // 修正 init_timer 函数
