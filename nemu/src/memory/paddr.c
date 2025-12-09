@@ -64,7 +64,7 @@ uint8_t *guest_to_host(paddr_t paddr)
 #ifdef CONFIG_HAS_PLIC
   if(MEM_IN(paddr, CONFIG_PLIC_MEM_BASE, CONFIG_PLIC_MEM_BASE+ CONFIG_PLIC_MEM_SIZE)){
     IFDEF(CONFIG_DIFFTEST,is_skip_ref = true;); 
-    Log("accessing PLIC:(0x%x)",paddr);
+    //Log("accessing PLIC:(0x%x)",paddr);
     return plic + paddr - CONFIG_PLIC_MEM_BASE;
   }
 #endif
