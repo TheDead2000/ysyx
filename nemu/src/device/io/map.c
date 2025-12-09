@@ -23,7 +23,7 @@
 void dtrace_read(const char * name,paddr_t addr,int len);
 void dtrace_write(const char * name,paddr_t addr,int len,word_t data);
 
-#define IO_SPACE_MAX (2 * 1024 * 1024)
+#define IO_SPACE_MAX (10 * 1024 * 1024)
 
 static uint8_t *io_space = NULL;
 static uint8_t *p_space = NULL;
