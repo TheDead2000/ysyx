@@ -19,6 +19,7 @@
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 #endif
+#include "plic.h"
 
 void init_map();
 void init_serial();
@@ -29,7 +30,7 @@ void init_audio();
 void init_disk();
 void init_sdcard();
 void init_alarm();
-
+void init_plic();
 void send_key(uint8_t, bool);
 void vga_update_screen();
 
@@ -86,6 +87,6 @@ void init_device() {
   IFDEF(CONFIG_HAS_AUDIO, init_audio());
   IFDEF(CONFIG_HAS_DISK, init_disk());
   IFDEF(CONFIG_HAS_SDCARD, init_sdcard());
-
+  init_plic();
   IFNDEF(CONFIG_TARGET_AM, init_alarm());
 }

@@ -100,9 +100,18 @@ static void execute(uint64_t n) {
     if (intr != INTR_EMPTY) {
       cpu.pc = isa_raise_intr(intr, cpu.pc);
     }
+
     if (nemu_state.state != NEMU_RUNNING)
       break;
     IFDEF(CONFIG_DEVICE, device_update()); // 设备更新
+            // 定期检查串口输入（每1000条指令检查一次）
+        static int counter = 0;
+        if (++counter >= 1000) {
+            counter = 0;
+            // 更新串口状态
+            extern void serial_update(void);
+            serial_update();
+        }
   }
 }
 

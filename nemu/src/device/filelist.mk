@@ -14,7 +14,7 @@
 #**************************************************************************************/
 
 DIRS-y += src/device/io
-SRCS-$(CONFIG_DEVICE) += src/device/device.c src/device/alarm.c src/device/intr.c
+SRCS-$(CONFIG_DEVICE) += src/device/device.c src/device/alarm.c src/device/intr.c src/device/plic.c
 SRCS-$(CONFIG_HAS_SERIAL) += src/device/serial.c
 SRCS-$(CONFIG_HAS_TIMER) += src/device/timer.c
 SRCS-$(CONFIG_HAS_KEYBOARD) += src/device/keyboard.c
