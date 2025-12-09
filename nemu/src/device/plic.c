@@ -114,7 +114,6 @@ static void plic_io_handler(uint32_t offset, int len, bool is_write) {
 }
 
 void init_plic() {
-    plic_base = new_space(CONFIG_PLIC_MEM_SIZE);
-    add_mmio_map("plic", CONFIG_PLIC_MEM_BASE, plic_base, 
-                 CONFIG_PLIC_MEM_SIZE, plic_io_handler);
+    plic_base = new_space(0x4000000);
+    add_mmio_map("plic", CONFIG_PLIC_MEM_BASE, plic_base, 0x4000000, plic_io_handler);
 }
