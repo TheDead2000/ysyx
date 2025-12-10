@@ -1095,27 +1095,44 @@ wire [7:0] icache_arb_rlen;
       .if_rdata_o(if_rdata),  // icache 返回读数据
       .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
 
-    
-    // axi4_arb 接口
-    .arb_awaddr(icache_arb_awaddr),
-    .arb_awvalid(icache_arb_awvalid),
-    .arb_awready(icache_arb_awready),
-    .arb_wdata(icache_arb_wdata),
-    .arb_wmask(icache_arb_wmask),
-    .arb_wvalid(icache_arb_wvalid),
-    .arb_wready(icache_arb_wready),
 
-    .arb_araddr(icache_arb_araddr),
-    .arb_arvalid(icache_arb_arvalid),
-    .arb_arready(icache_arb_arready),
-    .arb_rdata(icache_arb_rdata),
-    .arb_rvalid(icache_arb_rvalid),
-    .arb_rready(icache_arb_rready),
-    .arb_rlast(icache_arb_rlast),
-    .arb_wsize(icache_arb_wsize),
-    .arb_wlen(icache_arb_wlen),
-    .arb_rsize(icache_arb_rsize),
-    .arb_rlen(icache_arb_rlen)
+    .ram_raddr_icache_o(icache_arb_araddr),
+    .ram_raddr_valid_icache_o(icache_arb_arvalid),
+
+    .ram_rdata_icache_i(icache_arb_rdata),
+    .ram_rdata_ready_icache_i(icache_arb_rvalid),
+
+    .ram_rmask_icache_o(ram_rmask_icache),
+    .ram_rsize_icache_o(icache_arb_rsize),
+    .ram_rlen_icache_o(icache_arb_rlen),
+
+
+          /* sram */
+      .io_sram4_addr(io_sram4_addr),
+      .io_sram4_cen(io_sram4_cen),
+      .io_sram4_wen(io_sram4_wen),
+      .io_sram4_wmask(io_sram4_wmask),
+      .io_sram4_wdata(io_sram4_wdata),
+      .io_sram4_rdata(io_sram4_rdata),
+      .io_sram5_addr(io_sram5_addr),
+      .io_sram5_cen(io_sram5_cen),
+      .io_sram5_wen(io_sram5_wen),
+      .io_sram5_wmask(io_sram5_wmask),
+      .io_sram5_wdata(io_sram5_wdata),
+      .io_sram5_rdata(io_sram5_rdata),
+      .io_sram6_addr(io_sram6_addr),
+      .io_sram6_cen(io_sram6_cen),
+      .io_sram6_wen(io_sram6_wen),
+      .io_sram6_wmask(io_sram6_wmask),
+      .io_sram6_wdata(io_sram6_wdata),
+      .io_sram6_rdata(io_sram6_rdata),
+      .io_sram7_addr(io_sram7_addr),
+      .io_sram7_cen(io_sram7_cen),
+      .io_sram7_wen(io_sram7_wen),
+      .io_sram7_wmask(io_sram7_wmask),
+      .io_sram7_wdata(io_sram7_wdata),
+      .io_sram7_rdata(io_sram7_rdata)
+
 );
  
  
@@ -1331,15 +1348,7 @@ axi4_arb axi_arb (
     .if_rlen_i(icache_arb_rlen),
     .if_rdata_o(icache_arb_rdata),
     .if_rdata_ready_o(icache_arb_rvalid),
-    
-    // if 访存请求端口（写）- 连接到 icache
-    .if_write_addr_i(icache_arb_awaddr),
-    .if_write_valid_i(icache_arb_awvalid),
-    .if_wmask_i(icache_arb_wmask),
-    .if_wdata_i(icache_arb_wdata),
-    .if_wsize_i(icache_arb_wsize),
-    .if_wlen_i(icache_arb_wlen),
-    .if_wdata_ready_o(icache_arb_wready),
+  
 
     // dcache 访存请求端口（读）
     .mem_read_addr_i(dcache_arb_araddr),
@@ -1556,8 +1565,6 @@ wire [7:0] dcache_arb_rlen;
   );
 
 
-`ifndef YSYX_SOC
-
 /* sram 接口 测试使用 */
 
   wire [  6:0] io_sram0_addr;
@@ -1667,7 +1674,7 @@ wire [7:0] dcache_arb_rlen;
       .io_sram7_wdata(io_sram7_wdata),
       .io_sram7_rdata(io_sram7_rdata)
 );
-`endif 
+
 
 // ============ CSR 到 MMU 配置转换 (SV32) ============
 // 从 CSR 寄存器提取 MMU 配置信号 (SV32)

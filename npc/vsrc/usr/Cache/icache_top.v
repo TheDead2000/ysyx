@@ -12,7 +12,6 @@
 // // 6. tag: 32-6-7 == 19 bit 
 
 
-
 module icache_top (
     input clk,
     input rst,
@@ -23,37 +22,43 @@ module icache_top (
     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
 
     //input  if_rdata_ready_i,  // 是否准备好接收数据
-    output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
-
-
-      // axi4_arb 接口 - 连接到 axi4_arb 模块
-    output reg [31:0] arb_awaddr,
-    output reg arb_awvalid,
-    input arb_awready,
-    output reg [31:0] arb_wdata,
-    output reg [3:0] arb_wmask,
-    output reg [3:0] arb_wsize,
-    output reg [7:0] arb_wlen,
-    output reg arb_wvalid,
-    input arb_wready,
-
-    input arb_arready,
-    output reg arb_rready,
-    input arb_rlast,
-
-
+    output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
 
 
     /* cache<-->mem 端口 */
-    output [`XLEN-1:0] arb_araddr,
-    output                             arb_arvalid,
-    // output [                      3:0] ram_rmask_icache_o,
-    output [                      3:0] arb_rsize,
-    output [                      7:0] arb_rlen,
-    input                              arb_rvalid,
-    input  [    `XLEN-1:0] arb_rdata
+    output [`XLEN-1:0] ram_raddr_icache_o,
+    output                             ram_raddr_valid_icache_o,
+    output [                      3:0] ram_rmask_icache_o,
+    output [                      3:0] ram_rsize_icache_o,
+    output [                      7:0] ram_rlen_icache_o,
+    input                              ram_rdata_ready_icache_i,
+    input  [    `XLEN-1:0] ram_rdata_icache_i,
 
-
+    /* sram */
+    output [                      6:0] io_sram4_addr,
+    output                             io_sram4_cen,
+    output                             io_sram4_wen,
+    output [                    127:0] io_sram4_wmask,
+    output [                    127:0] io_sram4_wdata,
+    input  [                    127:0] io_sram4_rdata,
+    output [                      6:0] io_sram5_addr,
+    output                             io_sram5_cen,
+    output                             io_sram5_wen,
+    output [                    127:0] io_sram5_wmask,
+    output [                    127:0] io_sram5_wdata,
+    input  [                    127:0] io_sram5_rdata,
+    output [                      6:0] io_sram6_addr,
+    output                             io_sram6_cen,
+    output                             io_sram6_wen,
+    output [                    127:0] io_sram6_wmask,
+    output [                    127:0] io_sram6_wdata,
+    input  [                    127:0] io_sram6_rdata,
+    output [                      6:0] io_sram7_addr,
+    output                             io_sram7_cen,
+    output                             io_sram7_wen,
+    output [                    127:0] io_sram7_wmask,
+    output [                    127:0] io_sram7_wdata,
+    input  [                    127:0] io_sram7_rdata
 );
 
 `ifndef YSYX_SOC
@@ -102,7 +107,7 @@ module icache_top (
   reg [3:0] burst_count;
 
 
-  wire ram_r_handshake = _ram_raddr_valid_icache_o & arb_rvalid;
+  wire ram_r_handshake = _ram_raddr_valid_icache_o & ram_rdata_ready_icache_i;
   wire [3:0] burst_count_plus1 = burst_count + 1;
 
 
@@ -154,8 +159,8 @@ module icache_top (
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
-            _ram_rsize_icache_o <= 4'b0010;  // 32bit 
-            _ram_rlen_icache_o <= 8'd3;    // 突发16次 
+            _ram_rsize_icache_o <= 4'b0100;  // 32bit 
+            _ram_rlen_icache_o <= 15;    // 突发15+1次 
             burst_count <= 0;  // 清空计数器
 `ifndef YSYX_SOC 
             icache_unhit_count();
@@ -189,7 +194,7 @@ module icache_top (
           if (ram_r_handshake) begin
             _ram_raddr_valid_icache_o <= 0;
             uncache_data_ready <= 1;  // 完成信号
-            uncache_rdata <= arb_rdata[31:0]; // 直接取低32位
+            uncache_rdata <= ram_rdata_icache_i[31:0]; // 直接取低32位
             icache_state <= CACHE_IDLE;
           end
         end
@@ -211,7 +216,54 @@ module icache_top (
 
 
 
+ wire [127:0] icache_wmask = 
+    (burst_count[1:0] == 2'b00) ? 128'h00000000_00000000_00000000_FFFFFFFF :
+    (burst_count[1:0] == 2'b01) ? 128'h00000000_00000000_FFFFFFFF_00000000 :
+    (burst_count[1:0] == 2'b10) ? 128'h00000000_FFFFFFFF_00000000_00000000 :
+                                  128'hFFFFFFFF_00000000_00000000_00000000;
+
+wire [127:0] icache_wdate = 
+    (burst_count[1:0] == 2'b00) ? {96'b0, ram_rdata_icache_i[31:0]} :
+    (burst_count[1:0] == 2'b01) ? {64'b0, ram_rdata_icache_i[31:0], 32'b0} :
+    (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
+                                  {ram_rdata_icache_i[31:0], 96'b0};
   wire [`XLEN-1:0] icache_rdata;
+
+  icache_data u_icache_data (
+
+      .icache_index_i     (cache_line_idx),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
+      .icache_blk_addr_i(blk_addr_reg),  // icache_blk_addr_i 使用寄存器中的数据
+      .icache_line_wdata_i(icache_wdate),
+      .icache_wmask(icache_wmask),
+      .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
+      .burst_count_i(burst_count),
+      .icache_rdata_o(icache_rdata),
+      /* sram */
+      .io_sram4_addr(io_sram4_addr),
+      .io_sram4_cen(io_sram4_cen),
+      .io_sram4_wen(io_sram4_wen),
+      .io_sram4_wmask(io_sram4_wmask),
+      .io_sram4_wdata(io_sram4_wdata),
+      .io_sram4_rdata(io_sram4_rdata),
+      .io_sram5_addr(io_sram5_addr),
+      .io_sram5_cen(io_sram5_cen),
+      .io_sram5_wen(io_sram5_wen),
+      .io_sram5_wmask(io_sram5_wmask),
+      .io_sram5_wdata(io_sram5_wdata),
+      .io_sram5_rdata(io_sram5_rdata),
+      .io_sram6_addr(io_sram6_addr),
+      .io_sram6_cen(io_sram6_cen),
+      .io_sram6_wen(io_sram6_wen),
+      .io_sram6_wmask(io_sram6_wmask),
+      .io_sram6_wdata(io_sram6_wdata),
+      .io_sram6_rdata(io_sram6_rdata),
+      .io_sram7_addr(io_sram7_addr),
+      .io_sram7_cen(io_sram7_cen),
+      .io_sram7_wen(io_sram7_wen),
+      .io_sram7_wmask(io_sram7_wmask),
+      .io_sram7_wdata(io_sram7_wdata),
+      .io_sram7_rdata(io_sram7_rdata)
+  );
 
   // wire [`XLEN-1:0] _icache_data_o = {32'b0, icache_line_rdata[blk_addr_reg*8+:32]};
 
@@ -222,19 +274,15 @@ module icache_top (
   assign if_rdata_o = icache_final_data;
 
 
-  assign arb_araddr = _ram_raddr_icache_o;
-  assign arb_arvalid = _ram_raddr_valid_icache_o;
-  // assign ram_rmask_icache_o = _ram_rmask_icache_o;
-  assign arb_rsize = _ram_rsize_icache_o;
-  assign arb_rlen = _ram_rlen_icache_o;
+  assign ram_raddr_icache_o = _ram_raddr_icache_o;
+  assign ram_raddr_valid_icache_o = _ram_raddr_valid_icache_o;
+  assign ram_rmask_icache_o = _ram_rmask_icache_o;
+  assign ram_rsize_icache_o = _ram_rsize_icache_o;
+  assign ram_rlen_icache_o = _ram_rlen_icache_o;
 
 endmodule
 
 
-
-
-
-// `ifndef YSYX_SOC
 
 // module icache_top (
 //     input clk,
@@ -248,41 +296,35 @@ endmodule
 //     //input  if_rdata_ready_i,  // 是否准备好接收数据
 //     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线)
 
+
+//       // axi4_arb 接口 - 连接到 axi4_arb 模块
+//     output reg [31:0] arb_awaddr,
+//     output reg arb_awvalid,
+//     input arb_awready,
+//     output reg [31:0] arb_wdata,
+//     output reg [3:0] arb_wmask,
+//     output reg [3:0] arb_wsize,
+//     output reg [7:0] arb_wlen,
+//     output reg arb_wvalid,
+//     input arb_wready,
+
+//     input arb_arready,
+//     output reg arb_rready,
+//     input arb_rlast,
+
+
+
+
 //     /* cache<-->mem 端口 */
-//     output [`XLEN-1:0] ram_raddr_icache_o,
-//     output                             ram_raddr_valid_icache_o,
-//     output [                      3:0] ram_rmask_icache_o,
-//     output [                      3:0] ram_rsize_icache_o,
-//     output [                      7:0] ram_rlen_icache_o,
-//     input                              ram_rdata_ready_icache_i,
-//     input  [    `XLEN-1:0] ram_rdata_icache_i,
-//     `ifndef YSYX_SOC
-//     /* sram */
-//     output [                      6:0] io_sram4_addr,
-//     output                             io_sram4_cen,
-//     output                             io_sram4_wen,
-//     output [                    127:0] io_sram4_wmask,
-//     output [                    127:0] io_sram4_wdata,
-//     input  [                    127:0] io_sram4_rdata,
-//     output [                      6:0] io_sram5_addr,
-//     output                             io_sram5_cen,
-//     output                             io_sram5_wen,
-//     output [                    127:0] io_sram5_wmask,
-//     output [                    127:0] io_sram5_wdata,
-//     input  [                    127:0] io_sram5_rdata,
-//     output [                      6:0] io_sram6_addr,
-//     output                             io_sram6_cen,
-//     output                             io_sram6_wen,
-//     output [                    127:0] io_sram6_wmask,
-//     output [                    127:0] io_sram6_wdata,
-//     input  [                    127:0] io_sram6_rdata,
-//     output [                      6:0] io_sram7_addr,
-//     output                             io_sram7_cen,
-//     output                             io_sram7_wen,
-//     output [                    127:0] io_sram7_wmask,
-//     output [                    127:0] io_sram7_wdata,
-//     input  [                    127:0] io_sram7_rdata
-//     `endif 
+//     output [`XLEN-1:0] arb_araddr,
+//     output                             arb_arvalid,
+//     // output [                      3:0] ram_rmask_icache_o,
+//     output [                      3:0] arb_rsize,
+//     output [                      7:0] arb_rlen,
+//     input                              arb_rvalid,
+//     input  [    `XLEN-1:0] arb_rdata
+
+
 // );
 
 // `ifndef YSYX_SOC
@@ -331,7 +373,7 @@ endmodule
 //   reg [3:0] burst_count;
 
 
-//   wire ram_r_handshake = _ram_raddr_valid_icache_o & ram_rdata_ready_icache_i;
+//   wire ram_r_handshake = _ram_raddr_valid_icache_o & arb_rvalid;
 //   wire [3:0] burst_count_plus1 = burst_count + 1;
 
 
@@ -384,7 +426,7 @@ endmodule
 //             _ram_raddr_valid_icache_o <= 1;  // 地址有效
 //             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
 //             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
-//             _ram_rlen_icache_o <= 8'd15;    // 突发16次 
+//             _ram_rlen_icache_o <= 8'd15;    // 突发15+1次 
 //             burst_count <= 0;  // 清空计数器
 // `ifndef YSYX_SOC 
 //             icache_unhit_count();
@@ -418,7 +460,7 @@ endmodule
 //           if (ram_r_handshake) begin
 //             _ram_raddr_valid_icache_o <= 0;
 //             uncache_data_ready <= 1;  // 完成信号
-//             uncache_rdata <= ram_rdata_icache_i[31:0]; // 直接取低32位
+//             uncache_rdata <= arb_rdata[31:0]; // 直接取低32位
 //             icache_state <= CACHE_IDLE;
 //           end
 //         end
@@ -440,55 +482,7 @@ endmodule
 
 
 
-//  wire [127:0] icache_wmask = 
-//     (burst_count[1:0] == 2'b00) ? 128'h00000000_00000000_00000000_FFFFFFFF :
-//     (burst_count[1:0] == 2'b01) ? 128'h00000000_00000000_FFFFFFFF_00000000 :
-//     (burst_count[1:0] == 2'b10) ? 128'h00000000_FFFFFFFF_00000000_00000000 :
-//                                   128'hFFFFFFFF_00000000_00000000_00000000;
-
-// wire [127:0] icache_wdate = 
-//     (burst_count[1:0] == 2'b00) ? {96'b0, ram_rdata_icache_i[31:0]} :
-//     (burst_count[1:0] == 2'b01) ? {64'b0, ram_rdata_icache_i[31:0], 32'b0} :
-//     (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
-//                                   {ram_rdata_icache_i[31:0], 96'b0};
 //   wire [`XLEN-1:0] icache_rdata;
-//   `ifndef YSYX_SOC
-//   icache_data u_icache_data (
-
-//       .icache_index_i     (cache_line_idx),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
-//       .icache_blk_addr_i(blk_addr_reg),  // icache_blk_addr_i 使用寄存器中的数据
-//       .icache_line_wdata_i(icache_wdate),
-//       .icache_wmask(icache_wmask),
-//       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
-//       .burst_count_i(burst_count),
-//       .icache_rdata_o(icache_rdata),
-//       /* sram */
-//       .io_sram4_addr(io_sram4_addr),
-//       .io_sram4_cen(io_sram4_cen),
-//       .io_sram4_wen(io_sram4_wen),
-//       .io_sram4_wmask(io_sram4_wmask),
-//       .io_sram4_wdata(io_sram4_wdata),
-//       .io_sram4_rdata(io_sram4_rdata),
-//       .io_sram5_addr(io_sram5_addr),
-//       .io_sram5_cen(io_sram5_cen),
-//       .io_sram5_wen(io_sram5_wen),
-//       .io_sram5_wmask(io_sram5_wmask),
-//       .io_sram5_wdata(io_sram5_wdata),
-//       .io_sram5_rdata(io_sram5_rdata),
-//       .io_sram6_addr(io_sram6_addr),
-//       .io_sram6_cen(io_sram6_cen),
-//       .io_sram6_wen(io_sram6_wen),
-//       .io_sram6_wmask(io_sram6_wmask),
-//       .io_sram6_wdata(io_sram6_wdata),
-//       .io_sram6_rdata(io_sram6_rdata),
-//       .io_sram7_addr(io_sram7_addr),
-//       .io_sram7_cen(io_sram7_cen),
-//       .io_sram7_wen(io_sram7_wen),
-//       .io_sram7_wmask(io_sram7_wmask),
-//       .io_sram7_wdata(io_sram7_wdata),
-//       .io_sram7_rdata(io_sram7_rdata)
-//   );
-// `endif
 
 //   // wire [`XLEN-1:0] _icache_data_o = {32'b0, icache_line_rdata[blk_addr_reg*8+:32]};
 
@@ -499,12 +493,11 @@ endmodule
 //   assign if_rdata_o = icache_final_data;
 
 
-//   assign ram_raddr_icache_o = _ram_raddr_icache_o;
-//   assign ram_raddr_valid_icache_o = _ram_raddr_valid_icache_o;
-//   assign ram_rmask_icache_o = _ram_rmask_icache_o;
-//   assign ram_rsize_icache_o = _ram_rsize_icache_o;
-//   assign ram_rlen_icache_o = _ram_rlen_icache_o;
+//   assign arb_araddr = _ram_raddr_icache_o;
+//   assign arb_arvalid = _ram_raddr_valid_icache_o;
+//   // assign ram_rmask_icache_o = _ram_rmask_icache_o;
+//   assign arb_rsize = _ram_rsize_icache_o;
+//   assign arb_rlen = _ram_rlen_icache_o;
 
 // endmodule
 
-// `endif

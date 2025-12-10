@@ -14,14 +14,6 @@ module axi4_arb (
     output [`XLEN-1:0] if_rdata_o,  // 读数据返回mem
     output if_rdata_ready_o,  // 读数据是否有效
     
-    // if 访存请求端口（写）- 新增ICache写通道
-    input [`XLEN-1:0] if_write_addr_i,  // if 阶段的 write
-    input if_write_valid_i,
-    input [3:0] if_wmask_i,
-    input [`XLEN-1:0] if_wdata_i,
-    input [3:0] if_wsize_i,  // 数据大小
-    input [7:0] if_wlen_i,
-    output if_wdata_ready_o,  // 数据是否已经写入
     
     // mem 访存请求端口（读）
     input [`XLEN-1:0] mem_read_addr_i,  // mem 阶段的 read
@@ -67,7 +59,6 @@ module axi4_arb (
   localparam ARB_IDLE = 3'd0;
   localparam IF_READ_STATE = 3'd1;
   localparam MEM_READ_STATE = 3'd2;
-  localparam IF_WRITE_STATE = 3'd3;
   localparam MEM_WRITE_STATE = 3'd4;
 
   // 读通道
@@ -154,32 +145,12 @@ module axi4_arb (
             _arb_wlen_o <= mem_wlen_i;
             write_burst_count <= 0;
             write_burst_total <= mem_wlen_i;
-          end else if (if_write_valid_i) begin
-            write_arb_state <= IF_WRITE_STATE;
-            _arb_write_addr_o <= if_write_addr_i;
-            _arb_write_valid_o <= if_write_valid_i;
-            _arb_wmask_o <= if_wmask_i;
-            _arb_wdata_o <= if_wdata_i;
-            _arb_wsize_o <= if_wsize_i;
-            _arb_wlen_o <= if_wlen_i;
-            write_burst_count <= 0;
-            write_burst_total <= if_wlen_i;
           end
         end
         MEM_WRITE_STATE: begin
           if (arb_wdata_ready_i) begin
               write_arb_state <= ARB_IDLE;
               _arb_write_valid_o <= 0;
-          end
-        end
-        IF_WRITE_STATE: begin
-          if (arb_wdata_ready_i) begin
-            write_burst_count <= write_burst_count + 1;
-            
-            if (write_burst_count == write_burst_total) begin
-              write_arb_state <= ARB_IDLE;
-              _arb_write_valid_o <= 0;
-            end
           end
         end
         default: begin
@@ -191,7 +162,6 @@ module axi4_arb (
 
   wire if_read_state = arb_state == IF_READ_STATE;
   wire mem_read_state = arb_state == MEM_READ_STATE;
-  wire if_write_state = write_arb_state == IF_WRITE_STATE;
   wire mem_write_state = write_arb_state == MEM_WRITE_STATE;
 
   // 读响应
@@ -201,7 +171,6 @@ module axi4_arb (
   assign mem_rdata_ready_o = (mem_read_state) ? arb_rdata_ready_i : 0;
   
   // 写响应
-  assign if_wdata_ready_o = (if_write_state) ? arb_wdata_ready_i : 0;
   assign mem_wdata_ready_o = (mem_write_state) ? arb_wdata_ready_i : 0;
 
   // 读通道输出
