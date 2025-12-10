@@ -52,7 +52,6 @@ VM_USER_CFLAGS = \
 VM_USER_LDLIBS = \
 	-lreadline \
 	-ldl \
-	/home/zy/ysyx-workbench/nemu/build/riscv32-nemu-interpreter-so \
 	/home/zy/ysyx-workbench/nvboard/build/nvboard.a \
 	-lSDL2 \
 	-lSDL2_image \

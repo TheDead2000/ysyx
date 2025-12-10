@@ -93,7 +93,6 @@ LLVM_FLAGS += -Ofast  -fexceptions
 
 GCC_LIB = -lreadline \
 		  -ldl \
-		  ${NEMU_HOME}/build/riscv32-nemu-interpreter-so \
           ${NVBOARD_HOME}/build/nvboard.a \
 		  -lSDL2 \
 		  -lSDL2_image \
