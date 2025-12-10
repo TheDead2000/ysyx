@@ -1152,27 +1152,52 @@ wire [7:0] icache_arb_rlen;
       // dcache 读数据是否准备好(未准备好需要暂停流水线)
 
     // axi4_arb 接口
-    .arb_awaddr(dcache_arb_awaddr),
-    .arb_awvalid(dcache_arb_awvalid),
-    // .arb_awready(dcache_arb_awready),
-    .arb_wdata(dcache_arb_wdata),
-    .arb_wmask(dcache_arb_wmask),
-    // .arb_wvalid(dcache_arb_wvalid),
-    .arb_wready(dcache_arb_wready),
-    // .arb_wlast(dcache_arb_wlast),
-    // .arb_bvalid(dcache_arb_bvalid),
-    // .arb_bready(dcache_arb_bready),
-    .arb_araddr(dcache_arb_araddr),
-    .arb_arvalid(dcache_arb_arvalid),
+    .ram_waddr_dcache_o(dcache_arb_awaddr),
+    .ram_waddr_valid_dcache_o(dcache_arb_awvalid),
+    .ram_wdata_dcache_o(dcache_arb_wdata),
+    .ram_wmask_dcache_o(dcache_arb_wmask),
+    .ram_wsize_dcache_o(dcache_arb_wsize),
+    .ram_wlen_dcache_o(dcache_arb_wlen),
+    .ram_wdata_ready_dcache_i(dcache_arb_wready),
+
+
+    .ram_raddr_dcache_o(dcache_arb_araddr),
+    .ram_raddr_valid_dcache_o(dcache_arb_arvalid),
     // .arb_arready(dcache_arb_arready),
-    .arb_rdata(dcache_arb_rdata),
-    .arb_rvalid(dcache_arb_rvalid),
+    .ram_rdata_ready_dcache_i(dcache_arb_rvalid),
+    .ram_rdata_dcache_i(dcache_arb_rdata),
     // .arb_rready(dcache_arb_rready),
     // .arb_rlast(dcache_arb_rlast),
-    .arb_wsize(dcache_arb_wsize),
-    .arb_wlen(dcache_arb_wlen),
-    .arb_rsize(dcache_arb_rsize),
-    .arb_rlen(dcache_arb_rlen)
+    .ram_rsize_dcache_o(dcache_arb_rsize),
+    .ram_rlen_dcache_o(dcache_arb_rlen),
+    .ram_rmask_dcache_o(dcache_arb_rmask),
+
+ /* sram */
+      .io_sram0_addr (io_sram0_addr),
+      .io_sram0_cen  (io_sram0_cen),
+      .io_sram0_wen  (io_sram0_wen),
+      .io_sram0_wmask(io_sram0_wmask),
+      .io_sram0_wdata(io_sram0_wdata),
+      .io_sram0_rdata(io_sram0_rdata),
+      .io_sram1_addr (io_sram1_addr),
+      .io_sram1_cen  (io_sram1_cen),
+      .io_sram1_wen  (io_sram1_wen),
+      .io_sram1_wmask(io_sram1_wmask),
+      .io_sram1_wdata(io_sram1_wdata),
+      .io_sram1_rdata(io_sram1_rdata),
+      .io_sram2_addr (io_sram2_addr),
+      .io_sram2_cen  (io_sram2_cen),
+      .io_sram2_wen  (io_sram2_wen),
+      .io_sram2_wmask(io_sram2_wmask),
+      .io_sram2_wdata(io_sram2_wdata),
+      .io_sram2_rdata(io_sram2_rdata),
+      .io_sram3_addr (io_sram3_addr),
+      .io_sram3_cen  (io_sram3_cen),
+      .io_sram3_wen  (io_sram3_wen),
+      .io_sram3_wmask(io_sram3_wmask),
+      .io_sram3_wdata(io_sram3_wdata),
+      .io_sram3_rdata(io_sram3_rdata)
+
   );
  
  
@@ -1353,7 +1378,7 @@ axi4_arb axi_arb (
     // dcache 访存请求端口（读）
     .mem_read_addr_i(dcache_arb_araddr),
     .mem_raddr_valid_i(dcache_arb_arvalid),
-    .mem_rmask_i(4'b0011), // 全使能
+    .mem_rmask_i(dcache_arb_rmask), // 全使能
     .mem_rsize_i(dcache_arb_rsize),
     .mem_rlen_i(dcache_arb_rlen),
     .mem_rdata_o(dcache_arb_rdata),
@@ -1411,7 +1436,7 @@ wire [3:0] dcache_arb_wsize;
 wire [7:0] dcache_arb_wlen;
 wire [3:0] dcache_arb_rsize;
 wire [7:0] dcache_arb_rlen;
-
+wire [3:0] dcache_arb_rmask;
 
 `ifndef YSYX_SOC
    axi4_arb axi_arb (
