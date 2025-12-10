@@ -12,5 +12,5 @@ module uncache_check (
 //   assign uncache_valid_o = addr_check_i < 32'h80000000;
 // `endif
 
-    assign uncache_valid_o = 1'b1;
+    assign uncache_valid_o = 1'b0;
 endmodule
