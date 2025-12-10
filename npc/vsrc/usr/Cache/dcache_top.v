@@ -241,8 +241,8 @@ module dcache_top (
                   _ram_raddr_dcache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
                   _ram_raddr_valid_dcache_o <= 1;  // 地址有效
                   _ram_rmask_dcache_o       <= 4'b1111;  // 读掩码
-                  _ram_rsize_dcache_o       <= 4'b0100;  //读大小 8byte
-                  _ram_rlen_dcache_o        <= 8'd15;  // 突发 7 次
+                  _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32b
+                  _ram_rlen_dcache_o        <= 8'd15;  // 突发 15 次
                   burst_count               <= 0;  // 清空计数器
                 end
               end
@@ -324,7 +324,7 @@ module dcache_top (
 
         CACHE_MISS_ALLOCATE: begin
           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-            if (burst_count[3:0] == _ram_rlen_dcache_o[3:0]) begin  // 突发传输最后一个数据
+            if (burst_count == _ram_rlen_dcache_o[3:0]) begin  // 突发传输最后一个数据
               dcache_state              <= CACHE_IDLE;
               dcache_tag_wen            <= 1;  // 写 tag 
               _dirty_bit_write          <= 0;
