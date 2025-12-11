@@ -370,7 +370,31 @@ module dcache_top (
           if (_ram_raddr_valid_dcache_o & ram_rdata_ready_dcache_i) begin
             _ram_raddr_valid_dcache_o <= 0;
             dcache_data_ready <= 1;  // 完成信号
-            uncache_rdata <= ram_rdata_dcache_i[31:0];  // 数据返回
+            
+            case (mem_size_i)
+            4'b0001: begin // 字节访问 (8位)
+              case (mem_addr_i[1:0])
+                2'b00: uncache_rdata <= {24'b0, ram_rdata_dcache_i[7:0]};    // 字节0
+                2'b01: uncache_rdata <= {24'b0, ram_rdata_dcache_i[15:8]};   // 字节1  
+                2'b10: uncache_rdata <= {24'b0, ram_rdata_dcache_i[23:16]};  // 字节2
+                2'b11: uncache_rdata <= {24'b0, ram_rdata_dcache_i[31:24]};  // 字节3
+              endcase
+            end
+            4'b0010: begin // 半字访问 (16位)
+              case (mem_addr_i[1])
+                1'b0: uncache_rdata <= {16'b0, ram_rdata_dcache_i[15:0]};    // 半字0
+                1'b1: uncache_rdata <= {16'b0, ram_rdata_dcache_i[31:16]};   // 半字1
+              endcase
+            end
+            4'b0100: begin // 字访问 (32位) - lw指令
+              uncache_rdata <= ram_rdata_dcache_i;  // 直接返回整个32位
+            end
+            default: begin
+              uncache_rdata <= ram_rdata_dcache_i;  // 默认情况
+            end
+          endcase
+          
+            // uncache_rdata <= ram_rdata_dcache_i[31:0];  // 数据返回
             dcache_state <= CACHE_IDLE;
           end
         end
