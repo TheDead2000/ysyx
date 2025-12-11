@@ -10,7 +10,7 @@ wire _uncache_valid;
 
 
 
-assign _uncache_valid = (addr_check_i <= 32'hfff_ffff && addr_check_i >= 32'hf00_0000) || (addr_check_i >= 32'ha000_0000 && addr_check_i <= 32'hbfff_ffff)   ;
+assign _uncache_valid = (addr_check_i <= 32'hfff_ffff && addr_check_i >= 32'hf00_0000) || (addr_check_i >= 32'ha000_0000 && addr_check_i <= 32'hbfff_ffff) || (addr_check_i >= 32'h1000_0000 && addr_check_i <= 32'h1000_0fff)  ;
 
 assign uncache_valid_o = _uncache_valid;
 
