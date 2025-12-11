@@ -1,4 +1,4 @@
-// `include "sysconfig.v"
+`include "sysconfig.v"
 // // 地址位宽 32,icache<->cpu (数据64位) mem<-->icache(数据128位)
 // // 连接方式 ram<-->cache<-->cpu
 // // cache<-->cpu : 地址线宽度:32 数据线宽度:64

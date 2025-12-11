@@ -12234,6 +12234,10 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+6086,"dcache_writeback_valid", false,-1);
     tracep->declBus(c+6785,"dcache_index", false,-1, 6,0);
     tracep->declBus(c+6775,"dcache_rdata", false,-1, 31,0);
+    tracep->pushNamePrefix("dcache_uncache_check ");
+    tracep->declBus(c+6774,"addr_check_i", false,-1, 31,0);
+    tracep->declBit(c+7165,"uncache_valid_o", false,-1);
+    tracep->popNamePrefix(1);
     tracep->pushNamePrefix("u_dcache_data ");
     tracep->declBus(c+7348,"IDX_LEN", false,-1, 31,0);
     tracep->declBus(c+7357,"BLK_LEN", false,-1, 31,0);
@@ -12311,10 +12315,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+6932,"read_tag", false,-1, 18,0);
     tracep->declBit(c+6931,"read_dirty_bit", false,-1);
     tracep->declBus(c+6094,"i", false,-1, 31,0);
-    tracep->popNamePrefix(1);
-    tracep->pushNamePrefix("u_uncache_check1 ");
-    tracep->declBus(c+6774,"addr_check_i", false,-1, 31,0);
-    tracep->declBit(c+7165,"uncache_valid_o", false,-1);
     tracep->popNamePrefix(2);
     tracep->pushNamePrefix("u_icache_top ");
     tracep->declBit(c+7104,"clk", false,-1);

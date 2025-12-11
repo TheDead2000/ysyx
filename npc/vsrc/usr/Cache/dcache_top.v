@@ -81,7 +81,7 @@ module dcache_top (
 
   // uncache 检查
   wire uncache;
-  uncache_check u_uncache_check1 (
+  uncache_check dcache_uncache_check (
       .addr_check_i   (mem_addr_i),
       .uncache_valid_o(uncache)
   );
