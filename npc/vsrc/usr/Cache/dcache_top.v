@@ -205,7 +205,7 @@ module dcache_top (
                 dcache_state <= CACHE_IDLE;
                 //写 cache
                 dcache_data_wen <= 1;
-                dcache_data_ready <= 1;  // 完成信号
+                dcache_wdata_ready <= 1;  // 完成信号
                 dcache_tag_wen <= 1;
                 _dirty_bit_write <= 1;  // 标记为脏
                 dcache_write_hit_valid <= 1;  //写信号
@@ -227,7 +227,7 @@ module dcache_top (
 `endif
                 if (dirty_bit_read) begin  // 需要写回
                   dcache_state <= CACHE_WRITE_BACK;
-                  dcache_data_ready <= 0;
+                  dcache_wdata_ready <= 0;
                   _ram_waddr_dcache_o <= {dcache_tag_read, cache_line_idx, 6'b0};  // 写地址
                   _ram_waddr_valid_dcache_o <= 1;  // 地址有效
                   _ram_wmask_dcache_o <= 4'b_1111;  // 写掩码
@@ -251,7 +251,7 @@ module dcache_top (
             // 判断是读还是写
             if (mem_write_valid_i) begin
               dcache_state              <= UNCACHE_WRITE;
-              dcache_data_ready         <= 0;
+              dcache_wdata_ready         <= 0;
               _ram_waddr_dcache_o       <= mem_addr_i;  // 写地址
               _ram_waddr_valid_dcache_o <= 1;  // 地址有效
                 case (mem_size_i)
@@ -312,6 +312,7 @@ module dcache_top (
 
           end else begin
             dcache_data_ready <= 0;
+            dcache_wdata_ready <= 0;
             _ram_raddr_valid_dcache_o <= 0;
             _ram_waddr_valid_dcache_o <= 0;
             dcache_tag_wen <= 0;
@@ -340,7 +341,7 @@ module dcache_top (
           if (_ram_waddr_valid_dcache_o & ram_wdata_ready_dcache_i) begin
 
             _ram_waddr_valid_dcache_o <= 0;
-            dcache_data_ready <= 1;  // 完成信号
+            dcache_wdata_ready <= 1;  // 完成信号
             dcache_state <= CACHE_IDLE;
           end
         end
@@ -352,7 +353,7 @@ module dcache_top (
 
               // 写入 cache 中
               dcache_state              <= CACHE_MISS_ALLOCATE;
-              dcache_data_ready         <= 0;
+              dcache_wdata_ready         <= 0;
               _ram_raddr_dcache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
               _ram_raddr_valid_dcache_o <= 1;  // 地址有效
               _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
@@ -522,7 +523,7 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
 
 
 
-  assign ram_wlen_dcache_o = _ram_wlen_dcache_o;
+
   assign ram_rlen_dcache_o = _ram_rlen_dcache_o;
 
 
@@ -542,7 +543,8 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
   assign ram_wmask_dcache_o = _ram_wmask_dcache_o;
   assign ram_wdata_dcache_o = dcache_writeback_valid ? dcache_writeback_data : _ram_wdata_dcache_o;
   assign ram_wsize_dcache_o = _ram_wsize_dcache_o;
-
+  assign ram_wlen_dcache_o = _ram_wlen_dcache_o;
+  
 endmodule
 
 
