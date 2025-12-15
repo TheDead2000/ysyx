@@ -186,54 +186,7 @@ module ifu (
 
     wire _is_compressed_current = (_current_inst_16bit[1:0] != 2'b11);
     assign is_compressed_inst = _is_compressed_current;
-
-//  // ============ 指令对齐处理（简化版本） ============
-// reg [31:0] aligned_inst_data;
-// reg misaligned_exception;  // 新增：非对齐异常标志
-
-// always @(posedge clk or posedge rst) begin
-//     if (rst) begin
-//         aligned_inst_data <= 32'h00000013;
-//         misaligned_exception <= 1'b0;
-//     end else if (if_rdata_valid_i) begin
-//         misaligned_exception <= 1'b0;  // 默认不触发异常
-        
-//         // 根据地址对齐状态选择指令
-//         case (inst_addr_i[1:0])
-//             2'b00: begin
-//                 // 地址对齐到4字节边界
-//                 // 可以从32位数据中直接读取指令
-//                 // 可能是32位指令，也可能是16位压缩指令
-//                 if (_is_compressed_current) begin
-//                     // 压缩指令，使用低16位
-//                     aligned_inst_data <= {16'b0, if_rdata_i[15:0]};
-//                 end else begin
-//                     // 32位标准指令
-//                     aligned_inst_data <= if_rdata_i;
-//                 end
-//             end
-            
-//             2'b01, 2'b11: begin
-//                 // 奇数地址（奇地址对齐），总是非对齐异常
-//                 aligned_inst_data <= 32'h00000013;  // NOP
-//                 misaligned_exception <= 1'b1;
-//             end
-            
-//             2'b10: begin
-//                 // 地址对齐到2字节边界（半字对齐）
-//                 // 需要检查是否真的存在16位压缩指令
-//                 if (_is_compressed_current) begin
-//                     // 压缩指令，使用高16位（因为地址2对应32位字的高半字）
-//                     aligned_inst_data <= {16'b0, if_rdata_i[31:16]};
-//                 end else begin
-//                     // 试图在地址2读取32位指令 → 非对齐异常
-//                     aligned_inst_data <= 32'h00000013;  // NOP
-//                     misaligned_exception <= 1'b1;
-//                 end
-//             end
-//         endcase
-//     end
-// end
+    
 
     wire [`XLEN-1:0] expanded_inst;
     c_instruction_expander c_expander (
