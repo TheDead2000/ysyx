@@ -60,7 +60,7 @@ pc_reg u_pc_reg (
 
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
-
+    .is_compressed_inst(is_compressed_inst),
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
     //输出pc
@@ -133,6 +133,7 @@ wire [`HISLEN-1:0] history_fb;   // 预测时使用的历史记录
 wire[1:0] ex_jump_type; // 跳转类型
 wire [4:0] ex_rd_addr; // 目的寄存器地址
 
+wire is_compressed_inst;
 wire ls_valid;
 ifu ifu (
   .clk(clk),
@@ -160,7 +161,7 @@ ifu ifu (
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
-  
+  .is_compressed_inst(is_compressed_inst),
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签

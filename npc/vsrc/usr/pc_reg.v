@@ -16,8 +16,11 @@ module pc_reg (
     input  [`INST_LEN-1:0] clint_pc_i,         //trap pc,来自mem
     input              clint_pc_valid_i,   //trap pc valide,来自mem
 
+    
     input [`INST_LEN-1:0] bpu_pc_i,
     input bpu_pc_valid_i,
+    input is_compressed_inst,
+
 
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
     output read_req_o,        //输出 next_pc, icache 取指
@@ -28,6 +31,7 @@ module pc_reg (
   wire [`XLEN-1:0] _pc_current;
   wire [`XLEN-1:0] pc_temp = _pc_current;
   wire [`XLEN-1:0] pc_temp_plus4 = pc_temp + 'd4;
+  wire [`XLEN-1:0] pc_temp_plus2 = pc_temp + 'd2;
 
   reg [`XLEN-1:0] _pc_next;
 
@@ -45,7 +49,7 @@ module pc_reg (
     end else if (bpu_pc_valid_i) begin : bpu_pc
       _pc_next = bpu_pc_i;
     end else begin
-      _pc_next = pc_temp_plus4;
+      _pc_next = is_compressed_inst ? pc_temp_plus2 : pc_temp_plus4;
     end
     // $display("pc_reg:= %h", _pc_next);
   end
