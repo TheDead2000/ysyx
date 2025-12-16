@@ -516,11 +516,7 @@ always @(posedge clk or posedge rst) begin
         inst_data_o_reg <= 32'h00000013;
     end else if (!id_stall_i) begin
         inst_addr_o_reg <= inst_addr_i;
-        
-        // 只有当缓冲命中且数据就绪时才输出有效指令
-        if (buffer_hit && 
-            !((pc_low3 == 3'b010 || pc_low3 == 3'b110) && 
-              !inst_is_compressed_o && !buffer_1_valid)) begin
+        if (buffer_hit) begin
             inst_data_o_reg <= extracted_inst;
         end else begin
             inst_data_o_reg <= 32'h00000013;
