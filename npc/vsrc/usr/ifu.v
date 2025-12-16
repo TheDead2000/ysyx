@@ -170,6 +170,7 @@ module ifu (
         end
     end
     
+
         // ============ 添加的缓冲区逻辑 ============
     reg [15:0] pending_halfword;      // 存储跨边界的半个指令
     reg pending_valid;                // pending_halfword 是否有效
@@ -177,10 +178,13 @@ module ifu (
     
     // 当前读取的16位数据
     wire [15:0] current_halfword;
-    
+    wire [31:0] flush_if_rdata_i = if_flush_i ? 32'h00000013 : if_rdata_i;
     // 根据PC的低2位选择正确的16位数据
+
+
+
     assign current_halfword = (inst_addr_i[1] == 1'b0) ? 
-                             if_rdata_i[15:0] : if_rdata_i[31:16];
+                             flush_if_rdata_i[15:0] : flush_if_rdata_i[31:16];
     
     // 检查是否是压缩指令
     wire is_compressed = (current_halfword[1:0] != 2'b11);
@@ -215,7 +219,7 @@ module ifu (
                             // 非压缩指令：需要检查是否跨边界
                             if (inst_addr_i[1] == 1'b0) begin
                                 // 4字节对齐：直接提取完整32位
-                                instruction_out <= if_rdata_i;
+                                instruction_out <= flush_if_rdata_i;
                                 is_compressed_out <= 1'b0;
                                 instruction_valid_out <= 1'b1;
                             end else begin
@@ -238,7 +242,7 @@ module ifu (
                         // 检查地址是否连续
                         if ((inst_addr_i >> 2) == (last_pc >> 2) + 1) begin
                             // 地址连续，组合成完整指令
-                            instruction_out <= {if_rdata_i[15:0], pending_halfword};
+                            instruction_out <= {flush_if_rdata_i[15:0], pending_halfword};
                             is_compressed_out <= 1'b0;
                             instruction_valid_out <= 1'b1;
                             pending_valid <= 1'b0;
@@ -273,13 +277,13 @@ module ifu (
 
     // ============ 原有 IFU 逻辑（保持兼容） ============
     assign inst_addr_o = inst_addr_i;
-    // wire [31:0] _inst_data = if_rdata_i;
+    // wire [31:0] _inst_data = flush_if_rdata_i;
 
 
     wire[15:0] _current_inst_16bit = is_compressed_inst ?  instruction_out[15:0] : 16'b0;    
     // // 提取当前指令（根据对齐状态）
     // wire [15:0] _current_inst_16bit;
-    // assign _current_inst_16bit = (inst_addr_i[1] == 1'b0) ? if_rdata_i[15:0] : if_rdata_i[31:16];
+    // assign _current_inst_16bit = (inst_addr_i[1] == 1'b0) ? flush_if_rdata_i[15:0] : flush_if_rdata_i[31:16];
     
     // // 判断是否为压缩指令（低2位不为11）
 
@@ -293,7 +297,7 @@ module ifu (
     );
 
     wire [31:0] _final_inst;
-    assign _final_inst = is_compressed_inst ? expanded_inst : if_rdata_i;
+    assign _final_inst = is_compressed_inst ? expanded_inst : flush_if_rdata_i;
 
 
     

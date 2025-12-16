@@ -135,6 +135,7 @@ wire [4:0] ex_rd_addr; // 目的寄存器地址
 
 wire is_compressed_inst;
 wire ls_valid;
+
 ifu ifu (
   .clk(clk),
   .rst(rst),
