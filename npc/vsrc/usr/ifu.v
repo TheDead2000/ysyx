@@ -529,11 +529,12 @@ assign inst_data_o = inst_data_o_reg;
 assign is_compressed_inst = inst_is_compressed_o;
 
 // 访存暂停逻辑
-assign ram_stall_valid_if_o = 
-    (!buffer_hit || 
-     ((pc_low3 == 3'b010 || pc_low3 == 3'b110) && 
-      !inst_is_compressed_o && !buffer_1_valid)) 
-    ? 1'b1 : 1'b0;
+assign  ram_stall_valid_if_o = 
+      (!buffer_hit || 
+       ((pc_low3 == 3'b010 || pc_low3 == 3'b110) && 
+        !inst_is_compressed_o && !buffer_1_valid) ||
+       (buf_offset[3] && !buffer_1_valid))   //bufferoffset3 show need buffer1
+      ? 1'b1 : 1'b0;
     
 // ============ TRAP 处理（增加页错误） ============
 wire _Instruction_address_misaligned = 1'b0;
