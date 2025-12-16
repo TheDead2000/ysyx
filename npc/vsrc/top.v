@@ -171,8 +171,8 @@ ifu ifu (
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
   .is_compressed_inst(is_compressed_inst),
-  .prefetch_req_o(prefetch_req_o),
-  .prefetch_addr_o(prefetch_addr_o),
+  // .prefetch_req_o(prefetch_req_o),
+  // .prefetch_addr_o(prefetch_addr_o),
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
