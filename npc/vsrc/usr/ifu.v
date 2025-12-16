@@ -423,56 +423,60 @@ always @(*) begin
         end else begin
             // 使用buffer_1，偏移8-15字节
             // !!! 关键修正：必须先检查buffer_1_valid !!!
-            if (buffer_1_valid) begin
+                       if (buffer_1_valid) begin
                 case (buf_offset[2:0])
                     3'b000: begin // 偏移8字节
-                        raw_is_compressed = (buffer_1[1:0] != 2'b11);
+                        // !!! 关键修正：使用buffer_1[63:32]而不是buffer_1[31:0] !!!
+                        raw_is_compressed = (buffer_1[33:32] != 2'b11); // 检查高位
                         inst_is_compressed_o = raw_is_compressed;
                         if (raw_is_compressed) begin
                             // 压缩指令
-                            raw_16bit_inst = buffer_1[15:0];
+                            raw_16bit_inst = buffer_1[47:32]; // 从高位取
                             raw_next_offset = 3'b010;
                         end else begin
                             // 32位标准指令
-                            raw_32bit_inst = buffer_1[31:0];
+                            raw_32bit_inst = buffer_1[63:32]; // 使用高32位
                             raw_next_offset = 3'b100;
                         end
                     end
                     3'b010: begin // 偏移10字节
-                        raw_is_compressed = (buffer_1[17:16] != 2'b11);
-                        inst_is_compressed_o = raw_is_compressed;
-                        if (raw_is_compressed) begin
-                            // 压缩指令
-                            raw_16bit_inst = buffer_1[31:16];
-                            raw_next_offset = 3'b100;
-                        end else begin
-                            // 32位标准指令（需要下一行，超出当前缓冲范围）
-                            raw_32bit_inst = 32'h00000013;
-                            raw_next_offset = 3'b110;
-                        end
-                    end
-                    3'b100: begin // 偏移12字节
-                        raw_is_compressed = (buffer_1[33:32] != 2'b11);
-                        inst_is_compressed_o = raw_is_compressed;
-                        if (raw_is_compressed) begin
-                            // 压缩指令
-                            raw_16bit_inst = buffer_1[47:32];
-                            raw_next_offset = 3'b110;
-                        end else begin
-                            // 32位标准指令
-                            raw_32bit_inst = buffer_1[63:32];
-                            raw_next_offset = 3'b000;
-                        end
-                    end
-                    3'b110: begin // 偏移14字节
+                        // 注意：这里需要组合buffer_1[63:48]和下一行的数据
+                        // 但当前缓冲只有buffer_1，所以暂时无法完成
                         raw_is_compressed = (buffer_1[49:48] != 2'b11);
                         inst_is_compressed_o = raw_is_compressed;
                         if (raw_is_compressed) begin
                             // 压缩指令
                             raw_16bit_inst = buffer_1[63:48];
+                            raw_next_offset = 3'b100;
+                        end else begin
+                            // 32位标准指令（需要下一行）
+                            raw_32bit_inst = 32'h00000013;
+                            raw_next_offset = 3'b110;
+                        end
+                    end
+                    3'b100: begin // 偏移12字节
+                        // !!! 使用buffer_1[31:0] !!!
+                        raw_is_compressed = (buffer_1[1:0] != 2'b11);
+                        inst_is_compressed_o = raw_is_compressed;
+                        if (raw_is_compressed) begin
+                            // 压缩指令
+                            raw_16bit_inst = buffer_1[15:0];
+                            raw_next_offset = 3'b110;
+                        end else begin
+                            // 32位标准指令
+                            raw_32bit_inst = buffer_1[31:0];
+                            raw_next_offset = 3'b000;
+                        end
+                    end
+                    3'b110: begin // 偏移14字节
+                        raw_is_compressed = (buffer_1[17:16] != 2'b11);
+                        inst_is_compressed_o = raw_is_compressed;
+                        if (raw_is_compressed) begin
+                            // 压缩指令
+                            raw_16bit_inst = buffer_1[31:16];
                             raw_next_offset = 3'b000;
                         end else begin
-                            // 32位标准指令（需要下一行，超出当前缓冲范围）
+                            // 32位标准指令（需要下一行）
                             raw_32bit_inst = 32'h00000013;
                             raw_next_offset = 3'b010;
                         end
@@ -485,11 +489,11 @@ always @(*) begin
                     end
                 endcase
             end else begin
-                // !!! buffer_1无效，输出NOP !!!
+                // buffer_1无效
                 raw_32bit_inst = 32'h00000013;
                 raw_is_compressed = 1'b0;
                 inst_is_compressed_o = 1'b0;
-                raw_next_offset = pc_low3; // 保持当前偏移
+                raw_next_offset = pc_low3;
             end
         end
     end else begin
