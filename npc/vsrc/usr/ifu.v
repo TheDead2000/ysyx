@@ -7,7 +7,7 @@ module ifu (
     // 原有 IFU 接口
     input [31:0] inst_addr_i,          // from pc_reg (32位)
     input if_rdata_valid_i,            // 读数据是否准备好
-    input [63:0] if_rdata_i,
+    input [31:0] if_rdata_i,
     
     /* stall req */
     output ram_stall_valid_if_o,       // if 阶段访存暂停
@@ -172,7 +172,7 @@ module ifu (
     
     // ============ 原有 IFU 逻辑（保持兼容） ============
     assign inst_addr_o = inst_addr_i;
-    wire [63:0] _inst_data = if_rdata_i;
+    wire [31:0] _inst_data = if_rdata_i;
 
 
     // ============ C 扩展相关信号 ============
@@ -194,7 +194,7 @@ module ifu (
     );
 
     wire [31:0] _final_inst;
-    assign _final_inst = _is_compressed_current ? expanded_inst : if_rdata_i[31:0];
+    assign _final_inst = _is_compressed_current ? expanded_inst : if_rdata_i;
 
 
     

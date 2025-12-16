@@ -21,8 +21,6 @@ module pc_reg (
     input bpu_pc_valid_i,
     input is_compressed_inst,
 
-    input              ifu_prefetch_req_i,
-    input [`XLEN-1:0]  ifu_prefetch_addr_i,
 
 
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
