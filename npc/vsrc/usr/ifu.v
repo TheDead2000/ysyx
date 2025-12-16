@@ -7,7 +7,7 @@ module ifu (
     // 原有 IFU 接口
     input [31:0] inst_addr_i,          // from pc_reg (32位)
     input if_rdata_valid_i,            // 读数据是否准备好
-    input [31:0] if_rdata_i,
+    input [63:0] if_rdata_i,
     
     /* stall req */
     output ram_stall_valid_if_o,       // if 阶段访存暂停
@@ -38,7 +38,10 @@ module ifu (
     output [31:0] bpu_pc_o,
     output bpu_pc_valid_o,
     output is_compressed_inst,
-
+    
+    /* ============ 新增：预取请求接口 ============ */
+    output reg                 prefetch_req_o,      // 预取请求有效
+    output reg [31:0]          prefetch_addr_o,     // 预取地址（8字节对齐）
 
     // to exu
     output reg pdt_res,
@@ -117,7 +120,7 @@ module ifu (
     localparam STATE_WAIT_MMU = 2'b01;
     localparam STATE_WAIT_MEM = 2'b10;
     
-    reg [1:0] state;
+    reg [1:0] MMU_state;
     reg [31:0] phys_pc;
     reg pending_redirect;
     
@@ -132,14 +135,14 @@ module ifu (
     /* verilator lint_off CASEINCOMPLETE */
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            state <= STATE_IDLE;
+            MMU_state <= STATE_IDLE;
             phys_pc <= 32'b0;
             pending_redirect <= 1'b0;
         end else begin
-            case (state)
+            case (MMU_state)
                 STATE_IDLE: begin
                     if (mmu_enable_i) begin
-                        state <= STATE_WAIT_MMU;
+                        MMU_state <= STATE_WAIT_MMU;
                     end
                 end
                 
@@ -147,63 +150,299 @@ module ifu (
                     if (mmu_resp_valid_i) begin
                         if (mmu_page_fault_i) begin
                             // 页错误处理
-                            state <= STATE_IDLE;
+                            MMU_state <= STATE_IDLE;
                         end else begin
                             phys_pc <= mmu_resp_paddr_i;
-                            state <= STATE_WAIT_MEM;
+                            MMU_state <= STATE_WAIT_MEM;
                         end
                     end
                 end
                 
                 STATE_WAIT_MEM: begin
                     if (if_rdata_valid_i) begin
-                        state <= STATE_IDLE;
+                        MMU_state <= STATE_IDLE;
                     end
                 end
             endcase
             
             // 处理重定向
             if (if_flush_i) begin
-                state <= STATE_IDLE;
+                MMU_state <= STATE_IDLE;
                 pending_redirect <= 1'b1;
             end
         end
     end
     
-    // ============ 原有 IFU 逻辑（保持兼容） ============
+
+// ==================== 预取缓冲器定义 ====================
+// 双行64位缓冲，构成一个128位的指令窗口
+reg [63:0] buffer_0;        // 低地址行 (buffer_base_pc ~ buffer_base_pc+7)
+reg [63:0] buffer_1;        // 高地址行 (buffer_base_pc+8 ~ buffer_base_pc+15)
+reg        buffer_0_valid;
+reg        buffer_1_valid;
+reg [31:0] buffer_base_pc;  // buffer_0对应的起始地址（低3位为000）
+reg        buffer_hit;      // 当前PC是否命中缓冲窗口
+
+// ==================== 预取状态机 ====================
+localparam S_IDLE         = 3'b000;
+localparam S_REFILL_WAIT  = 3'b001; // 等待第一行数据（缓冲完全无效时）
+localparam S_PREFETCH_WAIT= 3'b010; // 等待预取的第二行数据
+localparam S_MISS_ALIGNED = 3'b011; // 处理对齐miss的特殊状态
+
+reg [2:0] state;
+reg [2:0] next_state;
+
+// ==================== 内部信号 ====================
+wire [2:0] pc_low3 = inst_addr_i[2:0]; // PC低3位，表示在8字节内的字节偏移
+wire [31:0] buffer_base_pc_plus8 = buffer_base_pc + 32'd8;
+
+reg        inst_is_compressed;
+reg [31:0] extracted_inst;
+reg  [2:0]  next_offset; // 下一条指令的偏移（相对于当前PC）
+
+// 指令地址异常检测
+wire        instruction_address_misaligned = inst_addr_i[0]; // 奇数地址
+wire        instruction_access_fault = 1'b0; // 示例，需根据实际情况实现
+wire        instruction_page_fault = mmu_page_fault_i && mmu_resp_valid_i;
+
+// 缓冲命中判断：当前PC在 [buffer_base_pc, buffer_base_pc+15] 范围内
+always @(*) begin
+    if (buffer_0_valid && 
+        (inst_addr_i[31:4] == buffer_base_pc[31:4]) && // 高28位相同
+        (inst_addr_i >= buffer_base_pc) && 
+        (inst_addr_i <= (buffer_base_pc + 32'd15))) begin
+        buffer_hit = 1'b1;
+    end else begin
+        buffer_hit = 1'b0;
+    end
+end
+
+// ==================== 预取状态机逻辑 ====================
+always @(*) begin
+    next_state = state;
+    prefetch_req_o = 1'b0;
+    prefetch_addr_o = 32'b0;
+    
+    case (state)
+        S_IDLE: begin
+            if (if_flush_i) begin
+                // 分支重定向，缓冲失效，需要完全重填
+                next_state = S_REFILL_WAIT;
+            end else if (!buffer_hit && buffer_0_valid) begin
+                // 缓冲部分有效但不是当前PC，也需要重填
+                next_state = S_REFILL_WAIT;
+            end else if (buffer_hit) begin
+                // 命中缓冲，检查是否需要预取下一行
+                // 情况1：当前指令是32位且起始于字节6，需要buffer_1来完成
+                // 情况2：顺序执行到下一条指令时，可能超出当前缓冲窗口
+                if ((pc_low3 == 3'b110 && !raw_is_compressed  && !buffer_1_valid) ||
+                    (next_offset == 3'b000 && !buffer_1_valid)) begin
+                    prefetch_req_o = 1'b1;
+                    prefetch_addr_o = buffer_base_pc_plus8;
+                    next_state = S_PREFETCH_WAIT;
+                end
+            end else begin
+                // 缓冲完全无效
+                prefetch_req_o = 1'b1;
+                prefetch_addr_o = {inst_addr_i[31:3], 3'b000}; // 8字节对齐
+                next_state = S_REFILL_WAIT;
+            end
+        end
+        
+        S_REFILL_WAIT: begin
+            if (if_rdata_valid_i) begin
+                // 收到第一行数据，检查是否还需要第二行
+                if ((inst_addr_i[2:0] == 3'b110) && (if_rdata_i[49:48] == 2'b11)) begin
+                    // 正好是需要跨行的32位指令，立即预取第二行
+                    prefetch_req_o = 1'b1;
+                    prefetch_addr_o = {inst_addr_i[31:3], 3'b000} + 32'd8;
+                    next_state = S_PREFETCH_WAIT;
+                end else begin
+                    next_state = S_IDLE;
+                end
+            end
+        end
+        
+        S_PREFETCH_WAIT: begin
+            if (if_rdata_valid_i) begin
+                next_state = S_IDLE;
+            end
+            // 注意：在等待期间，如果有分支重定向，状态机会被重置
+        end
+        
+        default: begin
+            next_state = S_IDLE;
+        end
+    endcase
+end
+
+// 状态寄存器更新
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        state <= S_IDLE;
+        buffer_0_valid <= 1'b0;
+        buffer_1_valid <= 1'b0;
+        buffer_base_pc <= 32'b0;
+    end else if (if_flush_i) begin
+        // 分支重定向，清空缓冲
+        state <= S_IDLE;
+        buffer_0_valid <= 1'b0;
+        buffer_1_valid <= 1'b0;
+    end else begin
+        state <= next_state;
+        
+        // 缓冲数据更新
+        if (if_rdata_valid_i) begin
+            case (state)
+                S_REFILL_WAIT: begin
+                    // 第一行数据
+                    buffer_0 <= if_rdata_i;
+                    buffer_0_valid <= 1'b1;
+                    buffer_base_pc <= {inst_addr_i[31:3], 3'b000}; // 更新基地址
+                    buffer_1_valid <= 1'b0; // 第二行失效
+                end
+                
+                S_PREFETCH_WAIT: begin
+                    // 第二行数据
+                    buffer_1 <= if_rdata_i;
+                    buffer_1_valid <= 1'b1;
+                end
+            endcase
+        end
+    end
+end
+// ==================== 指令提取与解压逻辑 ====================
+// 声明内部信号
+reg [15:0] raw_16bit_inst;      // 提取的原始16位指令（如果是压缩指令）
+reg [31:0] raw_32bit_inst;      // 提取的原始32位指令（如果是标准指令）
+reg        raw_is_compressed;   // 当前提取的原始指令是否为压缩指令
+reg [2:0]  raw_next_offset;     // 根据原始指令类型计算的下一条指令偏移
+reg inst_is_compressed_o;
+// 实例化C扩展解压器
+wire [31:0] expanded_inst_from_c;
+
+c_instruction_expander u_c_expander (
+    .compressed_inst_i(raw_16bit_inst),
+    .expanded_inst_o(expanded_inst_from_c)
+);
+
+// 最终的指令与偏移
+wire [31:0] final_extracted_inst = raw_is_compressed ? expanded_inst_from_c : raw_32bit_inst;
+wire [2:0]  final_next_offset = raw_next_offset;
+
+// 将最终结果连接到输出信号
+assign extracted_inst = final_extracted_inst;
+assign next_offset = final_next_offset;
+// 注意：inst_is_compressed_o 在下面的 always 块中赋值
+
+// 指令提取状态机与对齐逻辑
+always @(*) begin
+    // 默认值
+    raw_16bit_inst = 16'b0;
+    raw_32bit_inst = 32'h00000013;
+    raw_is_compressed = 1'b0;
+    raw_next_offset = pc_low3 + 3'd2; // 默认按C指令增加
+    inst_is_compressed_o = 1'b0; // 输出端口信号
+
+    if (buffer_hit) begin
+        case (pc_low3)
+            3'b000: begin // 对齐到字节0
+                raw_is_compressed = (buffer_0[1:0] != 2'b11);
+                inst_is_compressed_o = raw_is_compressed;
+                if (raw_is_compressed) begin
+                    // 压缩指令
+                    raw_16bit_inst = buffer_0[15:0];
+                    raw_next_offset = 3'b010;
+                end else begin
+                    // 32位标准指令
+                    raw_32bit_inst = buffer_0[31:0];
+                    raw_next_offset = 3'b100;
+                end
+            end
+            
+            3'b010: begin // 从字节2开始
+                raw_is_compressed = (buffer_0[17:16] != 2'b11);
+                inst_is_compressed_o = raw_is_compressed;
+                if (raw_is_compressed) begin
+                    // 压缩指令
+                    raw_16bit_inst = buffer_0[31:16];
+                    raw_next_offset = 3'b100;
+                end else begin
+                    // 32位标准指令，需要组合 buffer_0[31:16] 和 buffer_1[15:0]
+                    if (buffer_1_valid) begin
+                        raw_32bit_inst = {buffer_1[15:0], buffer_0[31:16]};
+                        raw_next_offset = 3'b110;
+                    end else begin
+                        // buffer_1未就绪，输出NOP（会触发预取和流水线暂停）
+                        raw_32bit_inst = 32'h00000013;
+                    end
+                end
+            end
+            
+            3'b100: begin // 从字节4开始
+                raw_is_compressed = (buffer_0[33:32] != 2'b11);
+                inst_is_compressed_o = raw_is_compressed;
+                if (raw_is_compressed) begin
+                    // 压缩指令
+                    raw_16bit_inst = buffer_0[47:32];
+                    raw_next_offset = 3'b110;
+                end else begin
+                    // 32位标准指令
+                    raw_32bit_inst = buffer_0[63:32];
+                    raw_next_offset = 3'b000; // 下一指令在下一行
+                end
+            end
+            
+            3'b110: begin // 从字节6开始（关键路径！）
+                raw_is_compressed = (buffer_0[49:48] != 2'b11);
+                inst_is_compressed_o = raw_is_compressed;
+                if (raw_is_compressed) begin
+                    // 压缩指令
+                    raw_16bit_inst = buffer_0[63:48];
+                    raw_next_offset = 3'b000; // 下一指令在下一行
+                end else begin
+                    // 32位标准指令，需要组合 buffer_0[63:48] 和 buffer_1[15:0]
+                    if (buffer_1_valid) begin
+                        raw_32bit_inst = {buffer_1[15:0], buffer_0[63:48]};
+                        raw_next_offset = 3'b010;
+                    end else begin
+                        // buffer_1未就绪，输出NOP
+                        raw_32bit_inst = 32'h00000013;
+                    end
+                end
+            end
+            
+            default: begin
+                // 不应该发生（奇数地址已在外部检查）
+                raw_32bit_inst = 32'h00000013;
+                raw_is_compressed = 1'b0;
+                inst_is_compressed_o = 1'b0;
+                raw_next_offset = pc_low3;
+            end
+        endcase
+    end else begin
+        // 缓冲未命中，等待数据
+        raw_32bit_inst = 32'h00000013;
+        raw_is_compressed = 1'b0;
+        inst_is_compressed_o = 1'b0;
+        raw_next_offset = pc_low3;
+    end
+end
+
+
     assign inst_addr_o = inst_addr_i;
-    wire [31:0] _inst_data = if_rdata_i;
-
-
-    // ============ C 扩展相关信号 ============
-    wire [31:0] _next_seq_pc;
-    
-    // 提取当前指令（根据对齐状态）
-    wire [15:0] _current_inst_16bit;
-    assign _current_inst_16bit = (inst_addr_i[1] == 1'b0) ? if_rdata_i[15:0] : if_rdata_i[31:16];
-    
-    // 判断是否为压缩指令（低2位不为11）
-
-    wire _is_compressed_current = (_current_inst_16bit[1:0] != 2'b11);
-    assign is_compressed_inst = _is_compressed_current;
-    
-
-    wire [`XLEN-1:0] expanded_inst;
-    c_instruction_expander c_expander (
-        .compressed_inst_i(_current_inst_16bit),
-        .expanded_inst_o(expanded_inst)
-    );
-
-    wire [31:0] _final_inst;
-    assign _final_inst = _is_compressed_current ? expanded_inst : if_rdata_i;
-
-
+    wire [31:0] _inst_data = extracted_inst;
     
     // 访存暂停逻辑
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     wire _ram_stall = (!if_rdata_valid_i);
-    assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
-    assign inst_data_o = _final_inst;
+    assign ram_stall_valid_if_o = 
+    (!buffer_hit || 
+     ((pc_low3 == 3'b010 || pc_low3 == 3'b110) && 
+      !inst_is_compressed_o && !buffer_1_valid)) 
+    ? 1'b1 : 1'b0;
+    
+    assign inst_data_o = _inst_data;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;
@@ -238,307 +477,14 @@ module ifu (
 // end
 endmodule
 
-module c_instruction_expander (
-    input [15:0] compressed_inst_i,
-    output reg [31:0] expanded_inst_o
-);
-    
-    // 提取指令字段
-    wire [1:0] opcode = compressed_inst_i[1:0];
-    wire [2:0] funct3 = compressed_inst_i[15:13];
-    
-    always @(*) begin
-        expanded_inst_o = 32'h00000013;  // 默认NOP
-        
-        case (opcode)
-            2'b00: begin
-                // C0格式：ADDI4SPN, LW, SW等
-                case (funct3)
-                    3'b000: begin  // C.ADDI4SPN
-                        // addi rd', x2, nzuimm
-                        expanded_inst_o = {2'b0, compressed_inst_i[10:7], 
-                                          compressed_inst_i[12:11], compressed_inst_i[5], 
-                                          compressed_inst_i[6], 2'b00,
-                                          5'h02, 3'b000, {2'b01, compressed_inst_i[4:2]}, 
-                                          7'b0010011};
-                    end
-                    3'b010: begin  // C.LW
-                        // lw rd', offset(rs1')
-                        expanded_inst_o = {5'b0, compressed_inst_i[5], 
-                                          compressed_inst_i[12:10], compressed_inst_i[6], 
-                                          2'b00,
-                                          {2'b01, compressed_inst_i[9:7]}, 3'b010, 
-                                          {2'b01, compressed_inst_i[4:2]}, 7'b0000011};
-                    end
-                    3'b110: begin  // C.SW
-                        // sw rs2', offset(rs1')
-                        expanded_inst_o = {5'b0, compressed_inst_i[5], 
-                                          compressed_inst_i[12:10], compressed_inst_i[6], 
-                                          2'b00,
-                                          {2'b01, compressed_inst_i[9:7]}, 3'b010, 
-                                          {2'b01, compressed_inst_i[4:2]}, 7'b0100011};
-                    end
-                    default: begin
-                        expanded_inst_o = 32'h00000013;  // NOP
-                    end
-                endcase
-            end
-            
-            2'b01: begin
-                // C1格式：ADDI, JAL, LI, LUI, 算术指令等
-                case (funct3)
-                    3'b000: begin  // C.ADDI
-                        // addi rd, rd, imm
-                        expanded_inst_o = {{7{compressed_inst_i[12]}}, 
-                                          compressed_inst_i[6:2], 
-                                          compressed_inst_i[11:7], 3'b000, 
-                                          compressed_inst_i[11:7], 7'b0010011};
-                    end
-                    3'b001: begin  // C.JAL
-                        // jal x1, offset
-                        // imm[20|10:1|11|19:12]
-                        expanded_inst_o = {compressed_inst_i[12], 
-                                          compressed_inst_i[8], compressed_inst_i[10:9], 
-                                          compressed_inst_i[6], compressed_inst_i[7], 
-                                          compressed_inst_i[2], compressed_inst_i[11], 
-                                          compressed_inst_i[5:3],
-                                          {9{compressed_inst_i[12]}},
-                                          5'h01, 7'b1101111};
-                    end
-                    3'b010: begin  // C.LI
-                        // addi rd, x0, imm
-                        expanded_inst_o = {{7{compressed_inst_i[12]}}, 
-                                          compressed_inst_i[6:2], 
-                                          5'b0, 3'b000, 
-                                          compressed_inst_i[11:7], 7'b0010011};
-                    end
-                    3'b011: begin  // C.LUI / C.ADDI16SP
-                        if (compressed_inst_i[11:7] == 5'b00010) begin
-                            // C.ADDI16SP: addi x2, x2, nzimm
-                            expanded_inst_o = {{3{compressed_inst_i[12]}}, 
-                                              compressed_inst_i[4:3], compressed_inst_i[5], 
-                                              compressed_inst_i[2], compressed_inst_i[6], 
-                                              4'b0, 5'h02, 3'b000, 5'h02, 7'b0010011};
-                        end else begin
-                            // C.LUI: lui rd, nzimm
-                            expanded_inst_o = {{15{compressed_inst_i[12]}}, 
-                                              compressed_inst_i[6:2], 
-                                              compressed_inst_i[11:7], 7'b0110111};
-                        end
-                    end
-                    3'b100: begin  // C.算术指令
-                        case (compressed_inst_i[11:10])
-                            2'b00: begin  // C.SRLI / C.SRAI
-                                if (compressed_inst_i[12] == 0) begin
-                                    // C.SRLI: srli rd', rd', shamt
-                                    expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                                      {2'b01, compressed_inst_i[9:7]}, 
-                                                      3'b101, {2'b01, compressed_inst_i[9:7]}, 
-                                                      7'b0010011};
-                                    expanded_inst_o[31:26] = 6'b000000;  // srli
-                                end else begin
-                                    // C.SRAI: srai rd', rd', shamt
-                                    expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                                      {2'b01, compressed_inst_i[9:7]}, 
-                                                      3'b101, {2'b01, compressed_inst_i[9:7]}, 
-                                                      7'b0010011};
-                                    expanded_inst_o[31:26] = 6'b010000;  // srai的特殊编码
-                                end
-                            end
-                            2'b01: begin  // C.ANDI
-                                // andi rd', rd', imm
-                                expanded_inst_o = {{7{compressed_inst_i[12]}}, 
-                                                  compressed_inst_i[6:2], 
-                                                  {2'b01, compressed_inst_i[9:7]}, 
-                                                  3'b111, {2'b01, compressed_inst_i[9:7]}, 
-                                                  7'b0010011};
-                            end
-                            2'b10: begin  // C.SUB, C.XOR, C.OR, C.AND
-                                case (compressed_inst_i[6:5])
-                                    2'b00: begin  // C.SUB
-                                        // sub rd', rd', rs2'
-                                        expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
-                                                          {2'b01, compressed_inst_i[9:7]}, 
-                                                          3'b000, {2'b01, compressed_inst_i[9:7]}, 
-                                                          7'b0110011};
-                                        expanded_inst_o[31:26] = 6'b010000;
-                                    end
-                                    2'b01: begin  // C.XOR
-                                        // xor rd', rd', rs2'
-                                        expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
-                                                          {2'b01, compressed_inst_i[9:7]}, 
-                                                          3'b100, {2'b01, compressed_inst_i[9:7]}, 
-                                                          7'b0110011};
-                                    end
-                                    2'b10: begin  // C.OR
-                                        // or rd', rd', rs2'
-                                        expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
-                                                          {2'b01, compressed_inst_i[9:7]}, 
-                                                          3'b110, {2'b01, compressed_inst_i[9:7]}, 
-                                                          7'b0110011};
-                                    end
-                                    2'b11: begin  // C.AND
-                                        // and rd', rd', rs2'
-                                        expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
-                                                          {2'b01, compressed_inst_i[9:7]}, 
-                                                          3'b111, {2'b01, compressed_inst_i[9:7]}, 
-                                                          7'b0110011};
-                                    end
-                                endcase
-                            end
-                        endcase
-                    end
-                    3'b101: begin  // C.J
-                        // jal x0, offset
-                        expanded_inst_o = {compressed_inst_i[12], 
-                                          compressed_inst_i[8], compressed_inst_i[10:9], 
-                                          compressed_inst_i[6], compressed_inst_i[7], 
-                                          compressed_inst_i[2], compressed_inst_i[11], 
-                                          compressed_inst_i[5:3],
-                                          {9{compressed_inst_i[12]}},  // 8位符号扩展（不是9位！）
-                                          5'h00, 7'b1101111};
-                    end
-                    3'b110: begin  // C.BEQZ
-                        // c.beqz rs1', offset
-                        // 32-bit: beq rs1', x0, offset
-                        // 重新分析位分配：
-                        // imm[12] = inst[12] (1位)
-                        // imm[11] = inst[6] (1位)
-                        // imm[10] = inst[5] (1位)
-                        // imm[9]  = inst[2] (1位)
-                        // imm[8]  = inst[11] (1位)
-                        // imm[7]  = inst[10] (1位)
-                        // imm[6]  = inst[4] (1位)
-                        // imm[5]  = inst[3] (1位)
-                        // imm[4]  = inst[9] (1位)
-                        // imm[3]  = inst[8] (1位)
-                        // imm[2]  = inst[7] (1位)
-                        // imm[1]  = 0 (1位)
-                        // imm[0]  = 0 (1位)
-                        
-                        expanded_inst_o = {
-                            // imm[12] (1位) - bit 31
-                            compressed_inst_i[12],
-                            // imm[10:5] (6位) - bits 30:25
-                            // 根据规范：imm[10:5] = {inst[6], inst[5], inst[2], inst[11], inst[10], inst[4]}
-                            compressed_inst_i[6], compressed_inst_i[5], compressed_inst_i[2],
-                            compressed_inst_i[11], compressed_inst_i[10], compressed_inst_i[4],
-                            // rs2 (5位) = x0 - bits 24:20
-                            5'b00000,
-                            // rs1 (5位) = {2'b01, inst[9:7]} - bits 19:15
-                            {2'b01, compressed_inst_i[9:7]},
-                            // funct3 (3位) = 000 (beq) - bits 14:12
-                            3'b000,
-                            // imm[4:1] (4位) - bits 11:8
-                            // 根据规范：imm[4:1] = {inst[3], inst[9], inst[8], inst[7]}
-                            compressed_inst_i[3], compressed_inst_i[9], compressed_inst_i[8], compressed_inst_i[7],
-                            // imm[11] (1位) = inst[6] - bit 7
-                            compressed_inst_i[6],
-                            // opcode (7位) = 1100011 - bits 6:0
-                            7'b1100011
-                        };
-                        // 总位数: 1+6+5+5+3+4+1+7 = 32位 ✅
-                    end
-                    3'b111: begin  // C.BNEZ
-                        // c.bnez rs1', offset
-                        expanded_inst_o = {
-                            // imm[12] (1位)
-                            compressed_inst_i[12],
-                            // imm[10:5] (6位)
-                            compressed_inst_i[6], compressed_inst_i[5], compressed_inst_i[2],
-                            compressed_inst_i[11], compressed_inst_i[10], compressed_inst_i[4],
-                            // rs2 (5位) = x0
-                            5'b00000,
-                            // rs1 (5位) = {2'b01, inst[9:7]}
-                            {2'b01, compressed_inst_i[9:7]},
-                            // funct3 (3位) = 001 (bne)
-                            3'b001,
-                            // imm[4:1] (4位)
-                            compressed_inst_i[3], compressed_inst_i[9], compressed_inst_i[8], compressed_inst_i[7],
-                            // imm[11] (1位) = inst[6]
-                            compressed_inst_i[6],
-                            // opcode (7位) = 1100011
-                            7'b1100011
-                        };
-                    end
-                endcase
-            end
-            
-            2'b10: begin
-                // C2格式：SLLI, LWSP, SWSP, JALR, ADD, MV, BREAK等
-                case (funct3)
-                    3'b000: begin  // C.SLLI
-                        // slli rd, rd, shamt
-                        expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                          compressed_inst_i[11:7], 3'b001, 
-                                          compressed_inst_i[11:7], 7'b0010011};
-                    end
-                    3'b010: begin  // C.LWSP
-                        // lw rd, offset(x2)
-                        expanded_inst_o = {4'b0, compressed_inst_i[3:2], 
-                                          compressed_inst_i[12], compressed_inst_i[6:4], 
-                                          2'b00, 5'h02, 3'b010, 
-                                          compressed_inst_i[11:7], 7'b0000011};
-                    end
-                    3'b100: begin  // C.JR, C.MV, C.EBREAK, C.JALR, C.ADD
-                        // 根据RISC-V规范：
-                        // C.JR: funct3=100, inst[12]=0, inst[6:2]=0, rd!=0
-                        // C.MV: funct3=100, inst[12]=0, inst[6:2]!=0
-                        // C.EBREAK: funct3=100, inst[12]=1, inst[6:2]=0, rd=0
-                        // C.JALR: funct3=100, inst[12]=1, inst[6:2]=0, rd!=0
-                        // C.ADD: funct3=100, inst[12]=1, inst[6:2]!=0
-                        
-                        if (compressed_inst_i[12] == 1'b0) begin
-                            // inst[12]=0
-                            if (compressed_inst_i[6:2] == 5'b00000) begin
-                                // C.JR: jalr x0, rs1, 0
-                                expanded_inst_o = {12'b0, compressed_inst_i[11:7], 
-                                                  3'b000, 5'b0, 7'b1100111};
-                            end else begin
-                                // C.MV: add rd, x0, rs2
-                                expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                                  5'b0, 3'b000, compressed_inst_i[11:7], 
-                                                  7'b0110011};
-                            end
-                        end else begin
-                            // inst[12]=1
-                            if (compressed_inst_i[6:2] == 5'b00000) begin
-                                if (compressed_inst_i[11:7] == 5'b00000) begin
-                                    // C.EBREAK: ebreak
-                                    expanded_inst_o = 32'h00100073;
-                                end else begin
-                                    // C.JALR: jalr x1, rs1, 0
-                                    expanded_inst_o = {12'b0, compressed_inst_i[11:7], 
-                                                      3'b000, 5'h01, 7'b1100111};
-                                end
-                            end else begin
-                                // C.ADD: add rd, rd, rs2
-                                expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                                  compressed_inst_i[11:7], 3'b000, 
-                                                  compressed_inst_i[11:7], 7'b0110011};
-                            end
-                        end
-                    end
-                    3'b110: begin  // C.SWSP
-                        // sw rs2, offset(x2)
-                        expanded_inst_o = {4'b0, compressed_inst_i[8:7], 
-                                          compressed_inst_i[12:9], 2'b00, 
-                                          5'h02, 3'b010, compressed_inst_i[6:2], 
-                                          7'b0100011};
-                    end
-                    default: begin
-                        expanded_inst_o = 32'h00000013;  // NOP
-                    end
-                endcase
-            end
-            
-            default: begin
-                // 不是压缩指令（opcode为2'b11）或其他情况
-                expanded_inst_o = 32'h00000013;  // NOP
-            end
-        endcase
-    end
-endmodule
+
+
+
+
+
+
+
+
 
 
 

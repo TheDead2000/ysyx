@@ -19,7 +19,7 @@ module icache_top (
     input [`XLEN-1:0] preif_raddr_i,  // CPU 的访存信息 
     // input [7:0] preif_rmask_i,  // 访存掩码
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
-    output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
+    output [63:0] if_rdata_o,  // icache 返回读数据
 
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
@@ -88,7 +88,7 @@ module icache_top (
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
 
-  reg [`XLEN-1:0] uncache_rdata;
+  reg [63:0] uncache_rdata;
   reg [3:0] icache_state;
 
 
@@ -194,7 +194,14 @@ module icache_top (
           if (ram_r_handshake) begin
             _ram_raddr_valid_icache_o <= 0;
             uncache_data_ready <= 1;  // 完成信号
-            uncache_rdata <= ram_rdata_icache_i[31:0]; // 直接取低32位
+            // uncache_rdata <= ram_rdata_icache_i[31:0]; // 直接取低32位
+           case (blk_addr_reg[2:0])
+            3'b000: uncache_rdata <= {32'b0, ram_rdata_icache_i[31:0]};
+            3'b010: uncache_rdata <= {16'b0, ram_rdata_icache_i[31:0], 16'b0};
+            3'b100: uncache_rdata <= {ram_rdata_icache_i[31:0], 32'b0};
+            // 注意：非2字节对齐的请求应在前端被阻止或处理为异常
+            default: uncache_rdata <= 64'b0;
+            endcase
             icache_state <= CACHE_IDLE;
           end
         end
@@ -227,7 +234,7 @@ wire [127:0] icache_wdate =
     (burst_count[1:0] == 2'b01) ? {64'b0, ram_rdata_icache_i[31:0], 32'b0} :
     (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
                                   {ram_rdata_icache_i[31:0], 96'b0};
-  wire [`XLEN-1:0] icache_rdata;
+  wire [63:0] icache_rdata;
 
   icache_data u_icache_data (
 
@@ -270,7 +277,7 @@ wire [127:0] icache_wdate =
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
+  wire [64-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
   assign if_rdata_o = icache_final_data;
 
 

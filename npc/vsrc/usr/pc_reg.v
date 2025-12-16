@@ -21,6 +21,9 @@ module pc_reg (
     input bpu_pc_valid_i,
     input is_compressed_inst,
 
+    input              ifu_prefetch_req_i,
+    input [`XLEN-1:0]  ifu_prefetch_addr_i,
+
 
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
     output read_req_o,        //输出 next_pc, icache 取指
@@ -48,6 +51,8 @@ module pc_reg (
       _pc_next = branch_pc_i;
     end else if (bpu_pc_valid_i) begin : bpu_pc
       _pc_next = bpu_pc_i;
+    end else if (ifu_prefetch_req_i) begin : ifu_prefetch_pc
+      _pc_next = ifu_prefetch_addr_i;
     end else begin
       _pc_next = is_compressed_inst ? pc_temp_plus2 : pc_temp_plus4;
     end

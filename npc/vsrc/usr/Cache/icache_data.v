@@ -13,7 +13,7 @@ module icache_data #(
     input  [              128-1:0] icache_wmask,
     input  [                  3:0] burst_count_i,
     input                          icache_wen_i,
-    output [`XLEN-1:0] icache_rdata_o,
+    output [63:0] icache_rdata_o,
     /* sram */
     output [                      6:0] io_sram4_addr,
     output                         io_sram4_cen,
@@ -67,9 +67,25 @@ module icache_data #(
 
 
 
-  wire [1:0] word_sel = icache_blk_addr_i[3:2];
-  assign icache_rdata_o = icache_ram_data[word_sel*32 +: 32];
+  // wire [1:0] word_sel = icache_blk_addr_i[3:2];
+  // assign icache_rdata_o = icache_ram_data[word_sel*32 +: 32];
+  reg [63:0] selected_64bit;
+  always @(*) begin
+    case (icache_blk_addr_i[3:1]) // 注意索引是[3:1]，不是[3:2]
+      3'b000: selected_64bit = icache_ram_data[63:0];   // 字节 0-7
+      3'b001: selected_64bit = icache_ram_data[79:16];  // 字节 2-9
+      3'b010: selected_64bit = icache_ram_data[95:32];  // 字节 4-11
+      3'b011: selected_64bit = icache_ram_data[111:48]; // 字节 6-13
+      3'b100: selected_64bit = icache_ram_data[127:64]; // 字节 8-15
+      // 注：当 icache_blk_addr_i[3:1] = 3'b110 (字节12-19) 时，
+      // 所需数据已跨当前128位行，需要触发ICache Miss来获取下一行。
+      // 这种情况在IFU的预取逻辑中应尽量避免，但这里可返回零或旧值。
+      default: selected_64bit = 64'b0;
+    endcase
+  end
 
+  assign icache_rdata_o = selected_64bit;
+  
   assign io_sram4_cen = 1'b0;
   assign io_sram4_wmask = BWEN;
   assign io_sram4_addr = A;
