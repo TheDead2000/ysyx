@@ -510,18 +510,16 @@ end
 reg [31:0] inst_addr_o_reg;
 reg [31:0] inst_data_o_reg;
 
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        inst_addr_o_reg <= 32'b0;
-        inst_data_o_reg <= 32'h00000013;
-    end else if (!id_stall_i) begin
-        inst_addr_o_reg <= inst_addr_i;
+always @(*) begin
+    // if (!id_stall_i) begin
+        inst_addr_o_reg = inst_addr_i;
         if (buffer_hit) begin
-            inst_data_o_reg <= extracted_inst;
+            inst_data_o_reg = extracted_inst;
         end else begin
-            inst_data_o_reg <= 32'h00000013;
+            inst_data_o_reg = 32'h00000013;
         end
-    end
+    // end
+    // else 
 end
 
 assign inst_addr_o = inst_addr_o_reg;
