@@ -194,6 +194,7 @@ module ifu (
     localparam STATE_WAIT_SECOND_HALF = 1'b1;
     
     reg state;
+    reg[31:0] instructionaddr_out;
     reg [31:0] instruction_out;
     reg instruction_valid_out;
     reg is_compressed_out;
@@ -212,6 +213,7 @@ module ifu (
                     if (if_rdata_valid_i) begin
                         if (is_compressed) begin
                             // 压缩指令：直接输出
+                            instructionaddr_out <=inst_addr_i;
                             instruction_out <= {16'b0, current_halfword};
                             is_compressed_out <= 1'b1;
                             instruction_valid_out <= 1'b1;
@@ -219,6 +221,7 @@ module ifu (
                             // 非压缩指令：需要检查是否跨边界
                             if (inst_addr_i[1] == 1'b0) begin
                                 // 4字节对齐：直接提取完整32位
+                                instructionaddr_out <=inst_addr_i;
                                 instruction_out <= flush_if_rdata_i;
                                 is_compressed_out <= 1'b0;
                                 instruction_valid_out <= 1'b1;
@@ -242,6 +245,7 @@ module ifu (
                         // 检查地址是否连续
                         if ((inst_addr_i >> 2) == (last_pc >> 2) + 1) begin
                             // 地址连续，组合成完整指令
+                            instructionaddr_out <=inst_addr_i;
                             instruction_out <= {flush_if_rdata_i[15:0], pending_halfword};
                             is_compressed_out <= 1'b0;
                             instruction_valid_out <= 1'b1;
@@ -276,7 +280,7 @@ module ifu (
 
 
     // ============ 原有 IFU 逻辑（保持兼容） ============
-    assign inst_addr_o = inst_addr_i;
+    assign inst_addr_o = instructionaddr_out;
     // wire [31:0] _inst_data = flush_if_rdata_i;
 
 
