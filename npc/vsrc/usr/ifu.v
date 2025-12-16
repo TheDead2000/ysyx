@@ -297,7 +297,7 @@ module ifu (
     );
 
     wire [31:0] _final_inst;
-    assign _final_inst = is_compressed_inst ? expanded_inst : instruction_out;
+    assign _final_inst = is_compressed_inst ? expanded_inst : flush_if_rdata_i;
 
 
     
