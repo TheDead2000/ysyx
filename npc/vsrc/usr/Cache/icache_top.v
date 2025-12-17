@@ -268,23 +268,7 @@ wire [127:0] icache_wdate =
 
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
-
-reg icache_hit_delayed;
-reg [127:0] icache_rdata_delayed;
-
-always @(posedge clk) begin
-  if (rst) begin
-    icache_hit_delayed <= 0;
-    icache_rdata_delayed <= 0;
-  end else begin
-    icache_hit_delayed <= icache_hit;
-    icache_rdata_delayed <= icache_rdata;
-  end
-end
-
-
-
-
+  
 wire [3:0] sram128_offset_byte = cache_blk_addr[3:0];  // 128bit SRAM内字节偏移(0~15)
 wire [1:0] word_sel_byte = cache_blk_addr[3:2];        // 32位字选择(0~3)
 wire [1:0] halfword_sel_byte = cache_blk_addr[1:0];    // 16位半字选择(0/2/4...14)
@@ -310,7 +294,7 @@ wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
 // 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 16;  // 下一块地址（+16字节）
 wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
 wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 
@@ -367,7 +351,7 @@ end
 
 // -------------------------- 7. 最终输出数据选择 --------------------------
 reg [`XLEN-1:0] if_rdata_o_reg;
-wire [31:0] cache_rdata_32 = icache_rdata_delayed[word_sel_byte*32 +: 32];  // 32位字数据
+wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 always @(*) begin
