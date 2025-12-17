@@ -349,7 +349,7 @@ icache_data u_icache_data_next (
 //     end
 // end
 
-wire [31:0] cross_inst_32 = (need_cross_sram128 && next_sram128_valid) ? {next_sram128_data[15:0], curr_halfword} : 32'b0;
+wire [31:0] cross_inst_32 = (need_cross_sram128 ) ? {next_sram128_data[15:0], curr_halfword} : 32'b0;
 
 // -------------------------- 7. 最终输出数据选择 --------------------------
 wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
@@ -358,7 +358,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128 && next_sram128_valid)  ? cross_inst_32 : is_32bit_inst ? cache_rdata_32 : cache_rdata_16;
+  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? cache_rdata_32 : cache_rdata_16;
   assign if_rdata_o = icache_final_data;
 
 
