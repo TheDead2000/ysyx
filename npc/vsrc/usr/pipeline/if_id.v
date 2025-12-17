@@ -34,7 +34,7 @@ module if_id (
   wire _flush_valid = flush_i | (inst_addr_if_i == `PC_RESET_ADDR - 'd4);
   wire reg_rst = rst | _flush_valid;
 
-  /* inst_data_if_i 寄存器 */
+  /* inst_addr_if_i 寄存器 */
   wire [`INST_LEN-1:0] _inst_addr_if_id_d = inst_addr_if_i;
   reg [`INST_LEN-1:0] _inst_addr_if_id_q;
   regTemplate #(
