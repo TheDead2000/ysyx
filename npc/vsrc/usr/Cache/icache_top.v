@@ -227,7 +227,7 @@ wire [127:0] icache_wdate =
     (burst_count[1:0] == 2'b01) ? {64'b0, ram_rdata_icache_i[31:0], 32'b0} :
     (burst_count[1:0] == 2'b10) ? {32'b0, ram_rdata_icache_i[31:0], 64'b0} :
                                   {ram_rdata_icache_i[31:0], 96'b0};
-  wire [127:0] icache_rdata;
+  wire [31:0] icache_rdata;
 
   icache_data u_icache_data (
 
@@ -266,92 +266,93 @@ wire [127:0] icache_wdate =
   );
 
 
-
+  // 1. icache_hit ： 数据来自 cache
+  // 2. uncache_data_ready ：数据来自 uncache
   
-wire [3:0] sram128_offset_byte = cache_blk_addr[3:0];  // 128bit SRAM内字节偏移(0~15)
-wire [1:0] word_sel_byte = cache_blk_addr[3:2];        // 32位字选择(0~3)
-wire [1:0] halfword_sel_byte = cache_blk_addr[1:0];    // 16位半字选择(0/2/4...14)
-// -------------------------- 5. 跨块预取（适配32位指令跨128bit块） --------------------------
-// 5.1 预取缓存寄存器
-reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
-reg next_sram128_valid;         // 缓存有效标记
+// wire [3:0] sram128_offset_byte = cache_blk_addr[3:0];  // 128bit SRAM内字节偏移(0~15)
+// wire [1:0] word_sel_byte = cache_blk_addr[3:2];        // 32位字选择(0~3)
+// wire [1:0] halfword_sel_byte = cache_blk_addr[1:0];    // 16位半字选择(0/2/4...14)
+// // -------------------------- 5. 跨块预取（适配32位指令跨128bit块） --------------------------
+// // 5.1 预取缓存寄存器
+// reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
+// reg next_sram128_valid;         // 缓存有效标记
 
-// 5.2 当前半字数据提取
-wire [15:0] curr_halfword;
-assign curr_halfword = (sram128_offset_byte == 0)  ? icache_rdata[15:0]  :
-                       (sram128_offset_byte == 2)  ? icache_rdata[31:16] :
-                       (sram128_offset_byte == 4)  ? icache_rdata[47:32] :
-                       (sram128_offset_byte == 6)  ? icache_rdata[63:48] :
-                       (sram128_offset_byte == 8)  ? icache_rdata[79:64] :
-                       (sram128_offset_byte == 10) ? icache_rdata[95:80] :
-                       (sram128_offset_byte == 12) ? icache_rdata[111:96]:
-                       icache_rdata[127:112];  // 14字节→112~127bit
+// // 5.2 当前半字数据提取
+// wire [15:0] curr_halfword;
+// assign curr_halfword = (sram128_offset_byte == 0)  ? icache_rdata[15:0]  :
+//                        (sram128_offset_byte == 2)  ? icache_rdata[31:16] :
+//                        (sram128_offset_byte == 4)  ? icache_rdata[47:32] :
+//                        (sram128_offset_byte == 6)  ? icache_rdata[63:48] :
+//                        (sram128_offset_byte == 8)  ? icache_rdata[79:64] :
+//                        (sram128_offset_byte == 10) ? icache_rdata[95:80] :
+//                        (sram128_offset_byte == 12) ? icache_rdata[111:96]:
+//                        icache_rdata[127:112];  // 14字节→112~127bit
 
-// 5.3 指令宽度判断（RISC-V C扩展标准）
-wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=11
-wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
-wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
+// // 5.3 指令宽度判断（RISC-V C扩展标准）
+// wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=11
+// wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
+// wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
-// 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
-wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
-wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
+// // 5.4 预取下一个128bit块
+// wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
+// wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
+// wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 
-/* verilator lint_off PINMISSING */
-// 预取数据模块（仅读，无写）
-icache_data u_icache_data_next (
-    .icache_index_i      (next_line_idx),
-    .icache_blk_addr_i   (next_blk_addr),
-    .icache_line_wdata_i (128'h0),
-    .icache_wmask        (128'h0),
-    .burst_count_i       (4'h0),
-    .icache_wen_i        (1'b0),
-    .icache_rdata_o  (next_sram128_data),
-    /* SRAM仅读，写端口悬空 */
-    .io_sram4_addr       (),
-    .io_sram4_cen        (),
-    .io_sram4_wen        (),
-    .io_sram4_wmask      (),
-    .io_sram4_wdata      (),
-    .io_sram4_rdata      (io_sram4_rdata),
-    .io_sram5_addr       (),
-    .io_sram5_cen        (),
-    .io_sram5_wen        (),
-    .io_sram5_wmask      (),
-    .io_sram5_wdata      (),
-    .io_sram5_rdata      (io_sram5_rdata),
-    .io_sram6_addr       (),
-    .io_sram6_cen        (),
-    .io_sram6_wen        (),
-    .io_sram6_wmask      (),
-    .io_sram6_wdata      (),
-    .io_sram6_rdata      (io_sram6_rdata),
-    .io_sram7_addr       (),
-    .io_sram7_cen        (),
-    .io_sram7_wen        (),
-    .io_sram7_wmask      (),
-    .io_sram7_wdata      (),
-    .io_sram7_rdata      (io_sram7_rdata)
-);
+// /* verilator lint_off PINMISSING */
+// // 预取数据模块（仅读，无写）
+// icache_data u_icache_data_next (
+//     .icache_index_i      (next_line_idx),
+//     .icache_blk_addr_i   (next_blk_addr),
+//     .icache_line_wdata_i (128'h0),
+//     .icache_wmask        (128'h0),
+//     .burst_count_i       (4'h0),
+//     .icache_wen_i        (1'b0),
+//     .icache_rdata_o  (next_sram128_data),
+//     /* SRAM仅读，写端口悬空 */
+//     .io_sram4_addr       (),
+//     .io_sram4_cen        (),
+//     .io_sram4_wen        (),
+//     .io_sram4_wmask      (),
+//     .io_sram4_wdata      (),
+//     .io_sram4_rdata      (io_sram4_rdata),
+//     .io_sram5_addr       (),
+//     .io_sram5_cen        (),
+//     .io_sram5_wen        (),
+//     .io_sram5_wmask      (),
+//     .io_sram5_wdata      (),
+//     .io_sram5_rdata      (io_sram5_rdata),
+//     .io_sram6_addr       (),
+//     .io_sram6_cen        (),
+//     .io_sram6_wen        (),
+//     .io_sram6_wmask      (),
+//     .io_sram6_wdata      (),
+//     .io_sram6_rdata      (io_sram6_rdata),
+//     .io_sram7_addr       (),
+//     .io_sram7_cen        (),
+//     .io_sram7_wen        (),
+//     .io_sram7_wmask      (),
+//     .io_sram7_wdata      (),
+//     .io_sram7_rdata      (io_sram7_rdata)
+// );
 
-// -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
-reg [31:0] cross_inst_32;
-reg cross_inst_valid;
+// // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
+// reg [31:0] cross_inst_32;
+// reg cross_inst_valid;
 
-always @(*) begin
-    cross_inst_valid = 1'b0;
-    cross_inst_32 = 32'h0;
-    if (need_cross_sram128 && next_sram128_valid) begin
-        // 拼接：下一块前16位 + 当前块最后16位
-        cross_inst_32 = {next_sram128_data[15:0], curr_halfword};
-        cross_inst_valid = 1'b1;
-    end
-end
+// always @(*) begin
+//     cross_inst_valid = 1'b0;
+//     cross_inst_32 = 32'h0;
+//     if (need_cross_sram128 && next_sram128_valid) begin
+//         // 拼接：下一块前16位 + 当前块最后16位
+//         cross_inst_32 = {next_sram128_data[15:0], curr_halfword};
+//         cross_inst_valid = 1'b1;
+//     end
+// end
 
-// -------------------------- 7. 最终输出数据选择 --------------------------
-reg [`XLEN-1:0] if_rdata_o_reg;
-wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
-wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
+// // -------------------------- 7. 最终输出数据选择 --------------------------
+// reg [`XLEN-1:0] if_rdata_o_reg;
+// wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
+// wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 // always @(*) begin
 //     if (cross_inst_valid) begin
@@ -367,10 +368,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-    // 1. icache_hit ： 数据来自 cache
-  // 2. uncache_data_ready ：数据来自 uncache
-
-  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : cache_rdata_32;
+  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : icache_rdata;
   assign if_rdata_o = icache_final_data;
 
 
