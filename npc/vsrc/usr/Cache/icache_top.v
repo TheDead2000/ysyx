@@ -294,7 +294,7 @@ wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
 // 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 16;  // 下一块地址（+16字节）
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
 wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
 wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 

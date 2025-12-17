@@ -12,7 +12,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
     uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode);
     VlWide<4>/*127:0*/ __Vtemp_h4cfaf9c9__0;
     VlWide<4>/*127:0*/ __Vtemp_hf85d17ab__0;
-    VlWide<4>/*127:0*/ __Vtemp_h6013a350__0;
+    VlWide<4>/*127:0*/ __Vtemp_hec5fc8c0__0;
     VlWide<4>/*127:0*/ __Vtemp_h0b17221e__0;
     VlWide<4>/*127:0*/ __Vtemp_h56503401__0;
     VlWide<3>/*95:0*/ __Vtemp_h065941fe__0;
@@ -3643,23 +3643,23 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
     bufp->fullCData(oldp+6117,((3U & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg 
                                       >> 2U))),2);
     bufp->fullCData(oldp+6118,((3U & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg)),2);
-    __Vtemp_h6013a350__0[0U] = (((- (IData)((0U == 
+    __Vtemp_hec5fc8c0__0[0U] = (((- (IData)((0U == 
                                              (3U & 
-                                              (((IData)(0x10U) 
+                                              (((IData)(4U) 
                                                 + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                >> 4U))))) 
                                  & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram4_rdata[0U]) 
                                 | (((- (IData)((1U 
                                                 == 
                                                 (3U 
-                                                 & (((IData)(0x10U) 
+                                                 & (((IData)(4U) 
                                                      + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                     >> 4U))))) 
                                     & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram5_rdata[0U]) 
                                    | (((- (IData)((2U 
                                                    == 
                                                    (3U 
-                                                    & (((IData)(0x10U) 
+                                                    & (((IData)(4U) 
                                                         + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                        >> 4U))))) 
                                        & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram6_rdata[0U]) 
@@ -3667,27 +3667,27 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                     (3U 
                                                      == 
                                                      (3U 
-                                                      & (((IData)(0x10U) 
+                                                      & (((IData)(4U) 
                                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                          >> 4U))))) 
                                          & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram7_rdata[0U]))));
-    __Vtemp_h6013a350__0[1U] = (((- (IData)((0U == 
+    __Vtemp_hec5fc8c0__0[1U] = (((- (IData)((0U == 
                                              (3U & 
-                                              (((IData)(0x10U) 
+                                              (((IData)(4U) 
                                                 + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                >> 4U))))) 
                                  & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram4_rdata[1U]) 
                                 | (((- (IData)((1U 
                                                 == 
                                                 (3U 
-                                                 & (((IData)(0x10U) 
+                                                 & (((IData)(4U) 
                                                      + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                     >> 4U))))) 
                                     & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram5_rdata[1U]) 
                                    | (((- (IData)((2U 
                                                    == 
                                                    (3U 
-                                                    & (((IData)(0x10U) 
+                                                    & (((IData)(4U) 
                                                         + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                        >> 4U))))) 
                                        & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram6_rdata[1U]) 
@@ -3695,27 +3695,27 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                     (3U 
                                                      == 
                                                      (3U 
-                                                      & (((IData)(0x10U) 
+                                                      & (((IData)(4U) 
                                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                          >> 4U))))) 
                                          & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram7_rdata[1U]))));
-    __Vtemp_h6013a350__0[2U] = (((- (IData)((0U == 
+    __Vtemp_hec5fc8c0__0[2U] = (((- (IData)((0U == 
                                              (3U & 
-                                              (((IData)(0x10U) 
+                                              (((IData)(4U) 
                                                 + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                >> 4U))))) 
                                  & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram4_rdata[2U]) 
                                 | (((- (IData)((1U 
                                                 == 
                                                 (3U 
-                                                 & (((IData)(0x10U) 
+                                                 & (((IData)(4U) 
                                                      + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                     >> 4U))))) 
                                     & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram5_rdata[2U]) 
                                    | (((- (IData)((2U 
                                                    == 
                                                    (3U 
-                                                    & (((IData)(0x10U) 
+                                                    & (((IData)(4U) 
                                                         + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                        >> 4U))))) 
                                        & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram6_rdata[2U]) 
@@ -3723,27 +3723,27 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                     (3U 
                                                      == 
                                                      (3U 
-                                                      & (((IData)(0x10U) 
+                                                      & (((IData)(4U) 
                                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                          >> 4U))))) 
                                          & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram7_rdata[2U]))));
-    __Vtemp_h6013a350__0[3U] = (((- (IData)((0U == 
+    __Vtemp_hec5fc8c0__0[3U] = (((- (IData)((0U == 
                                              (3U & 
-                                              (((IData)(0x10U) 
+                                              (((IData)(4U) 
                                                 + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                >> 4U))))) 
                                  & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram4_rdata[3U]) 
                                 | (((- (IData)((1U 
                                                 == 
                                                 (3U 
-                                                 & (((IData)(0x10U) 
+                                                 & (((IData)(4U) 
                                                      + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                     >> 4U))))) 
                                     & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram5_rdata[3U]) 
                                    | (((- (IData)((2U 
                                                    == 
                                                    (3U 
-                                                    & (((IData)(0x10U) 
+                                                    & (((IData)(4U) 
                                                         + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                        >> 4U))))) 
                                        & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram6_rdata[3U]) 
@@ -3751,19 +3751,19 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                                     (3U 
                                                      == 
                                                      (3U 
-                                                      & (((IData)(0x10U) 
+                                                      & (((IData)(4U) 
                                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                                          >> 4U))))) 
                                          & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__io_sram7_rdata[3U]))));
-    bufp->fullWData(oldp+6119,(__Vtemp_h6013a350__0),128);
+    bufp->fullWData(oldp+6119,(__Vtemp_hec5fc8c0__0),128);
     bufp->fullSData(oldp+6123,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__curr_halfword),16);
     bufp->fullBit(oldp+6124,((3U == (3U & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__curr_halfword)))));
     bufp->fullBit(oldp+6125,((0xeU == (0xfU & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg))));
     bufp->fullBit(oldp+6126,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__need_cross_sram128));
-    bufp->fullIData(oldp+6127,(((IData)(0x10U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg)),32);
-    bufp->fullCData(oldp+6128,((0x3fU & ((IData)(0x10U) 
+    bufp->fullIData(oldp+6127,(((IData)(4U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg)),32);
+    bufp->fullCData(oldp+6128,((0x3fU & ((IData)(4U) 
                                          + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg))),6);
-    bufp->fullCData(oldp+6129,((0x7fU & (((IData)(0x10U) 
+    bufp->fullCData(oldp+6129,((0x7fU & (((IData)(4U) 
                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                          >> 6U))),7);
     bufp->fullIData(oldp+6130,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__cross_inst_32),32);
@@ -3785,16 +3785,16 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_3(VysyxSoCFull___024roo
                                            >> 4U)))));
     bufp->fullBit(oldp+6137,((3U != (3U & ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__blk_addr_reg) 
                                            >> 4U)))));
-    bufp->fullBit(oldp+6138,((0U != (3U & (((IData)(0x10U) 
+    bufp->fullBit(oldp+6138,((0U != (3U & (((IData)(4U) 
                                             + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                            >> 4U)))));
-    bufp->fullBit(oldp+6139,((1U != (3U & (((IData)(0x10U) 
+    bufp->fullBit(oldp+6139,((1U != (3U & (((IData)(4U) 
                                             + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                            >> 4U)))));
-    bufp->fullBit(oldp+6140,((2U != (3U & (((IData)(0x10U) 
+    bufp->fullBit(oldp+6140,((2U != (3U & (((IData)(4U) 
                                             + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                            >> 4U)))));
-    bufp->fullBit(oldp+6141,((3U != (3U & (((IData)(0x10U) 
+    bufp->fullBit(oldp+6141,((3U != (3U & (((IData)(4U) 
                                             + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_pc_reg__DOT__pc_next_reg) 
                                            >> 4U)))));
     bufp->fullIData(oldp+6142,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__u_icache_tag__DOT__read_tag_full),20);
