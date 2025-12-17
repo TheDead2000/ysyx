@@ -177,25 +177,18 @@ module ifu (
     assign inst_addr_o = inst_addr_i;
     wire [31:0] _inst_data = if_rdata_i;
 
-    wire _is_compressed_current = 1'b0;
-    assign is_compressed_inst = _is_compressed_current;
-    // // 提取当前指令（根据对齐状态）
-    // wire [15:0] _current_inst_16bit;
-    // assign _current_inst_16bit = (inst_addr_i[1] == 1'b0) ? if_rdata_i[15:0] : if_rdata_i[31:16];
-    
     // // 判断是否为压缩指令（低2位不为11）
-
-    // wire _is_compressed_current = (_current_inst_16bit[1:0] != 2'b11);
-    // assign is_compressed_inst = _is_compressed_current;
+    assign is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
 
     wire [`XLEN-1:0] expanded_inst;
-    // c_instruction_expander c_expander (
-    //     .compressed_inst_i(_current_inst_16bit),
-    //     .expanded_inst_o(expanded_inst)
-    // );
+
+    c_instruction_expander c_expander (
+        .compressed_inst_i(if_rdata_i[15:0]),
+        .expanded_inst_o(expanded_inst)
+    );
 
     wire [31:0] _final_inst;
-    assign _final_inst = _is_compressed_current ? expanded_inst : if_rdata_i;
+    assign _final_inst = is_compressed_inst ? expanded_inst : if_rdata_i;
 
 
     

@@ -336,18 +336,20 @@ icache_data u_icache_data_next (
 );
 
 // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
-reg [31:0] cross_inst_32;
-reg cross_inst_valid;
+// reg [31:0] cross_inst_32;
+// reg cross_inst_valid;
 
-always @(*) begin
-    cross_inst_valid = 1'b0;
-    cross_inst_32 = 32'h0;
-    if (need_cross_sram128 && next_sram128_valid) begin
-        // 拼接：下一块前16位 + 当前块最后16位
-        cross_inst_32 = {next_sram128_data[15:0], curr_halfword};
-        cross_inst_valid = 1'b1;
-    end
-end
+// always @(*) begin
+//     cross_inst_valid = 1'b0;
+//     cross_inst_32 = 32'h0;
+//     if (need_cross_sram128 && next_sram128_valid) begin
+//         // 拼接：下一块前16位 + 当前块最后16位
+//         cross_inst_32 = {next_sram128_data[15:0], curr_halfword};
+//         cross_inst_valid = 1'b1;
+//     end
+// end
+
+wire [31:0] cross_inst_32 = (need_cross_sram128 && next_sram128_valid) ? {next_sram128_data[15:0], curr_halfword} : 32'b0;
 
 // -------------------------- 7. 最终输出数据选择 --------------------------
 wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
@@ -356,7 +358,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : cross_inst_valid ? cross_inst_32 : is_32bit_inst ? cache_rdata_32 : cache_rdata_16;
+  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128 && next_sram128_valid)  ? cross_inst_32 : is_32bit_inst ? cache_rdata_32 : cache_rdata_16;
   assign if_rdata_o = icache_final_data;
 
 

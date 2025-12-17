@@ -40,7 +40,14 @@ module pc_reg (
 
   wire _pc_reg_wen = ~stall_valid_i;
 
-
+  reg is_compressed_inst_reg;
+  always @(posedge clk) begin
+    if (rst) begin
+      is_compressed_inst_reg <= 1'b0;
+    end else if (~stall_valid_i) begin
+      is_compressed_inst_reg <= is_compressed_inst;
+    end
+  end
   always @(*) begin
     if (clint_pc_valid_i ) begin : trap_pc
       _pc_next = clint_pc_i;
@@ -49,7 +56,7 @@ module pc_reg (
     end else if (bpu_pc_valid_i) begin : bpu_pc
       _pc_next = bpu_pc_i;
     end else begin
-      _pc_next = is_compressed_inst ? pc_temp_plus2 : pc_temp_plus4;
+      _pc_next = is_compressed_inst_reg ? pc_temp_plus2 : pc_temp_plus4;
     end
     // $display("pc_reg:= %h", _pc_next);
   end
