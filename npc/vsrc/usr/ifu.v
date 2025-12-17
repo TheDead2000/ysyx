@@ -332,7 +332,7 @@ module ifu (
         end else begin
             // 当需要保存半字且流水线不暂停时才保存
             if (if_rdata_valid_i && !is_compressed_current && 
-                inst_addr_i[1] == 1'b1 && !saved_valid && !if_stall_i) begin
+                inst_addr_i[1] == 1'b1 && !saved_valid) begin
                 saved_halfword <= current_halfword;
                 saved_pc <= inst_addr_i;
                 saved_valid <= 1'b1;
