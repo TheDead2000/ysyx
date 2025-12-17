@@ -353,24 +353,24 @@ reg [`XLEN-1:0] if_rdata_o_reg;
 wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字数据
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
-always @(*) begin
-    if (cross_inst_valid) begin
-        // 跨块32位指令：返回拼接结果
-        if_rdata_o_reg = cross_inst_32;
-    end else if (is_32bit_inst) begin
-          if_rdata_o_reg = cache_rdata_32;
-    end else begin
-        // 16位压缩指令：返回16位数据，高位补0
-        if_rdata_o_reg = {{16{1'b0}}, cache_rdata_16};
-    end
-end
+// always @(*) begin
+//     if (cross_inst_valid) begin
+//         // 跨块32位指令：返回拼接结果
+//         if_rdata_o_reg = cross_inst_32;
+//     end else if (is_32bit_inst) begin
+//           if_rdata_o_reg = cache_rdata_32;
+//     end else begin
+//         // 16位压缩指令：返回16位数据，高位补0
+//         if_rdata_o_reg = {{16{1'b0}}, cache_rdata_16};
+//     end
+// end
 
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
     // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
 
-  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : if_rdata_o_reg;
+  wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : cache_rdata_32;
   assign if_rdata_o = icache_final_data;
 
 
