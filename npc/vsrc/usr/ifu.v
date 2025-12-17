@@ -178,7 +178,7 @@ module ifu (
     wire [31:0] _inst_data = if_rdata_i;
 
     wire _is_compressed_current = 1'b0;
-
+    assign is_compressed_inst = _is_compressed_current;
     // // 提取当前指令（根据对齐状态）
     // wire [15:0] _current_inst_16bit;
     // assign _current_inst_16bit = (inst_addr_i[1] == 1'b0) ? if_rdata_i[15:0] : if_rdata_i[31:16];
