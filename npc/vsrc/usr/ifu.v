@@ -410,7 +410,9 @@ module ifu (
     wire need_wait_second_half = (if_rdata_valid_i && !is_compressed_current && 
                                  inst_addr_i[1] == 1'b1 && !saved_valid);
     
-    assign ram_stall_valid_if_o = (!selected_valid || need_wait_second_half) && !ls_valid_i;
+    wire _ram_stall = (!if_rdata_valid_i) && (!selected_valid || need_wait_second_half) || (MMU_state != STATE_IDLE);;
+    assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
+
     // assign ifu_ready_o = selected_valid && !need_wait_second_half;
 
 
