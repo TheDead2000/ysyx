@@ -32,15 +32,13 @@ module ifu (
     input wire [31:0] id_ras_push_data_i,
     input wire ex_stall_valid_i,
     input wire if_flush_i,
-    input wire if_stall_i,
     input wire id_stall_i,
     
     // to pc
     output [31:0] bpu_pc_o,
     output bpu_pc_valid_o,
     output is_compressed_inst,
-    output reg  ifu_special_valid_o,          // IFU特殊更新有效
-    output reg  [`XLEN-1:0] ifu_special_pc_o, // IFU特殊更新地址
+
 
     // to exu
     output reg pdt_res,
@@ -115,11 +113,11 @@ module ifu (
     );
     
     // ============ IFU 状态机 ============
-    localparam MMU_STATE_IDLE = 2'b00;
+    localparam STATE_IDLE = 2'b00;
     localparam STATE_WAIT_MMU = 2'b01;
     localparam STATE_WAIT_MEM = 2'b10;
     
-    reg [1:0] MMU_state;
+    reg [1:0] state;
     reg [31:0] phys_pc;
     reg pending_redirect;
     
@@ -134,14 +132,14 @@ module ifu (
     /* verilator lint_off CASEINCOMPLETE */
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            MMU_state <= MMU_STATE_IDLE;
+            state <= STATE_IDLE;
             phys_pc <= 32'b0;
             pending_redirect <= 1'b0;
         end else begin
-            case (MMU_state)
-                MMU_STATE_IDLE: begin
+            case (state)
+                STATE_IDLE: begin
                     if (mmu_enable_i) begin
-                        MMU_state <= STATE_WAIT_MMU;
+                        state <= STATE_WAIT_MMU;
                     end
                 end
                 
@@ -149,254 +147,58 @@ module ifu (
                     if (mmu_resp_valid_i) begin
                         if (mmu_page_fault_i) begin
                             // 页错误处理
-                            MMU_state <= MMU_STATE_IDLE;
+                            state <= STATE_IDLE;
                         end else begin
                             phys_pc <= mmu_resp_paddr_i;
-                            MMU_state <= STATE_WAIT_MEM;
+                            state <= STATE_WAIT_MEM;
                         end
                     end
                 end
                 
                 STATE_WAIT_MEM: begin
                     if (if_rdata_valid_i) begin
-                        MMU_state <= MMU_STATE_IDLE;
+                        state <= STATE_IDLE;
                     end
                 end
             endcase
             
             // 处理重定向
             if (if_flush_i) begin
-                MMU_state <= MMU_STATE_IDLE;
+                state <= STATE_IDLE;
                 pending_redirect <= 1'b1;
             end
         end
     end
     
 
-    localparam STATE_IDLE = 1'b0;
-    localparam STATE_WAIT_HIGH16 = 1'b1;
+
     
-    reg state;
-    reg [15:0] saved_halfword;
-    reg [31:0] saved_pc;
-    
-    // 当前读取的16位数据
-    wire [15:0] current_halfword = (inst_addr_i[1] == 1'b0) ? 
-                                   if_rdata_i[15:0] : if_rdata_i[31:16];
-    
-    // 检查是否是压缩指令
-    wire is_compressed = (current_halfword[1:0] != 2'b11);
-    
-    // ============ 状态转移 ============
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            state <= STATE_IDLE;
-            ifu_special_valid_o <= 1'b0;
-        // end else if (if_flush_i || branch_taken_i) begin
-        end else if (if_flush_i) begin
-            // 分支或异常，重置状态
-            state <= STATE_IDLE;
-            ifu_special_valid_o <= 1'b0;
-        end else begin
-            // 默认清除特殊更新请求（单周期脉冲）
-            ifu_special_valid_o <= 1'b0;
-            
-            case (state)
-                STATE_IDLE: begin
-                    if (if_rdata_valid_i && !is_compressed && inst_addr_i[1] == 1'b1) begin
-                        // 遇到非对齐的32位指令
-                        saved_halfword <= current_halfword;
-                        saved_pc <= inst_addr_i;
-                        state <= STATE_WAIT_HIGH16;
-                        
-                        // 请求PC特殊更新到 inst_addr_i + 2
-                        ifu_special_valid_o <= 1'b1;
-                        ifu_special_pc_o <= inst_addr_i + 32'd2;
-                    end
-                end
-                
-                STATE_WAIT_HIGH16: begin
-                    if (if_rdata_valid_i) begin
-                        // 高16位到达，回到IDLE
-                        state <= STATE_IDLE;
-                    end
-                end
-            endcase
-        end
-    end
-    
-    // ============ 输出逻辑 ============
-    reg [31:0] output_instruction;
-    reg output_valid;
-    reg output_is_compressed;
-    
-    always @(*) begin
-        if (state == STATE_WAIT_HIGH16) begin
-            if (if_rdata_valid_i) begin
-                // 组合跨边界指令
-                output_instruction = {if_rdata_i[15:0], saved_halfword};
-                output_valid = 1'b1;
-                output_is_compressed = 1'b0;
-            end else begin
-                output_instruction = 32'h00000013;
-                output_valid = 1'b0;
-                output_is_compressed = 1'b0;
-            end
-        end else begin
-            // 正常情况
-            if (if_rdata_valid_i) begin
-                if (is_compressed) begin
-                    output_instruction = {16'b0, current_halfword};
-                    output_valid = 1'b1;
-                    output_is_compressed = 1'b1;
-                end else if (inst_addr_i[1] == 1'b0) begin
-                    output_instruction = if_rdata_i;
-                    output_valid = 1'b1;
-                    output_is_compressed = 1'b0;
-                end else begin
-                    // 非对齐32位指令的开始，还没有高16位
-                    output_instruction = 32'h00000013;
-                    output_valid = 1'b0;
-                    output_is_compressed = 1'b0;
-                end
-            end else begin
-                output_instruction = 32'h00000013;
-                output_valid = 1'b0;
-                output_is_compressed = 1'b0;
-            end
-        end
-    end
-    
-    assign inst_addr_o = (state == STATE_WAIT_HIGH16) ? saved_pc : inst_addr_i;
-    
+    // ============ 原有 IFU 逻辑（保持兼容） ============
+    assign inst_addr_o = inst_addr_i;
+
+    // 提取当前指令
+    wire [15:0] _current_inst_16bit;
+    wire _is_compressed_inst = if_rdata_i[1:0] != 2'b11;
+    assign _current_inst_16bit = _is_compressed_inst ? if_rdata_i[15:0] : 16'b0;
+    assign  is_compressed_inst = _is_compressed_inst;
+    // 判断是否为压缩指令（低2位不为11）
+
     wire [`XLEN-1:0] expanded_inst;
     c_instruction_expander c_expander (
-        .compressed_inst_i(output_instruction[15:0]),
+        .compressed_inst_i(_current_inst_16bit),
         .expanded_inst_o(expanded_inst)
     );
-    
-    assign inst_data_o = output_valid ? 
-                        (output_is_compressed ? expanded_inst : output_instruction) : 
-                        32'h00000013;
-    assign is_compressed_inst = output_is_compressed;
-    
-    // ============ 暂停逻辑 ============
-    // 需要暂停的情况：
-    // 1. 等待跨边界指令的高16位
-    // 2. 没有有效数据输出
-    wire need_stall = (state == STATE_WAIT_HIGH16 && !if_rdata_valid_i) || 
-                     (!output_valid && if_rdata_valid_i);
-    
-    assign ram_stall_valid_if_o = need_stall;
 
-    //     // 当前读取的16位数据
-    // wire [15:0] current_halfword = (inst_addr_i[1] == 1'b0) ? 
-    //                                if_rdata_i[15:0] : if_rdata_i[31:16];
-    
-    // // 检查是否是压缩指令
-    // wire is_compressed_current = (current_halfword[1:0] != 2'b11);
-    
-    // // ============ 时序逻辑状态保持 ============
-    // reg [15:0] saved_halfword;
-    // reg saved_valid;
-    // reg [31:0] saved_pc;
-    
-    // always @(posedge clk or posedge rst) begin
-    //     if (rst) begin
-    //         saved_valid <= 1'b0;
-    //     end else if (if_flush_i) begin
-    //         saved_valid <= 1'b0;
-    //     end else begin
-    //         // 当需要保存半字且流水线不暂停时才保存
-    //         if (if_rdata_valid_i && !is_compressed_current && 
-    //             inst_addr_i[1] == 1'b1 && !saved_valid) begin
-    //             saved_halfword <= current_halfword;
-    //             saved_pc <= inst_addr_i;
-    //             saved_valid <= 1'b1;
-    //         end else if (saved_valid && if_rdata_valid_i && 
-    //                    (inst_addr_i >> 2) == (saved_pc >> 2) + 1) begin
-    //             // 完成跨边界指令后清除保存状态
-    //             saved_valid <= 1'b0;
-    //         end
-    //     end
-    // end
-    
-    // // ============ 组合逻辑输出 ============
-    
-    // // 指令选择逻辑
-    // reg [31:0] selected_instruction;
-    // reg selected_is_compressed;
-    // reg selected_valid;
-    
-    // always @(*) begin
-    //     if (saved_valid) begin
-    //         // 有保存的半字，需要组合跨边界指令
-    //         if (if_rdata_valid_i && (inst_addr_i >> 2) == (saved_pc >> 2) + 1) begin
-    //             selected_instruction = {if_rdata_i[15:0], saved_halfword};
-    //             selected_is_compressed = 1'b0;
-    //             selected_valid = 1'b1;
-    //         end else begin
-    //             selected_instruction = 32'h00000013;  // nop
-    //             selected_is_compressed = 1'b0;
-    //             selected_valid = 1'b0;
-    //         end
-    //     end else if (if_rdata_valid_i) begin
-    //         if (is_compressed_current) begin
-    //             selected_instruction = {16'b0, current_halfword};
-    //             selected_is_compressed = 1'b1;
-    //             selected_valid = 1'b1;
-    //         end else if (inst_addr_i[1] == 1'b0) begin
-    //             selected_instruction = if_rdata_i;
-    //             selected_is_compressed = 1'b0;
-    //             selected_valid = 1'b1;
-    //         end else begin
-    //             // 需要保存半字的情况
-    //             selected_instruction = 32'h00000013;  // nop
-    //             selected_is_compressed = 1'b0;
-    //             selected_valid = 1'b0;
-    //         end
-    //     end else begin
-    //         selected_instruction = 32'h00000013;  // nop
-    //         selected_is_compressed = 1'b0;
-    //         selected_valid = 1'b0;
-    //     end
-    // end
-    
-    // // ============ 压缩指令扩展 ============
-    
-    // wire [`XLEN-1:0] expanded_inst;
-    // c_instruction_expander c_expander (
-    //     .compressed_inst_i(selected_instruction[15:0]),
-    //     .expanded_inst_o(expanded_inst)
-    // );
-    
-    // // ============ 最终输出 ============
-    
-    // assign inst_addr_o = inst_addr_i;
-    // assign inst_data_o = selected_valid ? 
-    //                     (selected_is_compressed ? expanded_inst : selected_instruction) : 
-    //                     32'h00000013;  // nop
-    
-    // assign is_compressed_inst = selected_is_compressed;
-    
-    // // ============ 暂停信号生成 ============
-    
-    // // 暂停条件：
-    // // 1. 没有有效数据
-    // // 2. 需要等待跨边界指令的第二个半字
-    // wire need_wait_second_half = (if_rdata_valid_i && !is_compressed_current && 
-    //                              inst_addr_i[1] == 1'b1 && !saved_valid);
-    
-    // // wire _ram_stall = (!if_rdata_valid_i) && (!selected_valid || need_wait_second_half) || (MMU_state != STATE_IDLE);
-    //  wire _ram_stall = (!if_rdata_valid_i) || (!selected_valid || need_wait_second_half);
-    // assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
-
-    // // assign ifu_ready_o = selected_valid && !need_wait_second_half;
+    wire [31:0] _final_inst;
+    assign _final_inst = (_is_compressed_inst) ? expanded_inst : if_rdata_i;
 
 
-
-
-
+    
+    // 访存暂停逻辑
+    // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
+    wire _ram_stall = (!if_rdata_valid_i);
+    assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
+    assign inst_data_o = _final_inst;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;

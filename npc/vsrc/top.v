@@ -61,11 +61,6 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
     .is_compressed_inst(is_compressed_inst),
-    .ifu_special_valid_i(ifu_req_valid_o),
-    .ifu_special_pc_i(ifu_req_pc_o),
-
-
-
 
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
@@ -114,7 +109,7 @@ wire mmu_flush;
 
 /*******************ifu***************************/
 wire if_rdata_valid;  // 读数据是否准备好
-wire [`XLEN-1:0] if_rdata;  // 返回到读取的数据
+wire [31:0] if_rdata;  // 返回到读取的数据
 
 wire [`INST_LEN-1:0] inst_addr_if;
 wire [`INST_LEN-1:0] inst_data_if;
@@ -166,14 +161,12 @@ ifu ifu (
   .id_ras_push_data_i(id_ras_push_data), // ID阶段计算的返回地址
   .ex_stall_valid_i(stall_clint[`CTRLBUS_ID_EX]), // 暂停流水线时清除预测
   .if_flush_i(flush_clint[`CTRLBUS_IF_ID]), // 清空 IF 阶段指令
-  .if_stall_i(stall_clint[`CTRLBUS_IF_ID]),
   .id_stall_i(stall_clint[`CTRLBUS_IF_ID]),
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
   .is_compressed_inst(is_compressed_inst),
-  .ifu_special_valid_o(ifu_req_valid_o),
-  .ifu_special_pc_o(ifu_req_pc_o),
+
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
