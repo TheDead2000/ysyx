@@ -18,17 +18,6 @@ module pc_reg (
     output read_req_o,
     output [`INST_LEN-1:0] pc_o
 );
-
-  // 新增：打拍缓存is_compressed_inst，切断组合循环
-  reg is_compressed_inst_reg;
-  always @(posedge clk) begin
-    if (rst) begin
-      is_compressed_inst_reg <= 1'b0;
-    end else if (!stall_valid_i) begin  // 非stall时更新
-      is_compressed_inst_reg <= is_compressed_inst;
-    end
-  end
-
   wire [`XLEN-1:0] _pc_current;
   wire [`XLEN-1:0] pc_temp = _pc_current;
   wire [`XLEN-1:0] pc_temp_plus4 = pc_temp + 'd4;
@@ -49,7 +38,7 @@ module pc_reg (
       _pc_next = bpu_pc_i;
     end else begin
       // 关键：用延迟一拍的标记计算PC增量
-      _pc_next = is_compressed_inst_reg ? pc_temp_plus2 : pc_temp_plus4;
+      _pc_next = is_compressed_inst ? pc_temp_plus2 : pc_temp_plus4;
     end
   end
 
