@@ -162,44 +162,26 @@ module c_instruction_expander (
                     end
                     3'b110: begin  // C.BEQZ
                         // c.beqz rs1', offset
-                        // 32-bit: beq rs1', x0, offset
-                        // 重新分析位分配：
-                        // imm[12] = inst[12] (1位)
-                        // imm[11] = inst[6] (1位)
-                        // imm[10] = inst[5] (1位)
-                        // imm[9]  = inst[2] (1位)
-                        // imm[8]  = inst[11] (1位)
-                        // imm[7]  = inst[10] (1位)
-                        // imm[6]  = inst[4] (1位)
-                        // imm[5]  = inst[3] (1位)
-                        // imm[4]  = inst[9] (1位)
-                        // imm[3]  = inst[8] (1位)
-                        // imm[2]  = inst[7] (1位)
-                        // imm[1]  = 0 (1位)
-                        // imm[0]  = 0 (1位)
-                        
+                        // 32-bit: beq rs1', x0, offset      
                         expanded_inst_o = {
                             // imm[12] (1位) - bit 31
                             compressed_inst_i[12],
                             // imm[10:5] (6位) - bits 30:25
-                            // 根据规范：imm[10:5] = {inst[6], inst[5], inst[2], inst[11], inst[10], inst[4]}
-                            compressed_inst_i[6], compressed_inst_i[5], compressed_inst_i[2],
-                            compressed_inst_i[11], compressed_inst_i[10], compressed_inst_i[4],
+                            compressed_inst_i[12], compressed_inst_i[12],
+                            compressed_inst_i[12], compressed_inst_i[6:5], compressed_inst_i[2],
                             // rs2 (5位) = x0 - bits 24:20
                             5'b00000,
                             // rs1 (5位) = {2'b01, inst[9:7]} - bits 19:15
                             {2'b01, compressed_inst_i[9:7]},
                             // funct3 (3位) = 000 (beq) - bits 14:12
                             3'b000,
-                            // imm[4:1] (4位) - bits 11:8
-                            // 根据规范：imm[4:1] = {inst[3], inst[9], inst[8], inst[7]}
-                            compressed_inst_i[3], compressed_inst_i[9], compressed_inst_i[8], compressed_inst_i[7],
-                            // imm[11] (1位) = inst[6] - bit 7
-                            compressed_inst_i[6],
+                            // imm[4:1] (4位) 
+                            compressed_inst_i[10:9], compressed_inst_i[4:3],
+                            // imm[11] (1位)
+                            compressed_inst_i[12],
                             // opcode (7位) = 1100011 - bits 6:0
                             7'b1100011
                         };
-                        // 总位数: 1+6+5+5+3+4+1+7 = 32位 ✅
                     end
                     3'b111: begin  // C.BNEZ
                         // c.bnez rs1', offset

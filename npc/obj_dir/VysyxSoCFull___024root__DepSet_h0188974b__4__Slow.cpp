@@ -192,40 +192,31 @@ VL_ATTR_COLD void VysyxSoCFull___024root___stl_comb__TOP__0(VysyxSoCFull___024ro
                                             << 0x13U)) 
                                         | ((0x40000000U 
                                             & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                               << 0x18U)) 
+                                               << 0x12U)) 
                                            | ((0x20000000U 
                                                & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                  << 0x18U)) 
+                                                  << 0x11U)) 
                                               | ((0x10000000U 
                                                   & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                     << 0x1aU)) 
-                                                 | ((0x8000000U 
+                                                     << 0x10U)) 
+                                                 | ((0xc000000U 
                                                      & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                        << 0x10U)) 
-                                                    | ((0x4000000U 
-                                                        & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                           << 0x10U)) 
-                                                       | (0x2000000U 
-                                                          & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                             << 0x15U)))))))) 
+                                                        << 0x15U)) 
+                                                    | (0x2000000U 
+                                                       & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
+                                                          << 0x17U))))))) 
                                        | ((0x38000U 
                                            & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
                                               << 8U)) 
-                                          | ((0x800U 
+                                          | ((0xc00U 
                                               & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                 << 8U)) 
-                                             | ((0x400U 
+                                                 << 1U)) 
+                                             | ((0x300U 
                                                  & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                    << 1U)) 
-                                                | ((0x200U 
-                                                    & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                       << 1U)) 
-                                                   | ((0x100U 
-                                                       & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                          << 1U)) 
-                                                      | (0x80U 
-                                                         & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                            << 1U))))))))));
+                                                    << 5U)) 
+                                                | (0x80U 
+                                                   & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
+                                                      >> 5U))))))));
             } else if ((0x2000U & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data)) {
                 vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ifu__DOT__expanded_inst 
                     = (0x6fU | ((0x80000000U & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
