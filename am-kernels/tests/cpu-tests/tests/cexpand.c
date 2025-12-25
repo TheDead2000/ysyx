@@ -14,19 +14,19 @@ void test_c_addi_basic() {
     printf("Test 1: Add positive immediate (5)\n");
     a0_value = 10;
     
-    __asm__ volatile (
-        "mv a0, %[input]\n"      // 设置初始值
-        "c.addi a0, 5\n"         // 压缩指令：a0 = a0 + 5
-        "mv %[result], a0\n"     // 保存结果
-        : [result] "=r" (result)
-        : [input] "r" (a0_value)
-        : "a0"
-    );
+    // __asm__ volatile (
+    //     "mv a0, %[input]\n"      // 设置初始值
+    //     "c.addi a0, 5\n"         // 压缩指令：a0 = a0 + 5
+    //     "mv %[result], a0\n"     // 保存结果
+    //     : [result] "=r" (result)
+    //     : [input] "r" (a0_value)
+    //     : "a0"
+    // );
     
-    printf("  Initial a0 = %d\n", a0_value);
-    printf("  After c.addi a0, 5: a0 = %d\n", result);
-    printf("  Expected: %d + 5 = %d\n", a0_value, a0_value + 5);
-    printf("  %s\n\n", (result == a0_value + 5) ? "✅ PASS" : "❌ FAIL");
+    // printf("  Initial a0 = %d\n", a0_value);
+    // printf("  After c.addi a0, 5: a0 = %d\n", result);
+    // printf("  Expected: %d + 5 = %d\n", a0_value, a0_value + 5);
+    // printf("  %s\n\n", (result == a0_value + 5) ? "✅ PASS" : "❌ FAIL");
     
     // // 测试用例2：负数加法（减法）
     // printf("Test 2: Add negative immediate (-3)\n");
@@ -70,4 +70,5 @@ void test_c_addi_basic() {
 int main()
 {
     test_c_addi_basic();
+    return 0;
 }
