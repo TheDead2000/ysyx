@@ -3,5 +3,5 @@
 int main()
 {   
     printf("hello,world!\n");
-    while(1);
+    // while(1);
 }
