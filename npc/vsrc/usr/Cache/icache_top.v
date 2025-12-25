@@ -298,7 +298,18 @@ assign next_halfword = (sram128_offset_byte == 0)  ? icache_rdata[31:16] :
 
 
 // 5.3 指令宽度判断（RISC-V C扩展标准）
-wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=11
+wire [`XLEN-1:0] pc_reg_value; // 从pc_reg模块引入pc_o
+reg [15:0] curr_halfword_reg; // 缓存curr_halfword到寄存器
+
+always @(posedge clk or posedge rst) begin
+  if (rst) begin
+    curr_halfword_reg <= 16'b0;
+  end else if (preif_raddr_valid_i) begin
+    curr_halfword_reg <= curr_halfword; // 打一拍缓存
+  end
+end
+
+wire is_32bit_inst = (curr_halfword_reg[1:0] == 2'b11); // 用寄存器值判断
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
