@@ -45,7 +45,7 @@ module top_core (
 
 /*×××××××××××××××××××××××××× PC 模块 ×××××××××××××××××××××××*/
 wire [`INST_LEN-1:0] inst_addr;
-/* verilator lint_off UNOPTFLAT */
+
 wire [`INST_LEN-1:0] pc_next;  // 输出给 icache
 wire read_req;
 pc_reg u_pc_reg (
