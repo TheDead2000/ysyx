@@ -168,7 +168,7 @@ module c_instruction_expander (
                             compressed_inst_i[12],
                             // imm[10:5] (6位) - bits 30:25
                             compressed_inst_i[12], compressed_inst_i[12],
-                            compressed_inst_i[12], compressed_inst_i[6:5], compressed_inst_i[2],
+                            compressed_inst_i[6:5], compressed_inst_i[2], compressed_inst_i[10],
                             // rs2 (5位) = x0 - bits 24:20
                             5'b00000,
                             // rs1 (5位) = {2'b01, inst[9:7]} - bits 19:15
@@ -176,7 +176,7 @@ module c_instruction_expander (
                             // funct3 (3位) = 000 (beq) - bits 14:12
                             3'b000,
                             // imm[4:1] (4位) 
-                            compressed_inst_i[10:9], compressed_inst_i[4:3],
+                           compressed_inst_i[9], compressed_inst_i[4:3],1'b0,
                             // imm[11] (1位)
                             compressed_inst_i[12],
                             // opcode (7位) = 1100011 - bits 6:0

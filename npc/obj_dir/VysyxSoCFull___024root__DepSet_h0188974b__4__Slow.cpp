@@ -196,24 +196,24 @@ VL_ATTR_COLD void VysyxSoCFull___024root___stl_comb__TOP__0(VysyxSoCFull___024ro
                                            | ((0x20000000U 
                                                & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
                                                   << 0x11U)) 
-                                              | ((0x10000000U 
+                                              | ((0x18000000U 
                                                   & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                     << 0x10U)) 
-                                                 | ((0xc000000U 
+                                                     << 0x16U)) 
+                                                 | ((0x4000000U 
                                                      & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                        << 0x15U)) 
+                                                        << 0x18U)) 
                                                     | (0x2000000U 
                                                        & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                          << 0x17U))))))) 
+                                                          << 0xfU))))))) 
                                        | ((0x38000U 
                                            & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
                                               << 8U)) 
-                                          | ((0xc00U 
+                                          | ((0x800U 
                                               & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                 << 1U)) 
-                                             | ((0x300U 
+                                                 << 2U)) 
+                                             | ((0x600U 
                                                  & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
-                                                    << 5U)) 
+                                                    << 6U)) 
                                                 | (0x80U 
                                                    & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data 
                                                       >> 5U))))))));
