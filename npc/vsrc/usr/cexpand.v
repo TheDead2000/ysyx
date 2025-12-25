@@ -281,12 +281,31 @@ module c_instruction_expander (
                             end
                         end
                     end
-                    3'b110: begin  // C.SWSP
-                        // sw rs2, offset(x2)
-                        expanded_inst_o = {4'b0, compressed_inst_i[8:7], 
-                                          compressed_inst_i[12:9], 2'b00, 
-                                          5'h02, 3'b010, compressed_inst_i[6:2], 
-                                          7'b0100011};
+                    3'b110: begin  // C.SWSP 正确扩展逻辑
+                     // 1. 提取C.SWSP的立即数（9位，4字节对齐）
+                    //  wire [8:0] offset = {compressed_inst_i[12:11], compressed_inst_i[10:6], 2'b00};
+                    //  // 2. 拆分立即数为Store型指令的imm11_5和imm4_0
+                    //  wire [6:0] imm11_5 = {3'b000, offset[8:5]};  // offset仅9位，高位补0
+                    //  wire [4:0] imm4_0  = offset[4:0];
+                    //  // 3. 提取rs2（5位，低2位固定为0）
+                    //  wire [4:0] rs2     = {compressed_inst_i[5:3], 2'b00};
+                    //  // 4. 拼接32位SW指令（严格遵循Store型格式）
+                    //  expanded_inst_o = {
+                    //      imm11_5,        // bit31~25: imm[11:5]
+                    //      rs2,            // bit24~20: rs2
+                    //      5'b00010,       // bit19~15: rs1=x2(sp)
+                    //      3'b010,         // bit14~12: funct3=010（SW）
+                    //      imm4_0,         // bit11~7:  imm[4:0]
+                    //      7'b0100011      // bit6~0:   opcode=0100011（Store）
+                    //  };
+                        expanded_inst_o = {
+                            {3'b000, {compressed_inst_i[12:11], compressed_inst_i[10:6], 2'b00}[8:5]},  // imm11_5
+                            {compressed_inst_i[5:3], 2'b00},  // rs2
+                            5'b00010,       // rs1=x2(sp)
+                            3'b010,         // funct3=010（SW）
+                            {compressed_inst_i[12:11], compressed_inst_i[10:6], 2'b00}[4:0],  // imm4_0
+                            7'b0100011      // opcode=0100011（Store）
+                        };
                     end
                     default: begin
                         expanded_inst_o = 32'h00000013;  // NOP

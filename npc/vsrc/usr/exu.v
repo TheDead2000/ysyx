@@ -7,6 +7,8 @@ module exu (
     // pc
     input       [         `INST_LEN-1:0] inst_addr_i,
     input       [         `INST_LEN-1:0] inst_data_i,
+
+    input                              is_compressed_inst_i,
     // gpr 译码结果
     input       [    `REG_ADDRWIDTH-1:0] rd_idx_i,
     input      [    `REG_ADDRWIDTH-1:0] rs1_idx_i,
@@ -178,13 +180,16 @@ assign amo_op_o = _amo_op;
   // 预测错误条件：实际跳转方向与预测方向不同
   wire bpu_pc_wrong = (jump_taken != pdt_res_i);
 
+
+  wire [31:0] _pc_offset = is_compressed_inst_i ? 32'd2 : 32'd4;
+
   reg [`XLEN-1:0] redirect_pc_op1;
   reg [`XLEN-1:0] redirect_pc_op2;
   always @(*) begin
     if (pdt_res_i & !jump_taken ) begin
       // 预测跳转但实际不跳转，需要返回PC+4
       redirect_pc_op1 = inst_addr_i;
-      redirect_pc_op2 = 'd4;
+      redirect_pc_op2 = _pc_offset;
     end else begin
       // 实际跳转但预测不跳转，需要跳转到目标地址
       redirect_pc_op1 = _excop_jalr ? rs1_data_i : inst_addr_i;
@@ -221,6 +226,8 @@ assign amo_op_o = _amo_op;
 
   wire [`IMM_LEN-1:0] _imm_aui_auipc = {imm_data_i[`IMM_LEN-1:12], 12'b0};
   
+
+
   // ALU 第一个操作数
   wire [         31:0] _alu_in1 = ({`XLEN{_rs1_rs2 | _rs1_imm}}&rs1_data_i) |
                                        ({`XLEN{_pc_4 | _pc_imm12}}&inst_addr_i) |
@@ -228,7 +235,7 @@ assign amo_op_o = _amo_op;
   // ALU 第二个操作数
   wire [         31:0] _alu_in2 = ({`XLEN{_rs1_rs2}}&rs2_data_i) |
                                        ({`XLEN{_rs1_imm}}&imm_data_i) |
-                                       ({`XLEN{_pc_4}}&`XLEN'd4)   |
+                                       ({`XLEN{_pc_4}}& _pc_offset)   |
                                        ({`XLEN{_pc_imm12|_none_imm12}}&_imm_aui_auipc);
   wire [31:0] _alu_out;
   wire _compare_out;

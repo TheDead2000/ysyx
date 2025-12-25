@@ -217,6 +217,8 @@ wire bpu_which_pdt_if_id;
 wire[`XLEN-1:0] bpu_pdt_tag_if_id;
 wire [`HISLEN-1:0] bpu_history_if_id;
 
+wire is_compressed_inst_if_id;
+
 if_id if2id(
   .clk (clk),
   .rst (rst),
@@ -229,6 +231,8 @@ if_id if2id(
   .bpu_taken_if_i (bpu_pc_valid_o),  // 分支预测结果
   .bpu_taken_if_id_o (bpu_pc_valid_if_id),
   
+  .is_compressed_inst_if_id_i(is_compressed_inst),
+  .is_compressed_inst_if_id_o(is_compressed_inst_if_id),
 
   .bpu_pdt_res_if_i(pdt_res),
   .bpu_which_pdt_if_i(which_pdt_o),
@@ -374,7 +378,7 @@ wire bpu_pdt_res_id_ex;
 wire bpu_which_pdt_id_ex;
 wire [`XLEN-1:0] bpu_pdt_tag_id_ex;
 wire [`HISLEN-1:0] bpu_history_id_ex;
-
+wire is_compressed_inst_id_ex;
 id_ex id2ex (
     .clk                  (clk),
     .rst                  (rst),
@@ -394,6 +398,10 @@ id_ex id2ex (
     .csr_op_id_ex_i       (csr_op_id),
     .csr_data_id_ex_i     (csr_readdata_id),
 
+
+    .is_compressed_inst_id_ex_i(is_compressed_inst_if_id),
+    .is_compressed_inst_id_ex_o(is_compressed_inst_id_ex),
+    
 
     .rs1_data_id_ex_i     (rs1_data_id),
     .rs2_data_id_ex_i     (rs2_data_id),
@@ -492,6 +500,9 @@ exu exu (
     // pc
     .inst_addr_i    (inst_addr_id_ex),
     .inst_data_i    (inst_data_id_ex),
+    .is_compressed_inst_i(is_compressed_inst_id_ex),
+
+
     // gpr 译码结果
     .rd_idx_i       (rd_idx_id_ex),
     .rs1_data_i     (rs1_data_id_ex),

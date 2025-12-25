@@ -13,6 +13,10 @@ module id_ex (
     input      [    `REG_ADDRWIDTH-1:0] rd_idx_id_ex_i,
     input      [          `IMM_LEN-1:0] imm_data_id_ex_i,
 
+
+    input  is_compressed_inst_id_ex_i,
+    output is_compressed_inst_id_ex_o,
+
     input [          `IMM_LEN-1:0] csr_imm_id_ex_i,
     input                                      csr_imm_valid_id_ex_i,
     input [             `XLEN_BUS] csr_data_id_ex_i,
@@ -92,6 +96,19 @@ module id_ex (
 
 
 
+  wire _is_compressed_inst_id_ex_d = is_compressed_inst_id_ex_i;
+  wire _is_compressed_inst_id_ex_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_is_compressed_inst_id_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_is_compressed_inst_id_ex_d),
+      .dout(_is_compressed_inst_id_ex_q),
+      .wen (reg_wen)
+  );
+    assign is_compressed_inst_id_ex_o = _is_compressed_inst_id_ex_q;
 
   /* bpu_taken_if_i 寄存器 */
   wire _bpu_taken_id_ex_d = bpu_taken_id_ex_i;

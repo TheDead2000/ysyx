@@ -11,7 +11,9 @@ module if_id (
 
     input bpu_taken_if_i,
     output bpu_taken_if_id_o,
-
+    
+    input is_compressed_inst_if_id_i,
+    output is_compressed_inst_if_id_o,
 
     input wire bpu_pdt_res_if_i,        // IF阶段分支预测结果
     input wire bpu_which_pdt_if_i,      // IF阶段使用的预测器类型
@@ -79,6 +81,21 @@ module if_id (
       .wen (reg_wen)
   );
   assign bpu_taken_if_id_o = _bpu_taken_if_id_q;
+
+  wire _is_compressed_inst_if_id_d = is_compressed_inst_if_id_i;
+  wire _is_compressed_inst_if_id_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_is_compressed_inst_if_id_o (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_is_compressed_inst_if_id_d),
+      .dout(_is_compressed_inst_if_id_q),
+      .wen (reg_wen)
+  );
+  assign is_compressed_inst_if_id_o = _is_compressed_inst_if_id_q;
+
 
 
     /* ============= 分支预测结果 ============= */
