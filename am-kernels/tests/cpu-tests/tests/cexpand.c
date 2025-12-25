@@ -8,11 +8,11 @@
 void test_c_addi_basic() {
     printf("Testing c.addi (compressed add immediate) instruction...\n\n");
     
-    int32_t a0_value, result;
+    // int32_t a0_value, result;
     
     // 测试用例1：正数加法
     printf("Test 1: Add positive immediate (5)\n");
-    a0_value = 10;
+    // a0_value = 10;
     
     // __asm__ volatile (
     //     "mv a0, %[input]\n"      // 设置初始值
