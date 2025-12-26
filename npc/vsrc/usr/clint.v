@@ -455,40 +455,14 @@ end
   
   assign clint_rdata_o = mtime_rdata;
 
-  // wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
-  // always @(*) begin
-  //   if (_trap_ebreak) begin
-  //     $display("EBREAK encountered at PC: %h", pc_from_mem_i);
-  //     $finish;  // 使用参数2表示立即退出
-  //   end
-  //end
-  // ========== 关键修改：EBREAK检测逻辑 ==========
+
+  import "DPI-C" function void call_ebreak();
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
-   reg ebreak_triggered;  // 防止多次触发finish
-   reg ebreak_exit_done; // 确保只退出一次
-  // 步骤1：时序逻辑初始化标记位
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      ebreak_triggered <= 1'b0;
-      ebreak_exit_done <= 1'b0;
-    end else if (_trap_ebreak && !ebreak_triggered) begin
-      // 首次检测到EBREAK时标记
-      ebreak_triggered <= 1'b1;
+  always @(*) begin
+    if (_trap_ebreak) begin
       $display("EBREAK encountered at PC: %h", pc_from_mem_i);
+      $finish;  // 使用参数2表示立即退出
+      call_ebreak();
     end
   end
-
-  // 步骤2：时序逻辑执行一次正常退出（避免组合逻辑持续触发）
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      // 复位初始化
-    end else if (ebreak_triggered && !ebreak_exit_done) begin
-      // 仅执行一次$finish，确保正常退出而非崩溃
-      ebreak_exit_done <= 1'b1;
-      $finish(0);  // 返回码0：正常退出（测试框架识别为PASS）
-      // 若需要区分EBREAK退出，可用$finish(2)，但需确认测试框架对返回码的定义
-    end
-  end
-
-
 endmodule
