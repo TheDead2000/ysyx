@@ -12645,6 +12645,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7230,"bpu_pc_valid_i", false,-1);
     tracep->declBus(c+6241,"ifu_next_pc_i", false,-1, 31,0);
     tracep->declBit(c+607,"ifu_next_pc_valid_i", false,-1);
+    tracep->declBit(c+607,"is_compressed_inst", false,-1);
     tracep->declBus(c+7,"pc_next_o", false,-1, 31,0);
     tracep->declBit(c+7178,"read_req_o", false,-1);
     tracep->declBus(c+6756,"pc_o", false,-1, 31,0);
