@@ -7,7 +7,8 @@ module c_instruction_expander (
     // 提取指令字段
     wire [1:0] opcode = compressed_inst_i[1:0];
     wire [2:0] funct3 = compressed_inst_i[15:13];
-    
+
+
     always @(*) begin
         expanded_inst_o = 32'h00000013;  // 默认NOP
         
