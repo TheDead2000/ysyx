@@ -175,44 +175,21 @@ module ifu (
 
     
     // ============ 原有 IFU 逻辑（保持兼容） ============
-    reg [15:0] c_expand_in_reg;  // 仅打拍压缩指令扩展的输入
-    reg is_compressed_comb;      // 组合逻辑判断压缩指令（用于PC计算）
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            c_expand_in_reg <= 16'b0;
-            is_compressed_comb <= 1'b0;
-        end else if (if_flush_i) begin  // flush时清空扩展输入
-            c_expand_in_reg <= 16'b0;
-            is_compressed_comb <= 1'b0;
-        end else  begin  // 用输入stall信号，避免组合环路
-            c_expand_in_reg <= if_rdata_i[15:0];  // 仅打拍扩展输入
-            is_compressed_comb <= (if_rdata_i[1:0] != 2'b11);  // 组合判断压缩指令
-        end
-    end
-
     assign inst_addr_o = inst_addr_i;
     wire [31:0] _inst_data = if_rdata_i;
 
-    // // // 判断是否为压缩指令（低2位不为11）
-    // wire is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
+    // // 判断是否为压缩指令（低2位不为11）
+    wire is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
 
-    wire [`XLEN-1:0] expanded_inst;
+    assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst ? 2 : 4);
+    assign ifu_next_pc_valid_o = is_compressed_inst ? 1 : 0;
 
-    c_instruction_expander c_expander (
-        .compressed_inst_i(c_expand_in_reg),
-        .expanded_inst_o(expanded_inst)
-    );
-
-    wire [31:0] _final_inst;
-    assign _final_inst = is_compressed_comb ? expanded_inst : if_rdata_i;
-
-    assign ifu_next_pc_o = inst_addr_i + (is_compressed_comb ? 2 : 4);
-    assign ifu_next_pc_valid_o = is_compressed_comb ? 1 : 0;
+    
     // 访存暂停逻辑
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
-    wire _ram_stall = (!if_rdata_valid_i) || is_compressed_comb;
+    wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
-    assign inst_data_o = _final_inst;
+    assign inst_data_o = _inst_data;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;

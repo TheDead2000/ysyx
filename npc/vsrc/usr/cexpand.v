@@ -1,6 +1,6 @@
 
 module c_instruction_expander (
-    input [15:0] compressed_inst_i,
+    input [31:0] compressed_inst_i,
     output reg [31:0] expanded_inst_o
 );
 
@@ -284,8 +284,12 @@ module c_instruction_expander (
             
             default: begin
                 // 不是压缩指令（opcode为2'b11）或其他情况
-                expanded_inst_o = 32'h00000013;  // NOP
+                expanded_inst_o = compressed_inst_i;  // NOP
             end
         endcase
     end
+
+
+
+
 endmodule
