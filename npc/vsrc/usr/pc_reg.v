@@ -43,9 +43,8 @@ module pc_reg (
     // 核心：IFU修正有效时，用修正后的PC（回滚）
     end else if (ifu_next_pc_valid_i) begin
       _pc_next = ifu_next_pc_i;
-    // 无修正时，用预判的+2（压缩指令）
     end else begin
-      _pc_next =  pc_temp_plus2;
+      _pc_next =  pc_temp_plus4;
     end
   end
 

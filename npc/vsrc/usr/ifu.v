@@ -38,8 +38,8 @@ module ifu (
     output [31:0] bpu_pc_o,
     output bpu_pc_valid_o,
     
-    output [`XLEN-1:0] ifu_correct_pc_o ,          // 下一条指令地址
-    output ifu_correct_valid_o,
+    output [`XLEN-1:0] ifu_next_pc_o,          // 下一条指令地址
+    output ifu_next_pc_valid_o,
 
     // to exu
     output reg pdt_res,
@@ -170,62 +170,36 @@ module ifu (
             end
         end
     end
+    
 
-// 对icache输入的指令数据打拍（时序寄存器），隔离组合环路
-    reg [31:0] if_rdata_reg;
-    reg if_rdata_valid_reg;
-    reg [31:0] inst_addr_reg;
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            if_rdata_reg <= 32'b0;
-            if_rdata_valid_reg <= 1'b0;
-        end  else if (if_flush_i) begin  // 跳转/刷新时立即清空
-            if_rdata_reg <= 32'h00000013; // NOP 指令
-            if_rdata_valid_reg <= 1'b0;
-            inst_addr_reg <= 32'b0;
-        end else begin
-            if_rdata_reg <= if_rdata_i;
-            inst_addr_reg <= inst_addr_i;
-            if_rdata_valid_reg <= if_rdata_valid_i;
-        end
-    end
 
-    // ============ 方案2核心：预判+修正逻辑（保留组合，保证性能） ============
-    assign inst_addr_o = inst_addr_reg;
-    wire [31:0] _inst_data_comb = if_rdata_i;  // 组合逻辑数据（用于预判修正）
-    wire [31:0] _inst_data_seq = if_rdata_reg; // 时序寄存器数据（用于指令扩展）
+    
+    // ============ 原有 IFU 逻辑（保持兼容） ============
+    assign inst_addr_o = inst_addr_i;
+    wire [31:0] _inst_data = if_rdata_i;
 
-    // 1. 组合逻辑解析指令长度（用于方案2的拍内修正，无延迟）
-    wire is_compressed_inst_comb = (if_rdata_reg[1:0] != 2'b11);
-    wire is_32bit_inst_comb = !is_compressed_inst_comb;
+    // // 判断是否为压缩指令（低2位不为11）
+    wire is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
 
-    // 2. 计算修正后的正确PC（拍内完成，无延迟）
-    wire [`XLEN-1:0] correct_pc = is_32bit_inst_comb ? (inst_addr_i + 4) : (inst_addr_i + 2);
-    wire correct_valid = is_32bit_inst_comb & if_rdata_valid_i;
-
-    // 输出修正信号给PC_reg（组合逻辑，拍内回滚）
-    assign ifu_correct_pc_o = correct_pc;
-    assign ifu_correct_valid_o = correct_valid;
-
-    // ============ 压缩指令扩展：使用打拍后的时序数据（打破环路） ============
-    // 1. 时序逻辑解析指令长度（用于指令扩展，不参与PC修正）
-    wire is_compressed_inst_seq = (_inst_data_seq[1:0] != 2'b11);
-
-    // 2. 压缩指令扩展：使用打拍后的数据，避免参与组合环路
     wire [`XLEN-1:0] expanded_inst;
+
     c_instruction_expander c_expander (
-        .compressed_inst_i(_inst_data_seq[15:0]),  // 修改：用时序数据
+        .compressed_inst_i(if_rdata_i[15:0]),
         .expanded_inst_o(expanded_inst)
     );
 
-    // 3. 最终输出到ID阶段的指令（用时序数据）
-    wire [31:0] _final_inst = is_compressed_inst_seq ? expanded_inst : _inst_data_seq;
-    assign inst_data_o = _final_inst;
+    wire [31:0] _final_inst;
+    assign _final_inst = is_compressed_inst ? expanded_inst : if_rdata_i;
+
+    assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst ? 2 : 4);
+    assign ifu_next_pc_valid_o = is_compressed_inst ? 1 : 0;
+
     
     // 访存暂停逻辑
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
+    assign inst_data_o = _final_inst;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;

@@ -172,8 +172,8 @@ ifu ifu (
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
   // .is_compressed_inst(is_compressed_inst),
-   .ifu_correct_pc_o(ifu_next_pc_o),          // 下一条指令地址
-   .ifu_correct_valid_o(ifu_next_pc_valid_o),
+   .ifu_next_pc_o(ifu_next_pc_o),          // 下一条指令地址
+   .ifu_next_pc_valid_o(ifu_next_pc_valid_o),
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
