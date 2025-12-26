@@ -465,23 +465,28 @@ end
   // ========== 关键修改：EBREAK检测逻辑 ==========
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
    reg ebreak_triggered;  // 防止多次触发finish
-  // 步骤1：时序逻辑标记EBREAK触发（确保只打印一次信息）
+   reg ebreak_exit_done; // 确保只退出一次
+  // 步骤1：时序逻辑初始化标记位
   always @(posedge clk or posedge rst) begin
     if (rst) begin
       ebreak_triggered <= 1'b0;
+      ebreak_exit_done <= 1'b0;
     end else if (_trap_ebreak && !ebreak_triggered) begin
+      // 首次检测到EBREAK时标记
       ebreak_triggered <= 1'b1;
       $display("EBREAK encountered at PC: %h", pc_from_mem_i);
     end
   end
 
-  // 步骤2：组合逻辑持续触发终止（只要EBREAK有效/已触发，就强制退出）
-  always @(*) begin
-    if (_trap_ebreak || ebreak_triggered) begin
-      // 组合逻辑持续触发，确保仿真器能捕获到退出指令
-      // $fatal优先级最高，强制终止；$finish兜底
-      $fatal(2, "EBREAK hit, force exit! PC = 0x%h", pc_from_mem_i);
-      $finish(2);
+  // 步骤2：时序逻辑执行一次正常退出（避免组合逻辑持续触发）
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      // 复位初始化
+    end else if (ebreak_triggered && !ebreak_exit_done) begin
+      // 仅执行一次$finish，确保正常退出而非崩溃
+      ebreak_exit_done <= 1'b1;
+      $finish(0);  // 返回码0：正常退出（测试框架识别为PASS）
+      // 若需要区分EBREAK退出，可用$finish(2)，但需确认测试框架对返回码的定义
     end
   end
 

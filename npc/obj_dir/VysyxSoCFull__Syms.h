@@ -39,7 +39,6 @@ class VysyxSoCFull__Syms final : public VerilatedSyms {
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4xbar_1;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4yank;
     VerilatedScope __Vscope_ysyxSoCFull__asic__axi4yank__unnamedblk1;
-    VerilatedScope __Vscope_ysyxSoCFull__asic__cpu__cpu__top_core__clint_u;
     VerilatedScope __Vscope_ysyxSoCFull__asic__lmrom;
     VerilatedScope __Vscope_ysyxSoCFull__flash;
     VerilatedScope __Vscope_ysyxSoCFull__flash__flash_cmd_i;

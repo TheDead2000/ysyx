@@ -42,6 +42,7 @@ VM_CLASSES_SLOW += \
 	VysyxSoCFull___024root__DepSet_h0188974b__1__Slow \
 	VysyxSoCFull___024root__DepSet_h0188974b__2__Slow \
 	VysyxSoCFull___024root__DepSet_h0188974b__3__Slow \
+	VysyxSoCFull___024root__DepSet_h0188974b__4__Slow \
 	VysyxSoCFull___024unit__Slow \
 	VysyxSoCFull___024unit__DepSet_h460a3d32__0__Slow \
 
