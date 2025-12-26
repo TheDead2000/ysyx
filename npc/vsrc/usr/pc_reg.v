@@ -13,22 +13,14 @@ module pc_reg (
 
     input [`INST_LEN-1:0] bpu_pc_i,
     input bpu_pc_valid_i,
-    input is_compressed_inst,  // 原始组合逻辑输入（来自icache）
+
+    input [`INST_LEN-1:0] ifu_next_pc_i,
+    input ifu_next_pc_valid_i,
 
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
     output read_req_o,                     //输出 next_pc, icache 取指
     output [`INST_LEN-1:0] pc_o            //输出pc
 );
-
-  // ========== 关键修改1：对is_compressed_inst打拍，消除组合循环 ==========
-  reg is_compressed_inst_reg;
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      is_compressed_inst_reg <= 1'b0;  // 复位初始化
-    end else if (!stall_valid_i) begin // 非stall时更新，避免stall期间值错乱
-      is_compressed_inst_reg <= is_compressed_inst;
-    end
-  end
 
   // ========== 保留原有信号定义 ==========
   wire [`XLEN-1:0] _pc_current;
@@ -38,19 +30,22 @@ module pc_reg (
 
   reg [`XLEN-1:0] _pc_next;
 
-  // ========== 关键修改2：_pc_next改回组合逻辑（always @(*)），立即响应跳转 ==========
   always @(*) begin
-    if (rst) begin  // 复位时，_pc_next初始化为复位地址
+    if (rst) begin
       _pc_next = `PC_RESET_ADDR;
-    end else if (clint_pc_valid_i) begin : trap_pc
-      _pc_next = clint_pc_i;  // trap优先级最高，立即跳转
-    end else if (branch_pc_valid_i) begin : branch_pc
-      _pc_next = branch_pc_i; // 分支跳转，立即响应
-    end else if (bpu_pc_valid_i) begin : bpu_pc
-      _pc_next = bpu_pc_i;    // 分支预测跳转，立即响应
+    // 优先级：trap > 分支 > BPU > IFU修正 > 预判
+    end else if (clint_pc_valid_i) begin
+      _pc_next = clint_pc_i;
+    end else if (branch_pc_valid_i) begin
+      _pc_next = branch_pc_i;
+    end else if (bpu_pc_valid_i) begin
+      _pc_next = bpu_pc_i;
+    // 核心：IFU修正有效时，用修正后的PC（回滚）
+    end else if (ifu_next_pc_valid_i) begin
+      _pc_next = ifu_next_pc_i;
+    // 无修正时，用预判的+2（压缩指令）
     end else begin
-      // 使用打拍后的is_compressed_inst_reg，避免组合循环
-      _pc_next = is_compressed_inst_reg ? pc_temp_plus2 : pc_temp_plus4;
+      _pc_next =  pc_temp_plus2;
     end
   end
 

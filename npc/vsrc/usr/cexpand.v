@@ -66,7 +66,7 @@ module c_instruction_expander (
                                           {9{compressed_inst_i[12]}},
                                           5'h01, 7'b1101111};
                     end
-                    3'b010: begin  // C.LI
+                    3'b010: begin  // C.LI  pass
                         // addi rd, x0, imm
                         expanded_inst_o = {{7{compressed_inst_i[12]}}, 
                                           compressed_inst_i[6:2], 
@@ -248,7 +248,7 @@ module c_instruction_expander (
                             // inst[12]=1
                             if (compressed_inst_i[6:2] == 5'b00000) begin
                                 if (compressed_inst_i[11:7] == 5'b00000) begin
-                                    // C.EBREAK: ebreak
+                                    // C.EBREAK: ebreak pass
                                     expanded_inst_o = 32'h00100073;
                                 end else begin
                                     // C.JALR: jalr x1, rs1, 0
@@ -263,7 +263,7 @@ module c_instruction_expander (
                             end
                         end
                     end
-                    3'b110: begin  // C.SWSP 正确扩展逻辑
+                    3'b110: begin  // C.SWSP pass
                             expanded_inst_o = {
                             // imm[11:5] = 4'b0000 + offset[7:6] + offset[5]
                             4'b0000, compressed_inst_i[8:7], compressed_inst_i[12],

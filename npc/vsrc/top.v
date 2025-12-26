@@ -61,7 +61,9 @@ pc_reg u_pc_reg (
 
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
-    .is_compressed_inst(is_compressed_inst),
+    // .is_compressed_inst(is_compressed_inst),
+    .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
+    .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
 
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
@@ -140,6 +142,9 @@ wire ls_valid;
 wire ifu_req_valid_o;
 wire[31:0] ifu_req_pc_o;
 
+wire [31:0] ifu_next_pc_o;
+wire ifu_next_pc_valid_o;
+
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -166,8 +171,9 @@ ifu ifu (
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
-  .is_compressed_inst(is_compressed_inst),
-
+  // .is_compressed_inst(is_compressed_inst),
+   .ifu_correct_pc_o(ifu_next_pc_o),          // 下一条指令地址
+   .ifu_correct_valid_o(ifu_next_pc_valid_o),
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
