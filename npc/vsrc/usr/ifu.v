@@ -179,7 +179,7 @@ module ifu (
         if (rst) begin
             if_rdata_reg <= 32'b0;
             if_rdata_valid_reg <= 1'b0;
-        end else if(!if_flush_i) begin // stall时不更新，避免数据错乱
+        end else begin
             if_rdata_reg <= if_rdata_i;
             inst_addr_reg <= inst_addr_i;
             if_rdata_valid_reg <= if_rdata_valid_i;
