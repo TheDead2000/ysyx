@@ -34,7 +34,7 @@ module pipline_control (
   localparam trap_ecall_flush = 6'b001110;
 
   localparam ram_mem_flush = 6'b010000;
-  localparam ram_mem_stall = 6'b001110;
+  localparam ram_mem_stall = 6'b001101;
 
   localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
   localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
