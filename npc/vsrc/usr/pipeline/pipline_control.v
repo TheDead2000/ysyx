@@ -108,10 +108,7 @@ module pipline_control (
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
       // 跳转指令,(发生在 ex 阶段)
-     end else if (compress_stall) begin
-      _stall = compress_stall_stall;
-      _flush = compress_flush;
-     end
+     end 
      else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
       _stall = 6'b000111;
       _flush = 6'b001000;
@@ -130,6 +127,12 @@ module pipline_control (
       _flush = load_use_flush;
       // 没有异常情况,正常执行
     end 
+
+    else if (compress_stall) begin
+      _stall = compress_stall_stall;
+      _flush = compress_flush;
+     end
+    
     else
     if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
     _stall = 6'b000111;
