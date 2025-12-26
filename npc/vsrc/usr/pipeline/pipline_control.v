@@ -41,16 +41,22 @@ module pipline_control (
     // 位映射：0=PC,1=Pre_IF,2=IF_ID,3=ID_EX,4=EX_MEM,5=MEM_WB
   localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3）
   localparam load_use_stall = 6'b000011;    // stall PC(0)+Pre_IF(1)
-  localparam jump_flush = 6'b000110;        // flush Pre_IF(1)+IF_ID(2)
+
+  localparam jump_flush = 6'b001110;        // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)  pass
   localparam jump_stall = 6'b000010;        // stall Pre_IF(1)
+
   localparam mul_div_flush = 6'b010000;     // flush EX_MEM(4)
   localparam mul_div_stall = 6'b000111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)
+
   localparam trap_csr_flush = 6'b001110;    // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)
   localparam trap_csr_stall = 6'b111111;    // stall所有阶段
+
   localparam trap_ecall_stall = 6'b000010;  // stall Pre_IF(1)
   localparam trap_ecall_flush = 6'b001110;  // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)
+
   localparam ram_mem_flush = 6'b100000;     // flush MEM_WB(5)
   localparam ram_mem_stall = 6'b001111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)
+
   localparam ram_if_flush = 6'b000000;      // IF stall无需flush
   localparam ram_if_stall = 6'b000011;      // stall PC(0)+Pre_IF(1)
 
