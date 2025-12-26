@@ -77,41 +77,41 @@ wire [31:0] pre_if_inst;
 wire [31:0] pre_if_addr;
 wire pre_if_valid;
 
-// pre_if pre_if (
-//     .clk            (clk),
-//     .rst            (rst),
-//     // 来自icache的输入
-//     .pc_addr_i      (pc_next),    // 指令对应的PC地址
-//     .icache_inst_i  (if_rdata),    // icache输出的原始指令
-//     .if_rdata_valid_i     (if_rdata_valid),
-//     // 流水线控制信号
-//     /* stall req */
-//     .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+pre_if pre_if (
+    .clk            (clk),
+    .rst            (rst),
+    // 来自icache的输入
+    .pc_addr_i      (inst_addr),    // 指令对应的PC地址
+    .icache_inst_i  (if_rdata),    // icache输出的原始指令
+    .if_rdata_valid_i     (if_rdata_valid),
+    // 流水线控制信号
+    /* stall req */
+    .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
 
-//     .pre_if_addr_o  (pre_if_addr),
-//     .pre_if_inst_o  (pre_if_inst),
-//     .pre_if_valid_o (pre_if_valid)
-// );
+    .pre_if_addr_o  (pre_if_addr),
+    .pre_if_inst_o  (pre_if_inst),
+    .pre_if_valid_o (pre_if_valid)
+);
 
 
-// wire[31:0] inst_addr_if_i;
-// wire[31:0] inst_data_if_i;
-// wire if_data_valid_o;
+wire[31:0] inst_addr_if_i;
+wire[31:0] inst_data_if_i;
+wire if_data_valid_o;
 
-// /**********************************preif_if模块***********************************/
-// preif_if preif_if (
-//     .clk                (clk),
-//     .rst                (rst),
-//     .stall_i            (stall_clint[`CTRLBUS_PREIF_IF]),
-//     .flush_i            (flush_clint[`CTRLBUS_PREIF_IF]),
-//     .inst_addr_preif_i     (pre_if_addr),
-//     .inst_data_preif_i     (pre_if_inst),
-//     .pre_if_valid_i       (pre_if_valid),
+/**********************************preif_if模块***********************************/
+preif_if preif_if (
+    .clk                (clk),
+    .rst                (rst),
+    .stall_i            (stall_clint[`CTRLBUS_PREIF_IF]),
+    .flush_i            (flush_clint[`CTRLBUS_PREIF_IF]),
+    .inst_addr_preif_i     (pre_if_addr),
+    .inst_data_preif_i     (pre_if_inst),
+    .pre_if_valid_i       (pre_if_valid),
 
-//     .inst_addr_preif_if_o  (inst_addr_if_i),
-//     .inst_data_preif_if_o  (inst_data_if_i),
-//     .preif_if_valid_o     (if_data_valid_o)
-// );
+    .inst_addr_preif_if_o  (inst_addr_if_i),
+    .inst_data_preif_if_o  (inst_data_if_i),
+    .preif_if_valid_o     (if_data_valid_o)
+);
 
 /**********============ MMU 相关信号 ============*************/
 // IMMU 信号
@@ -188,15 +188,15 @@ wire[31:0]inst_data_if;
 ifu ifu (
   .clk(clk),
   .rst(rst),
-  .inst_addr_i(inst_addr),  // from pc_reg
-  .if_rdata_valid_i    (if_rdata_valid),      // 读数据是否准备好
-  .if_rdata_i          (if_rdata),            // 返回到读取的数据
+  // .inst_addr_i(inst_addr),  // from pc_reg
+  // .if_rdata_valid_i    (if_rdata_valid),      // 读数据是否准备好
+  // .if_rdata_i          (if_rdata),            // 返回到读取的数据
   /* stall req */
-  .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+  // .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
 
-  // .inst_addr_i(inst_addr_if_i),  // from pc_reg
-  // .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
-  // .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
+  .inst_addr_i(inst_addr_if_i),  // from pc_reg
+  .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
+  .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
 
 
   .ls_valid_i(ls_valid),
