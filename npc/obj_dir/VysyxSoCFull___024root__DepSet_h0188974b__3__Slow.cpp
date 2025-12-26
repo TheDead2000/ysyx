@@ -8140,8 +8140,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root___stl_sequent__TOP__3(VysyxSoCFull___02
         VL_WRITEF("EBREAK encountered at PC: %x\n",
                   32,vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__ex2mem__DOT___pc_ex_mem_q);
         Verilated::runFlushCallbacks();
-        VL_STOP_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 462, "");
-        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 463, "");
+        VL_FINISH_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 462, "");
+        VL_STOP_MT("/home/zy/ysyx-workbench/npc/vsrc/usr/clint.v", 463, "");
     }
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_addr = 0U;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_data = 0U;
