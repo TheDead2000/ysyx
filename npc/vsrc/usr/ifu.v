@@ -38,6 +38,7 @@ module ifu (
     output [31:0] bpu_pc_o,
     output bpu_pc_valid_o,
     
+    input  is_compressed_inst,
     output [`XLEN-1:0] ifu_next_pc_o,          // 下一条指令地址
     output ifu_next_pc_valid_o,
 
@@ -177,9 +178,6 @@ module ifu (
     // ============ 原有 IFU 逻辑（保持兼容） ============
     assign inst_addr_o = inst_addr_i;
     wire [31:0] _inst_data = if_rdata_i;
-
-    // // 判断是否为压缩指令（低2位不为11）
-    wire is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
 
     assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst ? 2 : 4);
     assign ifu_next_pc_valid_o = is_compressed_inst ? 1 : 0;

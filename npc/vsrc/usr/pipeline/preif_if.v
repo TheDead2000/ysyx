@@ -7,6 +7,8 @@ module preif_if (
     input wire [`INST_LEN-1:0] inst_data_preif_i,
     input wire pre_if_valid_i,
 
+    input wire is_compressed_inst_preif_i,
+    output is_compressed_inst_preif_o,
     output [31:0] inst_addr_preif_if_o,
     output [31:0] inst_data_preif_if_o,
     output  preif_if_valid_o
@@ -61,4 +63,18 @@ module preif_if (
       .wen (reg_wen)
   );
 
+  /* pre_if_valid_i 寄存器 */
+  wire _is_compressed_inst_preif_d = is_compressed_inst_preif_i;
+  wire _is_compressed_inst_preif_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(0)
+  ) u_is_compressed_inst_preif (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_is_compressed_inst_preif_d),
+      .dout(_is_compressed_inst_preif_q),
+      .wen (reg_wen)
+  );
+  assign is_compressed_inst_preif_o = _is_compressed_inst_preif_q;
   endmodule

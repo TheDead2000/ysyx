@@ -62,8 +62,8 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
     // .is_compressed_inst(is_compressed_inst),
-    .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
-    .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
+    .ifu_next_pc_i     (pre_if_next_pc),          // 下一条指令地址
+    .ifu_next_pc_valid_i (pre_if_next_inst_valid_o),
 
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
@@ -77,6 +77,10 @@ wire [31:0] pre_if_inst;
 wire [31:0] pre_if_addr;
 wire pre_if_valid;
 
+wire pre_if_next_inst_valid_o;
+wire [31:0] pre_if_next_pc;
+wire is_compressed_inst_preif;
+
 pre_if pre_if (
     .clk            (clk),
     .rst            (rst),
@@ -88,6 +92,8 @@ pre_if pre_if (
     /* stall req */
     .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
 
+    .is_compressed_inst(is_compressed_inst_preif),
+
     .pre_if_addr_o  (pre_if_addr),
     .pre_if_inst_o  (pre_if_inst),
     .pre_if_valid_o (pre_if_valid)
@@ -97,7 +103,8 @@ pre_if pre_if (
 wire[31:0] inst_addr_if_i;
 wire[31:0] inst_data_if_i;
 wire if_data_valid_o;
-
+wire is_compressed_inst_if;
+wire is_compressed_inst_if_o;
 /**********************************preif_if模块***********************************/
 preif_if preif_if (
     .clk                (clk),
@@ -108,6 +115,8 @@ preif_if preif_if (
     .inst_data_preif_i     (pre_if_inst),
     .pre_if_valid_i       (pre_if_valid),
 
+    .is_compressed_inst_preif_i(is_compressed_inst_if),
+    .is_compressed_inst_preif_o(is_compressed_inst_if_o),
     .inst_addr_preif_if_o  (inst_addr_if_i),
     .inst_data_preif_if_o  (inst_data_if_i),
     .preif_if_valid_o     (if_data_valid_o)
@@ -217,7 +226,7 @@ ifu ifu (
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
-  // .is_compressed_inst(is_compressed_inst),
+  .is_compressed_inst(is_compressed_inst_if_o),
    .ifu_next_pc_o(ifu_next_pc_o),          // 下一条指令地址
    .ifu_next_pc_valid_o(ifu_next_pc_valid_o),
   //to if/id
