@@ -41,10 +41,10 @@ module pipline_control (
   // localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
     // 位映射：0=PC,1=Pre_IF,2=IF_ID,3=ID_EX,4=EX_MEM,5=MEM_WB
 
-  localparam compress_flush = 6'b000010;    // flush none
+  localparam compress_flush = 6'b000010;    // flush none pass
   localparam compress_stall_stall = 6'b000010;    // stall PC(0)+Pre_IF(1)
 
-  localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3）
+  localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3） pass
   localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)
 
   localparam jump_flush = 6'b001110;        // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)  pass
