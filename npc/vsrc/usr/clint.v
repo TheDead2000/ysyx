@@ -455,11 +455,27 @@ end
   
   assign clint_rdata_o = mtime_rdata;
 
+  // wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
+  // always @(*) begin
+  //   if (_trap_ebreak) begin
+  //     $display("EBREAK encountered at PC: %h", pc_from_mem_i);
+  //     $finish;  // 使用参数2表示立即退出
+  //   end
+  //end
+  // ========== 关键修改：EBREAK检测逻辑 ==========
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
-  always @(*) begin
-    if (_trap_ebreak) begin
+   reg ebreak_triggered;  // 防止多次触发finish
+  // 初始化ebreak_triggered
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      ebreak_triggered <= 1'b0;
+    end else if (_trap_ebreak && !ebreak_triggered) begin
+      // 仅在时钟上升沿、首次检测到EBREAK时触发一次
+      ebreak_triggered <= 1'b1;
       $display("EBREAK encountered at PC: %h", pc_from_mem_i);
-      $finish;  // 使用参数2表示立即退出
+      $finish(2);  // 直接终止仿真，移除$stop
     end
   end
+
+
 endmodule
