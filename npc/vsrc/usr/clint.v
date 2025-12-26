@@ -459,7 +459,7 @@ end
   always @(*) begin
     if (_trap_ebreak) begin
       $display("EBREAK encountered at PC: %h", pc_from_mem_i);
-      $finish;
+      $finish(2);  // 使用参数2表示立即退出
     end
   end
 endmodule
