@@ -458,6 +458,7 @@ end
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
   always @(*) begin
     if (_trap_ebreak) begin
+      $display("EBREAK encountered at PC: %h", pc_from_mem_i);
       $finish;
     end
   end
