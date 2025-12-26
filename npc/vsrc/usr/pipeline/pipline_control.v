@@ -45,7 +45,7 @@ module pipline_control (
   localparam compress_stall_stall = 6'b000010;    // stall PC(0)+Pre_IF(1)
 
   localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3）
-  localparam load_use_stall = 6'b000011;    // stall PC(0)+Pre_IF(1)
+  localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)
 
   localparam jump_flush = 6'b001110;        // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)  pass
   localparam jump_stall = 6'b000010;        // stall Pre_IF(1)
