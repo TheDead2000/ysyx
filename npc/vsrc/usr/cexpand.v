@@ -63,8 +63,9 @@ module c_instruction_expander (
                                           compressed_inst_i[8], compressed_inst_i[10:9], 
                                           compressed_inst_i[6], compressed_inst_i[7], 
                                           compressed_inst_i[2], compressed_inst_i[11], 
-                                          compressed_inst_i[5:3],1'b0,
-                                          {8{compressed_inst_i[12]}},
+                                          compressed_inst_i[5:3],
+                                          compressed_inst_i[12], // 11
+                                          {8{compressed_inst_i[12]}}, //19:12
                                           5'h01, 7'b1101111};
                     end
                     3'b010: begin  // C.LI  pass
