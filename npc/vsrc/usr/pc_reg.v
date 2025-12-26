@@ -17,7 +17,7 @@ module pc_reg (
     input [`INST_LEN-1:0] ifu_next_pc_i,
     input ifu_next_pc_valid_i,
 
-    output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
+    output reg [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
     output read_req_o,                     //输出 next_pc, icache 取指
     output [`INST_LEN-1:0] pc_o            //输出pc
 );
