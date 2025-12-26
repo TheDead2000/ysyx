@@ -103,7 +103,7 @@ pre_if pre_if (
 wire[31:0] inst_addr_if_i;
 wire[31:0] inst_data_if_i;
 wire if_data_valid_o;
-wire is_compressed_inst_if;
+wire is_compressed_inst_preif;
 wire is_compressed_inst_if_o;
 /**********************************preif_if模块***********************************/
 preif_if preif_if (
@@ -115,7 +115,7 @@ preif_if preif_if (
     .inst_data_preif_i     (pre_if_inst),
     .pre_if_valid_i       (pre_if_valid),
 
-    .is_compressed_inst_preif_i(is_compressed_inst_if),
+    .is_compressed_inst_preif_i(is_compressed_inst_preif),
     .is_compressed_inst_preif_o(is_compressed_inst_if_o),
     .inst_addr_preif_if_o  (inst_addr_if_i),
     .inst_data_preif_if_o  (inst_data_if_i),
