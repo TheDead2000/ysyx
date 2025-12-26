@@ -70,7 +70,17 @@ module pc_reg (
 
   // ========== 关键修改3：pc_next_o输出逻辑（兼顾stall和跳转即时性） ==========
   // stall时保持当前PC，非stall时用组合逻辑的_pc_next（立即响应跳转）
-  assign pc_next_o = stall_valid_i ? _pc_current : _pc_next_d;
+
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      pc_next_o <= `PC_RESET_ADDR;
+    end else if (~stall_valid_i) begin
+      pc_next_o <= _pc_next_d;
+    end else begin
+      pc_next_o <= _pc_current;
+    end
+  end
+  // assign pc_next_o = stall_valid_i ? _pc_current : _pc_next_d;
 
   // ========== 输出信号 ==========
   assign pc_o = _pc_current;
