@@ -174,18 +174,20 @@ module ifu (
 // 1. 对icache输入的指令数据打拍（时序寄存器），隔离组合环路
     reg [31:0] if_rdata_reg;
     reg if_rdata_valid_reg;
+    reg [31:0] inst_addr_reg;
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             if_rdata_reg <= 32'b0;
             if_rdata_valid_reg <= 1'b0;
         end else  begin // stall时不更新，避免数据错乱
             if_rdata_reg <= if_rdata_i;
+            inst_addr_reg <= inst_addr_i;
             if_rdata_valid_reg <= if_rdata_valid_i;
         end
     end
 
     // ============ 方案2核心：预判+修正逻辑（保留组合，保证性能） ============
-    assign inst_addr_o = inst_addr_i;
+    assign inst_addr_o = inst_addr_reg;
     wire [31:0] _inst_data_comb = if_rdata_i;  // 组合逻辑数据（用于预判修正）
     wire [31:0] _inst_data_seq = if_rdata_reg; // 时序寄存器数据（用于指令扩展）
 
