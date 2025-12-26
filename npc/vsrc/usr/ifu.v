@@ -40,7 +40,8 @@ module ifu (
     
     output [`XLEN-1:0] ifu_next_pc_o,          // 下一条指令地址
     output ifu_next_pc_valid_o,
-    input is_compressed_inst,
+    input is_compressed_inst_if_i,
+    output is_compressed_inst_if_o,
     output compress_stall,
 
     // to exu
@@ -181,10 +182,10 @@ module ifu (
     wire [31:0] _inst_data = if_rdata_i;
 
 
-    assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst ? 2 : 4);
-    assign ifu_next_pc_valid_o = is_compressed_inst ? 1 : 0;
-    assign compress_stall = is_compressed_inst & if_rdata_valid_i;
-
+    assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst_if_i ? 2 : 4);
+    assign ifu_next_pc_valid_o = is_compressed_inst_if_i ? 1 : 0;
+    assign compress_stall = is_compressed_inst_if_i & if_rdata_valid_i;
+    assign is_compressed_inst_if_o = is_compressed_inst_if_i;
     
     // 访存暂停逻辑
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);

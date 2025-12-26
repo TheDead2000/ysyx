@@ -195,6 +195,8 @@ wire[31:0]inst_addr_if;
 wire[31:0]inst_data_if;
 
 wire compress_stall;
+wire is_compressed_inst_if2id;
+
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -229,7 +231,8 @@ ifu ifu (
   .bpu_pc_valid_o(bpu_pc_valid_o),
   .compress_stall(compress_stall),
 
-  .is_compressed_inst(is_compressed_inst_if_o),
+  .is_compressed_inst_if_i(is_compressed_inst_if_o),
+  .is_compressed_inst_if_o(is_compressed_inst_if2id),
   .ifu_next_pc_o(ifu_next_pc_o),          // 下一条指令地址
   .ifu_next_pc_valid_o(ifu_next_pc_valid_o),
 
@@ -295,8 +298,8 @@ if_id if2id(
 
   .bpu_taken_if_i (bpu_pc_valid_o),  // 分支预测结果
   .bpu_taken_if_id_o (bpu_pc_valid_if_id),
-  
-  .is_compressed_inst_if_id_i(is_compressed_inst),
+
+  .is_compressed_inst_if_id_i(is_compressed_inst_if2id),
   .is_compressed_inst_if_id_o(is_compressed_inst_if_id),
 
   .bpu_pdt_res_if_i(pdt_res),

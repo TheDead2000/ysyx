@@ -1777,6 +1777,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+6756,"inst_addr_if", false,-1, 31,0);
     tracep->declBus(c+605,"inst_data_if", false,-1, 31,0);
     tracep->declBit(c+6239,"compress_stall", false,-1);
+    tracep->declBit(c+606,"is_compressed_inst_if2id", false,-1);
     tracep->declBus(c+610,"inst_addr_if_id", false,-1, 31,0);
     tracep->declBus(c+611,"inst_data_if_id", false,-1, 31,0);
     tracep->declBus(c+612,"trap_bus_if_id", false,-1, 21,0);
@@ -11265,7 +11266,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6008,"func5_00010", false,-1);
     tracep->declBit(c+6009,"func5_00011", false,-1);
     tracep->declBit(c+6010,"func5_00100", false,-1);
-    tracep->declBit(c+6011,"func5_01000", false,-1);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11275,6 +11275,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBit(c+6011,"func5_01000", false,-1);
     tracep->declBit(c+6012,"func5_01100", false,-1);
     tracep->declBit(c+6013,"func5_10000", false,-1);
     tracep->declBit(c+6014,"func5_10100", false,-1);
@@ -11297,7 +11298,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+605,"inst_data_if_i", false,-1, 31,0);
     tracep->declBit(c+7230,"bpu_taken_if_i", false,-1);
     tracep->declBit(c+613,"bpu_taken_if_id_o", false,-1);
-    tracep->declBit(c+7235,"is_compressed_inst_if_id_i", false,-1);
+    tracep->declBit(c+606,"is_compressed_inst_if_id_i", false,-1);
     tracep->declBit(c+618,"is_compressed_inst_if_id_o", false,-1);
     tracep->declBit(c+7231,"bpu_pdt_res_if_i", false,-1);
     tracep->declBit(c+7233,"bpu_which_pdt_if_i", false,-1);
@@ -11381,7 +11382,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+7219,"RESET_VAL", false,-1, 31,0);
     tracep->declBit(c+7142,"clk", false,-1);
     tracep->declBit(c+27,"rst", false,-1);
-    tracep->declBus(c+7235,"din", false,-1, 0,0);
+    tracep->declBus(c+606,"din", false,-1, 0,0);
     tracep->declBus(c+618,"dout", false,-1, 0,0);
     tracep->declBit(c+26,"wen", false,-1);
     tracep->popNamePrefix(1);
@@ -11422,7 +11423,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7230,"bpu_pc_valid_o", false,-1);
     tracep->declBus(c+6238,"ifu_next_pc_o", false,-1, 31,0);
     tracep->declBit(c+606,"ifu_next_pc_valid_o", false,-1);
-    tracep->declBit(c+606,"is_compressed_inst", false,-1);
+    tracep->declBit(c+606,"is_compressed_inst_if_i", false,-1);
+    tracep->declBit(c+606,"is_compressed_inst_if_o", false,-1);
     tracep->declBit(c+6239,"compress_stall", false,-1);
     tracep->declBit(c+7231,"pdt_res", false,-1);
     tracep->declBus(c+7232,"pdt_pc_tag", false,-1, 31,0);
