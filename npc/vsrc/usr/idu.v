@@ -344,11 +344,11 @@ wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
   wire _rs2_idx_not_zero = (_rs2_idx != `REG_ADDRWIDTH'b0);
 
   // exc stage bypass
-  wire _rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
-  wire _rs2_exc_bypass_valid = (_rs2_idx == ex_rd_addr_i) && (_rs2_idx_not_zero);
+  wire rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
+  wire rs2_exc_bypass_valid = (_rs2_idx == ex_rd_addr_i) && (_rs2_idx_not_zero);
   // mem stage bypass
-  wire _rs1_mem_bypass_valid = (_rs1_idx == mem_rd_addr_i) && (_rs1_idx_not_zero);
-  wire _rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
+  wire rs1_mem_bypass_valid = (_rs1_idx == mem_rd_addr_i) && (_rs1_idx_not_zero);
+  wire rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
   // wb stage bypass was enabled in gpr
 // CSR数据前递：如果当前指令需要读取的寄存器正是EX阶段CSR指令要写入的寄存器
 
@@ -356,28 +356,28 @@ wire _csr_rs1_forward = (_rs1_idx == ex_rd_addr_i) && _rs1_idx_not_zero && exc_c
 wire _csr_rs2_forward = (_rs2_idx == ex_rd_addr_i) && _rs2_idx_not_zero && exc_csr_valid_i;
 
 // exc stage bypass  
-wire _rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
-wire _rs2_exc_bypass_valid = (_rs2_idx == ex_rd_addr_i) && (_rs2_idx_not_zero);
+wire rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
+wire rs2_exc_bypass_valid = (_rs2_idx == ex_rd_addr_i) && (_rs2_idx_not_zero);
 // mem stage bypass
-wire _rs1_mem_bypass_valid = (_rs1_idx == mem_rd_addr_i) && (_rs1_idx_not_zero);
-wire _rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
+wire rs1_mem_bypass_valid = (_rs1_idx == mem_rd_addr_i) && (_rs1_idx_not_zero);
+wire rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
 
 // 优先级选择权：CSR前递 > ex > mem > wb > gpr
 wire [`INST_LEN-1:0] _rs1_data = 
     (_csr_rs1_forward) ? ex_csr_writedata_i :           // CSR数据前递（最高优先级）
-    (_rs1_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递
-    (_rs1_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
+    (rs1_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递
+    (rs1_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs1_data_i;                                    // 寄存器堆读取
 
 wire [`INST_LEN-1:0] _rs2_data = 
     (_csr_rs2_forward) ? ex_csr_writedata_i :           // CSR数据前递（最高优先级）
-    (_rs2_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递  
-    (_rs2_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
+    (rs2_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递  
+    (rs2_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs2_data_i;      
 
   // load-use hazard: 前一条指令为 load 类型，且下一条 rs1、rs2 为 load 指令的 rd，
   // https://courses.cs.vt.edu/cs2506/Spring2013/Notes/L12.PipelineStalls.pdf
-  wire _load_use_data_hazard_valid = _pre_inst_is_load & (_rs1_exc_bypass_valid | _rs2_exc_bypass_valid);
+  wire _load_use_data_hazard_valid = _pre_inst_is_load & (rs1_exc_bypass_valid | rs2_exc_bypass_valid);
 
 
   // 输出指定
