@@ -62,7 +62,6 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
 
-    .is_compressed_inst(is_compressed_inst_if_o),
     .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
     .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
 
@@ -195,6 +194,7 @@ wire ifu_next_pc_valid_o;
 wire[31:0]inst_addr_if;
 wire[31:0]inst_data_if;
 
+wire compress_stall;
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -227,9 +227,12 @@ ifu ifu (
   //to pc 
   .bpu_pc_o(bpu_pc_o),
   .bpu_pc_valid_o(bpu_pc_valid_o),
+  .compress_stall(compress_stall),
+
   .is_compressed_inst(is_compressed_inst_if_o),
-   .ifu_next_pc_o(ifu_next_pc_o),          // 下一条指令地址
-   .ifu_next_pc_valid_o(ifu_next_pc_valid_o),
+  .ifu_next_pc_o(ifu_next_pc_o),          // 下一条指令地址
+  .ifu_next_pc_valid_o(ifu_next_pc_valid_o),
+
   //to if/id
   .pdt_res(pdt_res),
   .pdt_pc_tag(pdt_tag),  // 预测对应的 PC 标签
@@ -1024,10 +1027,13 @@ clint clint_u (
 
     .trap_bus_i(trap_bus_mem),
 
+    .compress_stall(compress_stall),
     .if_rdata_valid_i(if_rdata_valid),
     .ls_valid_i(ls_valid),
     .arb_rdata_ready_i(arb_rdata_ready),
     .arb_wdata_ready_i(arb_wdata_ready),
+
+
     .ram_stall_valid_if_i(ram_stall_valid_if),
     .ram_stall_valid_mem_i(ram_stall_valid_mem),
     .load_use_valid_id_i(load_use_valid),

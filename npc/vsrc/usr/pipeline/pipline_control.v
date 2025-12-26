@@ -4,6 +4,7 @@
 module pipline_control (
     input rst,
     /* ----- stall request from other modules  --------*/
+    input compress_stall,
     input if_rdata_valid_i,
     input ls_valid_i,
     input ram_stall_valid_if_i,  // if ram
@@ -39,6 +40,10 @@ module pipline_control (
   // localparam ram_if_flush = 6'b000000;  // IF stall doesn't need flush
   // localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
     // 位映射：0=PC,1=Pre_IF,2=IF_ID,3=ID_EX,4=EX_MEM,5=MEM_WB
+
+  localparam compress_flush = 6'b000000;    // flush none
+  localparam compress_stall_stall = 6'b000011;    // stall PC(0)+Pre_IF(1)
+
   localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3）
   localparam load_use_stall = 6'b000011;    // stall PC(0)+Pre_IF(1)
 
@@ -103,7 +108,11 @@ module pipline_control (
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
       // 跳转指令,(发生在 ex 阶段)
-     end else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
+     end else if (compress_stall) begin
+      _stall = compress_stall_stall;
+      _flush = compress_flush;
+     end
+     else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
       _stall = 6'b000111;
       _flush = 6'b001000;
      
