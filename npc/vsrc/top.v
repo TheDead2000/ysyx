@@ -62,8 +62,8 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
     // .is_compressed_inst(is_compressed_inst),
-    .ifu_next_pc_i     (pre_if_next_pc),          // 下一条指令地址
-    .ifu_next_pc_valid_i (pre_if_next_inst_valid_o),
+    .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
+    .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
 
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
