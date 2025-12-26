@@ -85,9 +85,11 @@ pre_if pre_if (
     .icache_inst_i  (if_rdata),    // icache输出的原始指令
     .if_rdata_valid_i     (if_rdata_valid),
     // 流水线控制信号
+    /* stall req */
+    .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+
     .pre_if_addr_o  (pre_if_addr),
     .pre_if_inst_o  (pre_if_inst),
-
     .pre_if_valid_o (pre_if_valid)
 );
 
@@ -189,8 +191,7 @@ ifu ifu (
   .inst_addr_i(inst_addr_if_i),  // from pc_reg
   .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
   .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
-  /* stall req */
-  .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+
   .ls_valid_i(ls_valid),
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
