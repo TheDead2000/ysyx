@@ -62,8 +62,8 @@ module preif_if (
       .dout(_pre_if_valid_i_q),
       .wen (reg_wen)
   );
+ assign preif_if_valid_o = _pre_if_valid_i_q;
 
-  /* pre_if_valid_i 寄存器 */
   wire _is_compressed_inst_preif_d = is_compressed_inst_preif_i;
   wire _is_compressed_inst_preif_q;
   regTemplate #(
