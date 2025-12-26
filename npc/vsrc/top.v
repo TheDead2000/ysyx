@@ -83,7 +83,7 @@ pre_if pre_if (
     // 来自icache的输入
     .pc_addr_i      (pc_next),    // 指令对应的PC地址
     .icache_inst_i  (if_rdata),    // icache输出的原始指令
-    .if_rdata_i     (if_rdata_valid),
+    .if_rdata_valid_i     (if_rdata_valid),
     // 流水线控制信号
     .pre_if_addr_o  (pre_if_addr),
     .pre_if_inst_o  (pre_if_inst),

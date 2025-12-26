@@ -11860,7 +11860,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7173,"rst", false,-1);
     tracep->declBus(c+7,"pc_addr_i", false,-1, 31,0);
     tracep->declBus(c+10,"icache_inst_i", false,-1, 31,0);
-    tracep->declBit(c+605,"if_rdata_i", false,-1);
+    tracep->declBit(c+605,"if_rdata_valid_i", false,-1);
     tracep->declBus(c+8,"pre_if_inst_o", false,-1, 31,0);
     tracep->declBus(c+7,"pre_if_addr_o", false,-1, 31,0);
     tracep->declBit(c+605,"pre_if_valid_o", false,-1);
