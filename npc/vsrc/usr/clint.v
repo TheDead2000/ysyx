@@ -465,15 +465,23 @@ end
   // ========== 关键修改：EBREAK检测逻辑 ==========
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
    reg ebreak_triggered;  // 防止多次触发finish
-  // 初始化ebreak_triggered
+  // 步骤1：时序逻辑标记EBREAK触发（确保只打印一次信息）
   always @(posedge clk or posedge rst) begin
     if (rst) begin
       ebreak_triggered <= 1'b0;
     end else if (_trap_ebreak && !ebreak_triggered) begin
-      // 仅在时钟上升沿、首次检测到EBREAK时触发一次
       ebreak_triggered <= 1'b1;
       $display("EBREAK encountered at PC: %h", pc_from_mem_i);
-      $finish(2);  // 直接终止仿真，移除$stop
+    end
+  end
+
+  // 步骤2：组合逻辑持续触发终止（只要EBREAK有效/已触发，就强制退出）
+  always @(*) begin
+    if (_trap_ebreak || ebreak_triggered) begin
+      // 组合逻辑持续触发，确保仿真器能捕获到退出指令
+      // $fatal优先级最高，强制终止；$finish兜底
+      $fatal(2, "EBREAK hit, force exit! PC = 0x%h", pc_from_mem_i);
+      $finish(2);
     end
   end
 
