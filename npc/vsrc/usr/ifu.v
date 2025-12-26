@@ -175,31 +175,8 @@ module ifu (
 
     
     // ============ 原有 IFU 逻辑（保持兼容） ============
-    
-    
-    reg[31:0] inst_addr_reg;
-    reg[31:0] inst_data_reg;
-      always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            inst_addr_reg <= `XLEN'b0;
-            inst_data_reg <= `INST_NOP;
-        end else if(if_flush_i) begin
-            inst_addr_reg <= `XLEN'b0;
-            inst_data_reg <= `INST_NOP;
-        end
-        else if (!ram_stall_valid_if_o) begin
-            inst_addr_reg <= inst_addr_i;
-            inst_data_reg <= if_rdata_i;
-        end
-    end
-
-
-
-
-
-
-    assign inst_addr_o = inst_addr_reg;
-    wire [31:0] _inst_data = inst_data_reg;
+    assign inst_addr_o = inst_addr_i;
+    wire [31:0] _inst_data = if_rdata_i;
 
     // // 判断是否为压缩指令（低2位不为11）
     wire is_compressed_inst = (_inst_data[1:0] != 2'b11) ;
@@ -212,10 +189,9 @@ module ifu (
     );
 
     wire [31:0] _final_inst;
-    assign _final_inst = is_compressed_inst ? expanded_inst : _inst_data;
-    assign inst_data_o = _final_inst;
+    assign _final_inst = is_compressed_inst ? expanded_inst : if_rdata_i;
 
-    assign ifu_next_pc_o = inst_addr_reg + (is_compressed_inst ? 2 : 4);
+    assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst ? 2 : 4);
     assign ifu_next_pc_valid_o = is_compressed_inst ? 1 : 0;
 
     
@@ -223,7 +199,7 @@ module ifu (
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
-
+    assign inst_data_o = _final_inst;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;
