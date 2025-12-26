@@ -170,8 +170,8 @@ module ifu (
             end
         end
     end
-    
-// 1. 对icache输入的指令数据打拍（时序寄存器），隔离组合环路
+
+// 对icache输入的指令数据打拍（时序寄存器），隔离组合环路
     reg [31:0] if_rdata_reg;
     reg if_rdata_valid_reg;
     reg [31:0] inst_addr_reg;
@@ -179,6 +179,10 @@ module ifu (
         if (rst) begin
             if_rdata_reg <= 32'b0;
             if_rdata_valid_reg <= 1'b0;
+        end  else if (if_flush_i) begin  // 跳转/刷新时立即清空
+            if_rdata_reg <= 32'h00000013; // NOP 指令
+            if_rdata_valid_reg <= 1'b0;
+            inst_addr_reg <= 32'b0;
         end else begin
             if_rdata_reg <= if_rdata_i;
             inst_addr_reg <= inst_addr_i;
