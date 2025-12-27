@@ -87,6 +87,7 @@ module icache_top (
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
+  localparam CACHE_NEXT_MISS = 4'd5;
 
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
@@ -142,9 +143,10 @@ module icache_top (
           line_tag_reg           <= cache_line_tag;
           icache_tag_write_valid <= 0;
           uncache_data_ready     <= 0;
+          next_sram128_valid <= 1'b0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
           if (preif_raddr_valid_i) begin
-            icache_state <= CACHE_LOOKUP;
+            icache_state <= CACHE_LOOKUP;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
           end
         end
         CACHE_LOOKUP: begin
@@ -173,6 +175,18 @@ module icache_top (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
+          // else if (need_check_next_block && ~next_block_hit) begin
+          //     // 进入处理跨块miss的状态
+          //     icache_state <= CACHE_NEXT_MISS;
+          //     // 设置下一个块的加载请求
+          //     _ram_raddr_icache_o <= {next_cache_line_tag, next_cache_line_idx, 6'b0};
+          //     _ram_raddr_valid_icache_o <= 1'b1;
+          //     _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+          //     _ram_rsize_icache_o <= 4'b0100;  // 32bit 
+          //     _ram_rlen_icache_o <= 15;    // 突发15+1次 
+          //     burst_count <= 0;  // 清空计数器
+          // end
+
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
@@ -190,6 +204,18 @@ module icache_top (
             end
           end
         end
+        // CACHE_NEXT_MISS: begin
+        //   if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+        //     if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+        //       icache_state <= CACHE_IDLE;
+        //       _ram_raddr_valid_icache_o <= 0;  // 传输结束
+        //       icache_tag_write_valid <= 1;  // 写 tag 
+        //     end else begin
+        //       burst_count <= burst_count_plus1;
+        //     end
+        //   end
+        // end
+
         UNCACHE_READ: begin
           if (ram_r_handshake) begin
             _ram_raddr_valid_icache_o <= 0;
@@ -198,6 +224,10 @@ module icache_top (
             icache_state <= CACHE_IDLE;
           end
         end
+
+
+
+
         default: begin
           icache_state <= CACHE_IDLE;
         end
@@ -269,13 +299,32 @@ wire [127:0] icache_wdate =
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
   
+
+  // 5.1 预取缓存寄存器
+reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
+reg next_sram128_valid;         // 缓存有效标记
+wire next_block_hit;           // 下一个块是否命中
+
+// 5.2 下一个块的tag检查
+wire [18:0] next_cache_line_tag;  // 下一个块的tag
+wire [6:0]  next_cache_line_idx;  // 下一个块的index
+assign {next_cache_line_tag, next_cache_line_idx, next_blk_addr} = next_sram128_addr;
+
+// 实例化下一个块的tag检查模块
+icache_tag u_icache_tag_next (
+    .clk           (clk),
+    .rst           (rst),
+    .icache_tag_i  (next_cache_line_tag),    // 下一个块的tag
+    .icache_index_i(next_cache_line_idx),    // 下一个块的index
+    .write_valid_i (1'b0),                   // 只读不写
+    .icache_hit_o  (next_block_hit)          // 下一个块是否命中
+);
+
+
 wire [3:0] sram128_offset_byte = blk_addr_reg[3:0];  // 128bit SRAM内字节偏移(0~15)
 wire [1:0] word_sel_byte = blk_addr_reg[3:2];        // 32位字选择(0~3)
 wire [1:0] halfword_sel_byte = blk_addr_reg[1:0];    // 16位半字选择(0/2/4...14)
 // -------------------------- 5. 跨块预取（适配32位指令跨128bit块） --------------------------
-// 5.1 预取缓存寄存器
-reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
-reg next_sram128_valid;         // 缓存有效标记
 
 // 5.2 当前半字数据提取
 wire [15:0] curr_halfword;
