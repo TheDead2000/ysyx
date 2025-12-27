@@ -143,6 +143,7 @@ module icache_top (
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
           icache_tag_write_valid <= 0;
+          icache_tag_write_valid_next <= 0;  // 写 tag 
           uncache_data_ready     <= 0;
           next_sram128_valid <= 1'b0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
@@ -155,6 +156,7 @@ module icache_top (
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
           icache_tag_write_valid    <= 0;
+          icache_tag_write_valid_next <= 0;  // 写 tag 
           uncache_data_ready <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
         if (~icache_hit && ~uncache) begin
@@ -200,6 +202,7 @@ module icache_top (
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
               icache_tag_write_valid <= 1;  // 写 tag 
+              icache_tag_write_valid_next <= 1;  // 写 tag 
             end else begin
               burst_count <= burst_count_plus1;
             end
@@ -317,7 +320,7 @@ icache_tag u_icache_tag_next (
     .rst           (rst),
     .icache_tag_i  (next_cache_line_tag),    // 下一个块的tag
     .icache_index_i(next_cache_line_idx),    // 下一个块的index
-    .write_valid_i (icache_tag_write_valid | icache_tag_write_valid_next),  // 写使能
+    .write_valid_i (icache_tag_write_valid_next),  // 写使能
     .icache_hit_o  (next_block_hit)          // 下一个块是否命中
 );
 
@@ -417,7 +420,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 
 /* verilator lint_off WIDTHEXPAND */
 
-  assign if_rdata_valid_o = (icache_hit) | uncache_data_ready;
+  assign if_rdata_valid_o = (icache_hit) | uncache_data_ready & next_block_hit;
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;
