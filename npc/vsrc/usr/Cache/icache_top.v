@@ -20,10 +20,10 @@ module icache_top (
     // input [7:0] preif_rmask_i,  // 访存掩码
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
-
+  
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
-
+    output next_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
 
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
@@ -72,20 +72,10 @@ module icache_top (
 
   // 寄存器已复位
 
-  reg[31:0] preif_addr_i;
-  always @(posedge clk) begin
-    if (rst) begin
-      preif_addr_i <= 32'b0;
-    end else if (preif_raddr_valid_i) begin
-      preif_addr_i <= preif_raddr_i;
-    end
-  end
-
-
   wire [5:0] cache_blk_addr;  // 6bit块内地址（保持不变）
   wire [6:0] cache_line_idx;  // 7bit组号
   wire [18:0] cache_line_tag; // 19bit tag
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_addr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
 
   wire icache_hit;
   wire uncache;
@@ -202,7 +192,7 @@ module icache_top (
 
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
-            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_addr_i);
+            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
           end
 `endif 
         end
@@ -366,7 +356,7 @@ wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 wire need_check_next_block = need_cross_sram128; // 需要检查下一个块
 // 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_addr_i + 4;  // 下一块地址（+16字节）
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
 wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
 wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 
@@ -432,6 +422,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 
   // assign if_rdata_valid_o = (icache_hit & !(next_block_hit &  need_cross_sram128)) | uncache_data_ready;
     assign if_rdata_valid_o = (icache_hit ) | uncache_data_ready;
+    assign next_rdata_valid_o = next_block_hit & need_cross_sram128;
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;

@@ -80,7 +80,7 @@ wire pre_if_valid;
 wire pre_if_next_inst_valid_o;
 wire [31:0] pre_if_next_pc;
 wire is_compressed_inst_preif;
-
+wire next_rdata_valid;
 pre_if pre_if (
     .clk            (clk),
     .rst            (rst),
@@ -88,6 +88,7 @@ pre_if pre_if (
     .pc_addr_i      (inst_addr),    // 指令对应的PC地址
     .icache_inst_i  (if_rdata),    // icache输出的原始指令
     .if_rdata_valid_i     (if_rdata_valid),
+    .next_rdata_valid_i (next_rdata_valid),
     // 流水线控制信号
     /* stall req */
     .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
@@ -1178,7 +1179,7 @@ wire [7:0] icache_arb_rlen;
       .preif_raddr_valid_i(read_req),  // 地址是否有效，无效时，停止访问 cache
       .if_rdata_o(if_rdata),  // icache 返回读数据
       .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
-
+      .next_rdata_valid_o(next_rdata_valid),
 
     .ram_raddr_icache_o(icache_arb_araddr),
     .ram_raddr_valid_icache_o(icache_arb_arvalid),

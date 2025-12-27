@@ -6,7 +6,7 @@ module pre_if (
     input [31:0] pc_addr_i,    // 指令对应的PC地址
     input [31:0] icache_inst_i,    // icache输出的原始指令
     input if_rdata_valid_i,
-
+    input next_rdata_valid_i,
     // 流水线控制信号
     // input stall_valid_i,           // 流水线stall（整个流水线暂停）
     // input if_flush_i,              // 流水线flush（跳转/异常）
@@ -39,6 +39,6 @@ assign ram_stall_valid_if_o = _ram_stall;
 
 assign pre_if_inst_o = expanded_inst;
 assign pre_if_addr_o = pc_addr_i;
-assign pre_if_valid_o = if_rdata_valid_i;
+assign pre_if_valid_o = if_rdata_valid_i & next_rdata_valid_i;
 
 endmodule
