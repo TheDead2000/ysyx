@@ -460,9 +460,8 @@ end
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
   always @(*) begin
     if (_trap_ebreak) begin
-      $display("EBREAK encountered at PC: %h", pc_from_mem_i);
+      $display("EBREAK encountered at PC: %h pc_ex %h _trap_ebreak %d trap_bus_i", pc_from_mem_i, pc_from_exe_i, _trap_ebreak, trap_bus_i);
       $finish;  // 使用参数2表示立即退出
-      $finish;
       // call_ebreak();
     end
   end
