@@ -42,7 +42,7 @@ module pipline_control (
     // 位映射：0=PC,1=Pre_IF,2=IF_ID,3=ID_EX,4=EX_MEM,5=MEM_WB
 
   localparam compress_flush = 6'b000000;    // flush none pass
-  localparam compress_stall_stall = 6'b000001;    // stall PC(0)
+  localparam compress_stall_stall = 6'b000011;    // stall PC(0)
 
   localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3） pass
   localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)+if_id(2)
