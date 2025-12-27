@@ -197,7 +197,7 @@ module id_ex (
   ) u_inst_data_id_ex (
       .clk (clk),
       .rst (reg_rst),
-      .din (_inst_data_id_ex_d),
+      .din (_inst_data_id_ex_d), 
       .dout(_inst_data_id_ex_q),
       .wen (reg_wen)
   );
