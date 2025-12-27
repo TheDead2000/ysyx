@@ -175,17 +175,17 @@ module icache_top (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
-          // else if (need_check_next_block && ~next_block_hit) begin
-          //     // 进入处理跨块miss的状态
-          //     icache_state <= CACHE_NEXT_MISS;
-          //     // 设置下一个块的加载请求
-          //     _ram_raddr_icache_o <= {next_cache_line_tag, next_cache_line_idx, 6'b0};
-          //     _ram_raddr_valid_icache_o <= 1'b1;
-          //     _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
-          //     _ram_rsize_icache_o <= 4'b0100;  // 32bit 
-          //     _ram_rlen_icache_o <= 15;    // 突发15+1次 
-          //     burst_count <= 0;  // 清空计数器
-          // end
+          else if (need_check_next_block && ~next_block_hit) begin
+              // 进入处理跨块miss的状态
+              icache_state <= CACHE_NEXT_MISS;
+              // 设置下一个块的加载请求
+              _ram_raddr_icache_o <= {next_cache_line_tag, next_cache_line_idx, 6'b0};
+              _ram_raddr_valid_icache_o <= 1'b1;
+              _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+              _ram_rsize_icache_o <= 4'b0100;  // 32bit 
+              _ram_rlen_icache_o <= 15;    // 突发15+1次 
+              burst_count <= 0;  // 清空计数器
+          end
 
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
@@ -204,17 +204,17 @@ module icache_top (
             end
           end
         end
-        // CACHE_NEXT_MISS: begin
-        //   if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-        //     if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
-        //       icache_state <= CACHE_IDLE;
-        //       _ram_raddr_valid_icache_o <= 0;  // 传输结束
-        //       icache_tag_write_valid <= 1;  // 写 tag 
-        //     end else begin
-        //       burst_count <= burst_count_plus1;
-        //     end
-        //   end
-        // end
+        CACHE_NEXT_MISS: begin
+          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+              icache_state <= CACHE_IDLE;
+              _ram_raddr_valid_icache_o <= 0;  // 传输结束
+              icache_tag_write_valid <= 1;  // 写 tag 
+            end else begin
+              burst_count <= burst_count_plus1;
+            end
+          end
+        end
 
         UNCACHE_READ: begin
           if (ram_r_handshake) begin
@@ -316,7 +316,7 @@ icache_tag u_icache_tag_next (
     .rst           (rst),
     .icache_tag_i  (next_cache_line_tag),    // 下一个块的tag
     .icache_index_i(next_cache_line_idx),    // 下一个块的index
-    .write_valid_i (1'b0),                   // 只读不写
+    .write_valid_i (icache_tag_write_valid),  // 写使能
     .icache_hit_o  (next_block_hit)          // 下一个块是否命中
 );
 
@@ -350,7 +350,7 @@ assign next_halfword = (sram128_offset_byte == 0)  ? icache_rdata[31:16] :
 wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=11
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
-
+wire need_check_next_block = need_cross_sram128; // 需要检查下一个块
 // 5.4 预取下一个128bit块
 wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
 wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
