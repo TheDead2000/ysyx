@@ -91,7 +91,7 @@ pre_if pre_if (
     .next_rdata_unvalid_i (next_rdata_unvalid),
     // 流水线控制信号
     /* stall req */
-    .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+    // .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
 
     .is_compressed_inst(is_compressed_inst_preif),
 
@@ -205,7 +205,7 @@ ifu ifu (
   // .if_rdata_valid_i    (if_rdata_valid),      // 读数据是否准备好
   // .if_rdata_i          (if_rdata),            // 返回到读取的数据
   /* stall req */
-  // .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
+  .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
 
   .inst_addr_i(inst_addr_if_i),  // from pc_reg
   .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
