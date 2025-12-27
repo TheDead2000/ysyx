@@ -72,10 +72,20 @@ module icache_top (
 
   // 寄存器已复位
 
+  reg[31:0] preif_addr_i;
+  always @(posedge clk) begin
+    if (rst) begin
+      preif_addr_i <= 32'b0;
+    end else if (preif_raddr_valid_i) begin
+      preif_addr_i <= preif_raddr_i;
+    end
+  end
+
+
   wire [5:0] cache_blk_addr;  // 6bit块内地址（保持不变）
   wire [6:0] cache_line_idx;  // 7bit组号
   wire [18:0] cache_line_tag; // 19bit tag
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_addr_i;
 
   wire icache_hit;
   wire uncache;
@@ -192,7 +202,7 @@ module icache_top (
 
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
-            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
+            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_addr_i);
           end
 `endif 
         end
@@ -356,7 +366,7 @@ wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 wire need_check_next_block = need_cross_sram128; // 需要检查下一个块
 // 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
+wire [`XLEN-1:0] next_sram128_addr = preif_addr_i + 4;  // 下一块地址（+16字节）
 wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
 wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 
