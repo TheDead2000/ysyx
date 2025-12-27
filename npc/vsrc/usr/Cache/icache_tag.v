@@ -22,17 +22,7 @@ module icache_tag #(
   wire [TAG_LEN-1:0] tag_read = read_tag_full[TAG_LEN-1:0];
   
   // 命中判断
-  reg _icache_hit;
-  always @(posedge clk) begin
-    if( (icache_tag_i == tag_read) & valid_bit) begin
-      _icache_hit <= 1'b1;
-    end
-    else begin
-      _icache_hit <= 1'b0;
-    end
-  end
-
-  // wire _icache_hit = (icache_tag_i == tag_read) & valid_bit;
+  wire _icache_hit = (icache_tag_i == tag_read) & valid_bit;
   assign icache_hit_o = _icache_hit;
 
   // 合并的写入和复位逻辑
