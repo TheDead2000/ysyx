@@ -23,7 +23,7 @@ module icache_top (
   
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
-    output next_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
+    output next_rdata_unvalid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
 
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
@@ -422,7 +422,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 
   // assign if_rdata_valid_o = (icache_hit & !(next_block_hit &  need_cross_sram128)) | uncache_data_ready;
     assign if_rdata_valid_o = (icache_hit ) | uncache_data_ready;
-    assign next_rdata_valid_o = next_block_hit & need_cross_sram128;
+    assign next_rdata_unvalid_o = (!next_block_hit & need_cross_sram128);
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;

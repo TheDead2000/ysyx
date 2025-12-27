@@ -1718,7 +1718,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+7227,"pre_if_next_inst_valid_o", false,-1);
     tracep->declBus(c+7228,"pre_if_next_pc", false,-1, 31,0);
     tracep->declBit(c+9,"is_compressed_inst_preif", false,-1);
-    tracep->declBit(c+7186,"next_rdata_valid", false,-1);
+    tracep->declBit(c+7186,"next_rdata_unvalid", false,-1);
     tracep->declBus(c+6759,"inst_addr_if_i", false,-1, 31,0);
     tracep->declBus(c+610,"inst_data_if_i", false,-1, 31,0);
     tracep->declBit(c+6760,"if_data_valid_o", false,-1);
@@ -11866,7 +11866,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+6758,"pc_addr_i", false,-1, 31,0);
     tracep->declBus(c+11,"icache_inst_i", false,-1, 31,0);
     tracep->declBit(c+6772,"if_rdata_valid_i", false,-1);
-    tracep->declBit(c+7186,"next_rdata_valid_i", false,-1);
+    tracep->declBit(c+7186,"next_rdata_unvalid_i", false,-1);
     tracep->declBus(c+8,"pre_if_inst_o", false,-1, 31,0);
     tracep->declBus(c+6758,"pre_if_addr_o", false,-1, 31,0);
     tracep->declBit(c+7185,"pre_if_valid_o", false,-1);
@@ -12437,7 +12437,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7184,"preif_raddr_valid_i", false,-1);
     tracep->declBus(c+11,"if_rdata_o", false,-1, 31,0);
     tracep->declBit(c+6772,"if_rdata_valid_o", false,-1);
-    tracep->declBit(c+7186,"next_rdata_valid_o", false,-1);
+    tracep->declBit(c+7186,"next_rdata_unvalid_o", false,-1);
     tracep->declBus(c+672,"ram_raddr_icache_o", false,-1, 31,0);
     tracep->declBit(c+673,"ram_raddr_valid_icache_o", false,-1);
     tracep->declBus(c+671,"ram_rmask_icache_o", false,-1, 3,0);
