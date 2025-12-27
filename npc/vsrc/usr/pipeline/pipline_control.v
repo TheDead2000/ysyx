@@ -56,10 +56,10 @@ module pipline_control (
   localparam trap_ecall_flush = 6'b001110;  // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)
 
   localparam ram_mem_flush = 6'b100000;     // flush MEM_WB(5) 
-  localparam ram_mem_stall = 6'b011101;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)+EX_MEM(4)
+  localparam ram_mem_stall = 6'b011111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)+EX_MEM(4)
 
   localparam ram_if_flush = 6'b000000;      // IF stall无需flush 
-  localparam ram_if_stall = 6'b000001;      // stall PC(0)
+  localparam ram_if_stall = 6'b011101;      // stall PC(0)+
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
@@ -79,7 +79,7 @@ module pipline_control (
       _flush = ram_mem_flush;
     end 
     else if(ram_stall_req_if) begin
-        _stall = ram_if_stall;
+        _stall = ram_mem_stall;
         _flush = ram_if_flush;
         end
       // 中断|异常,(发生在 mem 阶段)
