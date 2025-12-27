@@ -419,9 +419,10 @@ wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字�
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 /* verilator lint_off WIDTHEXPAND */
+wire unvalid = need_cross_sram128 & next_block_hit;
 reg  if_rdata_valid_o_reg;
 always @(posedge clk) begin
-    if ( (icache_hit & next_block_hit) | uncache_data_ready) begin
+    if ( (icache_hit & !unvalid) | uncache_data_ready) begin
         if_rdata_valid_o_reg <= 1'b1;
     end else begin
         if_rdata_valid_o_reg <= 1'b0;
