@@ -1175,7 +1175,7 @@ wire [7:0] icache_arb_rlen;
       .clk(clk),
       .rst(rst),
       /* cpu<-->cache 端口 */
-      .preif_raddr_i(pc_next),  // CPU 的访存信息 
+      .preif_raddr_i(inst_addr),  // CPU 的访存信息 
       .preif_raddr_valid_i(read_req),  // 地址是否有效，无效时，停止访问 cache
       .if_rdata_o(if_rdata),  // icache 返回读数据
       .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
