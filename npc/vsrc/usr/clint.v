@@ -21,15 +21,11 @@ module clint (
     
     // 流水线暂停请求
     input compress_stall,
-    input if_rdata_valid_i,
-    input ls_valid_i,
     input ram_stall_valid_if_i,
     input ram_stall_valid_mem_i,
     input load_use_valid_id_i,
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
-    input arb_wdata_ready_i,
-    input arb_rdata_ready_i,  // 读数据是否有效
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
@@ -422,8 +418,6 @@ end
   pipline_control u_pipline_control (
       .rst(rst),
       .compress_stall(compress_stall),
-      .if_rdata_valid_i(if_rdata_valid_i),
-      .ls_valid_i(ls_valid_i),
       .ram_stall_valid_if_i(ram_stall_valid_if_i),
       .ram_stall_valid_mem_i(ram_stall_valid_mem_i),
       .load_use_valid_id_i(load_use_valid_id_i),
@@ -431,8 +425,6 @@ end
       .alu_mul_div_valid_ex_i(alu_mul_div_valid_ex_i),
       .trap_flush_valid_wb_i(trap_flush_condition),
       .trap_stall_valid_wb_i(trap_stall_valid),
-      .arb_wdata_ready_i(arb_wdata_ready_i),
-      .arb_rdata_ready_i(arb_rdata_ready_i),
       .stall_o(stall_o),
       .flush_o(flush_o)
   );
