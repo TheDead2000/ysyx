@@ -44,7 +44,7 @@ module pipline_control (
   localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)+if_id(2)
 
   localparam jump_flush = 6'b001110;        // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)  
-  localparam jump_stall = 6'b000010;        // stall Pre_IF(1)
+  localparam jump_stall = 6'b000011;        // stall Pre_IF(1)
 
   localparam mul_div_flush = 6'b010000;     // flush EX_MEM(4)
   localparam mul_div_stall = 6'b000111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)
@@ -58,7 +58,7 @@ module pipline_control (
   localparam ram_mem_flush = 6'b100000;     // flush MEM_WB(5) 
   localparam ram_mem_stall = 6'b011111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)+EX_MEM(4)
 
-  localparam ram_if_flush = 6'b000010;      // IF stall无需flush 
+  localparam ram_if_flush = 6'b000000;      // IF stall无需flush 
   localparam ram_if_stall = 6'b011101;      // stall PC(0)+
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
