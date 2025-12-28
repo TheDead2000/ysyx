@@ -5,6 +5,7 @@ module pipline_control (
     input rst,
     /* ----- stall request from other modules  --------*/
     input compress_stall,
+    input next_stall_preif_i,
     input ram_stall_valid_if_i,  // if ram
     input ram_stall_valid_mem_i,  // mem ram
     input load_use_valid_id_i,  //load-use data hazard from id
@@ -59,11 +60,12 @@ module pipline_control (
   localparam ram_mem_stall = 6'b011111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)+EX_MEM(4)
 
   localparam ram_if_flush = 6'b000000;      // IF stall无需flush
-  localparam ram_if_stall = 6'b000011;      // stall PC(0)+Pre_IF(1)
+  localparam ram_if_stall = 6'b011111;      // stall PC(0)+Pre_IF(1)
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
+  wire next_stall_req_preif = next_stall_preif_i;
 
   reg [5:0] _flush;
   reg [5:0] _stall;
@@ -78,8 +80,12 @@ module pipline_control (
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
+    else if(next_stall_req_preif) begin
+        _stall = ram_if_stall;
+        _flush = ram_if_flush;
+      end
     else if(ram_stall_req_if) begin
-        _stall = ram_mem_stall;
+        _stall = ram_if_stall;
         _flush = ram_if_flush;
         end
       // 中断|异常,(发生在 mem 阶段)

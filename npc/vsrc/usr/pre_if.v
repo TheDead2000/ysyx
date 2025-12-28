@@ -6,7 +6,7 @@ module pre_if (
     input [31:0] pc_addr_i,    // 指令对应的PC地址
     input [31:0] icache_inst_i,    // icache输出的原始指令
     input if_rdata_valid_i,
-
+    input next_rdata_unvalid_i,
     // 流水线控制信号
     // input stall_valid_i,           // 流水线stall（整个流水线暂停）
     // input if_flush_i,              // 流水线flush（跳转/异常）
@@ -18,7 +18,8 @@ module pre_if (
 
     output is_compressed_inst,  
 
-    output ram_stall_valid_if_o       // if 阶段访存暂停
+    output ram_stall_valid_if_o,       // if 阶段访存暂停
+    output next_ram_stall_preif_o       // 下一个周期访存暂停
 );
 
 
@@ -36,6 +37,9 @@ assign is_compressed_inst = (icache_inst_i[1:0] != 2'b11);
 
 wire _ram_stall = (!if_rdata_valid_i);
 assign ram_stall_valid_if_o = _ram_stall;
+
+wire next_ram_stall = next_rdata_unvalid_i;
+assign next_ram_stall_preif_o = next_ram_stall;
 
 assign pre_if_inst_o = expanded_inst;
 assign pre_if_addr_o = pc_addr_i;

@@ -23,7 +23,7 @@ module icache_top (
 
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
-
+    output next_rdata_unvalid_o, // 下一个读数据无效（跨块预取未完成）
 
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
@@ -78,6 +78,7 @@ module icache_top (
   assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
 
   wire icache_hit;
+  wire next_icache_hit;
   wire uncache;
 
 
@@ -214,6 +215,14 @@ module icache_top (
       .icache_hit_o  (icache_hit)
   );
 
+  icache_tag u_next_icache_tag (
+      .clk           (clk),
+      .rst           (rst),
+      .icache_tag_i  (next_line_tag_reg),            // tag
+      .icache_index_i(next_line_idx_reg),            // index
+      .write_valid_i (icache_tag_write_valid),  // 写使能
+      .icache_hit_o  (next_icache_hit)
+  );
 
 
  wire [127:0] icache_wmask = 
@@ -268,7 +277,20 @@ wire [127:0] icache_wdate =
 
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
+  // 5.4 预取下一个128bit块
+
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
+
+  wire [5:0] next_cache_blk_addr;  // 6bit块内地址（保持不变）
+  wire [6:0] next_cache_line_idx;  // 7bit组号
+  wire [18:0] next_cache_line_tag; // 19bit tag
   
+  reg[18:0] next_line_tag_reg;
+  reg[6:0] next_line_idx_reg;
+  reg[5:0] next_blk_addr_reg;
+
+  assign {next_cache_line_tag, next_cache_line_idx, next_cache_blk_addr} = next_sram128_addr;
+
 wire [3:0] sram128_offset_byte = blk_addr_reg[3:0];  // 128bit SRAM内字节偏移(0~15)
 wire [1:0] word_sel_byte = blk_addr_reg[3:2];        // 32位字选择(0~3)
 wire [1:0] halfword_sel_byte = blk_addr_reg[1:0];    // 16位半字选择(0/2/4...14)
@@ -302,16 +324,13 @@ wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=1
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
-// 5.4 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
-wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
-wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
+
 
 /* verilator lint_off PINMISSING */
 // 预取数据模块（仅读，无写）
 icache_data u_icache_data_next (
-    .icache_index_i      (next_line_idx),
-    .icache_blk_addr_i   (next_blk_addr),
+    .icache_index_i      (next_cache_line_idx),
+    .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
     .icache_line_wdata_i (128'h0),
     .icache_wmask        (128'h0),
     .burst_count_i       (4'h0),
@@ -368,6 +387,8 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
+  assign next_rdata_unvalid_o = need_cross_sram128 & !next_icache_hit; // 下一个128bit块数据无效，需要等待
+
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;

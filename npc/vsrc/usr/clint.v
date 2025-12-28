@@ -21,6 +21,7 @@ module clint (
     
     // 流水线暂停请求
     input compress_stall,
+    input next_stall_preif_i,
     input ram_stall_valid_if_i,
     input ram_stall_valid_mem_i,
     input load_use_valid_id_i,
@@ -418,6 +419,7 @@ end
   pipline_control u_pipline_control (
       .rst(rst),
       .compress_stall(compress_stall),
+      .next_stall_preif_i(next_stall_preif_i),
       .ram_stall_valid_if_i(ram_stall_valid_if_i),
       .ram_stall_valid_mem_i(ram_stall_valid_mem_i),
       .load_use_valid_id_i(load_use_valid_id_i),
