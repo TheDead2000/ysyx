@@ -441,9 +441,14 @@ wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字�
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 /* verilator lint_off WIDTHEXPAND */
+reg next_rdata_unvalid_o_reg;
+always @(posedge clk) begin
+    next_rdata_unvalid_o_reg <= (!next_block_hit & need_cross_sram128);
+end
+
 
   // assign if_rdata_valid_o = (icache_hit & !(next_block_hit &  need_cross_sram128)) | uncache_data_ready;
-    assign if_rdata_valid_o = icache_hit  | uncache_data_ready;
+    assign if_rdata_valid_o = (icache_hit & !next_rdata_unvalid_o_reg)  | uncache_data_ready;
     assign next_rdata_unvalid_o = (!next_block_hit & need_cross_sram128);
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;

@@ -16,9 +16,9 @@ module pre_if (
     output [31:0] pre_if_addr_o,   // 指令对应的PC地址（锁存）
     output pre_if_valid_o,          // Pre_IF阶段数据有效
 
-    output is_compressed_inst
+    output is_compressed_inst,  
 
-    // output ram_stall_valid_if_o       // if 阶段访存暂停
+    output ram_stall_valid_if_o       // if 阶段访存暂停
 );
 
 
@@ -34,11 +34,11 @@ assign is_compressed_inst = (icache_inst_i[1:0] != 2'b11);
 // wire _ram_stall = (!if_rdata_valid_i);
 // assign ram_stall_valid_if_o = ls_valid_i ? 1'b0 : _ram_stall;
 
-// wire _ram_stall = (!if_rdata_valid_i);
-// assign ram_stall_valid_if_o = _ram_stall;
+wire _ram_stall = (!if_rdata_valid_i);
+assign ram_stall_valid_if_o = _ram_stall;
 
 assign pre_if_inst_o = expanded_inst;
 assign pre_if_addr_o = pc_addr_i;
-assign pre_if_valid_o = if_rdata_valid_i & !next_rdata_unvalid_i;
+assign pre_if_valid_o =if_rdata_valid_i;
 
 endmodule
