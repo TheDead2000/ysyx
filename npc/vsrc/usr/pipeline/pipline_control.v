@@ -65,7 +65,6 @@ module pipline_control (
   wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
 
-
   reg [5:0] _flush;
   reg [5:0] _stall;
   /* 流水线越往后,优先级越高 */
