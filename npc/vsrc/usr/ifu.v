@@ -184,7 +184,7 @@ module ifu (
 
     assign ifu_next_pc_o = inst_addr_i + (is_compressed_inst_if_i ? 2 : 4);
     assign ifu_next_pc_valid_o = is_compressed_inst_if_i ? 1 : 0;
-    assign compress_stall = is_compressed_inst_if_i & if_rdata_valid_i;
+    assign compress_stall = is_compressed_inst_if_i ;
     assign is_compressed_inst_if_o = is_compressed_inst_if_i;
     
     // 访存暂停逻辑
