@@ -20,10 +20,10 @@ module icache_top (
     // input [7:0] preif_rmask_i,  // 访存掩码
     input preif_raddr_valid_i,  // 地址是否有效，无效时，停止访问 cache
     output [`XLEN-1:0] if_rdata_o,  // icache 返回读数据
-  
+
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
-    output next_rdata_unvalid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
+
 
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
@@ -87,7 +87,6 @@ module icache_top (
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
-  localparam CACHE_NEXT_MISS = 4'd5;
 
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
@@ -96,13 +95,8 @@ module icache_top (
   reg [5:0] blk_addr_reg;
   reg [6:0] line_idx_reg;
   reg [18:0] line_tag_reg;
-
-  reg [18:0] next_tag_reg;
-  reg [6:0] next_idx_reg;
-  reg [5:0] next_blk_reg;
-
   reg icache_tag_write_valid;
-  reg icache_tag_write_valid_next;
+
   reg uncache_data_ready;
   // cache<-->mem 端口 
   reg [`XLEN-1:0] _ram_raddr_icache_o;
@@ -128,13 +122,7 @@ module icache_top (
       blk_addr_reg              <= 0;
       line_idx_reg              <= 0;
       line_tag_reg              <= 0;
-      
-      next_tag_reg              <= 0;
-      next_idx_reg              <= 0;
-      next_blk_reg         <= 0;
-
       icache_tag_write_valid    <= 0;
-      icache_tag_write_valid_next <= 0;
       _ram_rmask_icache_o       <= 0;
       _ram_rsize_icache_o       <= 0;
       _ram_raddr_valid_icache_o <= 0;
@@ -152,32 +140,18 @@ module icache_top (
           blk_addr_reg           <= cache_blk_addr;
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
-
-          next_tag_reg            <= next_cache_line_tag;
-          next_idx_reg            <= next_cache_line_idx;
-          next_blk_reg            <= next_blk_addr;
-
           icache_tag_write_valid <= 0;
-          icache_tag_write_valid_next <= 0;  // 写 tag 
           uncache_data_ready     <= 0;
-          next_sram128_valid <= 1'b0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
           if (preif_raddr_valid_i) begin
-            icache_state <= CACHE_LOOKUP;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+            icache_state <= CACHE_LOOKUP;
           end
         end
         CACHE_LOOKUP: begin
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
-
-          next_tag_reg            <= next_cache_line_tag;
-          next_idx_reg            <= next_cache_line_idx;
-          next_blk_reg            <= next_blk_addr;
-
-
           icache_tag_write_valid    <= 0;
-          icache_tag_write_valid_next <= 0;  // 写 tag 
           uncache_data_ready <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
         if (~icache_hit && ~uncache) begin
@@ -199,19 +173,6 @@ module icache_top (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
-
-          else if (need_check_next_block && ~next_block_hit) begin
-              // 进入处理跨块miss的状态
-              icache_state <= CACHE_NEXT_MISS;
-              // 设置下一个块的加载请求
-              _ram_raddr_icache_o <= {next_tag_reg, next_idx_reg, 6'b0};
-              _ram_raddr_valid_icache_o <= 1'b1;
-              _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
-              _ram_rsize_icache_o <= 4'b0100;  // 32bit 
-              _ram_rlen_icache_o <= 15;    // 突发15+1次 
-              burst_count <= 0;  // 清空计数器
-          end
-
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
@@ -224,24 +185,11 @@ module icache_top (
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
               icache_tag_write_valid <= 1;  // 写 tag 
-              icache_tag_write_valid_next <= 1;  // 写 tag 
             end else begin
               burst_count <= burst_count_plus1;
             end
           end
         end
-        CACHE_NEXT_MISS: begin
-          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
-              icache_state <= CACHE_IDLE;
-              _ram_raddr_valid_icache_o <= 0;  // 传输结束
-              icache_tag_write_valid_next <= 1;  // 写 tag 
-            end else begin
-              burst_count <= burst_count_plus1;
-            end
-          end
-        end
-
         UNCACHE_READ: begin
           if (ram_r_handshake) begin
             _ram_raddr_valid_icache_o <= 0;
@@ -250,10 +198,6 @@ module icache_top (
             icache_state <= CACHE_IDLE;
           end
         end
-
-
-
-
         default: begin
           icache_state <= CACHE_IDLE;
         end
@@ -324,36 +268,14 @@ wire [127:0] icache_wdate =
 
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
-
-// 预取下一个128bit块
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
-
-  // 5.1 预取缓存寄存器
-reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
-reg next_sram128_valid;         // 缓存有效标记
-wire next_block_hit;           // 下一个块是否命中
-
-// 5.2 下一个块的tag检查
-wire [18:0] next_cache_line_tag;  // 下一个块的tag
-wire [6:0]  next_cache_line_idx;  // 下一个块的index
-wire [5:0]  next_blk_addr;        // 下一个块的块内地址
-assign {next_cache_line_tag, next_cache_line_idx, next_blk_addr} = next_sram128_addr;
-
-// 实例化下一个块的tag检查模块
-icache_tag u_icache_tag_next (
-    .clk           (clk),
-    .rst           (rst),
-    .icache_tag_i  (next_cache_line_tag),    // 下一个块的tag
-    .icache_index_i(next_cache_line_idx),    // 下一个块的index
-    .write_valid_i (icache_tag_write_valid_next),  // 写使能
-    .icache_hit_o  (next_block_hit)          // 下一个块是否命中
-);
-
-
+  
 wire [3:0] sram128_offset_byte = blk_addr_reg[3:0];  // 128bit SRAM内字节偏移(0~15)
 wire [1:0] word_sel_byte = blk_addr_reg[3:2];        // 32位字选择(0~3)
 wire [1:0] halfword_sel_byte = blk_addr_reg[1:0];    // 16位半字选择(0/2/4...14)
 // -------------------------- 5. 跨块预取（适配32位指令跨128bit块） --------------------------
+// 5.1 预取缓存寄存器
+reg [127:0] next_sram128_data;  // 下一个128bit块数据缓存
+reg next_sram128_valid;         // 缓存有效标记
 
 // 5.2 当前半字数据提取
 wire [15:0] curr_halfword;
@@ -379,14 +301,17 @@ assign next_halfword = (sram128_offset_byte == 0)  ? icache_rdata[31:16] :
 wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=11
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
-wire need_check_next_block = need_cross_sram128; // 需要检查下一个块
 
+// 5.4 预取下一个128bit块
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 4;  // 下一块地址（+16字节）
+wire [6-1:0] next_blk_addr = next_sram128_addr[6-1:0];
+wire [7-1:0] next_line_idx = next_sram128_addr[6 +: 7];
 
 /* verilator lint_off PINMISSING */
 // 预取数据模块（仅读，无写）
 icache_data u_icache_data_next (
-    .icache_index_i      (next_cache_line_idx),
-    .icache_blk_addr_i   (next_blk_reg),
+    .icache_index_i      (next_line_idx),
+    .icache_blk_addr_i   (next_blk_addr),
     .icache_line_wdata_i (128'h0),
     .icache_wmask        (128'h0),
     .burst_count_i       (4'h0),
@@ -441,15 +366,8 @@ wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字�
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 /* verilator lint_off WIDTHEXPAND */
-reg next_rdata_unvalid_o_reg;
-always @(posedge clk) begin
-    next_rdata_unvalid_o_reg <= (!next_block_hit & need_cross_sram128);
-end
 
-
-  // assign if_rdata_valid_o = (icache_hit & !(next_block_hit &  need_cross_sram128)) | uncache_data_ready;
-    assign if_rdata_valid_o = (icache_hit)  | uncache_data_ready;
-    assign next_rdata_unvalid_o = (!next_block_hit & need_cross_sram128);
+  assign if_rdata_valid_o = icache_hit | uncache_data_ready;
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;

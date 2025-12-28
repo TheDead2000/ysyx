@@ -28,8 +28,8 @@ module clint (
     input load_use_valid_id_i,
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
-    // input arb_wdata_ready_i,
-    // input arb_rdata_ready_i,  // 读数据是否有效
+    input arb_wdata_ready_i,
+    input arb_rdata_ready_i,  // 读数据是否有效
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
@@ -431,6 +431,8 @@ end
       .alu_mul_div_valid_ex_i(alu_mul_div_valid_ex_i),
       .trap_flush_valid_wb_i(trap_flush_condition),
       .trap_stall_valid_wb_i(trap_stall_valid),
+      .arb_wdata_ready_i(arb_wdata_ready_i),
+      .arb_rdata_ready_i(arb_rdata_ready_i),
       .stall_o(stall_o),
       .flush_o(flush_o)
   );
@@ -458,8 +460,8 @@ end
   wire _trap_ebreak = trap_bus_i[`TRAP_EBREAK];
   always @(*) begin
     if (_trap_ebreak) begin
-      $display("EBREAK encountered at PC: %h pc_ex %h _trap_ebreak %d trap_bus_i %h", pc_from_mem_i, pc_from_exe_i, _trap_ebreak, trap_bus_i);
-      $finish;
+      $display("EBREAK encountered at PC: %h", pc_from_mem_i);
+      $finish;  // 使用参数2表示立即退出
       $finish;
       // call_ebreak();
     end

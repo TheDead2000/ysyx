@@ -14,6 +14,8 @@ module pipline_control (
     input alu_mul_div_valid_ex_i,  // mul div stall from ex
     input trap_stall_valid_wb_i,
     input trap_flush_valid_wb_i,
+    input arb_wdata_ready_i,
+    input arb_rdata_ready_i,
     /* ---signals to other stages of the pipeline  ----*/
     output [5:0] stall_o,   // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
     output [5:0] flush_o  // flush the whole pipleline if exception or interrupt happened
@@ -66,6 +68,9 @@ module pipline_control (
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
+  wire arb_rdata_ready_i_aux = !arb_rdata_ready_i;
+  wire arb_wdata_ready_i_aux = !arb_wdata_ready_i;
+  wire test = (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0);
 
   reg [5:0] _flush;
   reg [5:0] _stall;
