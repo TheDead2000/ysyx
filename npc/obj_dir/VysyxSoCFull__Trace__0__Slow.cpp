@@ -2253,6 +2253,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+6257,"clint_rdata_o", false,-1, 31,0);
     tracep->declBus(c+6821,"trap_bus_i", false,-1, 21,0);
     tracep->declBit(c+603,"compress_stall", false,-1);
+    tracep->declBit(c+6769,"if_rdata_valid_i", false,-1);
+    tracep->declBit(c+6787,"ls_valid_i", false,-1);
     tracep->declBit(c+6783,"ram_stall_valid_if_i", false,-1);
     tracep->declBit(c+7196,"ram_stall_valid_mem_i", false,-1);
     tracep->declBit(c+6797,"load_use_valid_id_i", false,-1);
@@ -2354,6 +2356,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->pushNamePrefix("u_pipline_control ");
     tracep->declBit(c+7192,"rst", false,-1);
     tracep->declBit(c+603,"compress_stall", false,-1);
+    tracep->declBit(c+6769,"if_rdata_valid_i", false,-1);
+    tracep->declBit(c+6787,"ls_valid_i", false,-1);
     tracep->declBit(c+6783,"ram_stall_valid_if_i", false,-1);
     tracep->declBit(c+7196,"ram_stall_valid_mem_i", false,-1);
     tracep->declBit(c+6797,"load_use_valid_id_i", false,-1);
@@ -11262,8 +11266,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6010,"func5_10100", false,-1);
     tracep->declBit(c+6011,"func5_11000", false,-1);
     tracep->declBit(c+6012,"func5_11100", false,-1);
-    tracep->declBit(c+6013,"amo_func3_010", false,-1);
-    tracep->declBit(c+6014,"amo_opcode", false,-1);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11273,6 +11275,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBit(c+6013,"amo_func3_010", false,-1);
+    tracep->declBit(c+6014,"amo_opcode", false,-1);
     tracep->declBit(c+6886,"rs1_exc_bypass_valid", false,-1);
     tracep->declBit(c+6887,"rs2_exc_bypass_valid", false,-1);
     tracep->declBit(c+6888,"rs1_mem_bypass_valid", false,-1);

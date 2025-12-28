@@ -5,6 +5,8 @@ module pipline_control (
     input rst,
     /* ----- stall request from other modules  --------*/
     input compress_stall,
+    input if_rdata_valid_i,
+    input ls_valid_i,
     input ram_stall_valid_if_i,  // if ram
     input ram_stall_valid_mem_i,  // mem ram
     input load_use_valid_id_i,  //load-use data hazard from id
@@ -37,11 +39,11 @@ module pipline_control (
   // localparam ram_if_stall = 6'b000011;  // Stall PC and IF/ID
     // 位映射：0=PC,1=Pre_IF,2=IF_ID,3=ID_EX,4=EX_MEM,5=MEM_WB
 
-  localparam compress_flush = 6'b000_010;    // flush none pass
-  localparam compress_stall_stall = 6'b000_010;    // stall pre_if(1)
+  localparam compress_flush = 6'b000010;    // flush none pass
+  localparam compress_stall_stall = 6'b000010;    // stall PC(0)+Pre_IF(1)
 
   localparam load_use_flush = 6'b001000;    // flush ID_EX（bit3） pass
-  localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)+if_id(2)
+  localparam load_use_stall = 6'b000111;    // stall PC(0)+Pre_IF(1)
 
   localparam jump_flush = 6'b001110;        // flush Pre_IF(1)+IF_ID(2)+ID_EX(3)  pass
   localparam jump_stall = 6'b000010;        // stall Pre_IF(1)
@@ -58,13 +60,12 @@ module pipline_control (
   localparam ram_mem_flush = 6'b100000;     // flush MEM_WB(5) pass
   localparam ram_mem_stall = 6'b011111;     // stall PC(0)+Pre_IF(1)+IF_ID(2)+ID_EX(3)+EX_MEM(4)
 
-  localparam ram_if_flush = 6'b000000;      // IF stall无需flush pass
+  localparam ram_if_flush = 6'b000000;      // IF stall无需flush
   localparam ram_if_stall = 6'b000011;      // stall PC(0)+Pre_IF(1)
 
   wire ram_stall_req_mem = ram_stall_valid_mem_i ;
   wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
-
 
   reg [5:0] _flush;
   reg [5:0] _stall;
@@ -75,6 +76,16 @@ module pipline_control (
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
     end 
+  // if(if_rdata_valid_i == 0)begin
+  //   _stall = ram_mem_flush;
+  //   _flush = ram_mem_stall;
+  // end
+  // else 
+  // if(ram_stall_req_mem & if_rdata_valid_i)begin
+  //  _stall = 6'b001100;
+  //  _flush = 6'b000000;
+  // end
+  // else
   if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
@@ -92,12 +103,12 @@ module pipline_control (
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
       // 跳转指令,(发生在 ex 阶段)
+     end 
+     else if (jump_valid_ex_i & (if_rdata_valid_i == 1'b0) & (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)) begin
+      _stall = 6'b000111;
+      _flush = 6'b001000;
+     
      end
-         else if (compress_stall) begin
-      _stall = compress_stall_stall;
-      _flush = compress_flush;
-     end
-      
       else if (jump_valid_ex_i) begin
       _stall = jump_stall;
       _flush = jump_flush;
@@ -109,7 +120,19 @@ module pipline_control (
     end else if (load_use_valid_id_i) begin
       _stall = load_use_stall;
       _flush = load_use_flush;
+      // 没有异常情况,正常执行
     end 
+
+    else if (compress_stall) begin
+      _stall = compress_stall_stall;
+      _flush = compress_flush;
+     end
+    
+    else
+    if( (ram_stall_req_mem == 1'b0) & (ram_stall_req_if == 1'b0)  & (if_rdata_valid_i == 1'b0)) begin
+    _stall = 6'b000111;
+    _flush = 6'b001000;
+    end
      else
      begin
       _stall = 6'b000000;

@@ -1032,12 +1032,15 @@ clint clint_u (
     .trap_bus_i(trap_bus_mem),
 
     .compress_stall(compress_stall),
+    .if_rdata_valid_i(if_rdata_valid),
+    .ls_valid_i(ls_valid),
+    // .arb_rdata_ready_i(arb_rdata_ready),
+    // .arb_wdata_ready_i(arb_wdata_ready),
     .ram_stall_valid_if_i(ram_stall_valid_if),
     .ram_stall_valid_mem_i(ram_stall_valid_mem),
     .load_use_valid_id_i(load_use_valid),
     .jump_valid_ex_i(jump_hazard_valid),
     .alu_mul_div_valid_ex_i(alu_mul_div_valid),
-
 
     .csr_mstatus_i(csr_mstatus),
     .csr_mtvec_i(csr_mtvec),
