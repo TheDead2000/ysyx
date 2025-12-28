@@ -65,6 +65,7 @@ module pipline_control (
   wire ram_stall_req_if = ram_stall_valid_if_i ;
   wire trap_stall_req = trap_stall_valid_wb_i;
 
+
   reg [5:0] _flush;
   reg [5:0] _stall;
   /* 流水线越往后,优先级越高 */
@@ -91,7 +92,12 @@ module pipline_control (
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
       // 跳转指令,(发生在 ex 阶段)
-     end 
+     end
+         else if (compress_stall) begin
+      _stall = compress_stall_stall;
+      _flush = compress_flush;
+     end
+      
       else if (jump_valid_ex_i) begin
       _stall = jump_stall;
       _flush = jump_flush;
@@ -104,10 +110,6 @@ module pipline_control (
       _stall = load_use_stall;
       _flush = load_use_flush;
     end 
-    else if (compress_stall) begin
-      _stall = compress_stall_stall;
-      _flush = compress_flush;
-     end
      else
      begin
       _stall = 6'b000000;
