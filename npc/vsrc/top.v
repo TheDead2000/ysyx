@@ -62,9 +62,8 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
 
-    .is_compressed_inst(is_compressed_inst),
-    .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
-    .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
+    .idu_next_pc_i     (id_compress_pc),          // 下一条指令地址
+    .idu_next_pc_valid_i (id_compress_pc_valid_o),
 
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
@@ -346,7 +345,8 @@ wire [             `TRAP_BUS]  trap_bus_id;
 wire id_ras_push_valid; // ID阶段检测到CALL指令
 wire [31:0] id_ras_push_data; // ID阶段计算的返回地址
 wire csr_imm_valid_o;
-
+wire [31:0] id_compress_pc;
+wire id_compress_pc_valid_o;
 idu idu (
     /* from if/id */
     .inst_addr_i(inst_addr_if_id),
@@ -357,7 +357,9 @@ idu idu (
     .rs1_data_i(rs1_data_gpr),
     .rs2_data_i(rs2_data_gpr),
 
-    .is_compressed_inst_o(is_compressed_inst),
+    .id_compress_pc_valid_o(id_compress_pc_valid_o),
+    .id_compress_pc_o(id_compress_pc),
+
     /* from csr regs */
     .csr_data_i(csr_data_csr),
     
@@ -1027,7 +1029,7 @@ clint clint_u (
 
     .trap_bus_i(trap_bus_mem),
 
-    .compress_stall(compress_stall),
+    .compress_stall(id_compress_pc_valid_o),
     .next_stall_preif_i(next_ram_stall_preif),
     .ram_stall_valid_if_i(ram_stall_valid_if),
     .ram_stall_valid_mem_i(ram_stall_valid_mem),

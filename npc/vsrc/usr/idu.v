@@ -46,7 +46,12 @@ module idu (
     //to id_ex
     output [`INST_LEN-1:0] inst_addr_o,
     output [`INST_LEN-1:0] inst_data_o,
-    output  is_compressed_inst_o,
+    
+    
+    output[31:0] id_compress_pc_o,
+    output       id_compress_pc_valid_o,
+
+
 
      /* CSR 译码结果：to id/ex*/
     output [          `IMM_LEN-1:0] csr_imm_o,
@@ -159,8 +164,11 @@ localparam [31:0] AMOMAXU_W_VAL = 32'b11100_00_00000_00000_010_00000_0101111;
         .expanded_inst_o(expanded_inst)
   );
 
-  assign is_compressed_inst_o = (inst_data_i[1:0] != 2'b11);
+  wire is_compressed_inst = (inst_data_i[1:0] != 2'b11);
   
+  assign id_compress_pc_o =  inst_addr_i + 2;
+  assign id_compress_pc_valid_o = is_compressed_inst;
+
   assign inst_data_o = expanded_inst;
 
   wire [`INST_LEN-1:0] _inst = expanded_inst;
