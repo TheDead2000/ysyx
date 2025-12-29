@@ -433,7 +433,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  assign next_rdata_unvalid_o = !next_icache_hit | refill_stall; // 下一个128bit块数据无效，需要等待
+  assign next_rdata_unvalid_o = (need_cross_sram128 & !next_icache_hit) | refill_stall; // 下一个128bit块数据无效，需要等待
 
 wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
