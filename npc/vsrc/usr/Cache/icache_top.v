@@ -216,7 +216,6 @@ module icache_top (
             if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
-              refill_stall <= 0;
               icache_tag_write_valid <= 1;  // 写 tag 
             end else begin
               burst_count <= burst_count_plus1;
@@ -229,6 +228,7 @@ module icache_top (
             if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
+              refill_stall <= 0;
               icache_tag_write_valid <= 1;  // 写 tag 
             end else begin
               burst_count <= burst_count_plus1;
