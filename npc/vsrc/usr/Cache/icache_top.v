@@ -280,10 +280,15 @@ wire [127:0] icache_wdate =
                                   {ram_rdata_icache_i[31:0], 96'b0};
   wire [127:0] icache_rdata;
 
+
+wire[5:0] write_blk_addr = (icache_state == CACHE_REFILL) ? next_blk_addr_reg : blk_addr_reg;
+wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : cache_line_idx;
+
+
   icache_data u_icache_data (
 
-      .icache_index_i     (cache_line_idx),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
-      .icache_blk_addr_i(blk_addr_reg),  // icache_blk_addr_i 使用寄存器中的数据
+      .icache_index_i     (write_index),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
+      .icache_blk_addr_i(write_blk_addr),  // icache_blk_addr_i 使用寄存器中的数据
       .icache_line_wdata_i(icache_wdate),
       .icache_wmask(icache_wmask),
       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
