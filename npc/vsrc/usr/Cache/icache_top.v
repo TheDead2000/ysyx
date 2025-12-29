@@ -88,6 +88,8 @@ module icache_top (
   localparam CACHE_MISS = 4'd2;
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
+  localparam CACHE_REFILL = 4'd5;
+
 
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
@@ -123,6 +125,11 @@ module icache_top (
       blk_addr_reg              <= 0;
       line_idx_reg              <= 0;
       line_tag_reg              <= 0;
+
+      next_blk_addr_reg         <= 0;
+      next_line_idx_reg         <= 0;
+      next_line_tag_reg         <= 0;
+      
       icache_tag_write_valid    <= 0;
       _ram_rmask_icache_o       <= 0;
       _ram_rsize_icache_o       <= 0;
@@ -141,6 +148,12 @@ module icache_top (
           blk_addr_reg           <= cache_blk_addr;
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
+          
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
+
+
           icache_tag_write_valid <= 0;
           uncache_data_ready     <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
@@ -152,6 +165,11 @@ module icache_top (
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
+
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
+
           icache_tag_write_valid    <= 0;
           uncache_data_ready <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
@@ -162,7 +180,7 @@ module icache_top (
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
             _ram_rlen_icache_o <= 15;    // 突发15+1次 
-            burst_count <= 0;  // 清空计数器
+             burst_count <= 0;  // 清空计数器
 `ifndef YSYX_SOC 
             icache_unhit_count();
 `endif
@@ -174,6 +192,17 @@ module icache_top (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
+          else if(need_cross_sram128 & !next_icache_hit) begin
+            icache_state <= CACHE_REFILL;
+            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,next_cache_blk_addr};
+            _ram_raddr_valid_icache_o <= 1;  // 地址有效
+            _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+            _ram_rsize_icache_o <= 4'b0100;  // 32bit 
+            _ram_rlen_icache_o <= 15;    // 突发15+1次 
+            burst_count <= 0;  // 清空计数器
+          end
+
+
 `ifndef YSYX_SOC 
           else if (icache_hit) begin : hit
             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
@@ -191,6 +220,20 @@ module icache_top (
             end
           end
         end
+
+        CACHE_REFILL: begin
+          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+              icache_state <= CACHE_IDLE;
+              _ram_raddr_valid_icache_o <= 0;  // 传输结束
+              icache_tag_write_valid <= 1;  // 写 tag 
+            end else begin
+              burst_count <= burst_count_plus1;
+            end
+          end
+        end
+
+
         UNCACHE_READ: begin
           if (ram_r_handshake) begin
             _ram_raddr_valid_icache_o <= 0;
@@ -274,7 +317,6 @@ wire [127:0] icache_wdate =
       .io_sram7_rdata(io_sram7_rdata)
   );
 
-
   // 1. icache_hit ： 数据来自 cache
   // 2. uncache_data_ready ：数据来自 uncache
   // 5.4 预取下一个128bit块
@@ -324,44 +366,41 @@ wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=1
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
-
-
-/* verilator lint_off PINMISSING */
 // 预取数据模块（仅读，无写）
-icache_data u_icache_data_next (
-    .icache_index_i      (next_cache_line_idx),
-    .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
-    .icache_line_wdata_i (128'h0),
-    .icache_wmask        (128'h0),
-    .burst_count_i       (4'h0),
-    .icache_wen_i        (1'b0),
-    .icache_rdata_o  (next_sram128_data),
-    /* SRAM仅读，写端口悬空 */
-    .io_sram4_addr       (),
-    .io_sram4_cen        (),
-    .io_sram4_wen        (),
-    .io_sram4_wmask      (),
-    .io_sram4_wdata      (),
-    .io_sram4_rdata      (io_sram4_rdata),
-    .io_sram5_addr       (),
-    .io_sram5_cen        (),
-    .io_sram5_wen        (),
-    .io_sram5_wmask      (),
-    .io_sram5_wdata      (),
-    .io_sram5_rdata      (io_sram5_rdata),
-    .io_sram6_addr       (),
-    .io_sram6_cen        (),
-    .io_sram6_wen        (),
-    .io_sram6_wmask      (),
-    .io_sram6_wdata      (),
-    .io_sram6_rdata      (io_sram6_rdata),
-    .io_sram7_addr       (),
-    .io_sram7_cen        (),
-    .io_sram7_wen        (),
-    .io_sram7_wmask      (),
-    .io_sram7_wdata      (),
-    .io_sram7_rdata      (io_sram7_rdata)
-);
+// icache_data u_icache_data_next (
+//     .icache_index_i      (next_cache_line_idx),
+//     .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
+//     .icache_line_wdata_i (128'h0),
+//     .icache_wmask        (128'h0),
+//     .burst_count_i       (4'h0),
+//     .icache_wen_i        (1'b0),
+//     .icache_rdata_o  (next_sram128_data),
+//     /* SRAM仅读，写端口悬空 */
+//     .io_sram4_addr       (),
+//     .io_sram4_cen        (),
+//     .io_sram4_wen        (),
+//     .io_sram4_wmask      (),
+//     .io_sram4_wdata      (),
+//     .io_sram4_rdata      (io_sram4_rdata),
+//     .io_sram5_addr       (),
+//     .io_sram5_cen        (),
+//     .io_sram5_wen        (),
+//     .io_sram5_wmask      (),
+//     .io_sram5_wdata      (),
+//     .io_sram5_rdata      (io_sram5_rdata),
+//     .io_sram6_addr       (),
+//     .io_sram6_cen        (),
+//     .io_sram6_wen        (),
+//     .io_sram6_wmask      (),
+//     .io_sram6_wdata      (),
+//     .io_sram6_rdata      (io_sram6_rdata),
+//     .io_sram7_addr       (),
+//     .io_sram7_cen        (),
+//     .io_sram7_wen        (),
+//     .io_sram7_wmask      (),
+//     .io_sram7_wdata      (),
+//     .io_sram7_rdata      (io_sram7_rdata)
+// );
 
 // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
 // reg [31:0] cross_inst_32;
