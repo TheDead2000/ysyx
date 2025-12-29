@@ -62,6 +62,7 @@ pc_reg u_pc_reg (
     .bpu_pc_i        (bpu_pc_o),
     .bpu_pc_valid_i  (bpu_pc_valid_o),
 
+    .is_compressed_inst(is_compressed_inst),
     .ifu_next_pc_i     (ifu_next_pc_o),          // 下一条指令地址
     .ifu_next_pc_valid_i (ifu_next_pc_valid_o),
 
@@ -351,11 +352,12 @@ idu idu (
     .inst_addr_i(inst_addr_if_id),
     .inst_data_i(inst_data_if_id),
     .trap_bus_i(trap_bus_if_id),
+
     /* from gpr regs */
     .rs1_data_i(rs1_data_gpr),
     .rs2_data_i(rs2_data_gpr),
 
-
+    .is_compressed_inst_o(is_compressed_inst),
     /* from csr regs */
     .csr_data_i(csr_data_csr),
     
@@ -462,7 +464,7 @@ id_ex id2ex (
     .csr_data_id_ex_i     (csr_readdata_id),
 
 
-    .is_compressed_inst_id_ex_i(is_compressed_inst_if_id),
+    .is_compressed_inst_id_ex_i(is_compressed_inst),
     .is_compressed_inst_id_ex_o(is_compressed_inst_id_ex),
     
 
