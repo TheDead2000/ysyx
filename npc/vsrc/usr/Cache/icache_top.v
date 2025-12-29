@@ -252,19 +252,18 @@ module icache_top (
   icache_tag u_icache_tag (
       .clk           (clk),
       .rst           (rst),
+      
       .icache_tag_i  (line_tag_reg),            // tag
       .icache_index_i(line_idx_reg),            // index
-      .write_valid_i (icache_tag_write_valid),  // 写使能
-      .icache_hit_o  (icache_hit)
-  );
 
-  icache_tag u_next_icache_tag (
-      .clk           (clk),
-      .rst           (rst),
-      .icache_tag_i  (next_line_tag_reg),            // tag
-      .icache_index_i(next_line_idx_reg),            // index
+      // 下一个地址查询
+      .next_icache_tag_i       (next_line_tag_reg),
+      .next_icache_index_i     (next_line_idx_reg),
+
       .write_valid_i (icache_tag_write_valid),  // 写使能
-      .icache_hit_o  (next_icache_hit)
+     
+      .icache_hit_o  (icache_hit),
+      .next_icache_hit_o(next_icache_hit)
   );
 
 
