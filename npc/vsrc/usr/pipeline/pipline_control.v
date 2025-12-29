@@ -82,14 +82,14 @@ module pipline_control (
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 
-    else if(next_stall_req_preif) begin
-        _stall = ram_if_stall;
-        _flush = ram_if_flush;
-      end
     else if(ram_stall_req_if) begin
         _stall = ram_mem_stall;
         _flush = ram_if_flush;
         end
+      else if(next_stall_req_preif) begin
+        _stall = ram_mem_stall;
+        _flush = ram_if_flush;
+      end
       // 中断|异常,(发生在 mem 阶段)
      else if(trap_flush_valid_wb_i) begin
       _stall = trap_ecall_stall;
