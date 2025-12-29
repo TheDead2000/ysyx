@@ -43,16 +43,12 @@
 `define TRAP_BUS `TRAP_LEN-1:0
 
 
-//PC,PREIF_IF,IF_ID, ID_EX, EX_MEM, MEM_WB
+//PC,IF_ID, ID_EX, EX_MEM, MEM_WB
 `define CTRLBUS_PC 0
-`define CTRLBUS_PREIF_IF 1   
-`define CTRLBUS_IF_ID 2    //
-`define CTRLBUS_ID_EX 3    // 
-`define CTRLBUS_EX_MEM 4   // 
-`define CTRLBUS_MEM_WB 5   //
-
-// 新增 Pre_IF 定义（插入PC和IF_ID之间）
-
+`define CTRLBUS_IF_ID 1
+`define CTRLBUS_ID_EX 2
+`define CTRLBUS_EX_MEM 3
+`define CTRLBUS_MEM_WB 4
 
 
 /* ALU 操作码 */
