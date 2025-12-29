@@ -194,7 +194,7 @@ module icache_top (
           end
           else if(need_cross_sram128 & !next_icache_hit) begin
             icache_state <= CACHE_REFILL;
-            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,6'b0};
+            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,blk_addr_reg};
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
@@ -430,7 +430,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  assign next_rdata_unvalid_o = need_cross_sram128 & !next_icache_hit | icache_state == CACHE_REFILL ; // 下一个128bit块数据无效，需要等待
+  assign next_rdata_unvalid_o = need_cross_sram128 & !next_icache_hit; // 下一个128bit块数据无效，需要等待
 
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
