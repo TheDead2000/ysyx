@@ -366,40 +366,40 @@ wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
 // 预取数据模块（仅读，无写）
-// icache_data u_icache_data_next (
-//     .icache_index_i      (next_cache_line_idx),
-//     .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
-//     .icache_line_wdata_i (128'h0),
-//     .icache_wmask        (128'h0),
-//     .burst_count_i       (4'h0),
-//     .icache_wen_i        (1'b0),
-//     .icache_rdata_o  (next_sram128_data),
-//     /* SRAM仅读，写端口悬空 */
-//     .io_sram4_addr       (),
-//     .io_sram4_cen        (),
-//     .io_sram4_wen        (),
-//     .io_sram4_wmask      (),
-//     .io_sram4_wdata      (),
-//     .io_sram4_rdata      (io_sram4_rdata),
-//     .io_sram5_addr       (),
-//     .io_sram5_cen        (),
-//     .io_sram5_wen        (),
-//     .io_sram5_wmask      (),
-//     .io_sram5_wdata      (),
-//     .io_sram5_rdata      (io_sram5_rdata),
-//     .io_sram6_addr       (),
-//     .io_sram6_cen        (),
-//     .io_sram6_wen        (),
-//     .io_sram6_wmask      (),
-//     .io_sram6_wdata      (),
-//     .io_sram6_rdata      (io_sram6_rdata),
-//     .io_sram7_addr       (),
-//     .io_sram7_cen        (),
-//     .io_sram7_wen        (),
-//     .io_sram7_wmask      (),
-//     .io_sram7_wdata      (),
-//     .io_sram7_rdata      (io_sram7_rdata)
-// );
+icache_data u_icache_data_next (
+    .icache_index_i      (next_cache_line_idx),
+    .icache_blk_addr_i   (next_blk_addr_reg), // !!!!!!!!!!!!!!!!!!!!!!!
+    .icache_line_wdata_i (128'h0),
+    .icache_wmask        (128'h0),
+    .burst_count_i       (4'h0),
+    .icache_wen_i        (1'b0),
+    .icache_rdata_o  (next_sram128_data),
+    /* SRAM仅读，写端口悬空 */
+    .io_sram4_addr       (),
+    .io_sram4_cen        (),
+    .io_sram4_wen        (),
+    .io_sram4_wmask      (),
+    .io_sram4_wdata      (),
+    .io_sram4_rdata      (io_sram4_rdata),
+    .io_sram5_addr       (),
+    .io_sram5_cen        (),
+    .io_sram5_wen        (),
+    .io_sram5_wmask      (),
+    .io_sram5_wdata      (),
+    .io_sram5_rdata      (io_sram5_rdata),
+    .io_sram6_addr       (),
+    .io_sram6_cen        (),
+    .io_sram6_wen        (),
+    .io_sram6_wmask      (),
+    .io_sram6_wdata      (),
+    .io_sram6_rdata      (io_sram6_rdata),
+    .io_sram7_addr       (),
+    .io_sram7_cen        (),
+    .io_sram7_wen        (),
+    .io_sram7_wmask      (),
+    .io_sram7_wdata      (),
+    .io_sram7_rdata      (io_sram7_rdata)
+);
 
 // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
 // reg [31:0] cross_inst_32;
