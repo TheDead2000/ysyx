@@ -206,8 +206,9 @@ ifu ifu (
   .if_rdata_valid_i    (if_rdata_valid),      // 读数据是否准备好
   .if_rdata_i          (if_rdata),            // 返回到读取的数据
   /* stall req */
+  .next_rdata_unvalid_i(next_rdata_unvalid),
   .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
-
+  .next_refill_stall_valid_if_o(next_ram_stall_preif), //访存暂停
   // .inst_addr_i(inst_addr_if_i),  // from pc_reg
   // .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
   // .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
@@ -280,8 +281,6 @@ wire bpu_which_pdt_if_id;
 wire[`XLEN-1:0] bpu_pdt_tag_if_id;
 wire [`HISLEN-1:0] bpu_history_if_id;
 
-wire is_compressed_inst_if_id;
-
 if_id if2id(
   .clk (clk),
   .rst (rst),
@@ -293,10 +292,6 @@ if_id if2id(
 
   .bpu_taken_if_i (bpu_pc_valid_o),  // 分支预测结果
   .bpu_taken_if_id_o (bpu_pc_valid_if_id),
-
-  .is_compressed_inst_if_id_i(is_compressed_inst_if2id),
-  .is_compressed_inst_if_id_o(is_compressed_inst_if_id),
-
   .bpu_pdt_res_if_i(pdt_res),
   .bpu_which_pdt_if_i(which_pdt_o),
   .bpu_history_if_i(history_o),

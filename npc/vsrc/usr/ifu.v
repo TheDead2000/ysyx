@@ -10,7 +10,11 @@ module ifu (
     input [31:0] if_rdata_i,
     
     /* stall req */
+    input  next_rdata_unvalid_i,
     output ram_stall_valid_if_o,       // if 阶段访存暂停
+    output next_refill_stall_valid_if_o,
+    
+
     input ls_valid_i,
     
     /* to if/id */
@@ -179,6 +183,9 @@ module ifu (
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = _ram_stall;
+    
+    assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
+
     assign inst_data_o = _inst_data;
     
     // ============ TRAP 处理（增加页错误） ============
