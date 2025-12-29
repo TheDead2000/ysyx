@@ -109,10 +109,11 @@ module icache_top (
   reg [7:0] _ram_rlen_icache_o;
   reg [3:0] burst_count;
 
+  reg refill_stall;
 
   wire ram_r_handshake = _ram_raddr_valid_icache_o & ram_rdata_ready_icache_i;
   wire [3:0] burst_count_plus1 = burst_count + 1;
-
+  
 
   uncache_check u_uncache_check (
       .addr_check_i   ({line_tag_reg, line_idx_reg, blk_addr_reg}),
@@ -194,12 +195,13 @@ module icache_top (
           end
           else if(need_cross_sram128 & !next_icache_hit) begin
             icache_state <= CACHE_REFILL;
-            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,blk_addr_reg};
+            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,6'b0};
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
             _ram_rlen_icache_o <= 15;    // 突发15+1次 
             burst_count <= 0;  // 清空计数器
+            refill_stall <= 1;
           end
 
 
@@ -214,6 +216,7 @@ module icache_top (
             if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
+              refill_stall <= 0;
               icache_tag_write_valid <= 1;  // 写 tag 
             end else begin
               burst_count <= burst_count_plus1;
@@ -430,7 +433,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
 
   assign if_rdata_valid_o = icache_hit | uncache_data_ready;
-  assign next_rdata_unvalid_o = need_cross_sram128 & !next_icache_hit; // 下一个128bit块数据无效，需要等待
+  assign next_rdata_unvalid_o = need_cross_sram128 & !next_icache_hit | refill_stall; // 下一个128bit块数据无效，需要等待
 
   wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
