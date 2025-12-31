@@ -446,7 +446,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
   wire test = (need_cross_sram128& !next_icache_hit) ;
 
-  // assign if_rdata_valid_o = (icache_hit & !test) | icache_state == CACHE_IDLE | uncache_data_ready;
+  assign if_rdata_valid_o = (icache_hit & !test) | icache_state == CACHE_IDLE | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 
