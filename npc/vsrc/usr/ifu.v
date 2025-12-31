@@ -177,13 +177,23 @@ module ifu (
     
     // ============ 原有 IFU 逻辑（保持兼容） ============
     assign inst_addr_o = inst_addr_i;
-    wire [31:0] _inst_data = if_rdata_i;
+    reg [31:0] _inst_data = if_rdata_i;
     
     // 访存暂停逻辑
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
+
+    // reg [15:0] before_halfword;
+    // always(posedge clk) begin
+    // if(next_rdata_unvalid_i & (inst_data_i !=32'h0000_0013)) begin
+    //     before_halfword <= inst_data_i[31:16];
+    // end
+    // else 
+    //     _inst_data
+    
+    // end
+
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = _ram_stall;
-    
     assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
 
     assign inst_data_o = _inst_data;
