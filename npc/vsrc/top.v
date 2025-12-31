@@ -209,6 +209,7 @@ ifu ifu (
   .next_rdata_unvalid_i(next_rdata_unvalid),
   .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
   .next_refill_stall_valid_if_o(next_ram_stall_preif), //访存暂停
+  .cross_refill_i(cross_refill),
   // .inst_addr_i(inst_addr_if_i),  // from pc_reg
   // .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
   // .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
@@ -1165,6 +1166,7 @@ wire [7:0] icache_arb_rlen;
  
 
  wire next_rdata_unvalid; 
+ wire cross_refill;
  icache_top u_icache_top (
       .clk(clk),
       .rst(rst),
@@ -1174,6 +1176,7 @@ wire [7:0] icache_arb_rlen;
       .if_rdata_o(if_rdata),  // icache 返回读数据
       .if_rdata_valid_o  (if_rdata_valid),// icache 读数据是否准备好(未准备好需要暂停流水线)
       .next_rdata_unvalid_o(next_rdata_unvalid),
+      .cross_refill_o(cross_refill),
 
     .ram_raddr_icache_o(icache_arb_araddr),
     .ram_raddr_valid_icache_o(icache_arb_arvalid),

@@ -24,7 +24,7 @@ module icache_top (
     //input  if_rdata_ready_i,  // 是否准备好接收数据
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
     output next_rdata_unvalid_o, // 下一个读数据无效（跨块预取未完成）
-
+    output cross_refill_o,
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
     output                             ram_raddr_valid_icache_o,
@@ -440,9 +440,9 @@ wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字�
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 /* verilator lint_off WIDTHEXPAND */
-  wire test = (need_cross_sram128& !next_icache_hit) ;
+  assign cross_refill_o = (need_cross_sram128& !next_icache_hit) ;
 
-  assign if_rdata_valid_o = (icache_hit & !test) | icache_state == CACHE_IDLE | uncache_data_ready;
+  assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | icache_state == CACHE_IDLE | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 

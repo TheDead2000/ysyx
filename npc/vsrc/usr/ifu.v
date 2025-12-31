@@ -13,7 +13,7 @@ module ifu (
     input  next_rdata_unvalid_i,
     output ram_stall_valid_if_o,       // if 阶段访存暂停
     output next_refill_stall_valid_if_o,
-    
+    input cross_refill_i,
 
     input ls_valid_i,
     
@@ -185,13 +185,21 @@ module ifu (
     reg [15:0] before_halfword;
     reg test;
     always @(posedge clk) begin
-    if(if_rdata_valid_i ==0 && next_rdata_unvalid_i == 0) begin
+    if(cross_refill_i && if_rdata_valid_i ==0 && next_rdata_unvalid_i == 0) begin
         before_halfword <= _inst_data[15:0];
         test <= 1;
     end
-
-    
     end
+
+    reg [15:0] before_halfword_2;
+    reg test_2;
+    always @(posedge clk) begin
+    if(cross_refill_i) begin
+        before_halfword_2 <= _inst_data[15:0];
+        test_2 <= 1;
+    end
+    end
+
 
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = _ram_stall;
