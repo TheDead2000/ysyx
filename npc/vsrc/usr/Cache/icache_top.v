@@ -196,6 +196,10 @@ module icache_top (
           else if(need_cross_sram128 & !next_icache_hit) begin
             icache_state <= CACHE_REFILL;
             _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,next_cache_blk_addr};
+            line_tag_reg <= next_cache_line_tag;
+            line_idx_reg <= next_cache_line_idx;
+            blk_addr_reg <= next_cache_blk_addr;
+
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
@@ -291,14 +295,14 @@ wire [127:0] icache_wdate =
   wire [127:0] icache_rdata;
 
 
-wire[5:0] write_blk_addr = (icache_state == CACHE_REFILL) ? next_blk_addr_reg : blk_addr_reg;
-wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : cache_line_idx;
+// wire[5:0] write_blk_addr = (icache_state == CACHE_REFILL) ? next_blk_addr_reg : blk_addr_reg;
+// wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : cache_line_idx;
 
 
   icache_data u_icache_data (
 
-      .icache_index_i     (write_index),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
-      .icache_blk_addr_i(write_blk_addr),  // icache_blk_addr_i 使用寄存器中的数据
+      .icache_index_i     (cache_line_idx),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
+      .icache_blk_addr_i(blk_addr_reg),  // icache_blk_addr_i 使用寄存器中的数据
       .icache_line_wdata_i(icache_wdate),
       .icache_wmask(icache_wmask),
       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
@@ -443,7 +447,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
   wire test = (need_cross_sram128& !next_icache_hit) ;
 
   // assign if_rdata_valid_o = (icache_hit & !test) | icache_state == CACHE_IDLE | uncache_data_ready;
-  assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
+  // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 
 wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
