@@ -254,12 +254,17 @@ module icache_top (
     end
   end
 
+
+wire[18:0] write_tag_reg= (icache_state == CACHE_REFILL) ? next_cache_line_tag : line_tag_reg;
+wire[6:0] write_idx_reg = (icache_state == CACHE_REFILL) ? next_cache_line_idx : line_idx_reg;
+
+
   icache_tag u_icache_tag (
       .clk           (clk),
       .rst           (rst),
       
-      .icache_tag_i  (line_tag_reg),            // tag
-      .icache_index_i(line_idx_reg),            // index
+      .icache_tag_i  (write_tag_reg),            // tag
+      .icache_index_i(write_idx_reg),            // index
 
       // 下一个地址查询
       .next_icache_tag_i       (next_line_tag_reg),
