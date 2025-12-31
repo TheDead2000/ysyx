@@ -183,10 +183,14 @@ module ifu (
     // wire _ram_stall = (!if_rdata_valid_i) || (state != STATE_IDLE);
 
     reg [15:0] before_halfword;
+    
     always @(posedge clk) begin
-    if(next_rdata_unvalid_i & (_inst_data !=32'h0000_0013)) begin
+    if(if_rdata_valid_i ==0 && next_rdata_unvalid_i == 0) begin
         before_halfword <= _inst_data[31:16];
+
     end
+
+    
     end
 
     wire _ram_stall = (!if_rdata_valid_i);
