@@ -299,6 +299,7 @@ wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : c
       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
       .burst_count_i(burst_count),
       .icache_rdata_o(icache_rdata),
+      .icache_state(icache_state),
       /* sram */
       .io_sram4_addr(io_sram4_addr),
       .io_sram4_cen(io_sram4_cen),
@@ -384,6 +385,7 @@ icache_data u_icache_data_next (
     .burst_count_i       (4'h0),
     .icache_wen_i        (1'b0),
     .icache_rdata_o  (next_sram128_data),
+    .icache_state(icache_state),
     /* SRAM仅读，写端口悬空 */
     .io_sram4_addr       (),
     .io_sram4_cen        (),
