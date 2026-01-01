@@ -209,7 +209,7 @@ module ifu (
     assign ram_stall_valid_if_o = _ram_stall;
     assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
 
-    assign inst_data_o =  (test == 0 )? _inst_data : {_inst_data[31:16],before_halfword} ;
+    assign inst_data_o =  (before_halfword == 16'h0) ? _inst_data : {_inst_data[31:16],before_halfword} ;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;
