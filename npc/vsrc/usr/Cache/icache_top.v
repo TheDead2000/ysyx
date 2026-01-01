@@ -226,13 +226,14 @@ module icache_top (
 
         CACHE_REFILL: begin
           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-            if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
+            if (burst_count == 15) begin  // 突发传输最后一个数据
               icache_state <= CACHE_IDLE;
               _ram_raddr_valid_icache_o <= 0;  // 传输结束
               refill_stall <= 0;
               need_cross_sram128_reg <= 0;
               icache_tag_write_valid <= 1;  // 写 tag 
-            end else begin
+            end 
+            else begin
               burst_count <= burst_count_plus1;
             end
           end
@@ -442,7 +443,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
   assign cross_refill_o = (need_cross_sram128& !next_icache_hit) ;
 
-  assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | icache_state == CACHE_IDLE | uncache_data_ready;
+  assign if_rdata_valid_o = icache_hit | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 

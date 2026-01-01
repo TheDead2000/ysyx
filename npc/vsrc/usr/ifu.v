@@ -185,7 +185,7 @@ module ifu (
     reg [15:0] before_halfword;
     reg test;
     always @(posedge clk) begin
-    if(cross_refill_i && if_rdata_valid_i ==0 && next_rdata_unvalid_i == 0) begin
+    if(cross_refill_i && next_rdata_unvalid_i == 0) begin
         before_halfword <= _inst_data[15:0];
         test <= 1;
     end
