@@ -185,12 +185,13 @@ module ifu (
     reg [15:0] before_halfword;
     reg test;
     always @(posedge clk) begin
-    if(cross_refill_i && if_rdata_valid_i ==0 && next_rdata_unvalid_i == 0) begin
+    if(cross_refill_i && next_rdata_unvalid_i == 0) begin
         before_halfword <= _inst_data[15:0];
         test <= 1;
     end
     else if (cross_refill_i == 1 &&if_rdata_valid_i == 1 && next_rdata_unvalid_i == 0) begin
         before_halfword <= 16'h0000;
+        test <= 0;
     end
     end
 
@@ -208,7 +209,7 @@ module ifu (
     assign ram_stall_valid_if_o = _ram_stall;
     assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
 
-    assign inst_data_o =  (before_halfword == 16'h0) ? _inst_data : {_inst_data[31:16],before_halfword} ;
+    assign inst_data_o =  (test == 0 )? _inst_data : {_inst_data[31:16],before_halfword} ;
     
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;
