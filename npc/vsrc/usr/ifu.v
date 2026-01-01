@@ -189,7 +189,7 @@ module ifu (
         before_halfword <= _inst_data[15:0];
         test <= 1;
     end
-    else if (cross_refill_i == 1 &&if_rdata_valid_i == 1 && next_rdata_unvalid_i == 0) begin
+    else if (if_rdata_valid_i == 1 && next_rdata_unvalid_i == 0) begin
         before_halfword <= 16'h0000;
         test <= 0;
     end

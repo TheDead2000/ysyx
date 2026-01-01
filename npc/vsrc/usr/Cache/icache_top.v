@@ -441,9 +441,9 @@ wire [31:0] cache_rdata_32 = icache_rdata[word_sel_byte*32 +: 32];  // 32位字�
 wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) ? cache_rdata_32[15:0] : cache_rdata_32[31:16];  // 16位半字数据
 
 /* verilator lint_off WIDTHEXPAND */
-  assign cross_refill_o = (need_cross_sram128& !next_icache_hit) ;
+  assign cross_refill_o = (need_cross_sram128 && !next_icache_hit && icache_state == CACHE_LOOKUP  ) ;
 
-  assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | icache_state == CACHE_IDLE | uncache_data_ready;
+  assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 
