@@ -305,7 +305,7 @@ wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : c
       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
       .burst_count_i(burst_count),
       .icache_rdata_o(icache_rdata),
-      .icache_state(icache_state),
+      // .icache_state(icache_state),
       /* sram */
       .io_sram4_addr(io_sram4_addr),
       .io_sram4_cen(io_sram4_cen),
@@ -391,7 +391,7 @@ icache_data u_icache_data_next (
     .burst_count_i       (4'h0),
     .icache_wen_i        (1'b0),
     .icache_rdata_o  (next_sram128_data),
-    .icache_state(icache_state),
+    // .icache_state(icache_state),
     /* SRAM仅读，写端口悬空 */
     .io_sram4_addr       (),
     .io_sram4_cen        (),
@@ -420,20 +420,21 @@ icache_data u_icache_data_next (
 );
 
 // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
-// reg [31:0] cross_inst_32;
-// reg cross_inst_valid;
+reg [31:0] cross_inst_32;
+reg cross_inst_valid;
 
-// always @(*) begin
-//     cross_inst_valid = 1'b0;
-//     cross_inst_32 = 32'h0;
-//     if (need_cross_sram128 && next_sram128_valid) begin
-//         // 拼接：下一块前16位 + 当前块最后16位
-//         cross_inst_32 = {next_sram128_data[15:0], curr_halfword};
-//         cross_inst_valid = 1'b1;
-//     end
-// end
+always @(posedge clk) begin
+    if (cross_refill_o || next_rdata_unvalid_o) begin
+        // 拼接：下一块前16位 + 当前块最后16位
+        cross_inst_valid = 1'b1;
+    end
+    else 
+    begin
+        cross_inst_valid = 1'b0;
+    end
+end
 
-wire [31:0] cross_inst_32 = (need_cross_sram128 ) ? {next_sram128_data[15:0], curr_halfword} : 32'b0;
+
 wire[31:0] real_32bit_inst = is_32bit_inst ? {next_halfword,curr_halfword} : 32'b0;
 
 // -------------------------- 7. 最终输出数据选择 --------------------------
@@ -447,7 +448,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
 
-wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
+wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata  : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;
 assign if_rdata_o = final_if_rdata;
 

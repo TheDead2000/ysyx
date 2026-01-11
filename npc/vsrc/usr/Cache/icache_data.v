@@ -13,7 +13,7 @@ module icache_data #(
     input  [              128-1:0] icache_wmask,
     input  [                  3:0] burst_count_i,
     input                          icache_wen_i,
-    input [3:0]  icache_state,
+    // input [3:0]  icache_state,
     output [127:0] icache_rdata_o,
     /* sram */
     output [                      6:0] io_sram4_addr,
@@ -72,8 +72,8 @@ module icache_data #(
   // assign icache_rdata_o = icache_ram_data[word_sel*32 +: 32];
 
 
-  assign icache_rdata_o = (icache_state == 5) ? 0 : icache_ram_data;
-
+  // assign icache_rdata_o = (icache_state == 5) ? 0 : icache_ram_data;
+  assign icache_rdata_o = icache_ram_data;
   assign io_sram4_cen = 1'b0;
   assign io_sram4_wmask = BWEN;
   assign io_sram4_addr = A;
