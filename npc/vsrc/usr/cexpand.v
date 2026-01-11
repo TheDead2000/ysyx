@@ -117,7 +117,7 @@ module c_instruction_expander (
                                                   3'b111, {2'b01, compressed_inst_i[9:7]}, 
                                                   7'b0010011};
                             end
-                            2'b10: begin  // C.SUB, C.XOR, C.OR, C.AND
+                            2'b11: begin  // C.SUB, C.XOR, C.OR, C.AND
                                 case (compressed_inst_i[6:5])
                                     2'b00: begin  // C.SUB
                                         // sub rd', rd', rs2'
@@ -152,7 +152,7 @@ module c_instruction_expander (
                             end
                         endcase
                     end
-                    3'b101: begin  // C.J
+                    3'b101: begin  // C.J pass
                         // jal x0, offset pass 
                         expanded_inst_o = {compressed_inst_i[12], 
                                           compressed_inst_i[8], compressed_inst_i[10:9], 
@@ -258,7 +258,7 @@ module c_instruction_expander (
                                                       3'b000, 5'h01, 7'b1100111};
                                 end
                             end else begin
-                                // C.ADD: add rd, rd, rs2
+                                // C.ADD: add rd, rd, rs2 pass
                                 expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                   compressed_inst_i[11:7], 3'b000, 
                                                   compressed_inst_i[11:7], 7'b0110011};
