@@ -24,7 +24,7 @@ module c_instruction_expander (
                                           5'h02, 3'b000, {2'b01, compressed_inst_i[4:2]}, 
                                           7'b0010011};
                     end
-                    3'b010: begin  // C.LW
+                    3'b010: begin  // C.LW pass
                         // lw rd', offset(rs1')
                         expanded_inst_o = {5'b0, compressed_inst_i[5], 
                                           compressed_inst_i[12:10], compressed_inst_i[6], 
@@ -259,9 +259,9 @@ module c_instruction_expander (
                                 end
                             end else begin
                                 // C.ADD: add rd, rd, rs2
-                                expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
-                                                  compressed_inst_i[11:7], 3'b000, 
-                                                  compressed_inst_i[11:7], 7'b0110011};
+                                expanded_inst_o = {7'b0, compressed_inst_i[11:7], 
+                                                  compressed_inst_i[6:2], 3'b000, 
+                                                  compressed_inst_i[6:2], 7'b0110011};
                             end
                         end
                     end
