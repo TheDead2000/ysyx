@@ -259,9 +259,9 @@ module c_instruction_expander (
                                 end
                             end else begin
                                 // C.ADD: add rd, rd, rs2
-                                expanded_inst_o = {7'b0, compressed_inst_i[11:7], 
-                                                  compressed_inst_i[6:2], 3'b000, 
-                                                  compressed_inst_i[6:2], 7'b0110011};
+                                expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
+                                                  compressed_inst_i[11:7], 3'b000, 
+                                                  compressed_inst_i[11:7], 7'b0110011};
                             end
                         end
                     end
