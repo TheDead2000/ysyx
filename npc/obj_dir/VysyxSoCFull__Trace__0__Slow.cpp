@@ -2379,7 +2379,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7324,"ram_if_flush", false,-1, 5,0);
     tracep->declBus(c+7315,"ram_if_stall", false,-1, 5,0);
     tracep->declBus(c+7317,"compress_flush", false,-1, 5,0);
-    tracep->declBus(c+7320,"compress_stall_stall", false,-1, 5,0);
+    tracep->declBus(c+7317,"compress_stall_stall", false,-1, 5,0);
     tracep->declBit(c+7190,"ram_stall_req_mem", false,-1);
     tracep->declBit(c+7188,"ram_stall_req_if", false,-1);
     tracep->declBit(c+6619,"trap_stall_req", false,-1);
