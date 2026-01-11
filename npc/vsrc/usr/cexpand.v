@@ -49,7 +49,7 @@ module c_instruction_expander (
             2'b01: begin
                 // C1格式：ADDI, JAL, LI, LUI, 算术指令等
                 case (funct3)
-                    3'b000: begin  // C.ADDI
+                    3'b000: begin  // C.ADDI pass
                         // addi rd, rd, imm
                         expanded_inst_o = {{7{compressed_inst_i[12]}}, 
                                           compressed_inst_i[6:2], 
@@ -153,7 +153,7 @@ module c_instruction_expander (
                         endcase
                     end
                     3'b101: begin  // C.J
-                        // jal x0, offset
+                        // jal x0, offset pass 
                         expanded_inst_o = {compressed_inst_i[12], 
                                           compressed_inst_i[8], compressed_inst_i[10:9], 
                                           compressed_inst_i[6], compressed_inst_i[7], 
@@ -162,7 +162,7 @@ module c_instruction_expander (
                                           {9{compressed_inst_i[12]}},  // 8位符号扩展（不是9位！）
                                           5'h00, 7'b1101111};
                     end
-                    3'b110: begin  // C.BEQZ
+                    3'b110: begin  // C.BEQZ pass
                         // c.beqz rs1', offset
                         // 32-bit: beq rs1', x0, offset      
                         expanded_inst_o = {
@@ -219,7 +219,7 @@ module c_instruction_expander (
                                           compressed_inst_i[11:7], 3'b001, 
                                           compressed_inst_i[11:7], 7'b0010011};
                     end
-                    3'b010: begin  // C.LWSP
+                    3'b010: begin  // C.LWSP pass
                         // lw rd, offset(x2)
                         expanded_inst_o = {4'b0, compressed_inst_i[3:2], 
                                           compressed_inst_i[12], compressed_inst_i[6:4], 
@@ -237,11 +237,11 @@ module c_instruction_expander (
                         if (compressed_inst_i[12] == 1'b0) begin
                             // inst[12]=0
                             if (compressed_inst_i[6:2] == 5'b00000) begin
-                                // C.JR: jalr x0, rs1, 0
+                                // C.JR: jalr x0, rs1, 0  pass
                                 expanded_inst_o = {12'b0, compressed_inst_i[11:7], 
                                                   3'b000, 5'b0, 7'b1100111};
                             end else begin
-                                // C.MV: add rd, x0, rs2
+                                // C.MV: add rd, x0, rs2  pass
                                 expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                   5'b0, 3'b000, compressed_inst_i[11:7], 
                                                   7'b0110011};
