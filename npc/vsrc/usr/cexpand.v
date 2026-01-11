@@ -56,7 +56,7 @@ module c_instruction_expander (
                                           compressed_inst_i[11:7], 3'b000, 
                                           compressed_inst_i[11:7], 7'b0010011};
                     end
-                    3'b001: begin  // C.JAL
+                    3'b001: begin  // C.JAL pass
                         // jal x1, offset
                         // imm[20|10:1|11|19:12]
                         expanded_inst_o = {compressed_inst_i[12], 
