@@ -10886,7 +10886,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+6782,"rs2_idx_id_ex_i", false,-1, 4,0);
     tracep->declBus(c+6251,"rd_idx_id_ex_i", false,-1, 4,0);
     tracep->declBus(c+6252,"imm_data_id_ex_i", false,-1, 31,0);
-    tracep->declBit(c+7248,"is_compressed_inst_id_ex_i", false,-1);
+    tracep->declBit(c+619,"is_compressed_inst_id_ex_i", false,-1);
     tracep->declBit(c+634,"is_compressed_inst_id_ex_o", false,-1);
     tracep->declBus(c+615,"csr_imm_id_ex_i", false,-1, 31,0);
     tracep->declBit(c+616,"csr_imm_valid_id_ex_i", false,-1);
@@ -11061,7 +11061,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7228,"RESET_VAL", false,-1, 31,0);
     tracep->declBit(c+7149,"clk", false,-1);
     tracep->declBit(c+26,"rst", false,-1);
-    tracep->declBus(c+7248,"din", false,-1, 0,0);
+    tracep->declBus(c+619,"din", false,-1, 0,0);
     tracep->declBus(c+634,"dout", false,-1, 0,0);
     tracep->declBit(c+25,"wen", false,-1);
     tracep->popNamePrefix(1);

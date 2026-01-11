@@ -462,7 +462,7 @@ id_ex id2ex (
     .csr_data_id_ex_i     (csr_readdata_id),
 
 
-    .is_compressed_inst_id_ex_i(is_compressed_inst),
+    .is_compressed_inst_id_ex_i(id_compress_pc_valid_o),
     .is_compressed_inst_id_ex_o(is_compressed_inst_id_ex),
     
 
