@@ -127,14 +127,14 @@ module c_instruction_expander (
                                                           7'b0110011};
                                         expanded_inst_o[31:26] = 6'b010000;
                                     end
-                                    2'b01: begin  // C.XOR
+                                    2'b01: begin  // C.XOR pass
                                         // xor rd', rd', rs2'
                                         expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
                                                           {2'b01, compressed_inst_i[9:7]}, 
                                                           3'b100, {2'b01, compressed_inst_i[9:7]}, 
                                                           7'b0110011};
                                     end
-                                    2'b10: begin  // C.OR
+                                    2'b10: begin  // C.OR pass
                                         // or rd', rd', rs2'
                                         expanded_inst_o = {7'b0, {2'b01, compressed_inst_i[4:2]}, 
                                                           {2'b01, compressed_inst_i[9:7]}, 
