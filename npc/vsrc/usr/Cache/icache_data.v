@@ -95,6 +95,16 @@ module icache_data #(
                                  | ({128{~CEN10_next}}&io_next_sram6_rdata)
                                  | ({128{~CEN11_next}}&io_next_sram7_rdata);
 
+  reg [127:0] final_rdata; 
+  always @(*) begin
+    if (~CEN11) begin // 最后一个128bit子块（bit5~4=11）
+      final_rdata = icache_next_ram_data; // 用预取的icache_next_rdata
+    end else begin    // 非最后一个128bit子块
+      final_rdata = (icache_blk_addr_i[5:4] == 2'b00) ? Q01 : 
+                    (icache_blk_addr_i[5:4] == 2'b01) ? Q10 : 
+                    (icache_blk_addr_i[5:4] == 2'b10) ? Q11 : icache_ram_data;
+    end
+  end
 
   // wire [1:0] word_sel = icache_blk_addr_i[3:2];
   // assign icache_rdata_o = icache_ram_data[word_sel*32 +: 32];
@@ -102,7 +112,7 @@ module icache_data #(
 
   // assign icache_rdata_o = (icache_state == 5) ? 0 : icache_ram_data;
   assign icache_rdata_o = icache_ram_data;
-  assign icache_next_rdata_o = icache_next_ram_data;
+  assign icache_next_rdata_o = final_rdata;
 
 
   assign io_sram4_cen = 1'b0;
