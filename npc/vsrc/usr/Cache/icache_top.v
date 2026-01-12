@@ -337,7 +337,7 @@ wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : c
   // 2. uncache_data_ready ：数据来自 uncache
   // 5.4 预取下一个128bit块
 
-wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 16;  // 下一块地址（+16字节）
+wire [`XLEN-1:0] next_sram128_addr = preif_raddr_i + 8;  // 下一块地址（+16字节）
 
   wire [5:0] next_cache_blk_addr;  // 6bit块内地址（保持不变）
   wire [6:0] next_cache_line_idx;  // 7bit组号
