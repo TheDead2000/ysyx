@@ -36,29 +36,44 @@ module icache_top (
 
     /* sram */
     output [                      6:0] io_sram4_addr,
+    output [6:0]                       io_next_sram4_addr,
+
     output                             io_sram4_cen,
     output                             io_sram4_wen,
     output [                    127:0] io_sram4_wmask,
     output [                    127:0] io_sram4_wdata,
     input  [                    127:0] io_sram4_rdata,
+    input  [                    127:0] io_next_sram4_rdata,
+
     output [                      6:0] io_sram5_addr,
+    output [6:0]                       io_next_sram5_addr,
+
     output                             io_sram5_cen,
     output                             io_sram5_wen,
     output [                    127:0] io_sram5_wmask,
     output [                    127:0] io_sram5_wdata,
     input  [                    127:0] io_sram5_rdata,
+    input  [                    127:0] io_next_sram5_rdata,
+
     output [                      6:0] io_sram6_addr,
+    output [6:0]                       io_next_sram6_addr,
+
     output                             io_sram6_cen,
     output                             io_sram6_wen,
     output [                    127:0] io_sram6_wmask,
     output [                    127:0] io_sram6_wdata,
     input  [                    127:0] io_sram6_rdata,
+    input  [                    127:0] io_next_sram6_rdata,
+
     output [                      6:0] io_sram7_addr,
+    output [6:0]                       io_next_sram7_addr,
+    
     output                             io_sram7_cen,
     output                             io_sram7_wen,
     output [                    127:0] io_sram7_wmask,
     output [                    127:0] io_sram7_wdata,
-    input  [                    127:0] io_sram7_rdata
+    input  [                    127:0] io_sram7_rdata,
+    input [                    127:0] io_next_sram7_rdata
 );
 
 `ifndef YSYX_SOC
@@ -300,37 +315,54 @@ wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : c
 
       .icache_index_i     (write_index),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
       .icache_blk_addr_i(write_blk_addr),  // icache_blk_addr_i 使用寄存器中的数据
+      .icache_next_index_i      (next_cache_line_idx),
+      .icache_next_blk_addr_i   (next_blk_addr_reg),
+
+
       .icache_line_wdata_i(icache_wdate),
       .icache_wmask(icache_wmask),
       .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
       .burst_count_i(burst_count),
       .icache_rdata_o(icache_rdata),
+      .icache_next_rdata_o(next_sram128_data),
       // .icache_state(icache_state),
       /* sram */
       .io_sram4_addr(io_sram4_addr),
+      .io_next_sram4_addr(io_next_sram4_addr),
       .io_sram4_cen(io_sram4_cen),
       .io_sram4_wen(io_sram4_wen),
       .io_sram4_wmask(io_sram4_wmask),
       .io_sram4_wdata(io_sram4_wdata),
       .io_sram4_rdata(io_sram4_rdata),
+      .io_next_sram4_rdata(io_next_sram4_rdata),
+
       .io_sram5_addr(io_sram5_addr),
+      .io_next_sram5_addr(io_next_sram5_addr),
       .io_sram5_cen(io_sram5_cen),
       .io_sram5_wen(io_sram5_wen),
       .io_sram5_wmask(io_sram5_wmask),
       .io_sram5_wdata(io_sram5_wdata),
       .io_sram5_rdata(io_sram5_rdata),
+      .io_next_sram5_rdata(io_next_sram5_rdata),
+
       .io_sram6_addr(io_sram6_addr),
+      .io_next_sram6_addr(io_next_sram6_addr),
+
       .io_sram6_cen(io_sram6_cen),
       .io_sram6_wen(io_sram6_wen),
       .io_sram6_wmask(io_sram6_wmask),
       .io_sram6_wdata(io_sram6_wdata),
       .io_sram6_rdata(io_sram6_rdata),
+      .io_next_sram6_rdata(io_next_sram6_rdata),
+
       .io_sram7_addr(io_sram7_addr),
+      .io_next_sram7_addr(io_next_sram7_addr),
       .io_sram7_cen(io_sram7_cen),
       .io_sram7_wen(io_sram7_wen),
       .io_sram7_wmask(io_sram7_wmask),
       .io_sram7_wdata(io_sram7_wdata),
-      .io_sram7_rdata(io_sram7_rdata)
+      .io_sram7_rdata(io_sram7_rdata),
+      .io_next_sram7_rdata(io_next_sram7_rdata)
   );
 
   // 1. icache_hit ： 数据来自 cache
@@ -382,42 +414,6 @@ wire is_32bit_inst = (curr_halfword[1:0] == 2'b11);  // 32位指令opcode[1:0]=1
 wire is_last_halfword_in_sram128 = (sram128_offset_byte == 14);  // 最后一个16位半字
 wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需要跨块
 
-// 预取数据模块（仅读，无写）
-icache_data u_icache_data_next (
-    .icache_index_i      (next_cache_line_idx),
-    .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
-    .icache_line_wdata_i (128'h0),
-    .icache_wmask        (128'h0),
-    .burst_count_i       (4'h0),
-    .icache_wen_i        (1'b0),
-    .icache_rdata_o  (next_sram128_data),
-    // .icache_state(icache_state),
-    /* SRAM仅读，写端口悬空 */
-    .io_sram4_addr       (),
-    .io_sram4_cen        (),
-    .io_sram4_wen        (),
-    .io_sram4_wmask      (),
-    .io_sram4_wdata      (),
-    .io_sram4_rdata      (io_sram4_rdata),
-    .io_sram5_addr       (),
-    .io_sram5_cen        (),
-    .io_sram5_wen        (),
-    .io_sram5_wmask      (),
-    .io_sram5_wdata      (),
-    .io_sram5_rdata      (io_sram5_rdata),
-    .io_sram6_addr       (),
-    .io_sram6_cen        (),
-    .io_sram6_wen        (),
-    .io_sram6_wmask      (),
-    .io_sram6_wdata      (),
-    .io_sram6_rdata      (io_sram6_rdata),
-    .io_sram7_addr       (),
-    .io_sram7_cen        (),
-    .io_sram7_wen        (),
-    .io_sram7_wmask      (),
-    .io_sram7_wdata      (),
-    .io_sram7_rdata      (io_sram7_rdata)
-);
 
 // -------------------------- 6. 指令拼接（跨块32位指令） --------------------------
 // reg [31:0] cross_inst_32;

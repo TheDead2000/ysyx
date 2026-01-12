@@ -1191,29 +1191,44 @@ wire [7:0] icache_arb_rlen;
 
           /* sram */
       .io_sram4_addr(io_sram4_addr),
+      .io_next_sram4_addr(io_next_sram4_addr),
+
       .io_sram4_cen(io_sram4_cen),
       .io_sram4_wen(io_sram4_wen),
       .io_sram4_wmask(io_sram4_wmask),
       .io_sram4_wdata(io_sram4_wdata),
       .io_sram4_rdata(io_sram4_rdata),
+      .io_next_sram4_rdata(io_next_sram4_rdata),
+
       .io_sram5_addr(io_sram5_addr),
+      .io_next_sram5_addr(io_next_sram5_addr),
+
       .io_sram5_cen(io_sram5_cen),
       .io_sram5_wen(io_sram5_wen),
       .io_sram5_wmask(io_sram5_wmask),
       .io_sram5_wdata(io_sram5_wdata),
       .io_sram5_rdata(io_sram5_rdata),
+      .io_next_sram5_rdata(io_next_sram5_rdata),
+
       .io_sram6_addr(io_sram6_addr),
+      .io_next_sram6_addr(io_next_sram6_addr),
+
       .io_sram6_cen(io_sram6_cen),
       .io_sram6_wen(io_sram6_wen),
       .io_sram6_wmask(io_sram6_wmask),
       .io_sram6_wdata(io_sram6_wdata),
       .io_sram6_rdata(io_sram6_rdata),
+      .io_next_sram6_rdata(io_next_sram6_rdata),
+
       .io_sram7_addr(io_sram7_addr),
+      .io_next_sram7_addr(io_next_sram7_addr),
+
       .io_sram7_cen(io_sram7_cen),
       .io_sram7_wen(io_sram7_wen),
       .io_sram7_wmask(io_sram7_wmask),
       .io_sram7_wdata(io_sram7_wdata),
-      .io_sram7_rdata(io_sram7_rdata)
+      .io_sram7_rdata(io_sram7_rdata),
+      .io_next_sram7_rdata(io_next_sram7_rdata)
 
 );
  
@@ -1308,29 +1323,44 @@ wire [7:0] icache_arb_rlen;
 
       /* sram */
       .io_sram4_addr(io_sram4_addr),
+      .io_next_sram4_addr(io_next_sram4_addr),
+
       .io_sram4_cen(io_sram4_cen),
       .io_sram4_wen(io_sram4_wen),
       .io_sram4_wmask(io_sram4_wmask),
       .io_sram4_wdata(io_sram4_wdata),
       .io_sram4_rdata(io_sram4_rdata),
+      .io_next_sram4_rdata(io_next_sram4_rdata),
+
       .io_sram5_addr(io_sram5_addr),
+      .io_next_sram5_addr(io_next_sram5_addr),
+
       .io_sram5_cen(io_sram5_cen),
       .io_sram5_wen(io_sram5_wen),
       .io_sram5_wmask(io_sram5_wmask),
       .io_sram5_wdata(io_sram5_wdata),
       .io_sram5_rdata(io_sram5_rdata),
+      .io_next_sram5_rdata(io_next_sram5_rdata),
+
       .io_sram6_addr(io_sram6_addr),
+      .io_next_sram6_addr(io_next_sram6_addr),
+
       .io_sram6_cen(io_sram6_cen),
       .io_sram6_wen(io_sram6_wen),
       .io_sram6_wmask(io_sram6_wmask),
       .io_sram6_wdata(io_sram6_wdata),
       .io_sram6_rdata(io_sram6_rdata),
+      .io_next_sram6_rdata(io_next_sram6_rdata),
+
       .io_sram7_addr(io_sram7_addr),
+      .io_next_sram7_addr(io_next_sram7_addr),
+
       .io_sram7_cen(io_sram7_cen),
       .io_sram7_wen(io_sram7_wen),
       .io_sram7_wmask(io_sram7_wmask),
       .io_sram7_wdata(io_sram7_wdata),
-      .io_sram7_rdata(io_sram7_rdata)
+      .io_sram7_rdata(io_sram7_rdata),
+      .io_next_sram7_rdata(io_next_sram7_rdata)
  
   );
   `endif
@@ -1703,32 +1733,44 @@ wire [3:0] dcache_arb_rmask;
   wire [127:0] io_sram3_rdata;
 
   wire [  6:0] io_sram4_addr;
+  wire [6:0]   io_next_sram4_addr;
+
   wire         io_sram4_cen;
   wire         io_sram4_wen;
   wire [127:0] io_sram4_wmask;
   wire [127:0] io_sram4_wdata;
   wire [127:0] io_sram4_rdata;
+  wire [127:0] io_next_sram4_rdata;
 
   wire [  6:0] io_sram5_addr;
+  wire [6:0]   io_next_sram5_addr;
+
   wire         io_sram5_cen;
   wire         io_sram5_wen;
   wire [127:0] io_sram5_wmask;
   wire [127:0] io_sram5_wdata;
   wire [127:0] io_sram5_rdata;
+  wire [127:0] io_next_sram5_rdata;
 
   wire [  6:0] io_sram6_addr;
+  wire [6:0]   io_next_sram6_addr; 
+
   wire         io_sram6_cen;
   wire         io_sram6_wen;
   wire [127:0] io_sram6_wmask;
   wire [127:0] io_sram6_wdata;
   wire [127:0] io_sram6_rdata;
+  wire [127:0] io_next_sram6_rdata;
 
   wire [  6:0] io_sram7_addr;
+  wire [6:0]   io_next_sram7_addr;
+
   wire         io_sram7_cen;
   wire         io_sram7_wen;
   wire [127:0] io_sram7_wmask;
   wire [127:0] io_sram7_wdata;
   wire [127:0] io_sram7_rdata;
+  wire [127:0] io_next_sram7_rdata;
 
   sram sram (
       .clk           (clk),
@@ -1756,30 +1798,45 @@ wire [3:0] dcache_arb_rmask;
       .io_sram3_wmask(io_sram3_wmask),
       .io_sram3_wdata(io_sram3_wdata),
       .io_sram3_rdata(io_sram3_rdata),
+
       .io_sram4_addr (io_sram4_addr),
+      .io_next_sram4_addr(io_next_sram4_addr),
+
       .io_sram4_cen  (io_sram4_cen),
       .io_sram4_wen  (io_sram4_wen),
       .io_sram4_wmask(io_sram4_wmask),
       .io_sram4_wdata(io_sram4_wdata),
       .io_sram4_rdata(io_sram4_rdata),
+      .io_next_sram4_rdata(io_next_sram4_rdata),
+
       .io_sram5_addr (io_sram5_addr),
+      .io_next_sram5_addr(io_next_sram5_addr),
+
       .io_sram5_cen  (io_sram5_cen),
       .io_sram5_wen  (io_sram5_wen),
       .io_sram5_wmask(io_sram5_wmask),
       .io_sram5_wdata(io_sram5_wdata),
       .io_sram5_rdata(io_sram5_rdata),
+      .io_next_sram5_rdata(io_next_sram5_rdata),
+
       .io_sram6_addr (io_sram6_addr),
+      .io_next_sram6_addr(io_next_sram6_addr),
+
       .io_sram6_cen  (io_sram6_cen),
       .io_sram6_wen  (io_sram6_wen),
       .io_sram6_wmask(io_sram6_wmask),
       .io_sram6_wdata(io_sram6_wdata),
       .io_sram6_rdata(io_sram6_rdata),
+      .io_next_sram6_rdata(io_next_sram6_rdata),
+
       .io_sram7_addr (io_sram7_addr),
+      .io_next_sram7_addr(io_next_sram7_addr),
       .io_sram7_cen  (io_sram7_cen),
       .io_sram7_wen  (io_sram7_wen),
       .io_sram7_wmask(io_sram7_wmask),
       .io_sram7_wdata(io_sram7_wdata),
-      .io_sram7_rdata(io_sram7_rdata)
+      .io_sram7_rdata(io_sram7_rdata),
+      .io_next_sram7_rdata(io_next_sram7_rdata)
 );
 
 

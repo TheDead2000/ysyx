@@ -10,11 +10,13 @@
 */
 module L128D128_SRAM (
     Q,
+    Q_N,
     CLK,
     CEN,
     WEN,
     BWEN,
     A,
+    A_N,
     D
 );
   parameter Bits = 128;
@@ -23,11 +25,14 @@ module L128D128_SRAM (
   parameter Wen_Width = 128;
 
   output reg [Bits-1:0] Q;
+  output reg [Bits-1:0] Q_N;
   input CLK;
   input CEN;
   input WEN;
   input [Wen_Width-1:0] BWEN;
   input [Add_Width-1:0] A;
+  input [Add_Width-1:0] A_N;
+
   input [Bits-1:0] D;
 
   wire cen = ~CEN;
@@ -40,6 +45,7 @@ module L128D128_SRAM (
       ram[A] <= (D & bwen) | (ram[A] & ~bwen);
     end
     Q <= cen && !wen ? ram[A] : {4{$random}};
+    Q_N <= cen && !wen ? ram[A_N] : {4{$random}};
   end
 
 endmodule

@@ -9,37 +9,54 @@ module icache_data #(
     // input                          rst,
     input  [          IDX_LEN-1:0] icache_index_i,       // index
     input  [          BLK_LEN-1:0] icache_blk_addr_i,
+
+    input  [IDX_LEN-1:0] icache_next_index_i,       // index
+    input  [BLK_LEN-1:0] icache_next_blk_addr_i,
+
     input  [              128-1:0] icache_line_wdata_i,
     input  [              128-1:0] icache_wmask,
     input  [                  3:0] burst_count_i,
     input                          icache_wen_i,
     // input [3:0]  icache_state,
     output [127:0] icache_rdata_o,
+    output [127:0] icache_next_rdata_o,
     /* sram */
     output [                      6:0] io_sram4_addr,
+    output [6:0]                       io_next_sram4_addr,
     output                         io_sram4_cen,
     output                         io_sram4_wen,
     output [                127:0] io_sram4_wmask,
     output [                127:0] io_sram4_wdata,
     input  [                127:0] io_sram4_rdata,
+    input  [                127:0] io_next_sram4_rdata,
+
     output [                      6:0] io_sram5_addr,
+    output [6:0]                       io_next_sram5_addr,
     output                         io_sram5_cen,
     output                         io_sram5_wen,
     output [                127:0] io_sram5_wmask,
     output [                127:0] io_sram5_wdata,
     input  [                127:0] io_sram5_rdata,
+    input  [                127:0] io_next_sram5_rdata,
+
     output [                      6:0] io_sram6_addr,
+    output [6:0]                       io_next_sram6_addr,
     output                         io_sram6_cen,
     output                         io_sram6_wen,
     output [                127:0] io_sram6_wmask,
     output [                127:0] io_sram6_wdata,
     input  [                127:0] io_sram6_rdata,
+    input  [                127:0] io_next_sram6_rdata,
+
     output [                      6:0] io_sram7_addr,
+    output [6:0]                       io_next_sram7_addr,
     output                         io_sram7_cen,
     output                         io_sram7_wen,
     output [                127:0] io_sram7_wmask,
     output [                127:0] io_sram7_wdata,
-    input  [                127:0] io_sram7_rdata
+    input  [                127:0] io_sram7_rdata,
+    input  [                127:0] io_next_sram7_rdata
+
 );
 
 
@@ -54,10 +71,18 @@ module icache_data #(
   wire CEN10 = ~(icache_blk_addr_i[5:4] == 2'b10);
   wire CEN11 = ~(icache_blk_addr_i[5:4] == 2'b11);
 
+  wire CEN00_next = ~(icache_next_blk_addr_i[5:4] == 2'b00);
+  wire CEN01_next = ~(icache_next_blk_addr_i[5:4] == 2'b01);
+  wire CEN10_next = ~(icache_next_blk_addr_i[5:4] == 2'b10);
+  wire CEN11_next = ~(icache_next_blk_addr_i[5:4] == 2'b11);
+
+
   wire [127:0] Q00, Q01, Q10, Q11;  // 读数据
 
   wire [127:0] BWEN = ~icache_wmask;  // 写掩码
+
   wire [6:0] A = icache_index_i;
+  wire [6:0] A_next = icache_next_index_i;
   wire [127:0] D = icache_line_wdata_i;
 
   wire [127:0] icache_ram_data = ({128{~CEN00}}&Q00)
@@ -65,7 +90,10 @@ module icache_data #(
                                  | ({128{~CEN10}}&Q10)
                                  | ({128{~CEN11}}&Q11);
 
-
+  wire [127:0] icache_next_ram_data = ({128{~CEN00_next}}&io_next_sram4_rdata)
+                                 | ({128{~CEN01_next}}&io_next_sram5_rdata)
+                                 | ({128{~CEN10_next}}&io_next_sram6_rdata)
+                                 | ({128{~CEN11_next}}&io_next_sram7_rdata);
 
 
   // wire [1:0] word_sel = icache_blk_addr_i[3:2];
@@ -77,27 +105,37 @@ module icache_data #(
   assign io_sram4_cen = 1'b0;
   assign io_sram4_wmask = BWEN;
   assign io_sram4_addr = A;
+
+  assign io_next_sram4_addr = A_next;
+
   assign io_sram4_wdata = D;
   assign io_sram4_wen = WEN00;
   assign Q00 = io_sram4_rdata;
 
   assign io_sram5_cen = 1'b0;
   assign io_sram5_wmask = BWEN;
+
   assign io_sram5_addr = A;
+  assign io_next_sram5_addr = A_next;
   assign io_sram5_wdata = D;
   assign io_sram5_wen = WEN01;
   assign Q01 = io_sram5_rdata;
 
   assign io_sram6_cen = 1'b0;
   assign io_sram6_wmask = BWEN;
+
   assign io_sram6_addr = A;
+
   assign io_sram6_wdata = D;
   assign io_sram6_wen = WEN10;
   assign Q10 = io_sram6_rdata;
 
   assign io_sram7_cen = 1'b0;
   assign io_sram7_wmask = BWEN;
+
   assign io_sram7_addr = A;
+  assign io_next_sram7_addr = A_next;
+
   assign io_sram7_wdata = D;
   assign io_sram7_wen = WEN11;
   assign Q11 = io_sram7_rdata;
