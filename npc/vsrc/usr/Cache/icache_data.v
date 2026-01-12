@@ -102,6 +102,9 @@ module icache_data #(
 
   // assign icache_rdata_o = (icache_state == 5) ? 0 : icache_ram_data;
   assign icache_rdata_o = icache_ram_data;
+  assign icache_next_rdata_o = icache_next_ram_data;
+
+
   assign io_sram4_cen = 1'b0;
   assign io_sram4_wmask = BWEN;
   assign io_sram4_addr = A;
