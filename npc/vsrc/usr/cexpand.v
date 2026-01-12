@@ -178,7 +178,7 @@ module c_instruction_expander (
                             // funct3 (3位) = 000 (beq) - bits 14:12
                             3'b000,
                             // imm[4:1] (4位) 
-                           compressed_inst_i[10],compressed_inst_i[9], compressed_inst_i[4:3],
+                           compressed_inst_i[11],compressed_inst_i[10], compressed_inst_i[4:3],
                             // imm[11] (1位)
                             compressed_inst_i[12],
                             // opcode (7位) = 1100011 - bits 6:0
@@ -188,7 +188,6 @@ module c_instruction_expander (
                     3'b111: begin  // C.BNEZ
                         // c.bnez rs1', offset
                         expanded_inst_o = {
-                            // imm[12] (1位)
                             // imm[12] (1位) - bit 31
                             compressed_inst_i[12],
                             // imm[10:5] (6位) - bits 30:25
@@ -201,7 +200,7 @@ module c_instruction_expander (
                             // funct3 (3位) = 001 (bne)
                             3'b001,
                            // imm[4:1] (4位) 
-                           compressed_inst_i[10],compressed_inst_i[9], compressed_inst_i[4:3],
+                           compressed_inst_i[11],compressed_inst_i[10], compressed_inst_i[4:3],
                            // imm[11] (1位)
                            compressed_inst_i[12],
                            // opcode (7位) = 1100011 - bits 6:0
