@@ -67,7 +67,7 @@ module icache_top (
 
     output [                      6:0] io_sram7_addr,
     output [6:0]                       io_next_sram7_addr,
-    
+
     output                             io_sram7_cen,
     output                             io_sram7_wen,
     output [                    127:0] io_sram7_wmask,
@@ -210,7 +210,7 @@ module icache_top (
           end
           else if(need_cross_sram128 & !next_icache_hit) begin
             icache_state <= CACHE_REFILL;
-            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,6'b0};
+            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,next_cache_blk_addr};
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
