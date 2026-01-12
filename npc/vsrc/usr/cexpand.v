@@ -109,7 +109,7 @@ module c_instruction_expander (
                                     expanded_inst_o[31:26] = 6'b010000;  // srai的特殊编码
                                 end
                             end
-                            2'b01: begin  // C.ANDI
+                            2'b10: begin  // C.ANDI
                                 // andi rd', rd', imm
                                 expanded_inst_o = {{7{compressed_inst_i[12]}}, 
                                                   compressed_inst_i[6:2], 
