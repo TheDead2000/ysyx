@@ -385,7 +385,7 @@ wire need_cross_sram128 = is_32bit_inst & is_last_halfword_in_sram128;  // 需�
 // 预取数据模块（仅读，无写）
 icache_data u_icache_data_next (
     .icache_index_i      (next_cache_line_idx),
-    .icache_blk_addr_i   (next_blk_addr_reg), // !!!!!!!!!!!!!!!!!!!!!!!
+    .icache_blk_addr_i   (next_cache_blk_addr), // !!!!!!!!!!!!!!!!!!!!!!!
     .icache_line_wdata_i (128'h0),
     .icache_wmask        (128'h0),
     .burst_count_i       (4'h0),
