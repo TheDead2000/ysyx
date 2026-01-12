@@ -13991,26 +13991,26 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_0(VysyxSoCFull___024roo
                               >> 0xdU)),19);
     bufp->fullIData(oldp+38,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__write_tag_reg),19);
     bufp->fullCData(oldp+39,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__write_idx_reg),7);
-    bufp->fullIData(oldp+40,(((IData)(8U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next)),32);
-    bufp->fullCData(oldp+41,((0x3fU & ((IData)(8U) 
+    bufp->fullIData(oldp+40,(((IData)(4U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next)),32);
+    bufp->fullCData(oldp+41,((0x3fU & ((IData)(4U) 
                                        + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next))),6);
-    bufp->fullCData(oldp+42,((0x7fU & (((IData)(8U) 
+    bufp->fullCData(oldp+42,((0x7fU & (((IData)(4U) 
                                         + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                                        >> 6U))),7);
-    bufp->fullIData(oldp+43,((((IData)(8U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
+    bufp->fullIData(oldp+43,((((IData)(4U) + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                               >> 0xdU)),19);
     bufp->fullWData(oldp+44,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__u_icache_data_next__DOT__icache_ram_data),128);
     bufp->fullIData(oldp+48,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_final_data),32);
-    bufp->fullBit(oldp+49,((0U != (3U & (((IData)(8U) 
+    bufp->fullBit(oldp+49,((0U != (3U & (((IData)(4U) 
                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                                          >> 4U)))));
-    bufp->fullBit(oldp+50,((1U != (3U & (((IData)(8U) 
+    bufp->fullBit(oldp+50,((1U != (3U & (((IData)(4U) 
                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                                          >> 4U)))));
-    bufp->fullBit(oldp+51,((2U != (3U & (((IData)(8U) 
+    bufp->fullBit(oldp+51,((2U != (3U & (((IData)(4U) 
                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                                          >> 4U)))));
-    bufp->fullBit(oldp+52,((3U != (3U & (((IData)(8U) 
+    bufp->fullBit(oldp+52,((3U != (3U & (((IData)(4U) 
                                           + vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__pc_next) 
                                          >> 4U)))));
     bufp->fullBit(oldp+53,((1U & (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall))));
