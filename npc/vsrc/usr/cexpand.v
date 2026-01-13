@@ -34,11 +34,16 @@ module c_instruction_expander (
                     end
                     3'b110: begin  // C.SW
                         // sw rs2', offset(rs1')
-                        expanded_inst_o = {5'b0, compressed_inst_i[5], 
-                                          compressed_inst_i[12:10], compressed_inst_i[6], 
-                                          2'b00,
+                        expanded_inst_o = {5'b0, 
+                                          //        [6]  [5]
+                                          compressed_inst_i[5],compressed_inst_i[12],
+                                          //rs2
+                                          {2'b01, compressed_inst_i[4:2]},
+                                          //rs1
                                           {2'b01, compressed_inst_i[9:7]}, 3'b010, 
-                                          {2'b01, compressed_inst_i[4:2]}, 7'b0100011};
+                                          //offset[4:0]  [4:3] [2] [1:0]
+                                          compressed_inst_i[11:10], compressed_inst_i[6], 2'b00,
+                                          7'b0100011};
                     end
                     default: begin
                         expanded_inst_o = 32'h00000013;  // NOP
