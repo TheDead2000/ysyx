@@ -69,6 +69,22 @@ module pipline_control (
   wire trap_stall_req = trap_stall_valid_wb_i;
   wire next_stall_req_preif = next_stall_preif_i;
 
+ reg ram_stall_mem_prev; // 锁存上一拍的memstall状态
+  always @(posedge clk or posedge rst) begin
+    if (rst) ram_stall_mem_prev <= 1'b0;
+    else ram_stall_mem_prev <= ram_stall_valid_mem_i;
+  end
+  // memstall_neg：ram_stall_req_mem从1变0的瞬间，高电平仅持续1个周期
+  wire memstall_neg = ~ram_stall_valid_mem_i & ram_stall_mem_prev;
+
+  // ======================================
+  // 新增2：强制推进使能（memstall清零时，临时屏蔽所有stall）
+  // ======================================
+  wire pipe_force_advance = memstall_neg; // 边沿触发，仅1个周期有效
+
+
+
+
   reg [5:0] _flush;
   reg [5:0] _stall;
   /* 流水线越往后,优先级越高 */
