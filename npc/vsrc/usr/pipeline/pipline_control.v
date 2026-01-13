@@ -2,6 +2,7 @@
 
 // 组合逻辑
 module pipline_control (
+    input clk,
     input rst,
     /* ----- stall request from other modules  --------*/
     input compress_stall,
@@ -93,8 +94,12 @@ module pipline_control (
       _stall = 6'b000000;
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
-    end 
-  if (ram_stall_req_mem) begin 
+    end  else if (pipe_force_advance) begin
+      _stall = 6'b000000; // 所有阶段解除阻塞
+      _flush = 6'b000000; // 无flush
+    end
+    else
+    if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
     end 

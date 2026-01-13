@@ -417,6 +417,7 @@ end
   wire trap_stall_valid = (csr_state != IDLE);
   
   pipline_control u_pipline_control (
+      .clk(clk),
       .rst(rst),
       .compress_stall(compress_stall),
       .next_stall_preif_i(next_stall_preif_i),
