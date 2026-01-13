@@ -32,7 +32,7 @@ module c_instruction_expander (
                                           {2'b01, compressed_inst_i[9:7]}, 3'b010, 
                                           {2'b01, compressed_inst_i[4:2]}, 7'b0000011};
                     end
-                    3'b110: begin  // C.SW
+                    3'b110: begin  // C.SW pass
                         // sw rs2', offset(rs1')
                         expanded_inst_o = {5'b0, 
                                           //        [6]  [5]
@@ -114,7 +114,7 @@ module c_instruction_expander (
                                     expanded_inst_o[31:26] = 6'b010000;  // srai的特殊编码
                                 end
                             end
-                            2'b10: begin  // C.ANDI
+                            2'b10: begin  // C.ANDI pass
                                 // andi rd', rd', imm
                                 expanded_inst_o = {{7{compressed_inst_i[12]}}, 
                                                   compressed_inst_i[6:2], 
@@ -190,7 +190,7 @@ module c_instruction_expander (
                             7'b1100011
                         };
                     end
-                    3'b111: begin  // C.BNEZ
+                    3'b111: begin  // C.BNEZ pass
                         // c.bnez rs1', offset
                         expanded_inst_o = {
                             // imm[12] (1位) - bit 31
