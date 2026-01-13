@@ -218,7 +218,7 @@ module c_instruction_expander (
             2'b10: begin
                 // C2格式：SLLI, LWSP, SWSP, JALR, ADD, MV, BREAK等
                 case (funct3)
-                    3'b000: begin  // C.SLLI
+                    3'b000: begin  // C.SLLI pass
                         // slli rd, rd, shamt
                         expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                           compressed_inst_i[11:7], 3'b001, 
