@@ -87,7 +87,7 @@ module pipline_control (
         _flush = ram_if_flush;
         end
       else if(next_stall_req_preif) begin
-        _stall = 6'b000010;
+        _stall = ram_if_stall;
         _flush = ram_if_flush;
       end
       // 中断|异常,(发生在 mem 阶段)

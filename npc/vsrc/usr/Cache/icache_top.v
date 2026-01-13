@@ -214,7 +214,7 @@ module icache_top (
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
-            _ram_rlen_icache_o <= 15;    // 突发15+1次 
+            _ram_rlen_icache_o <= 0;    // 突发15+1次 
             burst_count <= 0;  // 清空计数器
             refill_stall <= 1;
             need_cross_sram128_reg <= 1;
@@ -239,19 +239,29 @@ module icache_top (
           end
         end
 
+        // CACHE_REFILL: begin
+        //   if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+        //     if (burst_count == 15) begin  // 突发传输最后一个数据
+        //       icache_state <= CACHE_IDLE;
+        //       _ram_raddr_valid_icache_o <= 0;  // 传输结束
+        //       refill_stall <= 0;
+        //       need_cross_sram128_reg <= 0;
+        //       icache_tag_write_valid <= 1;  // 写 tag 
+        //     end 
+        //     else begin
+        //       burst_count <= burst_count_plus1;
+        //     end
+        //   end
+        // end
+        // 修改后 - 只传输1次
         CACHE_REFILL: begin
-          if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
-            if (burst_count == 15) begin  // 突发传输最后一个数据
-              icache_state <= CACHE_IDLE;
-              _ram_raddr_valid_icache_o <= 0;  // 传输结束
-              refill_stall <= 0;
-              need_cross_sram128_reg <= 0;
-              icache_tag_write_valid <= 1;  // 写 tag 
-            end 
-            else begin
-              burst_count <= burst_count_plus1;
+            if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
+                icache_state <= CACHE_IDLE;
+                _ram_raddr_valid_icache_o <= 0;  // 传输结束
+                refill_stall <= 0;
+                need_cross_sram128_reg <= 0;
+                icache_tag_write_valid <= 1;  // 写 tag 
             end
-          end
         end
 
 
