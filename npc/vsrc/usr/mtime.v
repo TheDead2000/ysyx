@@ -31,7 +31,7 @@ module mtime (
       mtime_high_q <= 0;
     end else begin
       // 低32位自增，处理进位
-      {mtime_high_q, mtime_low_q} <= {mtime_high_q, mtime_low_q} + 64'd1;
+      {mtime_high_q, mtime_low_q} <= {mtime_low_q, mtime_high_q} + 64'd1;
       
       // 写操作优先级高于自增
       if (mtime_low_write_en) begin
