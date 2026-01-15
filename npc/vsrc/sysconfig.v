@@ -198,8 +198,8 @@
 `define MTIMECMP_ADDR_HIGH  32'h2004004 // mtimecmp[63:32]
 
 // 将 64 位的 mtime 寄存器拆分为两个 32 位寄存器
-`define MTIME_ADDR_LOW      32'h200BFF8 // mtime[31:0]
-`define MTIME_ADDR_HIGH     32'h200BFFC // mtime[63:32]
+`define MTIME_ADDR_HIGH      32'h200BFF8 // mtime[31:0]
+`define MTIME_ADDR_LOW     32'h200BFFC // mtime[63:32]
 
 
 
