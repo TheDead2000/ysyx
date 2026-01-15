@@ -98,14 +98,14 @@ module c_instruction_expander (
                     3'b100: begin  // C.算术指令
                         case (compressed_inst_i[11:10])
                             2'b00: begin  // C.SRLI / C.SRAI
-                                if (compressed_inst_i[12] == 0) begin
                                     // C.SRLI: srli rd', rd', shamt
                                     expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                       {2'b01, compressed_inst_i[9:7]}, 
                                                       3'b101, {2'b01, compressed_inst_i[9:7]}, 
                                                       7'b0010011};
                                     expanded_inst_o[31:26] = 6'b000000;  // srli
-                                end else begin
+                                end 
+                            2'b01: begin
                                     // C.SRAI: srai rd', rd', shamt
                                     expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                       {2'b01, compressed_inst_i[9:7]}, 
@@ -113,7 +113,6 @@ module c_instruction_expander (
                                                       7'b0010011};
                                     expanded_inst_o[31:26] = 6'b010000;  // srai的特殊编码
                                 end
-                            end
                             2'b10: begin  // C.ANDI pass
                                 // andi rd', rd', imm
                                 expanded_inst_o = {{7{compressed_inst_i[12]}}, 
