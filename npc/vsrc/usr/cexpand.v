@@ -82,7 +82,7 @@ module c_instruction_expander (
                     end
                     3'b011: begin 
                         if (compressed_inst_i[11:7] == 5'b00010) begin
-                            // C.ADDI16SP: addi x2, x2, nzimm
+                            // C.ADDI16SP: addi x2, x2, nzimm pass
                             expanded_inst_o = {{3{compressed_inst_i[12]}}, 
                                               compressed_inst_i[4:3], compressed_inst_i[5], 
                                               compressed_inst_i[2], compressed_inst_i[6], 

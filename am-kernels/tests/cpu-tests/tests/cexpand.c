@@ -10,9 +10,9 @@ void test_c_addi_basic() {
 
     
     // __asm__ volatile (
-    //     "c.addi16sp  0x10\n"       
+    //     "c.addi4spn x8, 4\n"       
     // );
-    __asm__ volatile (".half 0x6141\n");
+    __asm__ volatile (".half 0x0040\n");
 }
 
 
