@@ -88,7 +88,7 @@ module c_instruction_expander (
                                               compressed_inst_i[2], compressed_inst_i[6], 
                                               4'b0, 5'h02, 3'b000, 5'h02, 7'b0010011};
                         end else begin
-                            // C.LUI: lui rd, nzimm
+                            // C.LUI: lui rd, nzimm pass
                             expanded_inst_o = {{15{compressed_inst_i[12]}}, 
                                               compressed_inst_i[6:2], 
                                               compressed_inst_i[11:7], 7'b0110111};
