@@ -455,13 +455,14 @@ wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
 
     // 读数据处理
     wire [31:0] mem_rdata = mem_data_ready_i ? mem_rdata_i : 32'b0;
-    
+    wire [31:0] rdata_switch = (clint_valid) ? clint_rdata_i : mem_rdata;
+
     // 符号扩展逻辑
     wire ls_signed = _memop_lh | _memop_lb | _memop_lw;
     wire [`XLEN-1:0] mem_rdata_ext;
     
     lsu_ext lsu_ext_load (
-        .ext_data_i (mem_rdata),
+        .ext_data_i (rdata_switch),
         .ls_signed_i(ls_signed),
         .ls_size_i  (ls_size),
         .ext_data_o (mem_rdata_ext)
