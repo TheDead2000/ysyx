@@ -8,7 +8,7 @@ static uint32_t read_time() {
   uint32_t h = inl(CLINT_TIME + 4);
   uint32_t l = inl(CLINT_TIME);
   uint32_t _time = (uint64_t)l + ((uint64_t)h << 32);
-  // printf("read_time: %d\n", _time);
+  printf("read_time: %d\n", _time);
   return _time;
 }
 
