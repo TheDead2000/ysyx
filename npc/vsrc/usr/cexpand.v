@@ -97,7 +97,7 @@ module c_instruction_expander (
                     /* verilator lint_off CASEINCOMPLETE */
                     3'b100: begin  // C.算术指令
                         case (compressed_inst_i[11:10])
-                            2'b00: begin  // C.SRLI / C.SRAI
+                            2'b00: begin  // C.SRLI
                                     // C.SRLI: srli rd', rd', shamt
                                     expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                       {2'b01, compressed_inst_i[9:7]}, 
@@ -106,7 +106,7 @@ module c_instruction_expander (
                                     expanded_inst_o[31:26] = 6'b000000;  // srli
                                 end 
                             2'b01: begin
-                                    // C.SRAI: srai rd', rd', shamt
+                                    // C.SRAI: srai rd', rd', shamt pass
                                     expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                       {2'b01, compressed_inst_i[9:7]}, 
                                                       3'b101, {2'b01, compressed_inst_i[9:7]}, 
