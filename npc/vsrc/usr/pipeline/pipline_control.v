@@ -100,8 +100,8 @@ module pipline_control (
       _flush = ram_mem_flush;
     end 
     else if(next_stall_req_preif) begin
-        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
-        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
+        _stall = pipe_force_advance ? 6'b000011 : ram_mem_stall;
+        _flush = pipe_force_advance ? 6'b000000 : ram_if_flush;
       end
       else if(ram_stall_req_if) begin
         _stall = ram_mem_stall;
