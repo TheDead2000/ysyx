@@ -80,7 +80,7 @@ module c_instruction_expander (
                                           5'b0, 3'b000, 
                                           compressed_inst_i[11:7], 7'b0010011};
                     end
-                    3'b011: begin  // C.LUI / C.ADDI16SP
+                    3'b011: begin 
                         if (compressed_inst_i[11:7] == 5'b00010) begin
                             // C.ADDI16SP: addi x2, x2, nzimm
                             expanded_inst_o = {{3{compressed_inst_i[12]}}, 
@@ -94,11 +94,10 @@ module c_instruction_expander (
                                               compressed_inst_i[11:7], 7'b0110111};
                         end
                     end
-                    /* verilator lint_off CASEINCOMPLETE */
                     3'b100: begin  // C.算术指令
                         case (compressed_inst_i[11:10])
                             2'b00: begin  // C.SRLI
-                                    // C.SRLI: srli rd', rd', shamt
+                                    // C.SRLI: srli rd', rd', shamt pass
                                     expanded_inst_o = {7'b0, compressed_inst_i[6:2], 
                                                       {2'b01, compressed_inst_i[9:7]}, 
                                                       3'b101, {2'b01, compressed_inst_i[9:7]}, 
@@ -163,7 +162,7 @@ module c_instruction_expander (
                                           compressed_inst_i[6], compressed_inst_i[7], 
                                           compressed_inst_i[2], compressed_inst_i[11], 
                                           compressed_inst_i[5:3],
-                                          {9{compressed_inst_i[12]}},  // 8位符号扩展（不是9位！）
+                                          {9{compressed_inst_i[12]}},
                                           5'h00, 7'b1101111};
                     end
                     3'b110: begin  // C.BEQZ pass
