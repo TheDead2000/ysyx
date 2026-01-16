@@ -25,6 +25,7 @@ module icache_top (
     output if_rdata_valid_o,   // icache 读数据是否准备好(未准备好需要暂停流水线
     output next_rdata_unvalid_o, // 下一个读数据无效（跨块预取未完成）
     output cross_refill_o,
+    output cross_inst_valid_o,
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
     output                             ram_raddr_valid_icache_o,
@@ -441,6 +442,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
   assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
+  assign cross_inst_valid_o = cross_inst_valid;
 
 wire [`XLEN-1:0] icache_final_data = uncache ? uncache_rdata: cross_inst_valid ? {next_sram128_data[15:0], 16'hffff} : (need_cross_sram128)  ? cross_inst_32 : is_32bit_inst ? real_32bit_inst : cache_rdata_16;
 wire [`XLEN-1:0] final_if_rdata = (icache_final_data == `XLEN'b0) ? 32'h0000_0013 : icache_final_data;

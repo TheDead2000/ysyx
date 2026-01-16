@@ -14,7 +14,7 @@ module ifu (
     output ram_stall_valid_if_o,       // if 阶段访存暂停
     output next_refill_stall_valid_if_o,
     input cross_refill_i,
-
+    input cross_inst_valid_i,
     input ls_valid_i,
     
     /* to if/id */
@@ -190,6 +190,10 @@ module ifu (
         test <= 1;
     end
     else if (if_rdata_valid_i == 1 && next_rdata_unvalid_i == 0) begin
+        before_halfword <= 16'h0000;
+        test <= 0;
+    end
+    else if(cross_inst_valid_i == 0) begin
         before_halfword <= 16'h0000;
         test <= 0;
     end
