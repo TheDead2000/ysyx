@@ -108,9 +108,12 @@ void init_runtime() {
   tfp = new VerilatedVcdC;
   dut->trace(tfp, 99); // 跟踪99级信号
   printf("Trace file is generated at ./build/waveform.vcd\n");
- tfp->open("./waveform.vcd");
-  // MUXDEF(CONFIG_WAVE_FORM, tfp->open("./build/waveform.vcd");
-  //        , tfp->open("/dev/null");) // 打开VCD文件
+//  tfp->open("./waveform.vcd");
+  #if CONFIG_WAVE_FORM
+   tfp->open("./build/waveform.vcd");
+  #else
+   tfp->open("/dev/null");
+  #endif // 打开VCD文件
 #ifndef NPC
   nvboard_bind_all_pins(dut);
   nvboard_init();
