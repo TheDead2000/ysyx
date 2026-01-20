@@ -72,57 +72,7 @@ pc_reg u_pc_reg (
 );
 
 
-/**********************************preif模块***********************************/
-wire [31:0] pre_if_inst;
-wire [31:0] pre_if_addr;
-wire pre_if_valid;
-
-wire pre_if_next_inst_valid_o;
-wire [31:0] pre_if_next_pc;
-wire is_compressed_inst_preif;
 wire next_ram_stall_preif;
-// pre_if pre_if (
-//     .clk            (clk),
-//     .rst            (rst),
-//     // 来自icache的输入
-//     .pc_addr_i      (inst_addr),    // 指令对应的PC地址
-//     .icache_inst_i  (if_rdata),    // icache输出的原始指令
-//     .if_rdata_valid_i     (if_rdata_valid),
-//     .next_rdata_unvalid_i(next_rdata_unvalid),
-//     // 流水线控制信号
-//     /* stall req */
-//     .ram_stall_valid_if_o(ram_stall_valid_if),  // if 阶段访存暂停
-//     .next_ram_stall_preif_o(next_ram_stall_preif), //访存暂停
-
-//     .is_compressed_inst(is_compressed_inst_preif),
-
-//     .pre_if_addr_o  (pre_if_addr),
-//     .pre_if_inst_o  (pre_if_inst),
-//     .pre_if_valid_o (pre_if_valid)
-// );
-
-
-// wire[31:0] inst_addr_if_i;
-// wire[31:0] inst_data_if_i;
-// wire if_data_valid_o;
-// wire is_compressed_inst_preif;
-// wire is_compressed_inst_if_o;
-// /**********************************preif_if模块***********************************/
-// preif_if preif_if (
-//     .clk                (clk),
-//     .rst                (rst),
-//     .stall_i            (stall_clint[`CTRLBUS_PREIF_IF]),
-//     .flush_i            (flush_clint[`CTRLBUS_PREIF_IF]),
-//     .inst_addr_preif_i     (pre_if_addr),
-//     .inst_data_preif_i     (pre_if_inst),
-//     .pre_if_valid_i       (pre_if_valid),
-
-//     .is_compressed_inst_preif_i(is_compressed_inst_preif),
-//     .is_compressed_inst_preif_o(is_compressed_inst_if_o),
-//     .inst_addr_preif_if_o  (inst_addr_if_i),
-//     .inst_data_preif_if_o  (inst_data_if_i),
-//     .preif_if_valid_o     (if_data_valid_o)
-// );
 
 /**********============ MMU 相关信号 ============*************/
 // IMMU 信号
@@ -149,7 +99,7 @@ wire [31:0] dmmu_mem_rdata;
 wire dmmu_mem_rvalid;
 
 // CSR 到 MMU 的配置 (SV32)
-wire [21:0] csr_satp_ppn;      // 22位 PPN
+wire [19:0] csr_satp_ppn;      // 22位 PPN
 wire [8:0] csr_asid;           // 9位 ASID
 wire csr_sum;
 wire csr_enable_sv32;          // 启用 SV32
@@ -159,6 +109,10 @@ wire csr_tvm;
 wire csr_tw;
 wire csr_tsr;
 wire mmu_flush;
+
+
+
+
 
 /*******************ifu***************************/
 wire if_rdata_valid;  // 读数据是否准备好
@@ -211,12 +165,7 @@ ifu ifu (
   .next_refill_stall_valid_if_o(next_ram_stall_preif), //访存暂停
   .cross_refill_i(cross_refill),
   .cross_inst_valid_i(cross_inst_valid),
-  // .inst_addr_i(inst_addr_if_i),  // from pc_reg
-  // .if_rdata_valid_i    (if_data_valid_o),      // 读数据是否准备好
-  // .if_rdata_i          (inst_data_if_i),            // 返回到读取的数据
 
-
-  .ls_valid_i(ls_valid),
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
@@ -243,33 +192,7 @@ ifu ifu (
   /* to if/id */
   .inst_addr_o(inst_addr_if),
   .inst_data_o(inst_data_if),
-  .trap_bus_o(trap_bus_if),
-
-  // ============ MMU 接口 (SV32) ============
-  // CSR 到 MMU 配置
-  .mmu_enable_i(csr_enable_sv32),           // 统一命名
-  .mmu_satp_ppn_i(csr_satp_ppn),
-  .mmu_satp_asid_i(csr_asid),
-  .mmu_mxr_i(csr_mxr),
-  .mmu_sum_i(csr_sum),
-  
-  // MMU 请求接口
-  .mmu_req_vaddr_o(immu_req_vaddr),         // 统一命名
-  .mmu_req_valid_o(immu_req_ready),
-  
-  // MMU 响应接口
-  .mmu_resp_paddr_i(immu_resp_paddr),       // 统一命名
-  .mmu_resp_valid_i(immu_resp_valid),
-  .mmu_page_fault_i(immu_resp_page_fault),
-  
-  // 内存接口（用于页表遍历）
-  .mmu_mem_req_o(immu_mem_req),             // 统一命名
-  .mmu_mem_addr_o(immu_mem_addr),
-  .mmu_mem_rdata_i(immu_mem_rdata),
-  .mmu_mem_rvalid_i(immu_mem_rvalid),
-  
-  // 控制信号
-  .mmu_flush_i(mmu_flush)
+  .trap_bus_o(trap_bus_if)
 );
 
 //if_id moudle
@@ -825,35 +748,7 @@ lsu lsu (
     .amo_valid_i(amo_valid_ex_mem),
     .amo_rs2_data_i(amo_rs2_data_ex_mem),
     .amo_result_o(amo_result_mem),
-    .amo_done_o(amo_done_mem),
-
-
-  // ============ MMU 接口 (SV32) ============
-  // CSR 到 MMU 配置
-  .mmu_enable_i(csr_enable_sv32),           // 统一命名
-  .mmu_satp_ppn_i(csr_satp_ppn),
-  .mmu_satp_asid_i(csr_asid),
-  .mmu_mxr_i(csr_mxr),
-  .mmu_sum_i(csr_sum),
-  
-  // MMU 请求接口
-  .mmu_req_vaddr_o(dmmu_req_vaddr),         // 统一命名
-  .mmu_req_valid_o(dmmu_req_ready),
-  .mmu_is_store_o(dmmu_is_store),
-  
-  // MMU 响应接口
-  .mmu_resp_paddr_i(dmmu_resp_paddr),       // 统一命名
-  .mmu_resp_valid_i(dmmu_resp_valid),
-  .mmu_page_fault_i(dmmu_resp_page_fault),
-  
-  // 内存接口（用于页表遍历）
-  .mmu_mem_req_o(dmmu_mem_req),             // 统一命名
-  .mmu_mem_addr_o(dmmu_mem_addr),
-  .mmu_mem_rdata_i(dmmu_mem_rdata),
-  .mmu_mem_rvalid_i(dmmu_mem_rvalid),
-  
-  // 控制信号
-  .mmu_flush_i(mmu_flush)
+    .amo_done_o(amo_done_mem)
   );
 
 
@@ -1101,6 +996,9 @@ CSRs rv32_csr_regfile(
     .io_privilege(csr_privilege),
     
     // 新增 MMU 控制信号
+    .mmu_enable_o(csr_enable_sv32),
+    .mmu_satp_ppn_o(csr_satp_ppn),
+
     .io_mxr(csr_mxr),
     .io_sum(csr_sum),
     .io_tvm(csr_tvm),
@@ -1842,15 +1740,6 @@ wire [3:0] dcache_arb_rmask;
       .io_next_sram7_rdata(io_next_sram7_rdata)
 );
 
-
-// ============ CSR 到 MMU 配置转换 (SV32) ============
-// 从 CSR 寄存器提取 MMU 配置信号 (SV32)
-assign csr_satp_ppn = csr_satp[21:0];        // SV32 的 PPN 是 22 位
-assign csr_asid = csr_satp[30:22];           // SV32 的 ASID 是 9 位
-assign csr_enable_sv32 = (csr_satp[31] == 1'b1) && (csr_privilege != 2'b11); // 非 M 模式且 SATP.MODE=SV32
-assign csr_enable_lsvm = csr_enable_sv32;    // 简化处理
-
-assign mmu_flush = flush_clint[`CTRLBUS_IF_ID] || flush_clint[`CTRLBUS_ID_EX]; // 刷新时同时刷新 MMU
 
 // ============ MMU 内存请求仲裁器 ============
 wire mmu_arb_req;

@@ -54,28 +54,6 @@ module lsu (
     output ram_stall_valid_mem_o,
     output ls_valid_o,
 
-    // ============ 新增 MMU 相关接口 ============
-    input wire mmu_enable_i,
-    input wire [21:0] mmu_satp_ppn_i,
-    input wire [8:0] mmu_satp_asid_i,
-    input wire mmu_mxr_i,
-    input wire mmu_sum_i,
-    
-    output wire [31:0] mmu_req_vaddr_o,
-    output wire mmu_req_valid_o,
-    output wire mmu_is_store_o,
-    
-    input wire [31:0] mmu_resp_paddr_i,
-    input wire mmu_resp_valid_i,
-    input wire mmu_page_fault_i,
-    
-    output wire mmu_mem_req_o,
-    output wire [31:0] mmu_mem_addr_o,
-    input wire [31:0] mmu_mem_rdata_i,
-    input wire mmu_mem_rvalid_i,
-    
-    input wire mmu_flush_i,
-
     // ============ 原子操作信号 ============
     input  [`AMOOP_LEN-1:0] amo_op_i,
     input                   amo_valid_i,
@@ -130,45 +108,7 @@ module lsu (
     wire _is_amo =  _amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
                     _amo_min | _amo_max | _amo_minu | _amo_maxu;
 
-    // ============ MMU 实例化 ============
-    wire mmu_resp_valid;
-    wire mmu_page_fault;
-    wire [31:0] mmu_paddr;
-    wire mmu_mem_req;
-    wire [31:0] mmu_mem_addr;
-    
-    mmu lsu_mmu (
-        .clk(clk),
-        .rst_n(~rst),
-        .mmu_vaddr_i(exc_alu_data_i),
-        .mmu_req_valid_i(_isload | _isstore | _is_amo_load | _is_amo_store),
-        .mmu_is_store_i(_isstore | _is_amo_store),
-        .mmu_is_inst_i(1'b0),
-        .mmu_paddr_o(mmu_paddr),
-        .mmu_resp_valid_o(mmu_resp_valid),
-        .mmu_page_fault_o(mmu_page_fault),
-        .mmu_enable_i(mmu_enable_i),
-        .mmu_satp_ppn_i(mmu_satp_ppn_i),
-        .mmu_satp_asid_i(mmu_satp_asid_i),
-        .mmu_mxr_i(mmu_mxr_i),
-        .mmu_sum_i(mmu_sum_i),
-        .mmu_mem_req_o(mmu_mem_req),
-        .mmu_mem_addr_o(mmu_mem_addr),
-        .mmu_mem_rdata_i(mmu_mem_rdata_i),
-        .mmu_mem_rvalid_i(mmu_mem_rvalid_i),
-        .mmu_flush_i(mmu_flush_i)
-    );
-    
-    // ============ MMU 接口连接 ============
-    assign mmu_req_vaddr_o = exc_alu_data_i;
-    assign mmu_req_valid_o = (_isload | _isstore | _is_amo_load | _is_amo_store);
-    assign mmu_is_store_o = _isstore | _is_amo_store;
-    assign mmu_mem_req_o = mmu_mem_req;
-    assign mmu_mem_addr_o = mmu_mem_addr;
-
-    // ============ 地址选择逻辑 ============
-    wire use_mmu = mmu_enable_i && (_isload | _isstore | _is_amo_load | _is_amo_store);
-    wire [31:0] final_addr = use_mmu ? mmu_resp_paddr_i : exc_alu_data_i;
+    wire [31:0] final_addr =  exc_alu_data_i;
 
     // ============ 原子操作状态机 ============
     localparam [1:0] AMO_IDLE = 2'b00;
@@ -498,13 +438,12 @@ assign ram_stall_valid_mem_o =
     // 普通访存请求未完成
     (mem_addr_valid_o) |
     // MMU 转换未完成  
-    (use_mmu & ~mmu_resp_valid_i) |
     // 原子操作未完成且不在空闲状态
     ((amo_state != AMO_IDLE) & ~amo_done);
 
     // ============ TRAP 处理 ============
-    wire _load_page_fault = mmu_page_fault_i && (_isload | _amo_lr_w) && mmu_resp_valid_i;
-    wire _store_page_fault = mmu_page_fault_i && (_isstore | _is_amo_store) && mmu_resp_valid_i;
+    wire _load_page_fault =   (_isload | _amo_lr_w) ;
+    wire _store_page_fault =   (_isstore | _is_amo_store) ;
     wire _amo_misaligned = _is_amo && (final_addr[1:0] != 2'b00);
 
     reg [`TRAP_BUS] _mem_trap_bus;

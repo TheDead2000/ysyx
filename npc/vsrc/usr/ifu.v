@@ -15,7 +15,6 @@ module ifu (
     output next_refill_stall_valid_if_o,
     input cross_refill_i,
     input cross_inst_valid_i,
-    input ls_valid_i,
     
     /* to if/id */
     output [31:0] inst_addr_o,
@@ -46,133 +45,8 @@ module ifu (
     output reg pdt_res,
     output reg [31:0] pdt_pc_tag,
     output reg which_pdt_o,
-    output wire [`HISLEN-1:0] history_o,
-    
-    // ============ 新增 MMU 相关接口 ============
-    // CSR 到 MMU 配置 (SV32 格式)
-    input wire mmu_enable_i,            // 分页使能 (统一命名)
-    input wire [21:0] mmu_satp_ppn_i,   // SATP PPN (22位)
-    input wire [8:0] mmu_satp_asid_i,   // SATP ASID (9位)
-    input wire mmu_mxr_i,               // Make eXecutable Readable
-    input wire mmu_sum_i,               // Supervisor User Memory access
-    
-    // MMU 请求接口
-    output wire [31:0] mmu_req_vaddr_o,  // 虚拟地址
-    output wire mmu_req_valid_o,         // 请求有效
-    
-    // MMU 响应接口
-    input wire [31:0] mmu_resp_paddr_i,  // 物理地址
-    input wire mmu_resp_valid_i,         // 响应有效
-    input wire mmu_page_fault_i,         // 页错误
-    
-    // 内存接口（用于页表遍历）
-    output wire mmu_mem_req_o,           // 内存请求
-    output wire [31:0] mmu_mem_addr_o,   // 内存地址
-    input wire [31:0] mmu_mem_rdata_i,   // 内存读数据
-    input wire mmu_mem_rvalid_i,         // 内存读数据有效
-    
-    // 控制信号
-    input wire mmu_flush_i              // 刷新 MMU
+    output wire [`HISLEN-1:0] history_o
 );
-
-    // ============ MMU 实例化 ============
-    wire mmu_resp_valid;
-    wire mmu_page_fault;
-    wire [31:0] mmu_paddr;
-    wire mmu_mem_req;
-    wire [31:0] mmu_mem_addr;
-    
-    mmu ifu_mmu (
-        .clk(clk),
-        .rst_n(~rst),
-        
-        // 请求接口
-        .mmu_vaddr_i(inst_addr_i),
-        .mmu_req_valid_i(1'b1),           // IFU 持续请求
-        .mmu_is_store_i(1'b0),            // 指令访问不是存储
-        .mmu_is_inst_i(1'b1),             // 是指令访问
-        
-        // 响应接口
-        .mmu_paddr_o(mmu_paddr),
-        .mmu_resp_valid_o(mmu_resp_valid),
-        .mmu_page_fault_o(mmu_page_fault),
-        
-        // CSR 配置 (SV32)
-        .mmu_enable_i(mmu_enable_i),
-        .mmu_satp_ppn_i(mmu_satp_ppn_i),
-        .mmu_satp_asid_i(mmu_satp_asid_i),
-        .mmu_mxr_i(mmu_mxr_i),
-        .mmu_sum_i(mmu_sum_i),
-        
-        // 内存接口（页表遍历）
-        .mmu_mem_req_o(mmu_mem_req),
-        .mmu_mem_addr_o(mmu_mem_addr),
-        .mmu_mem_rdata_i(mmu_mem_rdata_i),
-        .mmu_mem_rvalid_i(mmu_mem_rvalid_i),
-        
-        // 控制信号
-        .mmu_flush_i(mmu_flush_i)
-    );
-    
-    // ============ IFU 状态机 ============
-    localparam STATE_IDLE = 2'b00;
-    localparam STATE_WAIT_MMU = 2'b01;
-    localparam STATE_WAIT_MEM = 2'b10;
-    
-    reg [1:0] state;
-    reg [31:0] phys_pc;
-    reg pending_redirect;
-    
-    // MMU 接口连接 - 统一命名
-    assign mmu_req_vaddr_o = inst_addr_i;
-    assign mmu_req_valid_o = 1'b1;  // IFU 持续请求
-    
-    assign mmu_mem_req_o = mmu_mem_req;
-    assign mmu_mem_addr_o = mmu_mem_addr;
-    
-    // 状态机
-    /* verilator lint_off CASEINCOMPLETE */
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            state <= STATE_IDLE;
-            phys_pc <= 32'b0;
-            pending_redirect <= 1'b0;
-        end else begin
-            case (state)
-                STATE_IDLE: begin
-                    if (mmu_enable_i) begin
-                        state <= STATE_WAIT_MMU;
-                    end
-                end
-                
-                STATE_WAIT_MMU: begin
-                    if (mmu_resp_valid_i) begin
-                        if (mmu_page_fault_i) begin
-                            // 页错误处理
-                            state <= STATE_IDLE;
-                        end else begin
-                            phys_pc <= mmu_resp_paddr_i;
-                            state <= STATE_WAIT_MEM;
-                        end
-                    end
-                end
-                
-                STATE_WAIT_MEM: begin
-                    if (if_rdata_valid_i) begin
-                        state <= STATE_IDLE;
-                    end
-                end
-            endcase
-            
-            // 处理重定向
-            if (if_flush_i) begin
-                state <= STATE_IDLE;
-                pending_redirect <= 1'b1;
-            end
-        end
-    end
-    
-
 
     
     // ============ 原有 IFU 逻辑（保持兼容） ============
@@ -218,8 +92,8 @@ module ifu (
     // ============ TRAP 处理（增加页错误） ============
     wire _Instruction_address_misaligned = 1'b0;
     wire _Instruction_access_fault = 1'b0;
-    wire _Instruction_page_fault = mmu_page_fault_i && mmu_resp_valid_i;
-    
+    // wire _Instruction_page_fault = mmu_page_fault_i && mmu_resp_valid_i;
+     wire _Instruction_page_fault = 1'b0;
     reg [`TRAP_BUS] _if_trap_bus;
     integer i;
     always @(*) begin

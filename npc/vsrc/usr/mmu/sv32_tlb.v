@@ -2,7 +2,7 @@
 
 module tlb (
     input wire clk,
-    input wire rst_n,
+    input wire rst,
     
     // TLB 更新接口
     input wire tlb_update_valid_i,
@@ -78,8 +78,8 @@ module tlb (
     end
     
     // TLB 更新逻辑
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or posedge rst) begin
+        if (!rst) begin
             for (i = 0; i < TLB_ENTRIES; i = i + 1) begin
                 tlb_valid[i] <= 1'b0;
                 tlb_vpn[i] <= 20'b0;

@@ -2,7 +2,7 @@
 
 module mmu (
     input wire clk,
-    input wire rst_n,
+    input wire rst,
     
     // 请求接口
     input wire [31:0] mmu_vaddr_i,      // 虚拟地址 (32位)
@@ -17,7 +17,7 @@ module mmu (
     
     // CSR 配置
     input wire mmu_enable_i,            // 分页使能
-    input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
+    input wire [19:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
     input wire [8:0] mmu_satp_asid_i,   // ASID (9位)
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
@@ -46,7 +46,7 @@ module mmu (
     
     tlb u_tlb (
         .clk(clk),
-        .rst_n(rst_n),
+        .rst(rst),
         .tlb_update_valid_i(tlb_update_valid),
         .tlb_update_vpn_i(tlb_update_vpn),
         .tlb_update_pte_i(tlb_update_pte),
@@ -71,7 +71,7 @@ module mmu (
     
     ptw u_ptw (
         .clk(clk),
-        .rst_n(rst_n),
+        .rst(rst),
         .ptw_enable_i(mmu_enable_i),
         .ptw_flush_i(mmu_flush_i),
         .ptw_busy_o(ptw_busy),
