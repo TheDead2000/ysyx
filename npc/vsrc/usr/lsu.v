@@ -54,6 +54,12 @@ module lsu (
     output ram_stall_valid_mem_o,
     output ls_valid_o,
 
+    //mmu
+    input icache_ifu_mmu_mem_req_i,
+    input [31:0] icache_ifu_mmu_mem_addr_i,
+    output [31:0] icache_ifu_mmu_mem_rdata_o,
+    output icache_ifu_mmu_mem_rvalid_o,
+
     // ============ 原子操作信号 ============
     input  [`AMOOP_LEN-1:0] amo_op_i,
     input                   amo_valid_i,
@@ -108,7 +114,7 @@ module lsu (
     wire _is_amo =  _amo_swap | _amo_add | _amo_xor | _amo_and | _amo_or |
                     _amo_min | _amo_max | _amo_minu | _amo_maxu;
 
-    wire [31:0] final_addr =  exc_alu_data_i;
+    wire [31:0] final_addr = icache_ifu_mmu_mem_req_i ? icache_ifu_mmu_mem_addr_i : exc_alu_data_i;
 
     // ============ 原子操作状态机 ============
     localparam [1:0] AMO_IDLE = 2'b00;
@@ -126,23 +132,6 @@ module lsu (
     // 原子操作计算
     reg [31:0] amo_calc_result;
     
-    // 手动实现有符号比较（不使用 $signed）
-    wire signed_less_than;
-    wire signed_greater_than;
-
-    assign signed_less_than = 
-        (loaded_value[31] & ~amo_rs2_data_i[31]) ? 1'b1 :
-        (~loaded_value[31] & amo_rs2_data_i[31]) ? 1'b0 :
-        (loaded_value[31] & amo_rs2_data_i[31]) ?
-            (loaded_value[30:0] > amo_rs2_data_i[30:0]) :
-            (loaded_value[30:0] < amo_rs2_data_i[30:0]);
-
-    assign signed_greater_than = 
-        (loaded_value[31] & ~amo_rs2_data_i[31]) ? 1'b0 :
-        (~loaded_value[31] & amo_rs2_data_i[31]) ? 1'b1 :
-        (loaded_value[31] & amo_rs2_data_i[31]) ?
-            (loaded_value[30:0] < amo_rs2_data_i[30:0]) :
-            (loaded_value[30:0] > amo_rs2_data_i[30:0]);
 
     // 添加边沿检测逻辑
 reg amo_valid_prev;
@@ -385,13 +374,18 @@ assign signed_greater_than =
         );
 
     // 访存控制信号
-wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
-wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
+    wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
+    wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
     
-    assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i);
+    assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i) | icache_ifu_mmu_mem_req_i;
     assign mem_write_valid_o = store_valid & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
     assign mem_size_o = ls_size;
+
+    //mmu
+    assign icache_ifu_mmu_mem_rdata_o = mem_rdata_i;
+    assign icache_ifu_mmu_mem_rvalid_o = mem_data_ready_i;
+
 
     // 读数据处理
     wire [31:0] mem_rdata = mem_data_ready_i ? mem_rdata_i : 32'b0;

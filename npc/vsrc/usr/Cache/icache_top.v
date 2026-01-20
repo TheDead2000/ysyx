@@ -26,6 +26,23 @@ module icache_top (
     output next_rdata_unvalid_o, // 下一个读数据无效（跨块预取未完成）
     output cross_refill_o,
     output cross_inst_valid_o,
+    
+    // CSR 配置
+    input wire mmu_enable_i,            // 分页使能
+    input wire [19:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
+
+    input wire mmu_mxr_i,               // Make eXecutable Readable
+    input wire mmu_sum_i,               // Supervisor User Memory access
+    
+    // 内存接口
+    output wire icache_ifu_mmu_mem_req_o,
+    output wire [31:0] icache_ifu_mmu_mem_addr_o,  // 内存地址 (32位)
+    input wire [31:0] icache_ifu_mmu_mem_rdata_i,  // 内存读数据 (32位)
+    input wire icache_ifu_mmu_mem_rvalid_i,
+    // 控制信号
+    input wire mmu_flush_i,              // 刷新TLB/PTW  
+
+
     /* cache<-->mem 端口 */
     output [`XLEN-1:0] ram_raddr_icache_o,
     output                             ram_raddr_valid_icache_o,
@@ -91,7 +108,10 @@ module icache_top (
   wire [5:0] cache_blk_addr;  // 6bit块内地址（保持不变）
   wire [6:0] cache_line_idx;  // 7bit组号
   wire [18:0] cache_line_tag; // 19bit tag
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
+
+  reg [31:0] pc_addr;
+
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = pc_addr;
 
   wire icache_hit;
   wire next_icache_hit;
@@ -105,6 +125,7 @@ module icache_top (
   localparam UNCACHE_READ = 4'd3;
   localparam CACHE_LOOKUP = 4'd4;
   localparam CACHE_REFILL = 4'd5;
+  localparam CACHE_MMU_TRANS = 4'd6;
 
 
   reg [`XLEN-1:0] uncache_rdata;
@@ -136,6 +157,46 @@ module icache_top (
       .uncache_valid_o(uncache)
   );
 
+//mmu 
+reg [`XLEN-1:0] vaddr_reg;
+reg [31:0] paddr_trans;
+wire mmu_resp_valid;
+wire mmu_page_fault;
+
+mmu icache_mmu (
+    .clk(clk),
+    .rst(rst),
+    
+    // 请求接口
+    .mmu_vaddr_i(vaddr_reg),
+    .mmu_req_valid_i(icache_state == CACHE_MMU_TRANS),
+    .mmu_is_store_i(1'b0),      // 指令读取，非存储
+    .mmu_is_inst_i(1'b1),       // 指令访问
+    
+    // 响应接口
+    .mmu_paddr_o(paddr_trans),
+    .mmu_resp_valid_o(mmu_resp_valid),
+    .mmu_page_fault_o(mmu_page_fault),
+    
+    // CSR配置
+    .mmu_enable_i(mmu_enable_i),
+    .mmu_satp_ppn_i(mmu_satp_ppn_i),
+    .mmu_mxr_i(mmu_mxr_i),
+    .mmu_sum_i(mmu_sum_i),
+  
+    
+    // 内存接口（用于页表遍历）
+    .mmu_mem_req_o(icache_ifu_mmu_mem_req_o),
+    .mmu_mem_addr_o(icache_ifu_mmu_mem_addr_o),
+    .mmu_mem_rdata_i(icache_ifu_mmu_mem_rdata_i),
+    .mmu_mem_rvalid_i(icache_ifu_mmu_mem_rvalid_i),
+
+    // 控制信号
+    .mmu_flush_i(mmu_flush_i)
+);
+
+
+
   always @(posedge clk) begin
     if (rst) begin
       icache_state              <= CACHE_RST;
@@ -162,6 +223,7 @@ module icache_top (
           icache_state <= CACHE_IDLE;
         end
         CACHE_IDLE: begin
+          pc_addr <= preif_raddr_i;
           blk_addr_reg           <= cache_blk_addr;
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
@@ -175,7 +237,22 @@ module icache_top (
           uncache_data_ready     <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
           if (preif_raddr_valid_i) begin
-            icache_state <= CACHE_LOOKUP;
+            icache_state <= CACHE_MMU_TRANS;
+          end
+        end
+        CACHE_MMU_TRANS:begin
+          vaddr_reg <= preif_raddr_i;
+          if(mmu_resp_valid) begin
+            if(mmu_page_fault) begin
+              // 发生页错误，保持在 idle 状态，等待外部处理
+              icache_state <= CACHE_IDLE;
+              $display("ICACHE: Instruction Page Fault at address %h", preif_raddr_i);
+            end
+            else begin
+              // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
+              pc_addr <= paddr_trans;
+              icache_state <= CACHE_LOOKUP;
+            end
           end
         end
         CACHE_LOOKUP: begin

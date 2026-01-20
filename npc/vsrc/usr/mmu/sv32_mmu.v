@@ -18,7 +18,7 @@ module mmu (
     // CSR 配置
     input wire mmu_enable_i,            // 分页使能
     input wire [19:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
-    input wire [8:0] mmu_satp_asid_i,   // ASID (9位)
+
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
     
@@ -82,7 +82,6 @@ module mmu (
         .ptw_resp_valid_o(ptw_resp_valid),
         .ptw_page_fault_o(ptw_page_fault),
         .ptw_satp_ppn_i(mmu_satp_ppn_i),
-        .ptw_satp_asid_i(mmu_satp_asid_i),
         .ptw_mxr_i(mmu_mxr_i),
         .ptw_sum_i(mmu_sum_i),
         .ptw_mem_req_o(ptw_mem_req),

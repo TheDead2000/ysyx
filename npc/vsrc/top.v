@@ -720,6 +720,13 @@ lsu lsu (
       .clint_wdata_o(clint_wdata),
       .clint_rdata_i(clint_rdata),
 
+      //mmu
+      .icache_ifu_mmu_mem_req_i(icache_ifu_mmu_mem_req),
+      .icache_ifu_mmu_mem_addr_i(icache_ifu_mmu_mem_addr),
+      .icache_ifu_mmu_mem_rdata_o(icache_ifu_mmu_mem_rdata),
+      .icache_ifu_mmu_mem_rvalid_o(icache_ifu_mmu_mem_rvalid),
+
+
       // TARP 总线
       .trap_bus_i     (trap_bus_ex_mem),
 
@@ -1067,6 +1074,13 @@ wire [7:0] icache_arb_rlen;
  wire next_rdata_unvalid; 
  wire cross_refill;
  wire cross_inst_valid;
+
+
+ wire        icache_ifu_mmu_mem_req;
+ wire [31:0] icache_ifu_mmu_mem_addr;
+ wire [31:0] icache_ifu_mmu_mem_rdata;
+ wire        icache_ifu_mmu_mem_rvalid;
+
  icache_top u_icache_top (
       .clk(clk),
       .rst(rst),
@@ -1078,6 +1092,21 @@ wire [7:0] icache_arb_rlen;
       .next_rdata_unvalid_o(next_rdata_unvalid),
       .cross_refill_o(cross_refill),
       .cross_inst_valid_o(cross_inst_valid),
+
+      .mmu_enable_i(csr_enable_sv32),
+      .mmu_satp_ppn_i(csr_satp_ppn),
+      .mmu_mxr_i(csr_mxr),
+      .mmu_sum_i(csr_sum),
+      // 内存接口
+      .icache_ifu_mmu_mem_req_o(icache_ifu_mmu_mem_req),      // 内存请求
+      .icache_ifu_mmu_mem_addr_o(icache_ifu_mmu_mem_addr),    // 内存地址 (32位)
+
+      .icache_ifu_mmu_mem_rdata_i(icache_ifu_mmu_mem_rdata),  // 内存读数据 (32位)
+      .icache_ifu_mmu_mem_rvalid_i(icache_ifu_mmu_mem_rvalid),
+      // 控制信号
+      .mmu_flush_i(1'b0),              // 刷新TLB/PTW  
+
+
 
     .ram_raddr_icache_o(icache_arb_araddr),
     .ram_raddr_valid_icache_o(icache_arb_arvalid),

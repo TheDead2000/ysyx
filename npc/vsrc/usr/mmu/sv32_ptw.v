@@ -32,7 +32,6 @@ module ptw (
     
     // CSR 接口
     input wire [19:0] ptw_satp_ppn_i,  // SATP PPN (22位)
-    input wire [8:0] ptw_satp_asid_i,  // SATP ASID (9位，实际Sv32是10位，这里按输入调整)
     input wire ptw_mxr_i,              // Make eXecutable Readable
     input wire ptw_sum_i,              // Supervisor User Memory access
     
@@ -230,7 +229,7 @@ module ptw (
         if (ptw_tlb_level_i == 2'b01) begin
             tlb_phys_addr = {ptw_tlb_pte_i[31:22], ptw_vaddr_i[21:12], page_offset};
         end else if (ptw_tlb_level_i == 2'b10) begin
-            tlb_phys_addr = {ptw_tlb_pte_i[31:10], page_offset};
+            tlb_phys_addr = {ptw_tlb_pte_i[29:10], page_offset};
         end else begin
             tlb_phys_addr = 32'b0;
         end
