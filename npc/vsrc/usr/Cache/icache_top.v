@@ -251,6 +251,7 @@ mmu icache_mmu (
             else begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
+              $display("trans addr: %h",paddr_trans);
               icache_state <= CACHE_LOOKUP;
             end
           end
