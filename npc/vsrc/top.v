@@ -64,7 +64,7 @@ pc_reg u_pc_reg (
 
     .idu_next_pc_i     (id_compress_pc),          // 下一条指令地址
     .idu_next_pc_valid_i (id_compress_pc_valid_o),
-
+    .csr_satp_flush_i(csr_satp_flush),
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
     //输出pc

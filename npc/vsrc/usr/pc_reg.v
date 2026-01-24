@@ -16,6 +16,7 @@ module pc_reg (
 
     input [`INST_LEN-1:0] idu_next_pc_i,
     input idu_next_pc_valid_i,
+    input csr_satp_flush_i,
     // output ifu_next_pc_ready_o,
 
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
@@ -46,6 +47,9 @@ module pc_reg (
     end 
     else if (idu_next_pc_valid_i) begin
       _pc_next = idu_next_pc_i;
+    end
+    else if(idu_next_pc_valid_i & csr_satp_flush_i)begin
+      _pc_next = pc_temp_plus2;
     end
      else begin
       _pc_next  =  pc_temp_plus4;
