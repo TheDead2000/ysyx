@@ -111,7 +111,7 @@ module icache_top (
 
   reg [31:0] pc_addr;
 
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? pc_addr : preif_raddr_i;
 
   wire icache_hit;
   wire next_icache_hit;
@@ -252,10 +252,16 @@ mmu icache_mmu (
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
               $display("trans addr: %h",paddr_trans);
+              blk_addr_reg <= cache_blk_addr;
+              line_idx_reg <= cache_line_idx;
+              line_tag_reg <= cache_line_tag;
+              icache_state <= CACHE_LOOKUP;
             end
           end
+          end
+          else 
+          icache_state <= CACHE_LOOKUP;
         end
-      end
         CACHE_LOOKUP: begin
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
