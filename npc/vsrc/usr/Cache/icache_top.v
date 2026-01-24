@@ -241,6 +241,7 @@ mmu icache_mmu (
           end
         end
         CACHE_MMU_TRANS:begin
+          if(mmu_enable_i) begin
           vaddr_reg <= preif_raddr_i;
           if(mmu_resp_valid) begin
             if(mmu_page_fault) begin
@@ -252,17 +253,10 @@ mmu icache_mmu (
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
               $display("trans addr: %h",paddr_trans);
-              blk_addr_reg <= cache_blk_addr;
-              line_idx_reg <= cache_line_idx;
-              line_tag_reg <= cache_line_tag;
-
-          next_blk_addr_reg         <= next_cache_blk_addr;
-          next_line_idx_reg         <= next_cache_line_idx;
-          next_line_tag_reg         <= next_cache_line_tag;
-              icache_state <= CACHE_LOOKUP;
             end
           end
         end
+      end
         CACHE_LOOKUP: begin
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
