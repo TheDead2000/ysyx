@@ -79,7 +79,7 @@ void trap_handler(void) {
     if (mcause == 12 || mcause == 13 || mcause == 15) {
         page_fault_occurred = 1;
         fault_addr = mepc;  // 故障地址=异常返回地址
-        printf("Page Fault detected! Cause: %d, Fault Address: 0x%08X\n", mcause, fault_addr);
+        printf("Page Fault detected! Cause: %d, Fault Address: 0x%x\n", mcause, fault_addr);
         
         // 跳过故障指令（避免死循环）
         csr_write(CSR_MEPC, mepc + 4);
@@ -112,7 +112,7 @@ void setup_4mb_page_table() {
 
     // 4. 写入页表项
     page_table[vpn1] = pte;
-    printf("Page table entry [VPN1=0x%X] = 0x%08X\n", vpn1, pte);
+    printf("Page table entry [VPN1=0x%X] = 0x%x\n", vpn1, pte);
 
     // 5. 注册异常处理函数（根据你的硬件中断向量表配置）
     // 注：需确保你的硬件中断向量表指向trap_handler
@@ -130,7 +130,7 @@ void test_mmu_access() {
     mmu_disable();
     *va_ptr = TEST_DATA;  // 直接写物理地址
     read_data = *va_ptr;  // 直接读物理地址
-    printf("Write 0x%08X to 0x%08X, Read back: 0x%08X\n", TEST_DATA, TEST_BASE_PA, read_data);
+    printf("Write 0x%x to 0x%x, Read back: 0x%x\n", TEST_DATA, TEST_BASE_PA, read_data);
     if (read_data != TEST_DATA) {
         printf("ERROR: Physical address access failed!\n");
         return;
@@ -141,7 +141,7 @@ void test_mmu_access() {
     uint32_t root_ppn = ((uint32_t)page_table) >> 12;  // 页表基地址的PPN（4KB对齐）
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
-    printf("Read from VA 0x%08X: 0x%08X\n", TEST_BASE_VA, read_data);
+    printf("Read from VA 0x%x: 0x%x\n", TEST_BASE_VA, read_data);
     if (read_data != TEST_DATA) {
         printf("ERROR: MMU virtual address access failed!\n");
         mmu_disable();
@@ -153,7 +153,7 @@ void test_mmu_access() {
     for (int i = 0; i < 5; i++) {
         read_data = *va_ptr;
     }
-    printf("5 times access to VA 0x%08X (TLB hit), Read back: 0x%08X\n", TEST_BASE_VA, read_data);
+    printf("5 times access to VA 0x%x (TLB hit), Read back: 0x%x\n", TEST_BASE_VA, read_data);
 
     // 4. 测试超出4MB范围的地址（触发页故障）
     printf("\n=== Step 4: Test out-of-range address (expect Page Fault) ===\n");
@@ -174,7 +174,7 @@ void test_mmu_access() {
 // ====================== 主函数 ======================
 int main() {
     printf("===== RV32 Sv32 MMU Test (4MB Huge Page) =====\n");
-    printf("Test 4MB huge page linear mapping: VA=0x%08X → PA=0x%08X\n", TEST_BASE_VA, TEST_BASE_PA);
+    printf("Test 4MB huge page linear mapping: VA=0x%x → PA=0x%x\n", TEST_BASE_VA, TEST_BASE_PA);
 
     // 2. 配置4MB大页页表
     setup_4mb_page_table();
