@@ -110,7 +110,7 @@ void init_runtime() {
   printf("Trace file is generated at ./build/waveform.vcd\n");
 //  tfp->open("./waveform.vcd");
   #if CONFIG_WAVE_FORM
-   tfp->open("./build/waveform.vcd");
+   tfp->open("./waveform.vcd");
   #else
    tfp->open("/dev/null");
   #endif // 打开VCD文件
