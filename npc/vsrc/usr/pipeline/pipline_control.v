@@ -133,7 +133,7 @@ module pipline_control (
     end 
     else if (csr_satp_flush_i) begin
       _stall = 6'b000011;
-      _flush = 6'b000010; 
+      _flush = 6'b001100; 
     end
     else if (compress_stall) begin
       _stall = 6'b000010;
