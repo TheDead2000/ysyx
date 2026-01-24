@@ -132,8 +132,8 @@ module pipline_control (
       // 没有异常情况,正常执行
     end 
     else if (compress_stall) begin
-      _stall = 6'b000011;
-      _flush = compress_flush;
+      _stall = 6'b000010;
+      _flush = 6'b000010;
      end
     else if (csr_satp_flush_i) begin
       _stall = 6'b001111;
