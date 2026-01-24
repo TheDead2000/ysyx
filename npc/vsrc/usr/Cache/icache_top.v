@@ -270,7 +270,7 @@ mmu icache_mmu (
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
         if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
-            _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
+            _ram_raddr_icache_o <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
@@ -281,7 +281,7 @@ mmu icache_mmu (
 `endif
           end else if (~icache_hit && uncache) begin
             icache_state              <= UNCACHE_READ;
-            _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
+            _ram_raddr_icache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
             _ram_rmask_icache_o       <= 4'b_1111;  // 读掩码
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
