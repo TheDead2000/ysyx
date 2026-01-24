@@ -259,8 +259,16 @@ mmu icache_mmu (
             end
           end
           end
-          else 
+          else begin
+          blk_addr_reg <= cache_blk_addr;
+          line_idx_reg <= cache_line_idx;
+          line_tag_reg <= cache_line_tag;
+
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
           icache_state <= CACHE_LOOKUP;
+          end
         end
         CACHE_LOOKUP: begin
           blk_addr_reg <= cache_blk_addr;
