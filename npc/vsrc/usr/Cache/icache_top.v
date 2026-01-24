@@ -111,7 +111,7 @@ module icache_top (
 
   reg [31:0] pc_addr;
 
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = pc_addr;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = preif_raddr_i;
 
   wire icache_hit;
   wire next_icache_hit;
@@ -223,7 +223,6 @@ mmu icache_mmu (
           icache_state <= CACHE_IDLE;
         end
         CACHE_IDLE: begin
-          pc_addr <= preif_raddr_i;
           blk_addr_reg           <= cache_blk_addr;
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
