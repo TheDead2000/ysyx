@@ -462,6 +462,7 @@ module CSRs(
         if (csr_write_address == 12'h300) begin
           privilegeReg <= csr_write_data[12:11]; // 更新MPP字段
         end
+        
       end
       
       // 更新计数器（受 mcountinhibit 控制）

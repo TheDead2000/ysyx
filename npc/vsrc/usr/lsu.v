@@ -53,6 +53,7 @@ module lsu (
     /* stall req */
     output ram_stall_valid_mem_o,
     output ls_valid_o,
+    output csr_satp_unstall_o,
 
     //mmu
     input icache_ifu_mmu_mem_req_i,
@@ -68,7 +69,16 @@ module lsu (
     output                  amo_done_o
 );
 
+    //csr flush
+  wire [6:0] _opcode = inst_data_i[6:0];
+  wire [4:0] _rd = inst_data_i[11:7];
+  wire [2:0] _func3 = inst_data_i[14:12];
+  wire [4:0] _rs1 = inst_data_i[19:15];
+  wire [4:0] _rs2 = inst_data_i[24:20];
+  wire [6:0] _func7 = inst_data_i[31:25];
+  wire [4:0] _func5 = inst_data_i[31:27];
 
+    assign csr_satp_unstall_o = (_opcode == 7'b111_0011 && _func3 == 3'b001);
 
 
     // ============ 原有 LSU 基本逻辑 ============
