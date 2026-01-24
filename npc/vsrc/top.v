@@ -693,6 +693,7 @@ wire [31:0] exc_csr_data_mem;         // 来自MEM阶段的CSR写数据
 wire [11:0] csr_idx_id;               // 来自ID阶段的CSR读地址
 wire [31:0] csr_data_csr;             // CSR读数据输出
  wire exc_csr_valid_mem;
+wire csr_satp_flush;
 
 lsu lsu (
       .clk            (clk),
@@ -747,9 +748,10 @@ lsu lsu (
       .mem_rdata_i(mem_rdata),
       .mem_wdata_o(mem_wdata),
       .mem_size_o(mem_size), // 数据宽度 4、2、1 byte
+
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
-
+      .csr_satp_flush_o(csr_satp_flush),
 
     .amo_op_i(amo_op_ex_mem),
     .amo_valid_i(amo_valid_ex_mem),
@@ -928,6 +930,7 @@ clint clint_u (
 
     .trap_bus_i(trap_bus_mem),
 
+    .csr_satp_flush_i(csr_satp_flush),
     .compress_stall(id_compress_pc_valid_o),
     .next_stall_preif_i(next_ram_stall_preif),
     .ram_stall_valid_if_i(ram_stall_valid_if),

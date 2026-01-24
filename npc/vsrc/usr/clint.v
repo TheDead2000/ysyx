@@ -20,6 +20,7 @@ module clint (
     input [`TRAP_BUS] trap_bus_i,
     
     // 流水线暂停请求
+    input csr_satp_flush_i,
     input compress_stall,
     input next_stall_preif_i,
     input ram_stall_valid_if_i,
@@ -419,6 +420,7 @@ end
   pipline_control u_pipline_control (
       .clk(clk),
       .rst(rst),
+      .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
       .next_stall_preif_i(next_stall_preif_i),
       .ram_stall_valid_if_i(ram_stall_valid_if_i),

@@ -5,6 +5,7 @@ module pipline_control (
     input clk,
     input rst,
     /* ----- stall request from other modules  --------*/
+    input csr_satp_flush_i,
     input compress_stall,
     input next_stall_preif_i,
     input ram_stall_valid_if_i,  // if ram
@@ -130,6 +131,10 @@ module pipline_control (
       _flush = load_use_flush;
       // 没有异常情况,正常执行
     end 
+    else if (csr_satp_flush_i) begin
+      _stall = 6'b000001;
+      _flush = 6'b001110; 
+    end
     else if (compress_stall) begin
       _stall = compress_stall_stall;
       _flush = compress_flush;
