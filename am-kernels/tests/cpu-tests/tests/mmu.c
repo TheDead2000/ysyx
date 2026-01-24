@@ -184,6 +184,6 @@ int main() {
 
     // 4. 执行MMU访问测试
     test_mmu_access();
-
+    while(1);
     return 0;
 }
