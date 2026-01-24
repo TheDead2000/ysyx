@@ -11194,6 +11194,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+613,"csr_imm_valid_o", false,-1);
     tracep->declBus(c+6638,"csr_idx_o", false,-1, 11,0);
     tracep->declBus(c+6639,"csr_readdata_o", false,-1, 31,0);
+    tracep->declBit(c+6669,"csr_satp_flush_o", false,-1);
     tracep->declBit(c+6641,"load_use_valid_o", false,-1);
     tracep->declBus(c+6642,"trap_bus_o", false,-1, 21,0);
     tracep->declBit(c+7110,"id_ras_push_valid_o", false,-1);
@@ -11476,7 +11477,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+6941,"mem_wdata_o", false,-1, 31,0);
     tracep->declBit(c+6943,"ram_stall_valid_mem_o", false,-1);
     tracep->declBit(c+6631,"ls_valid_o", false,-1);
-    tracep->declBit(c+6669,"csr_satp_flush_o", false,-1);
     tracep->declBit(c+6931,"icache_ifu_mmu_mem_req_i", false,-1);
     tracep->declBus(c+6572,"icache_ifu_mmu_mem_addr_i", false,-1, 31,0);
     tracep->declBus(c+6940,"icache_ifu_mmu_mem_rdata_o", false,-1, 31,0);

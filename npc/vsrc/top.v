@@ -328,6 +328,7 @@ idu idu (
     .inst_data_o(inst_data_id),
     // 请求暂停流水线 to ctrl
     .load_use_valid_o(load_use_valid),
+    .csr_satp_flush_o(csr_satp_flush),
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令
@@ -751,7 +752,6 @@ lsu lsu (
 
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
-      .csr_satp_flush_o(csr_satp_flush),
 
     .amo_op_i(amo_op_ex_mem),
     .amo_valid_i(amo_valid_ex_mem),

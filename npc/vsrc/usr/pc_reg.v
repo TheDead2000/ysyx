@@ -48,9 +48,6 @@ module pc_reg (
     else if (idu_next_pc_valid_i) begin
       _pc_next = idu_next_pc_i;
     end
-    else if(idu_next_pc_valid_i & csr_satp_flush_i)begin
-      _pc_next = pc_temp_plus2;
-    end
      else begin
       _pc_next  =  pc_temp_plus4;
     end
