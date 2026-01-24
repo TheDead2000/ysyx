@@ -186,7 +186,7 @@ module CSRs(
     timehReg = 32'h0;
     instrethReg = 32'h0;
     
-    privilegeReg = 2'b11; // 初始为M模式
+    privilegeReg = 2'b10; // 初始为M模式
   end
   
   // 输出赋值
