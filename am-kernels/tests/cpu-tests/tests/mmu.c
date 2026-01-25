@@ -63,11 +63,11 @@ static inline void mmu_disable() {
 
 // 开启MMU（SV32模式）
 static inline void mmu_enable(uint32_t root_ppn, uint32_t asid) {
-    uint32_t satp = SATP_MODE_SV32;
-    satp |= (asid & SATP_ASID_MASK);          // 设置ASID
-    satp |= ((root_ppn & SATP_PPN_MASK) << 9); // 设置根页表PPN
-    csr_write(CSR_SATP, satp);                // 写入SATP，开启MMU
-    // __asm__ volatile ("sfence.vma");          // 刷新TLB
+    uint32_t satp = SATP_MODE_SV32;            // Bit 31 = 1
+    satp |= (asid & 0x1FF) << 22;              // ASID: Bits 30-22
+    satp |= (root_ppn & 0x3FFFFF);             // PPN: Bits 21-0 (不要左移!)
+    csr_write(CSR_SATP, satp);
+    // __asm__ volatile ("sfence.vma");           // 刷新TLB
 }
 
 // ====================== 异常处理函数（页故障） ======================
@@ -140,7 +140,7 @@ void test_mmu_access() {
 
     uint32_t root_ppn = ((uint32_t)page_table) >> 12;  // 页表基地址的PPN（4KB对齐）
     printf("page_table:%x root_ppn:%x\n",&page_table,root_ppn);
-    
+
     printf("\n=== Step 2: Access virtual address (MMU enabled, 4MB huge page) ===\n");
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
