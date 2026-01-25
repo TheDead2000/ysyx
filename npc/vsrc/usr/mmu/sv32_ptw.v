@@ -209,15 +209,18 @@ module ptw (
     
     //  物理地址生成
     reg [31:0] phys_addr;
+    reg t_ptw_resp_valid_o;
     always @(*) begin
         case (pte_level)
             2'b01: begin
                 // 4MB叶子项：PPN[1]<<22 + VPN[0]<<12 + 页内偏移
                 phys_addr = {pte_ppn1, vpn0, page_offset};
+                t_ptw_resp_valid_o = 1'b1;
             end
             2'b10: begin
                 // 4KB叶子项：PPN<<12 + 页内偏移
                 phys_addr = {pte_ppn, page_offset};
+                t_ptw_resp_valid_o = 1'b1;
             end
             default: phys_addr = 32'b0;
         endcase
@@ -238,8 +241,9 @@ module ptw (
     // 输出逻辑（修改后）
     assign ptw_busy_o = (state != STATE_IDLE);
     assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
-    assign ptw_resp_valid_o = (state == STATE_IDLE) && 
-                             ((ptw_tlb_hit_i) || (ptw_req_valid_i && !ptw_busy_o && !ptw_page_fault_o));
+    // assign ptw_resp_valid_o = (state == STATE_IDLE) && 
+    //                          ((ptw_tlb_hit_i) || (ptw_req_valid_i && !ptw_busy_o && !ptw_page_fault_o));
+        assign ptw_resp_valid_o = t_ptw_resp_valid_o;
     assign ptw_page_fault_o = (state == STATE_ERROR);
     
     assign ptw_mem_req_o = (state == STATE_WAIT_PTE);
