@@ -136,7 +136,7 @@ module pipline_control (
       _flush = 6'b000010;
      end
     else if (csr_satp_flush_i) begin
-      _stall = 6'b000001;
+      _stall = 6'b000010;
       _flush = 6'b001110; 
     end
      else
