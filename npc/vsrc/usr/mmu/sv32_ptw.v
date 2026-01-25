@@ -58,7 +58,8 @@ module ptw (
     localparam STATE_HANDLE_PTE     = 3'b010;
     localparam STATE_ERROR          = 3'b011;
     localparam STATE_WAIT_FLUSH     = 3'b100;
-    
+    localparam STATE_CLK            = 3'b101;
+
     // 寄存器
     reg [2:0] state;
     reg [1:0] pte_level;       // 1:一级页表(4MB), 2:二级页表(4KB)
@@ -114,13 +115,16 @@ module ptw (
                             pte_level <= ptw_tlb_level_i;
                         end else begin
                             // TLB缺失，启动页表遍历：计算一级页表项物理地址
-                            //  根页表地址 = satp_ppn <<12 + VPN[1] <<2
-                            pte_ptr <= {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00};
-                            state <= STATE_WAIT_PTE;
+
+                            state <= STATE_CLK;
                         end
                     end
                 end
-                
+                STATE_CLK:begin
+                //  根页表地址 = satp_ppn <<12 + VPN[1] <<2
+                pte_ptr <= {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00};
+                state   <= STATE_WAIT_PTE;
+                end
                 STATE_WAIT_PTE: begin
                     // 等待内存返回页表项
                     if (ptw_mem_rvalid_i) begin

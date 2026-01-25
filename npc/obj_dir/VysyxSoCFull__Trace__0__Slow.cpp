@@ -12299,6 +12299,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+7238,"STATE_HANDLE_PTE", false,-1, 2,0);
     tracep->declBus(c+7239,"STATE_ERROR", false,-1, 2,0);
     tracep->declBus(c+7240,"STATE_WAIT_FLUSH", false,-1, 2,0);
+    tracep->declBus(c+7241,"STATE_CLK", false,-1, 2,0);
     tracep->declBus(c+6595,"state", false,-1, 2,0);
     tracep->declBus(c+6596,"pte_level", false,-1, 1,0);
     tracep->declBus(c+6574,"pte_ptr", false,-1, 31,0);
