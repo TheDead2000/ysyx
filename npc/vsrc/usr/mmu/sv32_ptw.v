@@ -142,6 +142,7 @@ module ptw (
                             // 叶子项：检查权限和超级页对齐
                             if (check_permissions()) begin
                                 state <= STATE_IDLE; // 遍历完成
+                                t_ptw_resp_valid_o = 1'b1;
                             end else begin
                                 state <= STATE_ERROR; // 权限/对齐错误
                             end
@@ -215,12 +216,10 @@ module ptw (
             2'b01: begin
                 // 4MB叶子项：PPN[1]<<22 + VPN[0]<<12 + 页内偏移
                 phys_addr = {pte_ppn1, vpn0, page_offset};
-                t_ptw_resp_valid_o = 1'b1;
             end
             2'b10: begin
                 // 4KB叶子项：PPN<<12 + 页内偏移
                 phys_addr = {pte_ppn, page_offset};
-                t_ptw_resp_valid_o = 1'b1;
             end
             default: phys_addr = 32'b0;
         endcase
