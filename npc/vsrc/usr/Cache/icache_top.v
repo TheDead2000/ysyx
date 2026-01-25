@@ -281,8 +281,12 @@ mmu icache_mmu (
 
           icache_tag_write_valid    <= 0;
           uncache_data_ready <= 0;
-          // 执行 fencei 指令时，保证 icache 处于 idle 状态
-        if (~icache_hit && ~uncache) begin
+
+          if(mmu_enable_i) begin
+            icache_state <= CACHE_MMU_TRANS;
+          end
+          else 
+            if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
@@ -313,12 +317,12 @@ mmu icache_mmu (
             need_cross_sram128_reg <= 1;
           end
 
+// `ifndef YSYX_SOC 
+//           else if (icache_hit) begin : hit
+//             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
+//           end
+// `endif 
 
-`ifndef YSYX_SOC 
-          else if (icache_hit) begin : hit
-            icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
-          end
-`endif 
         end
         CACHE_MISS: begin
           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
