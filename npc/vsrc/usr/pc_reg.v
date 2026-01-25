@@ -47,11 +47,11 @@ module pc_reg (
       _pc_next = bpu_pc_i;
     // 核心：IFU修正有效时，用修正后的PC（回滚）
     end 
-    else if (idu_next_pc_valid_i) begin
-      _pc_next = idu_next_pc_i;
-    end
     else if(csr_satp_flush_i) begin
       _pc_next = csr_stap_pc_i;
+    end
+    else if (idu_next_pc_valid_i) begin
+      _pc_next = idu_next_pc_i;
     end
      else begin
       _pc_next  =  pc_temp_plus4;
