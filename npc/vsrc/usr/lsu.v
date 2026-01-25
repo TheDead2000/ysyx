@@ -70,7 +70,15 @@ module lsu (
 );
 
     //csr flush
-    assign csr_satp_unstall_o = (csr_addr_i == 12'h180);
+      wire [6:0] _opcode = inst_data_o[6:0];
+  wire [4:0] _rd = inst_data_o[11:7];
+  wire [2:0] _func3 = inst_data_o[14:12];
+  wire [4:0] _rs1 = inst_data_o[19:15];
+  wire [4:0] _rs2 = inst_data_o[24:20];
+  wire [6:0] _func7 = inst_data_o[31:25];
+  wire [4:0] _func5 = inst_data_o[31:27];
+
+    assign csr_satp_unstall_o = (_opcode == 7'b111_0011 && _func3 == 3'b001);
 
     // ============ 原有 LSU 基本逻辑 ============
     assign inst_addr_o = inst_addr_i;
