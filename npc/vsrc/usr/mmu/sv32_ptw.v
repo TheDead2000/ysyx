@@ -90,7 +90,7 @@ module ptw (
     // 状态机（核心修改：匹配文字的XWR判断逻辑）
 
     always @(posedge clk or posedge rst) begin
-        if (!rst) begin
+        if (rst) begin
             state <= STATE_IDLE;
             pte_level <= 2'b01; 
             pte_ptr <= 32'b0;
