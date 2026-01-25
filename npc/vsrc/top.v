@@ -65,6 +65,9 @@ pc_reg u_pc_reg (
     .idu_next_pc_i     (id_compress_pc),          // 下一条指令地址
     .idu_next_pc_valid_i (id_compress_pc_valid_o),
 
+    .csr_satp_flush_i  (csr_satp_flush),
+    .csr_stap_pc_i     (csr_stap_pc),
+    
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
     //输出pc
@@ -111,6 +114,9 @@ wire csr_tsr;
 wire mmu_flush;
 
 
+
+
+
 /*******************ifu***************************/
 wire if_rdata_valid;  // 读数据是否准备好
 wire [31:0] if_rdata;  // 返回到读取的数据
@@ -149,8 +155,7 @@ wire[31:0]inst_data_if;
 
 wire compress_stall;
 wire is_compressed_inst_if2id;
-wire csr_satp_flush;
-wire csr_satp_unstall;
+
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -163,8 +168,6 @@ ifu ifu (
   .next_refill_stall_valid_if_o(next_ram_stall_preif), //访存暂停
   .cross_refill_i(cross_refill),
   .cross_inst_valid_i(cross_inst_valid),
-  .csr_satp_flush_o(csr_satp_flush),
-  .csr_satp_unflush_i(csr_satp_unstall),
 
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
@@ -693,7 +696,8 @@ wire [31:0] exc_csr_data_mem;         // 来自MEM阶段的CSR写数据
 wire [11:0] csr_idx_id;               // 来自ID阶段的CSR读地址
 wire [31:0] csr_data_csr;             // CSR读数据输出
  wire exc_csr_valid_mem;
-
+wire csr_satp_flush;
+wire[31:0] csr_stap_pc;
 lsu lsu (
       .clk            (clk),
       .rst            (rst),
@@ -750,7 +754,8 @@ lsu lsu (
 
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
-      .csr_satp_unstall_o(csr_satp_unstall),
+      .csr_satp_flush_o(csr_satp_flush),
+      .csr_satp_flush_pc_o(csr_stap_pc),
 
     .amo_op_i(amo_op_ex_mem),
     .amo_valid_i(amo_valid_ex_mem),
