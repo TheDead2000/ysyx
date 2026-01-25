@@ -102,7 +102,7 @@ wire [31:0] dmmu_mem_rdata;
 wire dmmu_mem_rvalid;
 
 // CSR 到 MMU 的配置 (SV32)
-wire [19:0] csr_satp_ppn;      // 22位 PPN
+wire [21:0] csr_satp_ppn;      // 22位 PPN
 wire [8:0] csr_asid;           // 9位 ASID
 wire csr_sum;
 wire csr_enable_sv32;          // 启用 SV32

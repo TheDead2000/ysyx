@@ -31,7 +31,7 @@ module ptw (
     output wire ptw_page_fault_o,      // 页错误
     
     // CSR 接口
-    input wire [19:0] ptw_satp_ppn_i,  // SATP PPN (22位)
+    input wire [21:0] ptw_satp_ppn_i,  // SATP PPN (22位)
     input wire ptw_mxr_i,              // Make eXecutable Readable
     input wire ptw_sum_i,              // Supervisor User Memory access
     
@@ -78,9 +78,9 @@ module ptw (
     wire pte_accessed = pte_reg[`PTE_A_BIT];
     wire pte_dirty = pte_reg[`PTE_D_BIT];
     
-    wire [19:0] pte_ppn = pte_reg[29:10]; // PTE的PPN字段（22位）
+    wire [21:0] pte_ppn = pte_reg[31:10]; // PTE的PPN字段（22位）
     wire [9:0] pte_ppn0 = pte_reg[19:10];  // PPN0（10位：10-19），4MB页需为0
-    wire [9:0] pte_ppn1 = pte_reg[29:20]; // PPN1（12位：20-31）
+    wire [11:0] pte_ppn1 = pte_reg[31:20]; // PPN1（12位：20-31）
     
     // 虚拟地址分解（严格匹配Sv32规范）
     wire [9:0] vpn0 = ptw_vaddr_i[21:12];  // VPN[0] (10位)
@@ -122,6 +122,8 @@ module ptw (
                 end
                 STATE_CLK:begin
                 //  根页表地址 = satp_ppn <<12 + VPN[1] <<2
+                /* verilator lint_off WIDTHEXPAND */
+                /* verilator lint_off WIDTHTRUNC */
                 pte_ptr <= {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00};
                 state   <= STATE_WAIT_PTE;
                 end

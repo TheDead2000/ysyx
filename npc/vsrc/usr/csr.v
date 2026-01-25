@@ -38,7 +38,7 @@ module CSRs(
   output [1:0]  io_privilege,
   
   // ============ 新增 MMU 控制信号输出 ============
-  output [19:0] mmu_satp_ppn_o,
+  output [21:0] mmu_satp_ppn_o,
   output mmu_enable_o,
 
   output        io_mxr,        // Make eXecutable Readable
@@ -488,7 +488,7 @@ module CSRs(
 
 wire [8:0]  csr_asid;
 wire        csr_enable_sv32;
-assign mmu_satp_ppn_o = satpReg[19:0];        // SV32 的 PPN 是 22 位
+assign mmu_satp_ppn_o = satpReg[21:0];        // SV32 的 PPN 是 22 位
 assign csr_asid = satpReg[30:22];           // SV32 的 ASID 是 9 位
 assign mmu_enable_o = (satpReg[31] == 1'b1) && (io_privilege != 2'b11); // 非 M 模式且 SATP.MODE=SV32
 // assign csr_enable_lsvm = csr_enable_sv32;    // 简化处理

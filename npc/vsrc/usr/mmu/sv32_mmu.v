@@ -17,7 +17,7 @@ module mmu (
     
     // CSR 配置
     input wire mmu_enable_i,            // 分页使能
-    input wire [19:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
+    input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
 
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
