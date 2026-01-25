@@ -139,6 +139,7 @@ void test_mmu_access() {
     // 2. 开启MMU，访问虚拟地址（4MB大页映射）
     printf("\n=== Step 2: Access virtual address (MMU enabled, 4MB huge page) ===\n");
     uint32_t root_ppn = ((uint32_t)page_table) >> 12;  // 页表基地址的PPN（4KB对齐）
+    printf("page_table:%x root_ppn:%x\n",&page_table,root_ppn);
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
     printf("Read from VA 0x%x: 0x%x\n", TEST_BASE_VA, read_data);
