@@ -15,6 +15,8 @@ module ifu (
     output next_refill_stall_valid_if_o,
     input cross_refill_i,
     input cross_inst_valid_i,
+    input csr_satp_unflush_i,
+    output csr_satp_flush_o,
     
     /* to if/id */
     output [31:0] inst_addr_o,
@@ -82,11 +84,20 @@ module ifu (
     end
     end
 
+  wire [6:0] _opcode = inst_data_o[6:0];
+  wire [4:0] _rd = inst_data_o[11:7];
+  wire [2:0] _func3 = inst_data_o[14:12];
+  wire [4:0] _rs1 = inst_data_o[19:15];
+  wire [4:0] _rs2 = inst_data_o[24:20];
+  wire [6:0] _func7 = inst_data_o[31:25];
+  wire [4:0] _func5 = inst_data_o[31:27];
+    
+    assign csr_satp_flush_o = csr_satp_unflush_i ? 0 : (_opcode == 7'b111_0011 && _func3 == 3'b001);
+
 
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = _ram_stall;
     assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
-
     assign inst_data_o =  (before_halfword == 16'h0) ? _inst_data : {_inst_data[31:16],before_halfword} ;
     
     // ============ TRAP 处理（增加页错误） ============

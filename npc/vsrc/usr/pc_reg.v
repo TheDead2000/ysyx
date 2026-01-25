@@ -18,9 +18,6 @@ module pc_reg (
     input idu_next_pc_valid_i,
     // output ifu_next_pc_ready_o,
 
-    input           csr_satp_flush_i,
-    input[31:0]     csr_stap_pc_i,
-
     output [`XLEN-1:0] pc_next_o,          //输出 next_pc, icache 取指
 
     output read_req_o,                     //输出 next_pc, icache 取指
@@ -47,9 +44,6 @@ module pc_reg (
       _pc_next = bpu_pc_i;
     // 核心：IFU修正有效时，用修正后的PC（回滚）
     end 
-    else if(csr_satp_flush_i) begin
-      _pc_next = csr_stap_pc_i;
-    end
     else if (idu_next_pc_valid_i) begin
       _pc_next = idu_next_pc_i;
     end
