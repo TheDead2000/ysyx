@@ -243,12 +243,6 @@ mmu icache_mmu (
           if(mmu_enable_i) begin
           vaddr_reg <= preif_raddr_i;
           if(mmu_resp_valid) begin
-            if(mmu_page_fault) begin
-              // 发生页错误，保持在 idle 状态，等待外部处理
-              icache_state <= CACHE_IDLE;
-              $display("ICACHE: Instruction Page Fault at address %h", preif_raddr_i);
-            end
-            else begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
               $display("trans addr: %h",paddr_trans);
@@ -257,7 +251,9 @@ mmu icache_mmu (
               line_tag_reg <= cache_line_tag;
               icache_state <= CACHE_LOOKUP;
             end
-          end
+            else begin
+             icache_state <= CACHE_MMU_TRANS;
+            end
           end
           else begin
           blk_addr_reg <= cache_blk_addr;
