@@ -65,6 +65,9 @@ pc_reg u_pc_reg (
     .idu_next_pc_i     (id_compress_pc),          // 下一条指令地址
     .idu_next_pc_valid_i (id_compress_pc_valid_o),
 
+    .csr_satp_flush_i  (csr_satp_flush),
+    .csr_stap_pc_i     (csr_stap_pc),
+    
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
     //输出pc
@@ -328,8 +331,6 @@ idu idu (
     .inst_data_o(inst_data_id),
     // 请求暂停流水线 to ctrl
     .load_use_valid_o(load_use_valid),
-    .csr_satp_flush_o(csr_satp_flush),
-    .csr_satp_unstall_i(csr_satp_unstall),
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令
@@ -696,7 +697,7 @@ wire [11:0] csr_idx_id;               // 来自ID阶段的CSR读地址
 wire [31:0] csr_data_csr;             // CSR读数据输出
  wire exc_csr_valid_mem;
 wire csr_satp_flush;
-wire csr_satp_unstall;
+wire[31:0] csr_stap_pc;
 lsu lsu (
       .clk            (clk),
       .rst            (rst),
@@ -753,7 +754,8 @@ lsu lsu (
 
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
-      .csr_satp_unstall_o(csr_satp_unstall),
+      .csr_satp_flush_o(csr_satp_flush),
+      .csr_satp_flush_pc_o(csr_stap_pc),
 
     .amo_op_i(amo_op_ex_mem),
     .amo_valid_i(amo_valid_ex_mem),

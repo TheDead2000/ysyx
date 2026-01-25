@@ -60,8 +60,6 @@ module idu (
     output [             `XLEN_BUS] csr_readdata_o,
 
     // 请求暂停流水线
-    input csr_satp_unstall_i,
-    output csr_satp_flush_o,
     output load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
     
@@ -175,8 +173,6 @@ localparam [31:0] AMOMAXU_W_VAL = 32'b11100_00_00000_00000_010_00000_0101111;
 
   wire [`INST_LEN-1:0] _inst = expanded_inst;
 
-  //csr flush
-  assign csr_satp_flush_o = csr_satp_unstall_i ? 0 : _inst_csrrw;
   
   wire [6:0] _opcode = _inst[6:0];
   wire [4:0] _rd = _inst[11:7];
