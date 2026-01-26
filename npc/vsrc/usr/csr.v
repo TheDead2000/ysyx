@@ -477,6 +477,7 @@ module CSRs(
       end
       
       // 更新用户模式计数器镜像
+      csr_ifu_unstall = 0;
       cycleReg <= mcycleReg;
       cyclehReg <= mcyclehReg;
       instretReg <= minstretReg;
