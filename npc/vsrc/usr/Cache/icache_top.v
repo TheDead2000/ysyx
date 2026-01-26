@@ -291,14 +291,16 @@ reg [`XLEN-1:0] last_vaddr;
           icache_tag_write_valid    <= 0;
           uncache_data_ready <= 0;
 
-         if (preif_raddr_valid_i && preif_raddr_i != last_vaddr) begin
+
             // 有新请求，且地址不同，需要重新转换
-            if (mmu_enable_i) begin
+          if (mmu_enable_i) begin
+              if (preif_raddr_valid_i && preif_raddr_i != last_vaddr) begin
               vaddr_reg <= preif_raddr_i;
               last_vaddr <= preif_raddr_i;
               mmu_translation_done <= 1'b0;
               icache_state <= CACHE_MMU_TRANS;
-            end else begin
+            end 
+            else begin
               pc_addr <= preif_raddr_i;
               icache_state <= CACHE_LOOKUP;
             end
