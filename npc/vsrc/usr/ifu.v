@@ -93,7 +93,7 @@ module ifu (
   wire [4:0] _func5 = inst_data_o[31:27];
   wire [`CSR_REG_ADDRWIDTH-1:0] _csr = inst_data_o[31:20]; 
 
-  assign csr_satp_flush_o = csr_ifu_unstall_i ? 0 : (_csr == 12'h180 && _opcode == 7'b111_001 && _func3 == 001);
+  assign csr_satp_flush_o = csr_ifu_unstall_i ? 0 : (_csr == 12'h180 && _opcode == 7'b111_0011 && _func3 == 001);
 
 
     wire _ram_stall = (!if_rdata_valid_i);
