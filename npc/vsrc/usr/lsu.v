@@ -53,8 +53,8 @@ module lsu (
     /* stall req */
     output ram_stall_valid_mem_o,
     output ls_valid_o,
-    output csr_satp_flush_o,
-    output[31:0] csr_satp_flush_pc_o,
+    // output csr_satp_flush_o,
+    // output[31:0] csr_satp_flush_pc_o,
     //mmu
     input icache_ifu_mmu_mem_req_i,
     input [31:0] icache_ifu_mmu_mem_addr_i,
@@ -69,9 +69,9 @@ module lsu (
     output                  amo_done_o
 );
 
-    //csr flush
-    assign csr_satp_flush_o = (csr_addr_i == 12'h180);
-    assign csr_satp_flush_pc_o = inst_addr_i + 32'h4;
+    // //csr flush
+    // assign csr_satp_flush_o = (csr_addr_i == 12'h180);
+    // assign csr_satp_flush_pc_o = inst_addr_i + 32'h4;
 
     // ============ 原有 LSU 基本逻辑 ============
     assign inst_addr_o = inst_addr_i;

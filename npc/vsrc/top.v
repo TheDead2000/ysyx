@@ -65,8 +65,8 @@ pc_reg u_pc_reg (
     .idu_next_pc_i     (id_compress_pc),          // 下一条指令地址
     .idu_next_pc_valid_i (id_compress_pc_valid_o),
 
-    .csr_satp_flush_i  (csr_satp_flush),
-    .csr_stap_pc_i     (csr_stap_pc),
+    // .csr_satp_flush_i  (csr_satp_flush),
+    // .csr_stap_pc_i     (csr_stap_pc),
     
     .read_req_o         (read_req),        
     .pc_next_o          (pc_next),          //输出 next_pc, icache 取指
@@ -168,7 +168,9 @@ ifu ifu (
   .next_refill_stall_valid_if_o(next_ram_stall_preif), //访存暂停
   .cross_refill_i(cross_refill),
   .cross_inst_valid_i(cross_inst_valid),
-
+  .csr_ifu_unstall_i(csr_ifu_unstall),
+  .csr_satp_flush_o(csr_satp_flush),
+  
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
@@ -754,8 +756,8 @@ lsu lsu (
 
       .ls_valid_o(ls_valid),
       .ram_stall_valid_mem_o(ram_stall_valid_mem),
-      .csr_satp_flush_o(csr_satp_flush),
-      .csr_satp_flush_pc_o(csr_stap_pc),
+      // .csr_satp_flush_o(csr_satp_flush),
+      // .csr_satp_flush_pc_o(csr_stap_pc),
 
     .amo_op_i(amo_op_ex_mem),
     .amo_valid_i(amo_valid_ex_mem),
@@ -977,7 +979,7 @@ clint clint_u (
 
 
 /*****************************csr******************************/
-
+wire csr_ifu_unstall;
 CSRs rv32_csr_regfile(
     .clk(clk),
     .rst(rst),
@@ -1012,7 +1014,7 @@ CSRs rv32_csr_regfile(
     // 新增 MMU 控制信号
     .mmu_enable_o(csr_enable_sv32),
     .mmu_satp_ppn_o(csr_satp_ppn),
-
+    .csr_ifu_unstall_o(csr_ifu_unstall),
     .io_mxr(csr_mxr),
     .io_sum(csr_sum),
     .io_tvm(csr_tvm),

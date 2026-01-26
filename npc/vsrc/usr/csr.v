@@ -40,6 +40,7 @@ module CSRs(
   // ============ 新增 MMU 控制信号输出 ============
   output [21:0] mmu_satp_ppn_o,
   output mmu_enable_o,
+  output csr_ifu_unstall_o,
 
   output        io_mxr,        // Make eXecutable Readable
   output        io_sum,        // Supervisor User Memory access
@@ -301,6 +302,8 @@ module CSRs(
   assign csr_read_data = read_data;
   assign csr_read_error = read_error;
   
+  reg csr_ifu_unstall;
+  assign csr_ifu_unstall_o = csr_ifu_unstall;
   // CSR写入逻辑
   always @(posedge clk) begin
     if (rst) begin
@@ -387,7 +390,7 @@ module CSRs(
           12'h142: scauseReg <= clint_csr_write_data;
           12'h143: stvalReg <= clint_csr_write_data;
           12'h144: sipReg <= update_sip(sipReg, clint_csr_write_data);
-          12'h180: satpReg <= update_satp(satpReg, clint_csr_write_data);
+          12'h180: begin satpReg <= update_satp(satpReg, clint_csr_write_data); csr_ifu_unstall = 1; end
           
           default: ; // 忽略其他地址
         endcase
@@ -453,7 +456,7 @@ module CSRs(
           12'h142: scauseReg <= csr_write_data;
           12'h143: stvalReg <= csr_write_data;
           12'h144: sipReg <= update_sip(sipReg, csr_write_data);
-          12'h180: satpReg <= update_satp(satpReg, csr_write_data);
+          12'h180: begin satpReg <= update_satp(satpReg, csr_write_data); csr_ifu_unstall = 1; end 
           
           default: ; // 忽略其他地址
         endcase
