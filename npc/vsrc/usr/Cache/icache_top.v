@@ -197,6 +197,7 @@ mmu icache_mmu (
 );
 
 reg mmu_translation_done;
+reg [`XLEN-1:0] last_vaddr;
 
   always @(posedge clk) begin
     if (rst) begin
@@ -224,7 +225,10 @@ reg mmu_translation_done;
           icache_state <= CACHE_IDLE;
         end
         CACHE_IDLE: begin
-          mmu_translation_done = 1'b0;
+
+          mmu_translation_done <= 1'b0;
+          last_vaddr <= preif_raddr_i; 
+
           blk_addr_reg           <= cache_blk_addr;
           line_idx_reg           <= cache_line_idx;
           line_tag_reg           <= cache_line_tag;
@@ -244,10 +248,16 @@ reg mmu_translation_done;
         CACHE_MMU_TRANS:begin
           if(mmu_enable_i) begin
           vaddr_reg <= preif_raddr_i;
+           if (last_vaddr != preif_raddr_i) begin
+              // 地址已改变，需要重新开始
+              last_vaddr <= preif_raddr_i;
+              mmu_translation_done <= 1'b0;
+            end
+
           if(mmu_resp_valid) begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
-              mmu_translation_done = 1'b1;  // 标记转换完成
+              mmu_translation_done <= 1'b1;  // 标记转换完成
               $display("trans addr: %h",paddr_trans);
               blk_addr_reg <= cache_blk_addr;
               line_idx_reg <= cache_line_idx;
@@ -281,10 +291,19 @@ reg mmu_translation_done;
           icache_tag_write_valid    <= 0;
           uncache_data_ready <= 0;
 
-          if (mmu_enable_i && !mmu_translation_done) begin
-            icache_state <= CACHE_MMU_TRANS;
-          end
-          else 
+         if (preif_raddr_valid_i && preif_raddr_i != last_vaddr) begin
+            // 有新请求，且地址不同，需要重新转换
+            if (mmu_enable_i) begin
+              vaddr_reg <= preif_raddr_i;
+              last_vaddr <= preif_raddr_i;
+              mmu_translation_done <= 1'b0;
+              icache_state <= CACHE_MMU_TRANS;
+            end else begin
+              pc_addr <= preif_raddr_i;
+              icache_state <= CACHE_LOOKUP;
+            end
+          end 
+          else
           if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
