@@ -280,6 +280,14 @@ reg [`XLEN-1:0] last_vaddr;
           end
         end
         CACHE_LOOKUP: begin
+// `ifndef YSYX_SOC 
+//             icache_unhit_count();
+// `endif
+// `ifndef YSYX_SOC 
+//           else if (icache_hit) begin : hit
+//             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
+//           end
+// `endif 
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
@@ -301,7 +309,7 @@ reg [`XLEN-1:0] last_vaddr;
               icache_state <= CACHE_MMU_TRANS;
             end 
           end
-          else
+          
           if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
@@ -310,9 +318,7 @@ reg [`XLEN-1:0] last_vaddr;
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
             _ram_rlen_icache_o <= 15;    // 突发15+1次 
              burst_count <= 0;  // 清空计数器
-`ifndef YSYX_SOC 
-            icache_unhit_count();
-`endif
+
           end else if (~icache_hit && uncache) begin
             icache_state              <= UNCACHE_READ;
             _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
@@ -332,14 +338,9 @@ reg [`XLEN-1:0] last_vaddr;
             refill_stall <= 1;
             need_cross_sram128_reg <= 1;
           end
-
-// `ifndef YSYX_SOC 
-//           else if (icache_hit) begin : hit
-//             icache_hit_count({line_tag_reg, line_idx_reg, blk_addr_reg}, preif_raddr_i);
-//           end
-// `endif 
-
         end
+
+
         CACHE_MISS: begin
           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
             if (burst_count == _ram_rlen_icache_o[3:0]) begin  // 突发传输最后一个数据
