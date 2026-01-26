@@ -1970,7 +1970,6 @@ void VysyxSoCFull___024root___eval(VysyxSoCFull___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VysyxSoCFull___024root___eval\n"); );
     // Init
     CData/*0:0*/ __VicoContinue;
-    VlTriggerVec<10> __VpreTriggered;
     IData/*31:0*/ __VnbaIterCount;
     CData/*0:0*/ __VnbaContinue;
     // Body
@@ -2012,7 +2011,7 @@ void VysyxSoCFull___024root___eval(VysyxSoCFull___024root* vlSelf) {
                 }
                 vlSelf->__VactIterCount = ((IData)(1U) 
                                            + vlSelf->__VactIterCount);
-                __VpreTriggered.andNot(vlSelf->__VactTriggered, vlSelf->__VnbaTriggered);
+                vlSelf->__VpreTriggered.andNot(vlSelf->__VactTriggered, vlSelf->__VnbaTriggered);
                 vlSelf->__VnbaTriggered.set(vlSelf->__VactTriggered);
                 VysyxSoCFull___024root___eval_act(vlSelf);
             }

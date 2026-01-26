@@ -534,7 +534,7 @@ wire [15:0] cache_rdata_16 = (halfword_sel_byte == 0 || halfword_sel_byte == 1) 
 /* verilator lint_off WIDTHEXPAND */
   assign cross_refill_o = (need_cross_sram128 && !next_icache_hit && icache_state == CACHE_LOOKUP  ) ;
 
-  assign if_rdata_valid_o = (icache_hit & !cross_refill_o) | uncache_data_ready;
+  assign if_rdata_valid_o = mmu_enable_i ? mmu_translation_done & icache_hit : (icache_hit & !cross_refill_o) | uncache_data_ready;
   // assign if_rdata_valid_o = (icache_hit & next_icache_hit ) | uncache_data_ready;
   assign next_rdata_unvalid_o = refill_stall; // 下一个128bit块数据无效，需要等待
   assign cross_inst_valid_o = cross_inst_valid;
