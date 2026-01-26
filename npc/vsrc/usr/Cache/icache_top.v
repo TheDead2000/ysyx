@@ -195,7 +195,7 @@ mmu icache_mmu (
     .mmu_flush_i(mmu_flush_i)
 );
 
-
+reg mmu_translation_done;
 
   always @(posedge clk) begin
     if (rst) begin
@@ -245,6 +245,7 @@ mmu icache_mmu (
           if(mmu_resp_valid) begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
+              mmu_translation_done <= 1'b1;  // 标记转换完成
               $display("trans addr: %h",paddr_trans);
               blk_addr_reg <= cache_blk_addr;
               line_idx_reg <= cache_line_idx;
@@ -278,11 +279,11 @@ mmu icache_mmu (
           icache_tag_write_valid    <= 0;
           uncache_data_ready <= 0;
 
-          if(mmu_enable_i) begin
+          if (mmu_enable_i && !mmu_translation_done) begin
             icache_state <= CACHE_MMU_TRANS;
           end
           else 
-            if (~icache_hit && ~uncache) begin
+          if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
