@@ -106,7 +106,8 @@ module ptw (
                 STATE_IDLE: begin
                     pte_reg <= 32'b0;
                     pte_level <= 2'b01;
-                    
+                    t_ptw_resp_valid_o = 1'b0;
+
                     if (ptw_req_valid_i && ptw_enable_i) begin
                         if (ptw_tlb_hit_i) begin
                             // TLB命中，直接处理缓存的PTE
@@ -146,8 +147,9 @@ module ptw (
                     end else begin
                         if (pte_xwr != 3'b000) begin
                             // 叶子项：检查权限和超级页对齐
-                            state <= STATE_IDLE; // 遍历完成
                             t_ptw_resp_valid_o = 1'b1;
+                            state <= STATE_IDLE; // 遍历完成
+
                         end else begin
                             // 非叶子项：进入二级页表遍历
                             if (pte_level == 2'b01) begin
