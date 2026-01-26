@@ -65,7 +65,7 @@ static inline void mmu_disable() {
 static inline void mmu_enable(uint32_t root_ppn, uint32_t asid) {
     uint32_t satp = SATP_MODE_SV32;            // Bit 31 = 1
     satp |= (asid & 0x1FF) << 22;              // ASID: Bits 30-22
-    satp |= (root_ppn & 0x3FFFFF);             // PPN: Bits 21-0 (不要左移!)
+    satp |= (root_ppn & 0x3FFFFF);             // PPN: Bits 21-0
     csr_write(CSR_SATP, satp);
     // __asm__ volatile ("sfence.vma");           // 刷新TLB
 }
@@ -108,11 +108,11 @@ void setup_4mb_page_table() {
     pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
     pte |= PTE_G;          // 全局页
     pte |= PTE_A | PTE_D;  // 访问位+脏位（避免首次访问触发页故障）
-    pte |= (ppn1 << PTE_PPN_SHIFT);  // PPN字段（4MB大页仅用PPN1）
+    pte |= (ppn1 << 20); ;  // PPN字段（4MB大页仅用PPN1）
 
     // 4. 写入页表项
     page_table[vpn1] = pte;
-    printf("Page table entry [VPN1=0x%X] = 0x%x\n", vpn1, pte);
+    printf("Page table entry [VPN1=0x%x] = 0x%x\n", vpn1, pte);
 
     // 5. 注册异常处理函数（根据你的硬件中断向量表配置）
     // 注：需确保你的硬件中断向量表指向trap_handler

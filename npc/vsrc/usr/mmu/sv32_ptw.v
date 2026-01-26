@@ -146,12 +146,8 @@ module ptw (
                     end else begin
                         if (pte_xwr != 3'b000) begin
                             // 叶子项：检查权限和超级页对齐
-                            if (check_permissions()) begin
-                                state <= STATE_IDLE; // 遍历完成
-                                t_ptw_resp_valid_o = 1'b1;
-                            end else begin
-                                state <= STATE_ERROR; // 权限/对齐错误
-                            end
+                            state <= STATE_IDLE; // 遍历完成
+                            t_ptw_resp_valid_o = 1'b1;
                         end else begin
                             // 非叶子项：进入二级页表遍历
                             if (pte_level == 2'b01) begin
@@ -181,38 +177,6 @@ module ptw (
         end
     end
 
-    function check_permissions;
-        begin
-            check_permissions = 1'b0;
-            
-            // 1. 检查PTE有效位
-            if (!pte_valid) begin
-                check_permissions = 1'b0;
-                return 0;
-            end
-            
-            // 2. 检查超级页对齐（4MB页的PPN[0]必须为0）
-            if (pte_level == 2'b01 && (pte_ppn0 != 10'b0)) begin
-                check_permissions = 1'b0;
-                return 0;
-            end
-            
-            // 3. 检查访问位和脏位
-            if (!pte_accessed) begin
-                check_permissions = 1'b0;
-                return 0;
-            end
-            
-            // 4. 按操作类型检查权限
-            if (ptw_is_store_i) begin
-                // 存储操作：需要写权限+脏位
-                check_permissions = pte_dirty && pte_w;
-            end else begin
-                // 加载/取指操作：读权限 或 执行权限+MXR
-                check_permissions = pte_r || (pte_x && ptw_mxr_i);
-            end
-        end
-    endfunction
     
     //  物理地址生成
     reg [31:0] phys_addr;
@@ -255,7 +219,7 @@ module ptw (
     assign ptw_mem_addr_o = pte_ptr;
     
     // TLB 更新（修改后）
-    assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE) && check_permissions() && !ptw_tlb_hit_i;
+    assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE)  && !ptw_tlb_hit_i;
     assign ptw_tlb_update_vpn_o = vpn; // 20位VPN（VPN1+VPN0）
     assign ptw_tlb_update_pte_o = pte_reg;
     assign ptw_tlb_update_is_4k_o = (pte_level == 2'b10);
