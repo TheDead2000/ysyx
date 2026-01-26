@@ -300,11 +300,7 @@ reg [`XLEN-1:0] last_vaddr;
               mmu_translation_done <= 1'b0;
               icache_state <= CACHE_MMU_TRANS;
             end 
-            else begin
-              pc_addr <= preif_raddr_i;
-              icache_state <= CACHE_LOOKUP;
-            end
-          end 
+          end
           else
           if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;

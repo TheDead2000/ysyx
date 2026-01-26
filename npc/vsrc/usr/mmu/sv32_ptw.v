@@ -97,6 +97,7 @@ module ptw (
             pte_ptr <= 32'b0;
             is_global <= 1'b0;
             pte_reg <= 32'b0;
+            t_ptw_resp_valid_o = 1'b0;
         end else if (ptw_flush_i) begin 
             state <= STATE_IDLE;
             pte_level <= 2'b01;
