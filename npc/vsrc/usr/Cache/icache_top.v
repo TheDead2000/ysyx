@@ -252,13 +252,14 @@ reg [`XLEN-1:0] last_vaddr;
         CACHE_MMU_TRANS:begin
           if(mmu_enable_i) begin
            vaddr_reg <= preif_raddr_i;
+           icache_mmu_mem_rvalid <= 0;
            if (last_vaddr != preif_raddr_i) begin
               // 地址已改变，需要重新开始
               last_vaddr <= preif_raddr_i;
               mmu_translation_done <= 1'b0;
             end
 
-          if(icache_mmu_mem_req) begin
+          if(icache_mmu_mem_req & icache_mmu_mem_rvalid != 1) begin
              icache_state <= CACHE_MMU_MEM;
             _ram_raddr_icache_o       <= icache_mmu_mem_addr;// 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
