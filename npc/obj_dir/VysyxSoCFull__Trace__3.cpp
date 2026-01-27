@@ -6553,7 +6553,7 @@ void VysyxSoCFull___024root__trace_chg_sub_3(VysyxSoCFull___024root* vlSelf, Ver
                                                 & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__idu__DOT__expanded_inst 
                                                    >> 7U)))))));
     bufp->chgCData(oldp+1781,(((1U == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state))
-                                ? 0xfU : (IData)(vlSelf->__VdfgTmp_hfe635847__0))),4);
+                                ? 0xfU : (IData)(vlSelf->__VdfgTmp_h5daa4fae__0))),4);
     bufp->chgBit(oldp+1782,((1U & (~ (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                                        >> 4U) | (((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___flush) 
                                                   >> 4U) 
@@ -6574,7 +6574,7 @@ void VysyxSoCFull___024root__trace_chg_sub_3(VysyxSoCFull___024root* vlSelf, Ver
                                             | ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT___is_amo_store) 
                                                | (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT___is_amo))))))))));
     bufp->chgIData(oldp+1786,((((- (IData)((IData)(
-                                                   (((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                                                   (((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                      >> 3U) 
                                                     | (1U 
                                                        == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)))))) 
@@ -6583,7 +6583,7 @@ void VysyxSoCFull___024root__trace_chg_sub_3(VysyxSoCFull___024root* vlSelf, Ver
                                                             (1U 
                                                              & ((1U 
                                                                  == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                                | ((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                                                                | ((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                                    >> 2U))))) 
                                                  << 0x10U)) 
                                              | ((0xff00U 
@@ -6591,7 +6591,7 @@ void VysyxSoCFull___024root__trace_chg_sub_3(VysyxSoCFull___024root* vlSelf, Ver
                                                                (1U 
                                                                 & ((1U 
                                                                     == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                                   | ((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                                                                   | ((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                                       >> 1U))))) 
                                                     << 8U)) 
                                                 | (0xffU 
@@ -6599,7 +6599,7 @@ void VysyxSoCFull___024root__trace_chg_sub_3(VysyxSoCFull___024root* vlSelf, Ver
                                                                 (1U 
                                                                  & ((1U 
                                                                      == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                                    | (IData)(vlSelf->__VdfgTmp_hfe635847__0)))))))))),32);
+                                                                    | (IData)(vlSelf->__VdfgTmp_h5daa4fae__0)))))))))),32);
     bufp->chgIData(oldp+1787,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__u_icache_tag__DOT__i),32);
     bufp->chgBit(oldp+1788,((1U & ((~ (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall)) 
                                    & (~ (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT____Vcellinp__cpu__reset))))));

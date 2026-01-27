@@ -186,15 +186,13 @@ module lsu (
                        (lsu_has_control ? final_addr : 32'b0);
     
     // 内存请求有效
-    assign mem_addr_valid_o = mmu_has_control ? icache_ifu_mmu_mem_req_i :
-                            (lsu_has_control ? lsu_mem_req : 1'b0);
+    assign mem_addr_valid_o = mmu_has_control ? icache_ifu_mmu_mem_req_i : lsu_mem_req;
     
     // LSU的原始内存请求
     wire lsu_mem_req = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i);
     
     // 内存写使能
-    assign mem_write_valid_o = mmu_has_control ? 1'b0 :  // MMU只读
-                              (lsu_has_control ? store_valid & mem_addr_valid_o : 1'b0);
+    assign mem_write_valid_o = mmu_has_control ? 1'b0 : lsu_has_control ? store_valid & mem_addr_valid_o : 1'b0;
     
     // 内存写数据
     assign mem_wdata_o = mmu_has_control ? 32'b0 :  // MMU不写数据

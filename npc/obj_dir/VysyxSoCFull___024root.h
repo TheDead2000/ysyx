@@ -1137,7 +1137,7 @@ class VysyxSoCFull___024root final : public VerilatedModule {
         CData/*3:0*/ ysyxSoCFull__DOT__sdram__DOT__u1_sdram_32mx32__DOT__u1_sdram_32mx16__DOT__W_Counter;
         CData/*0:0*/ ysyxSoCFull__DOT__sdram__DOT__u1_sdram_32mx32__DOT__u1_sdram_32mx16__DOT__read_flag;
         CData/*3:0*/ ysyxSoCFull__DOT__sdram__DOT__u1_sdram_32mx32__DOT__u1_sdram_32mx16__DOT__Length;
-        CData/*3:0*/ __VdfgTmp_hfe635847__0;
+        CData/*3:0*/ __VdfgTmp_h5daa4fae__0;
         CData/*0:0*/ __VdfgTmp_h428888aa__0;
     };
     struct {

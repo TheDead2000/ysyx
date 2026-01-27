@@ -16,8 +16,8 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__4(VysyxSoCFull___0
     // Init
     VlWide<4>/*127:0*/ __Vtemp_h55f41497__0;
     VlWide<4>/*127:0*/ __Vtemp_hda08040d__0;
-    VlWide<4>/*127:0*/ __Vtemp_h7b6e63a5__0;
-    VlWide<4>/*127:0*/ __Vtemp_h4a4fa4d0__0;
+    VlWide<4>/*127:0*/ __Vtemp_hba470956__0;
+    VlWide<4>/*127:0*/ __Vtemp_hccb2fa23__0;
     // Body
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_sum[0U] 
         = ((0xfffffffffffffff7ULL & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__exu__DOT__u_alu__DOT__u_alu_mul_top__DOT__u_alu_mul_wallace__DOT__step6_sum
@@ -1174,8 +1174,8 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__4(VysyxSoCFull___0
                             = __Vtemp_hda08040d__0[2U];
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_wdata_writehit[3U] 
                             = __Vtemp_hda08040d__0[3U];
-                        __Vtemp_h7b6e63a5__0[0U] = 
-                            (((- (IData)((IData)((((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                        __Vtemp_hba470956__0[0U] = 
+                            (((- (IData)((IData)((((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                    >> 3U) 
                                                   | (1U 
                                                      == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)))))) 
@@ -1184,7 +1184,7 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__4(VysyxSoCFull___0
                                                           (1U 
                                                            & ((1U 
                                                                == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                              | ((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                                                              | ((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                                  >> 2U))))) 
                                                << 0x10U)) 
                                            | ((0xff00U 
@@ -1192,7 +1192,7 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__4(VysyxSoCFull___0
                                                              (1U 
                                                               & ((1U 
                                                                   == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                                 | ((IData)(vlSelf->__VdfgTmp_hfe635847__0) 
+                                                                 | ((IData)(vlSelf->__VdfgTmp_h5daa4fae__0) 
                                                                     >> 1U))))) 
                                                   << 8U)) 
                                               | (0xffU 
@@ -1200,21 +1200,21 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__4(VysyxSoCFull___0
                                                               (1U 
                                                                & ((1U 
                                                                    == (IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__lsu__DOT__arb_state)) 
-                                                                  | (IData)(vlSelf->__VdfgTmp_hfe635847__0)))))))));
-                        __Vtemp_h7b6e63a5__0[1U] = 0U;
-                        __Vtemp_h7b6e63a5__0[2U] = 0U;
-                        __Vtemp_h7b6e63a5__0[3U] = 0U;
-                        VL_SHIFTL_WWI(128,128,32, __Vtemp_h4a4fa4d0__0, __Vtemp_h7b6e63a5__0, 
+                                                                  | (IData)(vlSelf->__VdfgTmp_h5daa4fae__0)))))))));
+                        __Vtemp_hba470956__0[1U] = 0U;
+                        __Vtemp_hba470956__0[2U] = 0U;
+                        __Vtemp_hba470956__0[3U] = 0U;
+                        VL_SHIFTL_WWI(128,128,32, __Vtemp_hccb2fa23__0, __Vtemp_hba470956__0, 
                                       (0x60U & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__mem_addr 
                                                 << 3U)));
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_wmask_writehit[0U] 
-                            = __Vtemp_h4a4fa4d0__0[0U];
+                            = __Vtemp_hccb2fa23__0[0U];
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_wmask_writehit[1U] 
-                            = __Vtemp_h4a4fa4d0__0[1U];
+                            = __Vtemp_hccb2fa23__0[1U];
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_wmask_writehit[2U] 
-                            = __Vtemp_h4a4fa4d0__0[2U];
+                            = __Vtemp_hccb2fa23__0[2U];
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_wmask_writehit[3U] 
-                            = __Vtemp_h4a4fa4d0__0[3U];
+                            = __Vtemp_hccb2fa23__0[3U];
                     } else {
                         vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_data_ready = 1U;
                         vlSelf->__Vdly__ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_dcache_top__DOT__dcache_state = 1U;
