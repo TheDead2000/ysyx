@@ -450,7 +450,7 @@ wire [127:0] icache_wdate =
 wire[5:0] write_blk_addr = (icache_state == CACHE_REFILL) ? next_blk_addr_reg : blk_addr_reg;
 wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : cache_line_idx;
 
-  wire icache_wen = ram_r_handshake & (icache_state != CACHE_MMU_MEM || icache_state != CACHE_MMU_TRANS);
+  wire icache_wen = ram_r_handshake & (icache_state != CACHE_MMU_MEM );
   icache_data u_icache_data (
 
       .icache_index_i     (write_index),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
