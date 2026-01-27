@@ -160,7 +160,7 @@ module lsu (
                 
                 ARB_LSU: begin
                     // LSU操作完成（读或写）
-                    if (mem_data_ready_i || mem_wdata_ready_i) begin
+                    if (lsu_read_ready || lsu_write_ready) begin
                         arb_state <= ARB_IDLE;
                     end
                 end
@@ -182,8 +182,7 @@ module lsu (
     wire lsu_has_control = (arb_state == ARB_LSU);
     
     // 内存地址
-    assign mem_addr_o = mmu_has_control ? icache_ifu_mmu_mem_addr_i : 
-                       (lsu_has_control ? final_addr : 32'b0);
+    assign mem_addr_o = mmu_has_control ? icache_ifu_mmu_mem_addr_i : final_addr ;
     
     // 内存请求有效
     assign mem_addr_valid_o = mmu_has_control ? icache_ifu_mmu_mem_req_i : lsu_mem_req;
