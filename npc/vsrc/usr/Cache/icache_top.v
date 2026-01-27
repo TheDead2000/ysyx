@@ -202,7 +202,6 @@ reg icache_mmu_mem_rvalid;
 
 reg mmu_translation_done;
 reg [`XLEN-1:0] last_vaddr;
-
   always @(posedge clk) begin
     if (rst) begin
       icache_state              <= CACHE_RST;
@@ -451,7 +450,7 @@ wire [127:0] icache_wdate =
 wire[5:0] write_blk_addr = (icache_state == CACHE_REFILL) ? next_blk_addr_reg : blk_addr_reg;
 wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : cache_line_idx;
 
-
+  wire icache_wen = ram_r_handshake & (icache_state != CACHE_MMU_MEM || icache_state != CACHE_MMU_TRANS);
   icache_data u_icache_data (
 
       .icache_index_i     (write_index),//cache_line_idx 使用直接输入数据，满足一个周期的时许要求
@@ -462,7 +461,7 @@ wire[6:0] write_index = (icache_state == CACHE_REFILL) ? next_cache_line_idx : c
 
       .icache_line_wdata_i(icache_wdate),
       .icache_wmask(icache_wmask),
-      .icache_wen_i(ram_r_handshake),  // 握手成功的时候，同时将数据写入cache
+      .icache_wen_i(icache_wen),  // 握手成功的时候，同时将数据写入cache
       .burst_count_i(burst_count),
       .icache_rdata_o(icache_rdata),
       .icache_next_rdata_o(next_sram128_data),
