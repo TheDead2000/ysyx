@@ -55,11 +55,7 @@ module lsu (
     output ls_valid_o,
     // output csr_satp_flush_o,
     // output[31:0] csr_satp_flush_pc_o,
-    //mmu
-    input icache_ifu_mmu_mem_req_i,
-    input [31:0] icache_ifu_mmu_mem_addr_i,
-    output [31:0] icache_ifu_mmu_mem_rdata_o,
-    output icache_ifu_mmu_mem_rvalid_o,
+
 
     // ============ 原子操作信号 ============
     input  [`AMOOP_LEN-1:0] amo_op_i,
@@ -120,115 +116,6 @@ module lsu (
                     _amo_min | _amo_max | _amo_minu | _amo_maxu;
 
     wire [31:0] final_addr =  exc_alu_data_i;
-
-
-    // ============ 内存仲裁器 ============
-    localparam ARB_IDLE     = 2'b00;
-    localparam ARB_MMU      = 2'b01;
-    localparam ARB_LSU      = 2'b10;
-    
-    reg [1:0] arb_state;
-    reg arb_mmu_granted;     // MMU是否被授权
-    
-    // 仲裁逻辑：MMU请求具有更高优先级
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            arb_state <= ARB_IDLE;
-            arb_mmu_granted <= 1'b0;
-        end else begin
-            case (arb_state)
-                ARB_IDLE: begin
-                    if (icache_ifu_mmu_mem_req_i) begin
-                        // MMU请求优先
-                        arb_state <= ARB_MMU;
-                        arb_mmu_granted <= 1'b1;
-                    end else if (lsu_needs_mem && !arb_mmu_granted) begin
-                        // LSU请求
-                        arb_state <= ARB_LSU;
-                        arb_mmu_granted <= 1'b0;
-                    end
-                end
-                
-                ARB_MMU: begin
-                    // MMU操作完成
-                    if (icache_ifu_mmu_mem_rvalid_o) begin
-                        arb_state <= ARB_IDLE;
-                        arb_mmu_granted <= 1'b0;
-                    end
-                    // 注意：即使LSU有请求，也要等待MMU完成
-                end
-                
-                ARB_LSU: begin
-                    // LSU操作完成（读或写）
-                    if (lsu_read_ready || lsu_write_ready) begin
-                        arb_state <= ARB_IDLE;
-                    end
-                end
-                
-                default: begin
-                    arb_state <= ARB_IDLE;
-                    arb_mmu_granted <= 1'b0;
-                end
-            endcase
-        end
-    end
-    
-    // LSU是否需要内存
-    wire lsu_needs_mem = mem_addr_valid_o;
-    
-    // ============ 内存接口多路选择 ============
-    // 决定哪个模块控制内存接口
-    wire mmu_has_control = (arb_state == ARB_MMU);
-    wire lsu_has_control = (arb_state == ARB_LSU);
-    
-    // 内存地址
-    assign mem_addr_o = mmu_has_control ? icache_ifu_mmu_mem_addr_i : final_addr ;
-    
-    // 内存请求有效
-    assign mem_addr_valid_o = mmu_has_control ? icache_ifu_mmu_mem_req_i : lsu_mem_req;
-    
-    // LSU的原始内存请求
-    wire lsu_mem_req = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i);
-    
-    // 内存写使能
-    assign mem_write_valid_o = mmu_has_control ? 1'b0 : lsu_has_control ? store_valid & mem_addr_valid_o : 1'b0;
-    
-    // 内存写数据
-    assign mem_wdata_o = mmu_has_control ? 32'b0 :  // MMU不写数据
-            (_is_amo | _is_amo_store)? store_data : (
-            (addr_last2 == 2'b00) ? store_data :
-            (addr_last2 == 2'b01) ? {store_data[23:0], 8'b0} :
-            (addr_last2 == 2'b10) ? {store_data[15:0], 16'b0} :
-            {store_data[7:0], 24'b0}
-        );
-    
-    // 内存掩码
-    assign mem_mask_o = mmu_has_control ? 4'b1111 :  // MMU总是读32位
-                       (mem_write_valid_o ? wmask : rmask);
-    
-    // 内存大小
-    assign mem_size_o = mmu_has_control ? 4'b0100 :  // MMU总是读字
-                       ls_size;
-    
-    // ============ 响应数据路由 ============
-    // 给MMU的响应
-    assign icache_ifu_mmu_mem_rvalid_o = mmu_has_control ? mem_data_ready_i : 1'b0;
-    assign icache_ifu_mmu_mem_rdata_o = mem_rdata_i;
-    
-    // 给LSU的响应
-    wire lsu_read_ready = lsu_has_control ? mem_data_ready_i : 1'b0;
-    wire lsu_write_ready = lsu_has_control ? mem_wdata_ready_i : 1'b0;
-
-
-
-
-
-
-
-
-
-
-
 
     // ============ 原子操作状态机 ============
     localparam [1:0] AMO_IDLE = 2'b00;
@@ -323,7 +210,7 @@ always @(posedge clk or posedge rst) begin
     $display("  mem_addr_o = 0x%h", mem_addr_o);
     $display("  mem_addr_valid_o = %b", mem_addr_valid_o);
     $display("  mem_write_valid_o = %b", mem_write_valid_o);
-                if (lsu_read_ready) begin
+                if (mem_data_ready_i) begin
                     loaded_value <= mem_rdata_i;
                     $display("AMO_LOAD: loaded_value=%h, _amo_lr_w=%b", mem_rdata_i, _amo_lr_w);
                     
@@ -377,7 +264,7 @@ AMO_STORE: begin
     $display("  mem_wdata_o = 0x%h", mem_wdata_o);
     $display("  store_data = 0x%h", store_data);
     
-    if (lsu_write_ready) begin
+    if (mem_wdata_ready_i) begin
         $display("AMO_STORE: Storage completed successfully");
         if (_amo_sc_w) begin
             amo_result <= sc_success ? 32'b0 : 32'b1;
@@ -475,28 +362,26 @@ assign signed_greater_than =
                        (_amo_sc_w ? rs2_data_i : amo_calc_result) :
                        rs2_data_i;
     
-    // assign mem_addr_o = final_addr;
-    // assign mem_mask_o = mem_write_valid_o ? wmask : rmask;
+    assign mem_addr_o = final_addr;
+    assign mem_mask_o = mem_write_valid_o ? wmask : rmask;
     
     // 写数据生成
-    // assign mem_wdata_o = 
-    //     (_is_amo | _is_amo_store)? store_data : (
-    //         (addr_last2 == 2'b00) ? store_data :
-    //         (addr_last2 == 2'b01) ? {store_data[23:0], 8'b0} :
-    //         (addr_last2 == 2'b10) ? {store_data[15:0], 16'b0} :
-    //         {store_data[7:0], 24'b0}
-    //     );
-
+    assign mem_wdata_o = 
+        (_is_amo | _is_amo_store)? store_data : (
+            (addr_last2 == 2'b00) ? store_data :
+            (addr_last2 == 2'b01) ? {store_data[23:0], 8'b0} :
+            (addr_last2 == 2'b10) ? {store_data[15:0], 16'b0} :
+            {store_data[7:0], 24'b0}
+        );
 
     // 访存控制信号
     wire load_valid = (_isload | _amo_lr_w | (amo_mem_req & ~amo_mem_write));
     wire store_valid = (_isstore | _amo_sc_w | (amo_mem_req & amo_mem_write));
     
-    // assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i) | icache_ifu_mmu_mem_req_i;
-    // assign mem_write_valid_o = store_valid & mem_addr_valid_o;
+    assign mem_addr_valid_o = (load_valid | store_valid | ls_valid) & (~mem_data_ready_i) & (~clint_valid) &(~mem_wdata_ready_i);
+    assign mem_write_valid_o = store_valid & mem_addr_valid_o;
     assign ls_valid_o = ls_valid;
-    // assign mem_size_o = ls_size;
-
+    assign mem_size_o = ls_size;
 
     // 读数据处理
     wire [31:0] mem_rdata = mem_data_ready_i ? mem_rdata_i : 32'b0;

@@ -102,8 +102,7 @@ module mmu (
     assign mmu_paddr_o = (mmu_enable_i && tlb_hit) ? tlb_paddr : 
                         (mmu_enable_i && ptw_resp_valid) ? ptw_paddr : mmu_vaddr_i;
     
-    assign mmu_resp_valid_o = (!mmu_enable_i) ? mmu_req_valid_i :
-                             (tlb_hit || ptw_resp_valid);
+    assign mmu_resp_valid_o = (tlb_hit || ptw_resp_valid);
     
     assign mmu_page_fault_o = ptw_page_fault;
     

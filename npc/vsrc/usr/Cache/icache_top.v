@@ -34,11 +34,11 @@ module icache_top (
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
     
-    // 内存接口
-    output wire icache_ifu_mmu_mem_req_o,
-    output wire [31:0] icache_ifu_mmu_mem_addr_o,  // 内存地址 (32位)
-    input wire [31:0] icache_ifu_mmu_mem_rdata_i,  // 内存读数据 (32位)
-    input wire icache_ifu_mmu_mem_rvalid_i,
+    // // 内存接口
+    // output wire icache_ifu_mmu_mem_req_o,
+    // output wire [31:0] icache_ifu_mmu_mem_addr_o,  // 内存地址 (32位)
+    // input wire [31:0] icache_ifu_mmu_mem_rdata_i,  // 内存读数据 (32位)
+    // input wire icache_ifu_mmu_mem_rvalid_i,
     // 控制信号
     input wire mmu_flush_i,              // 刷新TLB/PTW  
 
@@ -127,7 +127,7 @@ module icache_top (
   localparam CACHE_LOOKUP = 4'd4;
   localparam CACHE_REFILL = 4'd5;
   localparam CACHE_MMU_TRANS = 4'd6;
-
+  localparam CACHE_MMU_MEM = 4'd7;
 
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
@@ -187,14 +187,18 @@ mmu icache_mmu (
   
     
     // 内存接口（用于页表遍历）
-    .mmu_mem_req_o(icache_ifu_mmu_mem_req_o),
-    .mmu_mem_addr_o(icache_ifu_mmu_mem_addr_o),
-    .mmu_mem_rdata_i(icache_ifu_mmu_mem_rdata_i),
-    .mmu_mem_rvalid_i(icache_ifu_mmu_mem_rvalid_i),
+    .mmu_mem_req_o(icache_mmu_mem_req),
+    .mmu_mem_addr_o(icache_mmu_mem_addr),
+    .mmu_mem_rdata_i(icache_mmu_mem_rdata),
+    .mmu_mem_rvalid_i(icache_mmu_mem_rvalid),
 
     // 控制信号
     .mmu_flush_i(mmu_flush_i)
 );
+reg icache_mmu_mem_req;
+reg[31:0] icache_mmu_mem_addr;
+reg[31:0] icache_mmu_mem_rdata;
+reg icache_mmu_mem_rvalid;
 
 reg mmu_translation_done;
 reg [`XLEN-1:0] last_vaddr;
@@ -247,14 +251,22 @@ reg [`XLEN-1:0] last_vaddr;
         end
         CACHE_MMU_TRANS:begin
           if(mmu_enable_i) begin
-          vaddr_reg <= preif_raddr_i;
+           vaddr_reg <= preif_raddr_i;
            if (last_vaddr != preif_raddr_i) begin
               // 地址已改变，需要重新开始
               last_vaddr <= preif_raddr_i;
               mmu_translation_done <= 1'b0;
             end
 
-          if(mmu_resp_valid) begin
+          if(icache_mmu_mem_req) begin
+             icache_state <= CACHE_MMU_MEM;
+            _ram_raddr_icache_o       <= icache_mmu_mem_addr;// 读地址
+            _ram_raddr_valid_icache_o <= 1;  // 地址有效
+            _ram_rmask_icache_o       <= 4'b_1111;  // 读掩码
+            _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
+            _ram_rlen_icache_o        <= 8'd0;  // 不突发
+          end
+          else if(mmu_resp_valid) begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
               pc_addr <= paddr_trans;
               mmu_translation_done <= 1'b1;  // 标记转换完成
@@ -279,6 +291,16 @@ reg [`XLEN-1:0] last_vaddr;
           icache_state <= CACHE_LOOKUP;
           end
         end
+
+        CACHE_MMU_MEM: begin
+          if (ram_r_handshake) begin
+            _ram_raddr_valid_icache_o <= 0;
+            icache_mmu_mem_rdata <= ram_rdata_icache_i[31:0]; // 直接取低32位
+            icache_mmu_mem_rvalid <= 1;
+            icache_state <= CACHE_MMU_TRANS;
+          end
+        end
+
         CACHE_LOOKUP: begin
 // `ifndef YSYX_SOC 
 //             icache_unhit_count();

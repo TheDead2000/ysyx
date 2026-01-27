@@ -170,7 +170,7 @@ ifu ifu (
   .cross_inst_valid_i(cross_inst_valid),
   .csr_ifu_unstall_i(csr_ifu_unstall),
   .csr_satp_flush_o(csr_satp_flush),
-  
+
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
@@ -726,12 +726,6 @@ lsu lsu (
       .clint_wdata_o(clint_wdata),
       .clint_rdata_i(clint_rdata),
 
-      //mmu
-      .icache_ifu_mmu_mem_req_i(icache_ifu_mmu_mem_req),
-      .icache_ifu_mmu_mem_addr_i(icache_ifu_mmu_mem_addr),
-      .icache_ifu_mmu_mem_rdata_o(icache_ifu_mmu_mem_rdata),
-      .icache_ifu_mmu_mem_rvalid_o(icache_ifu_mmu_mem_rvalid),
-
 
       // TARP 总线
       .trap_bus_i     (trap_bus_ex_mem),
@@ -1106,12 +1100,7 @@ wire [7:0] icache_arb_rlen;
       .mmu_satp_ppn_i(csr_satp_ppn),
       .mmu_mxr_i(csr_mxr),
       .mmu_sum_i(csr_sum),
-      // 内存接口
-      .icache_ifu_mmu_mem_req_o(icache_ifu_mmu_mem_req),      // 内存请求
-      .icache_ifu_mmu_mem_addr_o(icache_ifu_mmu_mem_addr),    // 内存地址 (32位)
 
-      .icache_ifu_mmu_mem_rdata_i(icache_ifu_mmu_mem_rdata),  // 内存读数据 (32位)
-      .icache_ifu_mmu_mem_rvalid_i(icache_ifu_mmu_mem_rvalid),
       // 控制信号
       .mmu_flush_i(1'b0),              // 刷新TLB/PTW  
 
