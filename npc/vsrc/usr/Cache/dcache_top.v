@@ -101,7 +101,7 @@ module dcache_top (
   wire [5:0] cache_blk_addr;  // 保持不变
   wire [6:0] cache_line_idx;  // 7位
   wire [18:0] cache_line_tag; // 19位
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mem_addr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? mem_trans_addr : mem_addr_i;
 
 
   wire dcache_hit;
