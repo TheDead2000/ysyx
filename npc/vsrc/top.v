@@ -1176,6 +1176,19 @@ wire [7:0] icache_arb_rlen;
       .mem_size_i(mem_size),
       // dcache 读数据是否准备好(未准备好需要暂停流水线)
 
+
+      .mmu_enable_i(csr_enable_sv32),
+      .mmu_satp_ppn_i(csr_satp_ppn),
+      .mmu_mxr_i(csr_mxr),
+      .mmu_sum_i(csr_sum),
+      // 控制信号
+      .mmu_flush_i(1'b0),              // 刷新TLB/PTW  
+
+
+
+
+
+
     // axi4_arb 接口
     .ram_waddr_dcache_o(dcache_arb_awaddr),
     .ram_waddr_valid_dcache_o(dcache_arb_awvalid),

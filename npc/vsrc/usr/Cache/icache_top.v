@@ -33,13 +33,6 @@ module icache_top (
 
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
-    
-    // // 内存接口
-    // output wire icache_ifu_mmu_mem_req_o,
-    // output wire [31:0] icache_ifu_mmu_mem_addr_o,  // 内存地址 (32位)
-    // input wire [31:0] icache_ifu_mmu_mem_rdata_i,  // 内存读数据 (32位)
-    // input wire icache_ifu_mmu_mem_rvalid_i,
-    // 控制信号
     input wire mmu_flush_i,              // 刷新TLB/PTW  
 
 
@@ -163,6 +156,12 @@ reg [`XLEN-1:0] vaddr_reg;
 reg [31:0] paddr_trans;
 wire mmu_resp_valid;
 wire mmu_page_fault;
+reg icache_mmu_mem_req;
+reg[31:0] icache_mmu_mem_addr;
+reg[31:0] icache_mmu_mem_rdata;
+reg icache_mmu_mem_rvalid;
+reg mmu_translation_done;
+reg [`XLEN-1:0] last_vaddr;
 
 mmu icache_mmu (
     .clk(clk),
@@ -195,13 +194,9 @@ mmu icache_mmu (
     // 控制信号
     .mmu_flush_i(mmu_flush_i)
 );
-reg icache_mmu_mem_req;
-reg[31:0] icache_mmu_mem_addr;
-reg[31:0] icache_mmu_mem_rdata;
-reg icache_mmu_mem_rvalid;
 
-reg mmu_translation_done;
-reg [`XLEN-1:0] last_vaddr;
+
+
   always @(posedge clk) begin
     if (rst) begin
       icache_state              <= CACHE_RST;

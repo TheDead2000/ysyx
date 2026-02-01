@@ -27,15 +27,13 @@ module dcache_top (
     output mem_data_ready_o,  // dcache 读数据是否准备好(未准备好需要暂停流水线)
     output mem_wdata_ready_o,
    
-   
-   
-    //    // CSR 配置
-    // input wire mmu_enable_i,            // 分页使能
-    // input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
+       // CSR 配置
+    input wire mmu_enable_i,            // 分页使能
+    input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
 
-    // input wire mmu_mxr_i,               // Make eXecutable Readable
-    // input wire mmu_sum_i,               // Supervisor User Memory access]
-    // input wire mmu_flush_i,              // 刷新TLB/PTW  
+    input wire mmu_mxr_i,               // Make eXecutable Readable
+    input wire mmu_sum_i,               // Supervisor User Memory access]
+    input wire mmu_flush_i,              // 刷新TLB/PTW  
    
    
     /* dcache<-->mem 端口 */
@@ -168,37 +166,54 @@ module dcache_top (
   wire ram_r_handshake = _ram_raddr_valid_dcache_o & ram_rdata_ready_dcache_i;
   wire ram_w_handshake = _ram_waddr_valid_dcache_o & ram_wdata_ready_dcache_i;
 
-// mmu icache_mmu (
-//     .clk(clk),
-//     .rst(rst),
+
+
+//mmu
+reg [`XLEN-1:0] vaddr_reg;
+reg [31:0] paddr_trans;
+wire mmu_resp_valid;
+wire mmu_page_fault;
+reg [31:0] mem_trans_addr;
+
+reg dcache_mmu_mem_req;
+reg[31:0] dcache_mmu_mem_addr;
+reg[31:0] dcache_mmu_mem_rdata;
+reg dcache_mmu_mem_rvalid;
+
+reg mmu_translation_done;
+reg [`XLEN-1:0] last_vaddr;
+
+mmu dcache_mmu (
+    .clk(clk),
+    .rst(rst),
     
-//     // 请求接口
-//     .mmu_vaddr_i(vaddr_reg),
-//     .mmu_req_valid_i(icache_state == CACHE_MMU_TRANS),
-//     .mmu_is_store_i(1'b0),      // 指令读取，非存储
-//     .mmu_is_inst_i(1'b1),       // 指令访问
+    // 请求接口
+    .mmu_vaddr_i(vaddr_reg),
+    .mmu_req_valid_i(dcache_state == CACHE_MMU_TRANS),
+    .mmu_is_store_i(1'b0),      // 指令读取，非存储
+    .mmu_is_inst_i(1'b1),       // 指令访问
     
-//     // 响应接口
-//     .mmu_paddr_o(paddr_trans),
-//     .mmu_resp_valid_o(mmu_resp_valid),
-//     .mmu_page_fault_o(mmu_page_fault),
+    // 响应接口
+    .mmu_paddr_o(paddr_trans),
+    .mmu_resp_valid_o(mmu_resp_valid),
+    .mmu_page_fault_o(mmu_page_fault),
     
-//     // CSR配置
-//     .mmu_enable_i(mmu_enable_i),
-//     .mmu_satp_ppn_i(mmu_satp_ppn_i),
-//     .mmu_mxr_i(mmu_mxr_i),
-//     .mmu_sum_i(mmu_sum_i),
+    // CSR配置
+    .mmu_enable_i(mmu_enable_i),
+    .mmu_satp_ppn_i(mmu_satp_ppn_i),
+    .mmu_mxr_i(mmu_mxr_i),
+    .mmu_sum_i(mmu_sum_i),
   
     
-//     // 内存接口（用于页表遍历）
-//     .mmu_mem_req_o(dcache_mmu_mem_req),
-//     .mmu_mem_addr_o(dcache_mmu_mem_addr),
-//     .mmu_mem_rdata_i(dcache_mmu_mem_rdata),
-//     .mmu_mem_rvalid_i(dcache_mmu_mem_rvalid),
+    // 内存接口（用于页表遍历）
+    .mmu_mem_req_o(dcache_mmu_mem_req),
+    .mmu_mem_addr_o(dcache_mmu_mem_addr),
+    .mmu_mem_rdata_i(dcache_mmu_mem_rdata),
+    .mmu_mem_rvalid_i(dcache_mmu_mem_rvalid),
 
-//     // 控制信号
-//     .mmu_flush_i(mmu_flush_i)
-// );
+    // 控制信号
+    .mmu_flush_i(mmu_flush_i)
+);
 
 
   always @(posedge clk) begin
@@ -235,66 +250,60 @@ module dcache_top (
         CACHE_RST: begin
           dcache_state <= CACHE_IDLE;
         end
-        // CACHE_MMU_TRANS:begin
-        //   if(mmu_enable_i) begin
-        //    vaddr_reg <= mem_addr_i;
-        //    dcache_mmu_mem_rvalid <= 0;
-        //    if (last_vaddr != mem_addr_i) begin
-        //       // 地址已改变，需要重新开始
-        //       last_vaddr <= mem_addr_i;
-        //       mmu_translation_done <= 1'b0;
-        //     end
+        CACHE_MMU_TRANS:begin
+          if(mmu_enable_i) begin
+           vaddr_reg <= mem_addr_i;
+           dcache_mmu_mem_rvalid <= 0;
+           if (last_vaddr != mem_addr_i) begin
+              // 地址已改变，需要重新开始
+              last_vaddr <= mem_addr_i;
+              mmu_translation_done <= 1'b0;
+            end
 
-        //   if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
-        //      icache_state <= CACHE_MMU_MEM;
-        //     _ram_raddr_dcache_o       <= dcache_mmu_mem_addr;// 读地址
-        //     _ram_raddr_valid_dcache_o <= 1;  // 地址有效
-        //     _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
-        //     _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32bit,一条指令
-        //     _ram_rlen_dcache_o        <= 8'd0;  // 不突发
-        //   end
-        //   else if(mmu_resp_valid) begin
-        //       // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
-        //       pc_addr <= paddr_trans;
-        //       mmu_translation_done <= 1'b1;  // 标记转换完成
-        //       $display("trans addr: %h",paddr_trans);
-        //       blk_addr_reg <= cache_blk_addr;
-        //       line_idx_reg <= cache_line_idx;
-        //       line_tag_reg <= cache_line_tag;
-              
-        //       next_blk_addr_reg         <= next_cache_blk_addr;
-        //       next_line_idx_reg         <= next_cache_line_idx;
-        //       next_line_tag_reg         <= next_cache_line_tag;
-        //       icache_state <= CACHE_LOOKUP;
-        //     end
-        //     else begin
-        //      icache_state <= CACHE_MMU_TRANS;
-        //     end
-        //   end
-        //   else begin
-        //   blk_addr_reg <= cache_blk_addr;
-        //   line_idx_reg <= cache_line_idx;
-        //   line_tag_reg <= cache_line_tag;
-
-        //   next_blk_addr_reg         <= next_cache_blk_addr;
-        //   next_line_idx_reg         <= next_cache_line_idx;
-        //   next_line_tag_reg         <= next_cache_line_tag;
-        //   icache_state <= CACHE_LOOKUP;
-        //   end
-        // end
-
+          if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
+             dcache_state <= CACHE_MMU_MEM;
+            _ram_raddr_dcache_o       <= dcache_mmu_mem_addr;// 读地址
+            _ram_raddr_valid_dcache_o <= 1;  // 地址有效
+            _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
+            _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32bit,一条指令
+            _ram_rlen_dcache_o        <= 8'd0;  // 不突发
+          end
+          else if(mmu_resp_valid) begin
+              // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
+              mem_trans_addr <= paddr_trans;
+              mmu_translation_done <= 1'b1;  // 标记转换完成
+              $display("dcache trans addr: %h",paddr_trans);
+              dcache_state <= CACHE_IDLE;
+            end
+            else begin
+             dcache_state <= CACHE_MMU_TRANS;
+            end
+          end
+      else begin
+        dcache_state <= CACHE_IDLE;
+        end
+      end
+      
+      CACHE_MMU_MEM: begin
+          if (ram_r_handshake) begin
+            _ram_raddr_valid_dcache_o <= 0;
+            dcache_mmu_mem_rdata <= ram_rdata_dcache_i[31:0]; // 直接取低32位
+            dcache_mmu_mem_rvalid <= 1;
+            dcache_state <= CACHE_MMU_TRANS;
+          end
+        end
 
 
         CACHE_IDLE: begin
 
-          // if (mmu_enable_i) begin
-          //     if (mem_addr_valid_i && mem_addr_i != last_vaddr) begin
-          //     vaddr_reg <= mem_addr_i;
-          //     last_vaddr <= mem_addr_i;
-          //     mmu_translation_done <= 1'b0;
-          //     dcache_state <= CACHE_MMU_TRANS;
-          //   end 
-          // end
+          if (mmu_enable_i) begin
+              if (mem_addr_valid_i && mem_addr_i != last_vaddr) begin
+              vaddr_reg <= mem_addr_i;
+              last_vaddr <= mem_addr_i;
+              mmu_translation_done <= 1'b0;
+              dcache_state <= CACHE_MMU_TRANS;
+            end 
+          end
 
           blk_addr_reg <= cache_blk_addr;
           // line_tag_reg <= cache_line_tag;
@@ -583,7 +592,7 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
                           | ({128{state_writehit}} & dcache_wdata_writehit);
 
 
-  wire dcache_wwen = (state_readmiss & ram_r_handshake) | (state_writehit & dcache_data_wen);
+  wire dcache_wwen = ( (state_readmiss & ram_r_handshake) | (state_writehit & dcache_data_wen) ) & (dcache_state != CACHE_MMU_MEM );
 
 
   wire dirty_bit_write = _dirty_bit_write;
