@@ -1186,9 +1186,6 @@ wire [7:0] icache_arb_rlen;
 
 
 
-
-
-
     // axi4_arb 接口
     .ram_waddr_dcache_o(dcache_arb_awaddr),
     .ram_waddr_valid_dcache_o(dcache_arb_awvalid),
