@@ -295,7 +295,7 @@ mmu dcache_mmu (
 
 
         CACHE_IDLE: begin
-
+          last_vaddr <= mem_addr_i; 
           if (mmu_enable_i) begin
               if (mem_addr_valid_i && mem_addr_i != last_vaddr) begin
               vaddr_reg <= mem_addr_i;
