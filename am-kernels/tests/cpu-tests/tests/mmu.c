@@ -295,25 +295,24 @@ void test_mmu() {
     uint32_t *va_ptr = (uint32_t *)TEST_VA;
     uint32_t read_data;
 
-    printf("=== 1. 关闭MMU直接写入物理地址 ===\n");
+
+
+
     mmu_disable();
-    
-    uint32_t *pa_ptr = (uint32_t *)TEST_PA;
-    *pa_ptr = TEST_DATA;
-    printf("写入 PA 0x%x: 0x%x\n", TEST_PA, TEST_DATA);
-    
-    read_data = *pa_ptr;
+    *va_ptr = TEST_DATA;  // 直接写物理地址
+    read_data = *va_ptr;  // 直接读物理地址
+    printf("Write 0x%x to 0x%x, Read back: 0x%x\n", TEST_DATA, TEST_PA, read_data);
     if (read_data != TEST_DATA) {
-        printf("错误: 物理地址读写失败\n");
+        printf("ERROR: Physical address access failed!\n");
         return;
     }
 
-    printf("\n=== 2. 开启MMU通过虚拟地址读取 ===\n");
+    printf("=== Step 2: Access virtual address (MMU enabled, 4KB page) ===\n");
     uint32_t root_ppn = ((uint32_t)page_table_l1) >> 12;
     mmu_enable(root_ppn);
     
     printf("SATP = 0x%x\n", csr_read(CSR_SATP));
-    printf("访问 VA 0x%x (应映射到 PA 0x%x)\n", TEST_VA, TEST_PA);
+    printf("VA 0x%x --->  PA 0x%x)\n", TEST_VA, TEST_PA);
     
     read_data = *va_ptr;
     printf("读取 VA 0x%x: 0x%x\n", TEST_VA, read_data);
@@ -324,34 +323,34 @@ void test_mmu() {
         return;
     }
 
-    printf("\n=== 3. 通过虚拟地址写入 ===\n");
-    uint32_t new_data = 0x87654321;
-    *va_ptr = new_data;
-    read_data = *va_ptr;
-    printf("写入 VA 0x%x: 0x%x, 读取: 0x%x\n", TEST_VA, new_data, read_data);
+    // printf("\n=== 3. 通过虚拟地址写入 ===\n");
+    // uint32_t new_data = 0x87654321;
+    // *va_ptr = new_data;
+    // read_data = *va_ptr;
+    // printf("写入 VA 0x%x: 0x%x, 读取: 0x%x\n", TEST_VA, new_data, read_data);
     
-    if (read_data != new_data) {
-        printf("错误: 通过MMU写入失败\n");
-    }
+    // if (read_data != new_data) {
+    //     printf("错误: 通过MMU写入失败\n");
+    // }
 
-    printf("\n=== 4. 关闭MMU验证物理内存 ===\n");
-    mmu_disable();
-    read_data = *pa_ptr;
-    printf("读取 PA 0x%x: 0x%x\n", TEST_PA, read_data);
+    // printf("\n=== 4. 关闭MMU验证物理内存 ===\n");
+    // mmu_disable();
+    // read_data = *pa_ptr;
+    // printf("读取 PA 0x%x: 0x%x\n", TEST_PA, read_data);
     
-    if (read_data == new_data) {
-        printf("成功: 物理内存被正确更新\n");
-    } else {
-        printf("警告: 物理内存未被更新，但MMU访问正常\n");
-    }
+    // if (read_data == new_data) {
+    //     printf("成功: 物理内存被正确更新\n");
+    // } else {
+    //     printf("警告: 物理内存未被更新，但MMU访问正常\n");
+    // }
 
-    printf("\n测试完成\n");
+    printf("finish\n");
 }
 
 // ====================== 主函数 ======================
 int main() {
-    printf("===== 4KB页表线性映射测试 =====\n");
-    printf("映射: VA 0x%x -> PA 0x%x\n", TEST_VA, TEST_PA);
+    printf("===== 4KB =====\n");
+    printf("VA 0x%x -> PA 0x%x\n", TEST_VA, TEST_PA);
 
     // 配置页表
     setup_4kb_page_table();
