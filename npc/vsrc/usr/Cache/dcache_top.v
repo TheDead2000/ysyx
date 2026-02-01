@@ -254,11 +254,6 @@ mmu dcache_mmu (
           if(mmu_enable_i) begin
            vaddr_reg <= mem_addr_i;
            dcache_mmu_mem_rvalid <= 0;
-           if (last_vaddr != mem_addr_i) begin
-              // 地址已改变，需要重新开始
-              last_vaddr <= mem_addr_i;
-              mmu_translation_done <= 1'b0;
-            end
 
           if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
              dcache_state <= CACHE_MMU_MEM;
@@ -295,11 +290,9 @@ mmu dcache_mmu (
 
 
         CACHE_IDLE: begin
-          last_vaddr <= mem_addr_i; 
           if (mmu_enable_i) begin
-              if (mem_addr_valid_i && mem_addr_i != last_vaddr) begin
+              if (mem_addr_valid_i) begin
               vaddr_reg <= mem_addr_i;
-              last_vaddr <= mem_addr_i;
               mmu_translation_done <= 1'b0;
               dcache_state <= CACHE_MMU_TRANS;
             end 
