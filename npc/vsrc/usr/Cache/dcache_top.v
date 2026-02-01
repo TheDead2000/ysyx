@@ -123,7 +123,7 @@ module dcache_top (
   localparam UNCACHE_WRITE = 4'd9;
   localparam CACHE_MMU_TRANS = 4'd10;
   localparam CACHE_MMU_MEM = 4'd11;
-
+  localparam CACHE_LOOKUP = 4'd12;
   reg [3:0] dcache_state;
 
 
@@ -244,12 +244,21 @@ mmu dcache_mmu (
       dcache_wmask_writehit <= 0;
       _ram_raddr_dcache_o <= 0;
       _ram_wmask_dcache_o <= 0;
-
+      mmu_translation_done <= 0;
     end else begin
       case (dcache_state)
         CACHE_RST: begin
           dcache_state <= CACHE_IDLE;
         end
+
+      CACHE_IDLE:begin
+        mmu_translation_done <= 1'b0;
+        last_vaddr <= mem_addr_i; 
+        if (mem_addr_valid_i) begin
+            dcache_state <= CACHE_MMU_TRANS;
+        end
+      end
+
         CACHE_MMU_TRANS:begin
           if(mmu_enable_i) begin
            vaddr_reg <= mem_addr_i;
@@ -268,14 +277,14 @@ mmu dcache_mmu (
               mem_trans_addr <= paddr_trans;
               mmu_translation_done <= 1'b1;  // 标记转换完成
               $display("dcache trans addr: %h",paddr_trans);
-              dcache_state <= CACHE_IDLE;
+              dcache_state <= CACHE_LOOKUP;
             end
             else begin
              dcache_state <= CACHE_MMU_TRANS;
             end
           end
       else begin
-        dcache_state <= CACHE_IDLE;
+        dcache_state <= CACHE_LOOKUP;
         end
       end
       
@@ -289,14 +298,7 @@ mmu dcache_mmu (
         end
 
 
-        CACHE_IDLE: begin
-          if (mmu_enable_i) begin
-              if (mem_addr_valid_i) begin
-              vaddr_reg <= mem_addr_i;
-              mmu_translation_done <= 1'b0;
-              dcache_state <= CACHE_MMU_TRANS;
-            end 
-          end
+        CACHE_LOOKUP: begin
 
           blk_addr_reg <= cache_blk_addr;
           // line_tag_reg <= cache_line_tag;
@@ -680,6 +682,18 @@ wire [127:0] dcache_wdata = ({128{state_readmiss}} & dcache_wdate_readmiss)
   
 endmodule
 
+
+          // if (mmu_enable_i) begin
+          //       if (last_vaddr != mem_addr_i) begin
+          //     // 地址已改变，需要重新开始
+          //     last_vaddr <= mem_addr_i;
+          //     mmu_translation_done <= 1'b0;
+          //   end
+          //     vaddr_reg <= mem_addr_i; 
+          //     dcache_state <= CACHE_MMU_TRANS;
+          //   end 
+          // end
+          // else 
 
 
 // module dcache_top (
