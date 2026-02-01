@@ -210,7 +210,7 @@ module ptw (
         end
     end
     
-    // 输出逻辑（修改后）
+    // 输出逻辑
     assign ptw_busy_o = (state != STATE_IDLE);
     assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
     // assign ptw_resp_valid_o = (state == STATE_IDLE) && 
@@ -221,7 +221,7 @@ module ptw (
     assign ptw_mem_req_o = (state == STATE_WAIT_PTE);
     assign ptw_mem_addr_o = pte_ptr;
     
-    // TLB 更新（修改后）
+    // TLB 更新
     assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE)  && !ptw_tlb_hit_i;
     assign ptw_tlb_update_vpn_o = vpn; // 20位VPN（VPN1+VPN0）
     assign ptw_tlb_update_pte_o = pte_reg;

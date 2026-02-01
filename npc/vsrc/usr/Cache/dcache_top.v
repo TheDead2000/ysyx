@@ -26,6 +26,18 @@ module dcache_top (
     output [`XLEN-1:0] mem_rdata_o,  // dcache 返回读数据
     output mem_data_ready_o,  // dcache 读数据是否准备好(未准备好需要暂停流水线)
     output mem_wdata_ready_o,
+   
+   
+   
+    //    // CSR 配置
+    // input wire mmu_enable_i,            // 分页使能
+    // input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
+
+    // input wire mmu_mxr_i,               // Make eXecutable Readable
+    // input wire mmu_sum_i,               // Supervisor User Memory access]
+    // input wire mmu_flush_i,              // 刷新TLB/PTW  
+   
+   
     /* dcache<-->mem 端口 */
     // 读端口
     output [`XLEN-1:0] ram_raddr_dcache_o,
@@ -111,6 +123,8 @@ module dcache_top (
   localparam CACHE_WRITE_MISS = 4'd7;
   localparam UNCACHE_READ = 4'd8;
   localparam UNCACHE_WRITE = 4'd9;
+  localparam CACHE_MMU_TRANS = 4'd10;
+  localparam CACHE_MMU_MEM = 4'd11;
 
   reg [3:0] dcache_state;
 
@@ -154,6 +168,43 @@ module dcache_top (
   wire ram_r_handshake = _ram_raddr_valid_dcache_o & ram_rdata_ready_dcache_i;
   wire ram_w_handshake = _ram_waddr_valid_dcache_o & ram_wdata_ready_dcache_i;
 
+
+
+
+
+// mmu icache_mmu (
+//     .clk(clk),
+//     .rst(rst),
+    
+//     // 请求接口
+//     .mmu_vaddr_i(vaddr_reg),
+//     .mmu_req_valid_i(icache_state == CACHE_MMU_TRANS),
+//     .mmu_is_store_i(1'b0),      // 指令读取，非存储
+//     .mmu_is_inst_i(1'b1),       // 指令访问
+    
+//     // 响应接口
+//     .mmu_paddr_o(paddr_trans),
+//     .mmu_resp_valid_o(mmu_resp_valid),
+//     .mmu_page_fault_o(mmu_page_fault),
+    
+//     // CSR配置
+//     .mmu_enable_i(mmu_enable_i),
+//     .mmu_satp_ppn_i(mmu_satp_ppn_i),
+//     .mmu_mxr_i(mmu_mxr_i),
+//     .mmu_sum_i(mmu_sum_i),
+  
+    
+//     // 内存接口（用于页表遍历）
+//     .mmu_mem_req_o(dcache_mmu_mem_req),
+//     .mmu_mem_addr_o(dcache_mmu_mem_addr),
+//     .mmu_mem_rdata_i(dcache_mmu_mem_rdata),
+//     .mmu_mem_rvalid_i(dcache_mmu_mem_rvalid),
+
+//     // 控制信号
+//     .mmu_flush_i(mmu_flush_i)
+// );
+
+
   always @(posedge clk) begin
     if (rst) begin
       dcache_state <= CACHE_RST;
@@ -188,7 +239,66 @@ module dcache_top (
         CACHE_RST: begin
           dcache_state <= CACHE_IDLE;
         end
+
+        CACHE_MMU_TRANS:begin
+        
+        
+        end
+
+
+
         CACHE_IDLE: begin
+
+        // CACHE_MMU_TRANS:begin
+        //   if(mmu_enable_i) begin
+        //    vaddr_reg <= mem_addr_i;
+        //    dcache_mmu_mem_rvalid <= 0;
+        //    if (last_vaddr != mem_addr_i) begin
+        //       // 地址已改变，需要重新开始
+        //       last_vaddr <= mem_addr_i;
+        //       mmu_translation_done <= 1'b0;
+        //     end
+
+        //   if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
+        //      icache_state <= CACHE_MMU_MEM;
+        //     _ram_raddr_dcache_o       <= icache_mmu_mem_addr;// 读地址
+        //     _ram_raddr_valid_dcache_o <= 1;  // 地址有效
+        //     _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
+        //     _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32bit,一条指令
+        //     _ram_rlen_dcache_o        <= 8'd0;  // 不突发
+        //   end
+        //   else if(mmu_resp_valid) begin
+        //       // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
+        //       pc_addr <= paddr_trans;
+        //       mmu_translation_done <= 1'b1;  // 标记转换完成
+        //       $display("trans addr: %h",paddr_trans);
+        //       blk_addr_reg <= cache_blk_addr;
+        //       line_idx_reg <= cache_line_idx;
+        //       line_tag_reg <= cache_line_tag;
+              
+        //       next_blk_addr_reg         <= next_cache_blk_addr;
+        //       next_line_idx_reg         <= next_cache_line_idx;
+        //       next_line_tag_reg         <= next_cache_line_tag;
+        //       icache_state <= CACHE_LOOKUP;
+        //     end
+        //     else begin
+        //      icache_state <= CACHE_MMU_TRANS;
+        //     end
+        //   end
+        //   else begin
+        //   blk_addr_reg <= cache_blk_addr;
+        //   line_idx_reg <= cache_line_idx;
+        //   line_tag_reg <= cache_line_tag;
+
+        //   next_blk_addr_reg         <= next_cache_blk_addr;
+        //   next_line_idx_reg         <= next_cache_line_idx;
+        //   next_line_tag_reg         <= next_cache_line_tag;
+        //   icache_state <= CACHE_LOOKUP;
+        //   end
+        // end
+
+
+
           blk_addr_reg <= cache_blk_addr;
           // line_tag_reg <= cache_line_tag;
           _dirty_flush <= 0;
