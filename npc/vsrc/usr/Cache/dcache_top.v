@@ -253,6 +253,18 @@ mmu dcache_mmu (
         end
 
       CACHE_IDLE:begin
+        
+        dcache_data_ready <= 0;
+        dcache_wdata_ready <= 0;
+        _ram_raddr_valid_dcache_o <= 0;
+        _ram_waddr_valid_dcache_o <= 0;
+        dcache_tag_wen <= 0;
+        dcache_data_wen <= 0;
+        _dirty_bit_write <= 0;
+        dcache_wdata_writehit <= 0;
+        dcache_write_hit_valid <= 0;  //写信号
+
+
         mmu_translation_done <= 1'b0;
         last_vaddr <= mem_addr_i; 
         if (mem_addr_valid_i) begin
