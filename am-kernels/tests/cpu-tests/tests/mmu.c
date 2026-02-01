@@ -237,14 +237,14 @@ static inline void csr_write(uint32_t csr, uint32_t val) {
 // 关闭MMU
 static inline void mmu_disable() {
     csr_write(CSR_SATP, 0);
-    __asm__ volatile ("sfence.vma");
+    // __asm__ volatile ("sfence.vma");
 }
 
 // 开启MMU
 static inline void mmu_enable(uint32_t root_ppn) {
     uint32_t satp = SATP_MODE_SV32 | root_ppn;
     csr_write(CSR_SATP, satp);
-    __asm__ volatile ("sfence.vma");
+    // __asm__ volatile ("sfence.vma");
 }
 
 // ====================== 异常处理函数 ======================
@@ -295,7 +295,7 @@ void test_mmu() {
     uint32_t *va_ptr = (uint32_t *)TEST_VA;
     uint32_t read_data;
 
-    printf("\n=== 1. 关闭MMU，直接写入物理地址 ===\n");
+    printf("=== 1. 关闭MMU直接写入物理地址 ===\n");
     mmu_disable();
     
     uint32_t *pa_ptr = (uint32_t *)TEST_PA;
@@ -308,7 +308,7 @@ void test_mmu() {
         return;
     }
 
-    printf("\n=== 2. 开启MMU，通过虚拟地址读取 ===\n");
+    printf("\n=== 2. 开启MMU通过虚拟地址读取 ===\n");
     uint32_t root_ppn = ((uint32_t)page_table_l1) >> 12;
     mmu_enable(root_ppn);
     
