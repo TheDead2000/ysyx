@@ -111,8 +111,8 @@ module icache_top (
 
   reg [31:0] pc_addr;
 
-  // assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? pc_addr : preif_raddr_i;
-   assign {cache_line_tag, cache_line_idx, cache_blk_addr} =  preif_raddr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? pc_addr : preif_raddr_i;
+  //  assign {cache_line_tag, cache_line_idx, cache_blk_addr} =  preif_raddr_i;
 
   wire icache_hit;
   wire next_icache_hit;

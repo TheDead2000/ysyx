@@ -168,10 +168,6 @@ module dcache_top (
   wire ram_r_handshake = _ram_raddr_valid_dcache_o & ram_rdata_ready_dcache_i;
   wire ram_w_handshake = _ram_waddr_valid_dcache_o & ram_wdata_ready_dcache_i;
 
-
-
-
-
 // mmu icache_mmu (
 //     .clk(clk),
 //     .rst(rst),
@@ -239,16 +235,6 @@ module dcache_top (
         CACHE_RST: begin
           dcache_state <= CACHE_IDLE;
         end
-
-        CACHE_MMU_TRANS:begin
-        
-        
-        end
-
-
-
-        CACHE_IDLE: begin
-
         // CACHE_MMU_TRANS:begin
         //   if(mmu_enable_i) begin
         //    vaddr_reg <= mem_addr_i;
@@ -261,7 +247,7 @@ module dcache_top (
 
         //   if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
         //      icache_state <= CACHE_MMU_MEM;
-        //     _ram_raddr_dcache_o       <= icache_mmu_mem_addr;// 读地址
+        //     _ram_raddr_dcache_o       <= dcache_mmu_mem_addr;// 读地址
         //     _ram_raddr_valid_dcache_o <= 1;  // 地址有效
         //     _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
         //     _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32bit,一条指令
@@ -298,6 +284,17 @@ module dcache_top (
         // end
 
 
+
+        CACHE_IDLE: begin
+
+          // if (mmu_enable_i) begin
+          //     if (mem_addr_valid_i && mem_addr_i != last_vaddr) begin
+          //     vaddr_reg <= mem_addr_i;
+          //     last_vaddr <= mem_addr_i;
+          //     mmu_translation_done <= 1'b0;
+          //     dcache_state <= CACHE_MMU_TRANS;
+          //   end 
+          // end
 
           blk_addr_reg <= cache_blk_addr;
           // line_tag_reg <= cache_line_tag;
