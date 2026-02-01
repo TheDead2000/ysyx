@@ -314,7 +314,7 @@ mmu dcache_mmu (
 `ifndef YSYX_SOC
                 dcache_hit_count();
 `endif
-                dcache_state <= CACHE_LOOKUP;
+                dcache_state <= CACHE_IDLE;
                 //写 cache
                 dcache_data_wen <= 1;
                 dcache_wdata_ready <= 1;  // 完成信号
@@ -331,7 +331,7 @@ mmu dcache_mmu (
                 dcache_hit_count();
 `endif
                 dcache_data_ready <= 1;
-                dcache_state <= CACHE_LOOKUP;
+                dcache_state <= CACHE_IDLE;
               end
               2'b00, 2'b01: begin : miss_allocate  // miss 时 分配 cache，需要考虑脏位
 `ifndef YSYX_SOC
