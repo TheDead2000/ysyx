@@ -124,6 +124,7 @@ module dcache_top (
   localparam CACHE_MMU_TRANS = 4'd10;
   localparam CACHE_MMU_MEM = 4'd11;
   localparam CACHE_LOOKUP = 4'd12;
+  
   reg [3:0] dcache_state;
 
 
@@ -313,7 +314,7 @@ mmu dcache_mmu (
 `ifndef YSYX_SOC
                 dcache_hit_count();
 `endif
-                dcache_state <= CACHE_IDLE;
+                dcache_state <= CACHE_LOOKUP;
                 //写 cache
                 dcache_data_wen <= 1;
                 dcache_wdata_ready <= 1;  // 完成信号
@@ -330,7 +331,7 @@ mmu dcache_mmu (
                 dcache_hit_count();
 `endif
                 dcache_data_ready <= 1;
-                dcache_state <= CACHE_IDLE;
+                dcache_state <= CACHE_LOOKUP;
               end
               2'b00, 2'b01: begin : miss_allocate  // miss 时 分配 cache，需要考虑脏位
 `ifndef YSYX_SOC
