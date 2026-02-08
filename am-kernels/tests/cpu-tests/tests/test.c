@@ -18,23 +18,23 @@ static inline uint32_t atomic_add(uint32_t *ptr, uint32_t value)
 /* 测试基本原子操作 */
 void test_basic_atomic(void)
 {
-    printf("=== 测试基本原子操作 ===\n");
+    printf("=== base===\n");
     
     uint32_t counter = 0;
     uint32_t old_value;
     
     /* 第一次原子加 */
     old_value = atomic_add(&counter, 42);
-    printf("第一次原子加: old_value = %u, counter = %u\n", old_value, counter);
+    printf("first: old_value = %d, counter = %d\n", old_value, counter);
     
     /* 第二次原子加 */
     old_value = atomic_add(&counter, 58);
-    printf("第二次原子加: old_value = %u, counter = %u\n", old_value, counter);
+    printf("secnod: old_value = %d, counter = %d\n", old_value, counter);
     
     if (counter == 100 && old_value == 42) {
-        printf("✓ 基础原子操作测试通过\n");
+        printf("✓ pass\n");
     } else {
-        printf("✗ 基础原子操作测试失败\n");
+        printf("✗ nopass\n");
     }
 }
 
