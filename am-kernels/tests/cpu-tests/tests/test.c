@@ -41,5 +41,6 @@ void test_basic_atomic(void)
 int main(void)
 {
     test_basic_atomic();
+    while(1);
     return 0;
 }
