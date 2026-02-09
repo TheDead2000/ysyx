@@ -124,6 +124,7 @@ localparam [31:0] AND_VAL    = 32'b0000000_00000_00000_111_00000_0110011;
 localparam [31:0] ECALL_VAL  = 32'b0000000_00000_00000_000_00000_1110011;
 localparam [31:0] EBREAK_VAL = 32'h00100073;
 localparam [31:0] MRET_VAL   = 32'h30200073;
+localparam [31:0] SRET_VAL   = 32'h10200073;
 
 /***************CSR**********************/
 localparam [31:0] CSRRW_VAL = 32'b0000000_00000_00000_001_00000_1110011;
@@ -242,6 +243,7 @@ wire _inst_and    = match(_inst, MASK_FUNC7,  AND_VAL);
 wire _inst_ecall  = match(_inst, MASK_ALL,    ECALL_VAL);
 wire _inst_ebreak = match(_inst, MASK_ALL,    EBREAK_VAL);
 wire _inst_mret   = match(_inst, MASK_ALL,    MRET_VAL);
+wire _inst_sret   = match(_inst, MASK_ALL,    SRET_VAL);
 
 //RV32 CSR
 wire _inst_csrrw  = match(_inst,MASK_FUNC3, CSRRW_VAL);
@@ -306,7 +308,7 @@ wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
                         _inst_mul | _inst_mulh | _inst_mulhsu | _inst_mulhu |
                          _inst_div | _inst_divu | _inst_rem | _inst_remu;
 
-  wire _type_system = _inst_ecall | _inst_ebreak | _inst_mret |
+  wire _type_system = _inst_ecall | _inst_ebreak | _inst_mret | _inst_sret |
                       _inst_csrrw | _inst_csrrs | _inst_csrrc |
                       _inst_csrrwi | _inst_csrrsi | _inst_csrrci;
   
@@ -573,7 +575,10 @@ wire _alu_amo_sc = _inst_sc_w;
     for (i = 0; i < `TRAP_LEN; i = i + 1) begin
       if (i == `TRAP_MRET) begin
         _decode_trap_bus[i] = _inst_mret;
-      end else if (i == `TRAP_EBREAK) begin
+      end else if (i ==`TRAP_SRET) begin
+         _decode_trap_bus[i] = _inst_sret;
+      end
+      else if (i == `TRAP_EBREAK) begin
         _decode_trap_bus[i] = _inst_ebreak;
       end else if (i == `TRAP_ECALL_M) begin
         _decode_trap_bus[i] = _inst_ecall;

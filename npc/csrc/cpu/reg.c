@@ -69,25 +69,12 @@ void csr_display(CPU_state* cpu) {
   printf("------------------------------------------------------------------------------------------------------------\n");
   
   for(int i = 0; i < 25; i++) {
-    if (i < 17 || i >= 23) { // 显示主要的CSR寄存器，跳过一些控制信号
-      MUXDEF(CONFIG_RV64,
-        printf("%-12s \t%-30s\t0x%-8lx\t%-10ld\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i], cpu->csr_gpr[i]);,
         printf("%-12s \t%-30s\t0x%-8x\t%-10d\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i], cpu->csr_gpr[i]);
-      );
+        printf("%-12s \t%-30s\t0x%-8x\t%-10d\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i], cpu->csr_gpr[i]);
     }
+
   }
-  
-  // 单独显示MMU控制信号
-  printf("\n================================================MMU Control Signals================================================\n");
-  printf("%-12s \t%-30s\t%-10s\n", "Signal", "Description", "Value");
-  printf("----------------------------------------------------------------------------------------------------------------\n");
-  for(int i = 18; i <= 22; i++) {
-    MUXDEF(CONFIG_RV64,
-      printf("%-12s \t%-30s\t%-10ld\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i] & 1);,
-      printf("%-12s \t%-30s\t%-10d\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i] & 1);
-    );
-  }
-}
+
 
 // 完整的寄存器显示（包括通用寄存器和CSR寄存器）
 void full_reg_display(CPU_state* cpu) {

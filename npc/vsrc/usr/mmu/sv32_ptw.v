@@ -66,7 +66,7 @@ module ptw (
     reg [31:0] pte_ptr;        // 页表项物理地址
     reg is_global;
     reg [31:0] pte_reg;        // 读取的页表项
-    
+    reg _ptw_page_fault;
     // 线网
     wire pte_valid = pte_reg[`PTE_V_BIT];
     wire pte_r = pte_reg[`PTE_R_BIT];
@@ -127,7 +127,7 @@ module ptw (
                 /* verilator lint_off WIDTHEXPAND */
                 /* verilator lint_off WIDTHTRUNC */
                 pte_ptr <= {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00};
-                $display("req mem_addr:0x%h",pte_ptr);
+                $display("req mem_addr:0x%h", {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00});
                 state   <= STATE_WAIT_PTE;
                 end
                 STATE_WAIT_PTE: begin
@@ -146,6 +146,7 @@ module ptw (
                     if (!pte_valid) begin
                         // PTE无效，页故障
                         $display("PTW: Page Fault - Invalid PTE");
+                        _ptw_page_fault <= 1;
                         state <= STATE_ERROR;
                     end else begin
                         if (pte_xwr != 3'b000) begin
@@ -219,8 +220,9 @@ module ptw (
     assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
     // assign ptw_resp_valid_o = (state == STATE_IDLE) && 
     //                          ((ptw_tlb_hit_i) || (ptw_req_valid_i && !ptw_busy_o && !ptw_page_fault_o));
-        assign ptw_resp_valid_o = t_ptw_resp_valid_o;
-    assign ptw_page_fault_o = (state == STATE_ERROR);
+    assign ptw_resp_valid_o = t_ptw_resp_valid_o;
+    // assign ptw_page_fault_o = (state == STATE_ERROR);
+    assign ptw_page_fault_o = _ptw_page_fault;
     
     assign ptw_mem_req_o = (state == STATE_WAIT_PTE);
     assign ptw_mem_addr_o = pte_ptr;

@@ -929,6 +929,7 @@ clint clint_u (
     .clint_rdata_o(clint_rdata),
 
     .trap_bus_i(trap_bus_mem),
+    .trap_mmu_page_falut(icache_mmu_page_fault),
 
     .csr_satp_flush_i(csr_satp_flush),
     .compress_stall(id_compress_pc_valid_o),
@@ -1083,7 +1084,7 @@ wire [7:0] icache_arb_rlen;
  wire [31:0] icache_ifu_mmu_mem_addr;
  wire [31:0] icache_ifu_mmu_mem_rdata;
  wire        icache_ifu_mmu_mem_rvalid;
-
+ wire icache_mmu_page_fault;
  icache_top u_icache_top (
       .clk(clk),
       .rst(rst),
@@ -1098,6 +1099,8 @@ wire [7:0] icache_arb_rlen;
 
       .mmu_enable_i(csr_enable_sv32),
       .mmu_satp_ppn_i(csr_satp_ppn),
+      .icache_mmu_page_fault_o(icache_mmu_page_fault),
+
       .mmu_mxr_i(csr_mxr),
       .mmu_sum_i(csr_sum),
 

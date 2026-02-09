@@ -18,7 +18,8 @@ module clint (
     
     // 陷阱总线
     input [`TRAP_BUS] trap_bus_i,
-    
+    input trap_mmu_page_falut,
+
     // 流水线暂停请求
     input csr_satp_flush_i,
     input compress_stall,
@@ -102,7 +103,8 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  assign trap_valid = trap_bus_i[`TRAP_ECALL_M] || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt ||
+  assign trap_valid = trap_bus_i[`TRAP_ECALL_M] || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt 
+                     || trap_mmu_page_falut ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
   
@@ -176,7 +178,7 @@ module clint (
       cause_value = {1'b0, 26'b0, 5'd9};
     end else if (trap_bus_i[`TRAP_ECALL_M]) begin
       cause_value = {1'b0, 26'b0, 5'd11};
-    end else if (trap_bus_i[`TRAP_INST_PAGE_FAULT]) begin
+    end else if (trap_bus_i[`TRAP_INST_PAGE_FAULT] || trap_mmu_page_falut) begin
       cause_value = {1'b0, 26'b0, 5'd12};
     end else if (trap_bus_i[`TRAP_LOAD_PAGE_FAULT]) begin
       cause_value = {1'b0, 26'b0, 5'd13};
@@ -224,22 +226,15 @@ end
       handler_pc = pc_from_mem_i;
     end else if (trap_valid) begin
       // 根据委托决定使用哪个tvec
-      if (exception_delegated || interrupt_delegated) begin
-        // 向量化处理模式
-        if (csr_stvec_i[0]) begin
-          handler_pc = {csr_stvec_i[31:2], 2'b00} + ({27'b0,(cause_value[4:0] << 2)});
-        end else begin
-          handler_pc = {csr_stvec_i[31:2], 2'b00};
-        end
-      end else begin
-        // 向量化处理模式
-        if (csr_mtvec_i[0]) begin
-          handler_pc = {csr_mtvec_i[31:2], 2'b00} + ({27'b0,(cause_value[4:0] << 2)});
-        end else begin
-          handler_pc = {csr_mtvec_i[31:2], 2'b00};
-        end
+      if (csr_privilege_i == 2'b01) begin
+          handler_pc = csr_stvec_i;
+      end 
+      else 
+      begin
+          handler_pc = csr_mtvec_i;
       end
-    end else begin
+    end 
+    else begin
       handler_pc = 32'h0;
     end
   end
@@ -298,19 +293,19 @@ end
     case (csr_state)
       SAVE_PC: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated_latched) begin
+        if (csr_privilege_i == 2'b01) begin
           csr_write_addr_o = 12'h141; // sepc
-        end else begin
+        end else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o = 12'h341; // mepc
         end
-        csr_write_data_o = interrupt_pending ? pc_from_exe_i_latch-4 : pc_from_exe_i_latch-4;
+        csr_write_data_o = pc_from_exe_i_latch-4;
       end
       
       SAVE_CAUSE: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated_latched) begin
+        if (csr_privilege_i == 2'b01) begin
           csr_write_addr_o = 12'h142; // scause
-        end else begin
+        end else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o = 12'h342; // mcause
         end
         csr_write_data_o = cause_value_latched;
@@ -318,7 +313,7 @@ end
       
       SAVE_VALUE: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated_latched) begin
+        if (csr_privilege_i == 2'b01) begin
           csr_write_addr_o = 12'h143; // stval
         end else begin
           csr_write_addr_o = 12'h343; // mtval
@@ -328,7 +323,7 @@ end
       
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
-        if (is_delegated_latched) begin
+        if (csr_privilege_i == 2'b01) begin
           csr_write_addr_o = 12'h100; // sstatus
           csr_write_data_o = {
             csr_sstatus_i[31:9],
@@ -338,8 +333,10 @@ end
             csr_sstatus_i[4:2],
             1'b0,               // SIE
             csr_sstatus_i[0]
+            //todo
+            //add mstatus control
           };
-        end else begin
+        end else if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o = 12'h300; // mstatus
           csr_write_data_o = {
             csr_mstatus_i[31:13],
@@ -367,7 +364,7 @@ end
       RESTORE_STATUS: begin
         csr_write_en_o = 1'b1;
         if (trap_mret) begin
-          csr_write_addr_o = 12'h300; // mstatus
+          csr_write_addr_o = 12'h300; // mstatus   
           csr_write_data_o = {
             csr_mstatus_i[31:13],
             2'b00,                 // MPP
@@ -378,7 +375,7 @@ end
             csr_mstatus_i[2:0]
           };
         end else if (trap_sret) begin
-          csr_write_addr_o = 12'h100; // sstatus
+          csr_write_addr_o = 12'h100; // sstatus   this has problem!!!!!!!!!!!!!  todo
           csr_write_data_o = {
             csr_sstatus_i[31:9],
             1'b0,                 // SPP
