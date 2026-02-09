@@ -164,6 +164,8 @@ reg icache_mmu_mem_rvalid;
 reg mmu_translation_done;
 reg [`XLEN-1:0] last_vaddr;
 
+assign icache_mmu_page_fault_o = mmu_page_fault;
+
 mmu icache_mmu (
     .clk(clk),
     .rst(rst),
