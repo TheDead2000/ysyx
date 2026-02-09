@@ -127,12 +127,14 @@ module ptw (
                 /* verilator lint_off WIDTHEXPAND */
                 /* verilator lint_off WIDTHTRUNC */
                 pte_ptr <= {ptw_satp_ppn_i, 12'b0} + {20'b0,vpn1, 2'b00};
+                $display("req mem_addr:0x%h",pte_ptr);
                 state   <= STATE_WAIT_PTE;
                 end
                 STATE_WAIT_PTE: begin
                     // 等待内存返回页表项
                     if (ptw_mem_rvalid_i) begin
                         pte_reg <= ptw_mem_rdata_i;
+                        $display("ptw_mem_rdata_i:0x%h",ptw_mem_rdata_i);
                         state <= STATE_HANDLE_PTE;
                     end
                     else begin
@@ -149,6 +151,7 @@ module ptw (
                         if (pte_xwr != 3'b000) begin
                             // 叶子项：检查权限和超级页对齐
                             t_ptw_resp_valid_o = 1'b1;
+                            $display("phys_addr:%h",phys_addr);
                             state <= STATE_IDLE; // 遍历完成
 
                         end else begin
@@ -156,6 +159,7 @@ module ptw (
                             if (pte_level == 2'b01) begin
                                 // 二级页表项地址 = 一级项PPN <<12 + VPN[0] <<2
                                 pte_ptr <= {pte_ppn, 12'b0} + {20'b0, vpn0, 2'b00};
+                                $display("second pte_ptr:%h",pte_ptr);
                                 pte_level <= 2'b10;
                                 state <= STATE_WAIT_PTE;
                             end else begin
