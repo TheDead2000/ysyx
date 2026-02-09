@@ -133,7 +133,7 @@ module CSRs(
     //       (1 << 2)  |  // C扩展（压缩指令）
     //       (1 << 19);   // Zicntr扩展（计时器）
 // 结果 = 32'h4006F101
-    misaReg = 32'h40001101 |  (1 << 18) | (1 << 13) ; // SU模式   // RV32IMA
+    misaReg = 32'h40001101 |  (1 << 18) ; // S模式   // RV32IMA
     mtvecReg = 32'h0;
     mieReg = 32'h0;
     medelegReg = 32'h0;
