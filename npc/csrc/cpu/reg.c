@@ -70,9 +70,7 @@ void csr_display(CPU_state* cpu) {
   
   for(int i = 0; i < 25; i++) {
         printf("%-12s \t%-30s\t0x%-8x\t%-10d\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i], cpu->csr_gpr[i]);
-        printf("%-12s \t%-30s\t0x%-8x\t%-10d\n", csr_regs[i], csr_desc[i], cpu->csr_gpr[i], cpu->csr_gpr[i]);
     }
-
   }
 
 

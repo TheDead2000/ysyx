@@ -229,7 +229,7 @@ end
       if (csr_privilege_i == 2'b01) begin
           handler_pc = csr_stvec_i;
       end 
-      else if (csr_privilege_i == 2'b11) 
+      else 
       begin
           handler_pc = csr_mtvec_i;
       end
