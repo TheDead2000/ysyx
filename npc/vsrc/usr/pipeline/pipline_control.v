@@ -5,6 +5,7 @@ module pipline_control (
     input clk,
     input rst,
     /* ----- stall request from other modules  --------*/
+    input trap_mmu_page_falut,
     input csr_satp_flush_i,
     input compress_stall,
     input next_stall_preif_i,
@@ -96,6 +97,10 @@ module pipline_control (
       _flush = 6'b011111;
       // 访存时阻塞所有流水线
     end  
+    else if(trap_mmu_page_falut) begin
+      _stall = 6'b000_000;
+      _flush = 6'b000_000;
+    end
     else if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;

@@ -417,6 +417,7 @@ end
   pipline_control u_pipline_control (
       .clk(clk),
       .rst(rst),
+      .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
       .next_stall_preif_i(next_stall_preif_i),

@@ -2367,6 +2367,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->pushNamePrefix("u_pipline_control ");
     tracep->declBit(c+7117,"clk", false,-1);
     tracep->declBit(c+7153,"rst", false,-1);
+    tracep->declBit(c+6535,"trap_mmu_page_falut", false,-1);
     tracep->declBit(c+53,"csr_satp_flush_i", false,-1);
     tracep->declBit(c+631,"compress_stall", false,-1);
     tracep->declBit(c+6599,"next_stall_preif_i", false,-1);
