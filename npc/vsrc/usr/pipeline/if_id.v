@@ -62,6 +62,7 @@ module if_id (
       .dout(inst_data_if_id_q),
       .wen (reg_wen)
   );
+  
   assign inst_data_if_id_o = inst_data_if_id_q;
 
   /* bpu_taken_if_i 寄存器 */
@@ -125,7 +126,7 @@ module if_id (
     );
     assign bpu_pdt_tag_if_id_o = _bpu_pdt_tag_if_id_q;
 
-     wire [`HISLEN-1:0] _bpu_history_if_id_d = bpu_history_if_i;
+    wire [`HISLEN-1:0] _bpu_history_if_id_d = bpu_history_if_i;
     wire [`HISLEN-1:0] _bpu_history_if_id_q;
     regTemplate #(
         .WIDTH    (`HISLEN),
