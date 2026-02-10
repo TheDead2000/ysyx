@@ -280,11 +280,6 @@ void setup_page_table(uint32_t* page_table) {
     // 页表在物理地址0x10000
     uint32_t* root_pt = (uint32_t*)page_table;
     
-    // 清空页表
-    for (int i = 0; i < 1024; i++) {
-        root_pt[i] = 0;
-    }
-    
     // 映射虚拟地址0x80000000到物理地址0x80000000（1GB）
     // VPN[1] = 0x200, 所以索引是0x200
     uint32_t pte = (0x80000000 >> 2) | PTE_V | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D;
@@ -294,7 +289,7 @@ void setup_page_table(uint32_t* page_table) {
     // 这里故意不设置PTE_V，以触发页异常
     root_pt[0] = 0;
     
-    printf("页表设置完成\n");
+    printf("page table finish\n");
 }
 
 // ============ S模式入口函数 ============
