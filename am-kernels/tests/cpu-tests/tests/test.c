@@ -49,15 +49,14 @@
 #define PTE_A     0x040  // 访问过
 #define PTE_D     0x080  // 脏位
 
-// 外部符号声明（这些将由链接器提供或在本文件中定义）
-extern uint32_t _stack_top;
+#define TEST_BASE_VA 0xA0000000  // 虚拟地址起始（4MB大页）
+#define TEST_BASE_PA 0xA0000000  // 物理地址起始（线性映射：VA=PA）
 
 
 // 函数声明
 void handle_m_trap(uint32_t mcause, uint32_t mepc);
 void handle_s_trap(uint32_t scause, uint32_t sepc, uint32_t stval);
 void s_mode_entry(void);
-void setup_page_table(uint32_t* page_table);
 void printf(const char* fmt, ...);
 
 // CSR操作内联汇编
@@ -274,25 +273,35 @@ void handle_s_trap(uint32_t scause, uint32_t sepc, uint32_t stval) {
 }
 
 // ============ 页表设置 ============
+__attribute__((aligned(4096))) uint32_t page_table[1024];
 
 // 页表设置函数
-void setup_page_table(uint32_t* page_table) {
-    // 页表在物理地址0x10000
-    uint32_t* root_pt = (uint32_t*)page_table;
-    
-    // 映射虚拟地址0x80000000到物理地址0x80000000（1GB）
-    // VPN[1] = 0x200, 所以索引是0x200
-    uint32_t pte = (0x80000000 >> 2) | PTE_V | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D;
-    root_pt[0x200] = pte;
-    
-    // 映射虚拟地址0x00000000到物理地址0x80000000（测试用，会触发异常）
-    // 这里故意不设置PTE_V，以触发页异常
-    root_pt[0] = 0;
-    
-    printf("page table finish\n");
-}
+void setup_page_table() {
+    printf("Setting up 4MB huge page table...\n");
 
+    // 1. 清空页表
+    for (int i = 0; i < 1024; i++) {
+        page_table[i] = 0;
+    }
+
+    // 2. 计算VPN1（4MB大页的虚拟页号，VA[31:22]）
+    uint32_t vpn1 = (TEST_BASE_VA >> 22) & 0x3FF;  // 10位VPN1
+
+    // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
+    uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
+    uint32_t pte = 0;
+          // 有效位
+    pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
+    pte |= PTE_G;          // 全局页
+    pte |= PTE_A | PTE_D;  // 访问位+脏位（避免首次访问触发页故障）
+    pte |= (ppn1 << 20); ;  // PPN字段（4MB大页仅用PPN1）
+
+    // 4. 写入页表项
+    page_table[vpn1] = pte;
+    printf("Page table entry [VPN1=0x%x] = 0x%x\n", vpn1, pte);
+}
 // ============ S模式入口函数 ============
+
 
 // S模式入口函数
 void s_mode_entry(void) {
@@ -301,38 +310,33 @@ void s_mode_entry(void) {
     // 1. 设置S模式陷阱处理程序
     csr_write(STVEC, (uint32_t)s_trap_entry);  // 直接模式
     
-    // 2. 设置S模式栈
-    extern uint32_t _s_stack_top;
-    csr_write(SSCRATCH, (uint32_t)&_s_stack_top);
-    
-    // 3. 设置页表
-    uint32_t* page_table = (uint32_t*)0x10000;  // 页表物理地址
     setup_page_table(page_table);
     
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
     
+    asm __volatile__("mv a0,a0\n");
+
+    // // 访问未映射的虚拟地址（应该触发页异常）
+    // volatile uint32_t* test_addr = (volatile uint32_t*)0x0;
+    // printf("尝试访问地址0x0\n");
+    // uint32_t value = *test_addr;  // 应该触发加载页异常
     
-    // 访问未映射的虚拟地址（应该触发页异常）
-    volatile uint32_t* test_addr = (volatile uint32_t*)0x0;
-    printf("尝试访问地址0x0\n");
-    uint32_t value = *test_addr;  // 应该触发加载页异常
+    // // 如果异常处理程序返回，继续执行
+    // printf("页异常处理完成，继续执行\n");
     
-    // 如果异常处理程序返回，继续执行
-    printf("页异常处理完成，继续执行\n");
-    
-    // 访问已映射的地址（应该正常工作）
-    volatile uint32_t* mapped_addr = (volatile uint32_t*)0x80000000;
-    printf("尝试访问映射地址0x80000000\n");
-    value = *mapped_addr;
-    printf("成功读取值: 0x%x\n", value);
+    // // 访问已映射的地址（应该正常工作）
+    // volatile uint32_t* mapped_addr = (volatile uint32_t*)0x80000000;
+    // printf("尝试访问映射地址0x80000000\n");
+    // value = *mapped_addr;
+    // printf("成功读取值: 0x%x\n", value);
     
     // 执行S模式ecall
-    printf("执行S模式ecall...\n");
+    printf("S mode ecall...\n");
     ecall();
     
-    printf("测试完成！\n");
+    printf("sucess !\n");
     
     // 循环等待
     while (1) {
@@ -348,9 +352,6 @@ void main(void) {
     
     // 1. 设置M模式陷阱处理程序
     csr_write(MTVEC, (uint32_t)m_trap_entry);  // 直接模式
-    
-    // 2. 设置M模式栈
-    csr_write(MSCRATCH, (uint32_t)&_stack_top);
     
     // 3. 设置异常委托
     // 将页异常委托给S模式
