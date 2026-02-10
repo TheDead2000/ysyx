@@ -230,13 +230,13 @@ mmu icache_mmu (
           mmu_translation_done <= 1'b0;
           last_vaddr <= preif_raddr_i; 
 
-          // blk_addr_reg           <= cache_blk_addr;
-          // line_idx_reg           <= cache_line_idx;
-          // line_tag_reg           <= cache_line_tag;
+          blk_addr_reg           <= cache_blk_addr;
+          line_idx_reg           <= cache_line_idx;
+          line_tag_reg           <= cache_line_tag;
           
-          // next_blk_addr_reg         <= next_cache_blk_addr;
-          // next_line_idx_reg         <= next_cache_line_idx;
-          // next_line_tag_reg         <= next_cache_line_tag;
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
 
 
           icache_tag_write_valid <= 0;

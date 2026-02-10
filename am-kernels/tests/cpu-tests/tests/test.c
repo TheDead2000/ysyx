@@ -290,7 +290,7 @@ void setup_page_table() {
     // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
     uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
     uint32_t pte = 0;
-          // 有效位
+                                   // 有效位
     pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
     pte |= PTE_G;          // 全局页
     pte |= PTE_A | PTE_D;  // 访问位+脏位（避免首次访问触发页故障）
