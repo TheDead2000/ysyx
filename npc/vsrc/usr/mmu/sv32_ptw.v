@@ -108,7 +108,7 @@ module ptw (
                     pte_reg <= 32'b0;
                     pte_level <= 2'b01;
                     t_ptw_resp_valid_o = 1'b0;
-                    _ptw_page_fault <= 0;
+
                     if (ptw_req_valid_i && ptw_enable_i) begin
                         if (ptw_tlb_hit_i) begin
                             // TLB命中，直接处理缓存的PTE
@@ -174,6 +174,7 @@ module ptw (
                 STATE_ERROR: begin
                     // 页故障后重置状态
                     state <= STATE_IDLE;
+                    _ptw_page_fault <= 0;
                     pte_level <= 2'b01;
                 end
                 
