@@ -50,19 +50,19 @@ module if_id (
   
   
   /* inst_data_if_i 寄存器 */
-  wire [`INST_LEN-1:0] _inst_data_if_id_d = inst_data_if_i;
-  reg [`INST_LEN-1:0] _inst_data_if_id_q;
+  wire [`INST_LEN-1:0] inst_data_if_id_d = inst_data_if_i;
+  reg [`INST_LEN-1:0] inst_data_if_id_q;
   regTemplate #(
       .WIDTH    (`INST_LEN),
       .RESET_VAL(`INST_NOP)
   ) u_inst_data_if_id (
       .clk (clk),
       .rst (reg_rst),
-      .din (_inst_data_if_id_d),
-      .dout(_inst_data_if_id_q),
+      .din (inst_data_if_id_d),
+      .dout(inst_data_if_id_q),
       .wen (reg_wen)
   );
-  assign inst_data_if_id_o = _inst_data_if_id_q;
+  assign inst_data_if_id_o = inst_data_if_id_q;
 
   /* bpu_taken_if_i 寄存器 */
   wire _bpu_taken_if_id_d = bpu_taken_if_i;

@@ -230,6 +230,15 @@ mmu icache_mmu (
           mmu_translation_done <= 1'b0;
           last_vaddr <= preif_raddr_i; 
 
+          blk_addr_reg           <= cache_blk_addr;
+          line_idx_reg           <= cache_line_idx;
+          line_tag_reg           <= cache_line_tag;
+          
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
+
+
           icache_tag_write_valid <= 0;
           uncache_data_ready     <= 0;
           // 执行 fencei 指令时，保证 icache 处于 idle 状态
