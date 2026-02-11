@@ -12301,6 +12301,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+7403,"CACHE_MMU_TRANS", false,-1, 3,0);
     tracep->declBus(c+7404,"CACHE_MMU_MEM", false,-1, 3,0);
     tracep->declBus(c+7405,"CACHE_WAIT_ADDR_CLK", false,-1, 3,0);
+    tracep->declBus(c+7406,"CACHE_WAIT_TRANS_LOOKUP", false,-1, 3,0);
     tracep->declBus(c+6867,"uncache_rdata", false,-1, 31,0);
     tracep->declBus(c+6868,"icache_state", false,-1, 3,0);
     tracep->declBus(c+6869,"blk_addr_reg", false,-1, 5,0);

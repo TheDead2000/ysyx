@@ -123,6 +123,9 @@ module icache_top (
   localparam CACHE_MMU_TRANS = 4'd6;
   localparam CACHE_MMU_MEM = 4'd7;
   localparam CACHE_WAIT_ADDR_CLK = 4'd8;
+  localparam CACHE_WAIT_TRANS_LOOKUP = 4'd9;
+
+
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
 
@@ -284,21 +287,24 @@ mmu icache_mmu (
           icache_state <= CACHE_LOOKUP;
           end
         end
+
         CACHE_WAIT_ADDR_CLK: begin
           pc_addr <= paddr_trans;
-          mmu_translation_done <= 1'b1;  // 标记转换完成
           $display("trans addr: %h",paddr_trans);
+          icache_state <= CACHE_WAIT_TRANS_LOOKUP;
+        end
+
+        CACHE_WAIT_TRANS_LOOKUP:begin
           $display("pc_addr: %h",pc_addr);
+          mmu_translation_done <= 1'b1;  // 标记转换完成
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;
           line_tag_reg <= cache_line_tag;
-
           next_blk_addr_reg         <= next_cache_blk_addr;
           next_line_idx_reg         <= next_cache_line_idx;
           next_line_tag_reg         <= next_cache_line_tag;
           icache_state <= CACHE_LOOKUP;
         end
-
 
         CACHE_MMU_MEM: begin
           if (ram_r_handshake) begin
