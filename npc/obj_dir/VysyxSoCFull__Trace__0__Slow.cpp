@@ -12300,6 +12300,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBus(c+7402,"CACHE_REFILL", false,-1, 3,0);
     tracep->declBus(c+7403,"CACHE_MMU_TRANS", false,-1, 3,0);
     tracep->declBus(c+7404,"CACHE_MMU_MEM", false,-1, 3,0);
+    tracep->declBus(c+7405,"CACHE_WAIT_ADDR_CLK", false,-1, 3,0);
     tracep->declBus(c+6867,"uncache_rdata", false,-1, 31,0);
     tracep->declBus(c+6868,"icache_state", false,-1, 3,0);
     tracep->declBus(c+6869,"blk_addr_reg", false,-1, 5,0);
@@ -13940,10 +13941,10 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_full_sub_0(VysyxSoCFull___024roo
                                   >> 4U))));
     bufp->fullBit(oldp+35,((1U & (~ ((IData)(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT___stall) 
                                      >> 4U)))));
-    bufp->fullCData(oldp+36,((0x3fU & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h01d5baaf__0)),6);
-    bufp->fullCData(oldp+37,((0x7fU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h01d5baaf__0 
+    bufp->fullCData(oldp+36,((0x3fU & vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h105f8624__0)),6);
+    bufp->fullCData(oldp+37,((0x7fU & (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h105f8624__0 
                                        >> 6U))),7);
-    bufp->fullIData(oldp+38,((vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h01d5baaf__0 
+    bufp->fullIData(oldp+38,((vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT____VdfgTmp_h105f8624__0 
                               >> 0xdU)),19);
     bufp->fullBit(oldp+39,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__icache_hit));
     bufp->fullIData(oldp+40,(vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__u_icache_top__DOT__write_tag_reg),19);

@@ -105,7 +105,7 @@ module icache_top (
 
   reg [31:0] pc_addr;
 
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? paddr_trans : preif_raddr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? pc_addr : preif_raddr_i;
   //  assign {cache_line_tag, cache_line_idx, cache_blk_addr} =  preif_raddr_i;
 
   wire icache_hit;
@@ -122,7 +122,7 @@ module icache_top (
   localparam CACHE_REFILL = 4'd5;
   localparam CACHE_MMU_TRANS = 4'd6;
   localparam CACHE_MMU_MEM = 4'd7;
-
+  localparam CACHE_WAIT_ADDR_CLK = 4'd8;
   reg [`XLEN-1:0] uncache_rdata;
   reg [3:0] icache_state;
 
@@ -269,30 +269,28 @@ mmu icache_mmu (
               pc_addr <= paddr_trans;
               mmu_translation_done <= 1'b1;  // 标记转换完成
               $display("trans addr: %h",paddr_trans);
-              blk_addr_reg <= cache_blk_addr;
-              line_idx_reg <= cache_line_idx;
-              line_tag_reg <= cache_line_tag;
-              
-              next_blk_addr_reg         <= next_cache_blk_addr;
-              next_line_idx_reg         <= next_cache_line_idx;
-              next_line_tag_reg         <= next_cache_line_tag;
-              icache_state <= CACHE_LOOKUP;
+              icache_state <= CACHE_WAIT_ADDR_CLK;
             end
             else begin
              icache_state <= CACHE_MMU_TRANS;
             end
           end
-          else begin
-          blk_addr_reg <= cache_blk_addr;
-          line_idx_reg <= cache_line_idx;
-          line_tag_reg <= cache_line_tag;
 
-          next_blk_addr_reg         <= next_cache_blk_addr;
-          next_line_idx_reg         <= next_cache_line_idx;
-          next_line_tag_reg         <= next_cache_line_tag;
+          else begin
+          // blk_addr_reg <= cache_blk_addr;
+          // line_idx_reg <= cache_line_idx;
+          // line_tag_reg <= cache_line_tag;
+
+          // next_blk_addr_reg         <= next_cache_blk_addr;
+          // next_line_idx_reg         <= next_cache_line_idx;
+          // next_line_tag_reg         <= next_cache_line_tag;
           icache_state <= CACHE_LOOKUP;
           end
         end
+        CACHE_WAIT_ADDR_CLK: begin
+          icache_state <= CACHE_LOOKUP;
+        end
+
 
         CACHE_MMU_MEM: begin
           if (ram_r_handshake) begin
