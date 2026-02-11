@@ -285,12 +285,12 @@ void setup_page_table() {
     }
 
     // 2. 计算VPN1（4MB大页的虚拟页号，VA[31:22]）
-    uint32_t vpn1 = (TEST_BASE_VA >> 22) & 0x3FF;  // 10位VPN1
+    uint32_t vpn1 = (0xc0000000 >> 22) & 0x3FF;  // 10位VPN1
 
     // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
-    uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
+    uint32_t ppn1 = (0xa00003fc >> 22) & 0x3FF;  // 10位PPN1
     uint32_t pte = 0;
-                                   // 有效位
+    pte |= PTE_V;                // 有效位
     pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
     pte |= PTE_G;          // 全局页
     pte |= PTE_A | PTE_D;  // 访问位+脏位（避免首次访问触发页故障）
@@ -308,7 +308,7 @@ void s_mode_entry(void) {
     printf("run in s mode !!!\n");
     
     // 1. 设置S模式陷阱处理程序
-    csr_write(STVEC, (uint32_t)s_trap_entry);  // 直接模式
+    csr_write(STVEC, 0xc0000000);  // 直接模式
     
     setup_page_table(page_table);
     
@@ -318,21 +318,6 @@ void s_mode_entry(void) {
     
     asm __volatile__("mv a0,a0\n");
 
-    // // 访问未映射的虚拟地址（应该触发页异常）
-    // volatile uint32_t* test_addr = (volatile uint32_t*)0x0;
-    // printf("尝试访问地址0x0\n");
-    // uint32_t value = *test_addr;  // 应该触发加载页异常
-    
-    // // 如果异常处理程序返回，继续执行
-    // printf("页异常处理完成，继续执行\n");
-    
-    // // 访问已映射的地址（应该正常工作）
-    // volatile uint32_t* mapped_addr = (volatile uint32_t*)0x80000000;
-    // printf("尝试访问映射地址0x80000000\n");
-    // value = *mapped_addr;
-    // printf("成功读取值: 0x%x\n", value);
-    
-    // 执行S模式ecall
     printf("S mode ecall...\n");
     ecall();
     
@@ -388,14 +373,3 @@ void main(void) {
         wfi();
     }
 }
-
-// ============ 内存布局定义 ============
-
-// 定义栈（在BSS段之后）
-#define STACK_SIZE 4096
-static uint32_t m_stack[STACK_SIZE] __attribute__((aligned(16)));
-static uint32_t s_stack[STACK_SIZE] __attribute__((aligned(16)));
-
-// 定义栈顶
-uint32_t _stack_top = (uint32_t)&m_stack[STACK_SIZE];
-uint32_t _s_stack_top = (uint32_t)&s_stack[STACK_SIZE];
