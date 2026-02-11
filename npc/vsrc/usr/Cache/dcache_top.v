@@ -101,7 +101,7 @@ module dcache_top (
   wire [5:0] cache_blk_addr;  // 保持不变
   wire [6:0] cache_line_idx;  // 7位
   wire [18:0] cache_line_tag; // 19位
-  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? paddr_trans : mem_addr_i;
+  assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? mem_trans_addr : mem_addr_i;
 
 
   wire dcache_hit;
@@ -124,7 +124,10 @@ module dcache_top (
   localparam CACHE_MMU_TRANS = 4'd10;
   localparam CACHE_MMU_MEM = 4'd11;
   localparam CACHE_LOOKUP = 4'd12;
+  localparam CACHE_WAIT_ADDR_CLK = 4'd13;
+  localparam CACHE_WAIT_TRANS_LOOKUP = 4'd14;
   
+
   reg [3:0] dcache_state;
 
 
@@ -287,10 +290,7 @@ mmu dcache_mmu (
           end
           else if(mmu_resp_valid) begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
-              mem_trans_addr <= paddr_trans;
-              mmu_translation_done <= 1'b1;  // 标记转换完成
-              $display("dcache trans addr: %h",paddr_trans);
-              dcache_state <= CACHE_LOOKUP;
+              dcache_state <= CACHE_WAIT_ADDR_CLK;;
             end
             else begin
              dcache_state <= CACHE_MMU_TRANS;
@@ -308,7 +308,20 @@ mmu dcache_mmu (
             dcache_mmu_mem_rvalid <= 1;
             dcache_state <= CACHE_MMU_TRANS;
           end
+      end
+      
+      CACHE_WAIT_ADDR_CLK: begin
+          mem_trans_addr <= paddr_trans;
+          $display("mem_paddr_trans: %h",paddr_trans);
+          dcache_state <= CACHE_WAIT_TRANS_LOOKUP;
+      end
+
+        CACHE_WAIT_TRANS_LOOKUP:begin
+          $display("mem_trans_addr: %h",mem_trans_addr);
+          mmu_translation_done <= 1'b1;  // 标记转换完成
+          dcache_state <= CACHE_LOOKUP;
         end
+
 
 
         CACHE_LOOKUP: begin
