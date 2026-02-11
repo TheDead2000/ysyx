@@ -266,9 +266,6 @@ mmu icache_mmu (
           end
           else if(mmu_resp_valid) begin
               // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
-              pc_addr <= paddr_trans;
-              mmu_translation_done <= 1'b1;  // 标记转换完成
-              $display("trans addr: %h",paddr_trans);
               icache_state <= CACHE_WAIT_ADDR_CLK;
             end
             else begin
@@ -288,6 +285,17 @@ mmu icache_mmu (
           end
         end
         CACHE_WAIT_ADDR_CLK: begin
+          pc_addr <= paddr_trans;
+          mmu_translation_done <= 1'b1;  // 标记转换完成
+          $display("trans addr: %h",paddr_trans);
+          $display("pc_addr: %h",pc_addr);
+          blk_addr_reg <= cache_blk_addr;
+          line_idx_reg <= cache_line_idx;
+          line_tag_reg <= cache_line_tag;
+
+          next_blk_addr_reg         <= next_cache_blk_addr;
+          next_line_idx_reg         <= next_cache_line_idx;
+          next_line_tag_reg         <= next_cache_line_tag;
           icache_state <= CACHE_LOOKUP;
         end
 
