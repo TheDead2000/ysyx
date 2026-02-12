@@ -12063,8 +12063,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7153,"rst", false,-1);
     tracep->declBus(c+6854,"mmu_vaddr_i", false,-1, 31,0);
     tracep->declBit(c+6873,"mmu_req_valid_i", false,-1);
-    tracep->declBit(c+7181,"mmu_is_store_i", false,-1);
-    tracep->declBit(c+7184,"mmu_is_inst_i", false,-1);
+    tracep->declBit(c+7184,"mmu_is_store_i", false,-1);
+    tracep->declBit(c+7181,"mmu_is_inst_i", false,-1);
     tracep->declBus(c+7034,"mmu_paddr_o", false,-1, 31,0);
     tracep->declBit(c+6550,"mmu_resp_valid_o", false,-1);
     tracep->declBit(c+6551,"mmu_page_fault_o", false,-1);
@@ -12100,7 +12100,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7008,"ptw_busy_o", false,-1);
     tracep->declBus(c+6854,"ptw_vaddr_i", false,-1, 31,0);
     tracep->declBit(c+6875,"ptw_req_valid_i", false,-1);
-    tracep->declBit(c+7181,"ptw_is_store_i", false,-1);
+    tracep->declBit(c+7184,"ptw_is_store_i", false,-1);
     tracep->declBus(c+6960,"ptw_paddr_o", false,-1, 31,0);
     tracep->declBit(c+6555,"ptw_resp_valid_o", false,-1);
     tracep->declBit(c+6551,"ptw_page_fault_o", false,-1);

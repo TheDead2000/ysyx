@@ -109,18 +109,23 @@ module ptw (
                     pte_level <= 2'b01;
                     t_ptw_resp_valid_o = 1'b0;
 
-                    if (ptw_req_valid_i && ptw_enable_i) begin
-                        if (ptw_tlb_hit_i) begin
-                            // TLB命中，直接处理缓存的PTE
-                            state <= STATE_HANDLE_PTE;
-                            pte_reg <= ptw_tlb_pte_i;
-                            pte_level <= ptw_tlb_level_i;
-                        end else begin
-                            // TLB缺失，启动页表遍历：计算一级页表项物理地址
+                    // if (ptw_req_valid_i && ptw_enable_i) begin
+                    //     if (ptw_tlb_hit_i) begin
+                    //         // TLB命中，直接处理缓存的PTE
+                    //         state <= STATE_HANDLE_PTE;
+                    //         pte_reg <= ptw_tlb_pte_i;
+                    //         pte_level <= ptw_tlb_level_i;
+                    //     end else begin
+                    //         // TLB缺失，启动页表遍历：计算一级页表项物理地址
 
-                            state <= STATE_CLK;
-                        end
+                    //         state <= STATE_CLK;
+                    //     end
+                    // end
+                    if(ptw_enable_i) begin
+                        $display("vaddr:%h is inst or mem ? %h",ptw_vaddr_i,ptw_is_store_i);
+                        state <= STATE_CLK;
                     end
+
                 end
                 STATE_CLK:begin
                 //  根页表地址 = satp_ppn <<12 + VPN[1] <<2

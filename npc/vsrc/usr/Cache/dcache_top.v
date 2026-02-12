@@ -194,8 +194,8 @@ mmu dcache_mmu (
     // 请求接口
     .mmu_vaddr_i(vaddr_reg),
     .mmu_req_valid_i(dcache_state == CACHE_MMU_TRANS),
-    .mmu_is_store_i(1'b0),      // 指令读取，非存储
-    .mmu_is_inst_i(1'b1),       // 指令访问
+    .mmu_is_store_i(1'b1),      // 指令读取，非存储
+    .mmu_is_inst_i(1'b0),       // 指令访问
     
     // 响应接口
     .mmu_paddr_o(paddr_trans),
