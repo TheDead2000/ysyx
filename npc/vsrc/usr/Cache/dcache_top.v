@@ -101,8 +101,9 @@ module dcache_top (
   wire [5:0] cache_blk_addr;  // 保持不变
   wire [6:0] cache_line_idx;  // 7位
   wire [18:0] cache_line_tag; // 19位
+  wire [31:0] mux_addr;
   assign {cache_line_tag, cache_line_idx, cache_blk_addr} = mmu_enable_i ? mem_trans_addr : mem_addr_i;
-
+  assign mux_addr                                         = mmu_enable_i ? mem_trans_addr : mem_addr_i;
 
   wire dcache_hit;
   wire [31:0] wmask_bit;
@@ -348,8 +349,8 @@ mmu dcache_mmu (
                 dcache_write_hit_valid <= 1;  //写信号
 
               //?????
-               dcache_wdata_writehit <= {96'b0, mem_wdata_i} << (mem_addr_i[3:2] * 32);
-               dcache_wmask_writehit <= {96'b0, wmask_bit} << (mem_addr_i[3:2] * 32);
+               dcache_wdata_writehit <=  {96'b0, mem_wdata_i} << (mux_addr[3:2] * 32);
+               dcache_wmask_writehit <=  {96'b0, wmask_bit} << (mux_addr[3:2] * 32);
               end
               2'b10: begin : read_hit
 `ifndef YSYX_SOC
@@ -389,11 +390,11 @@ mmu dcache_mmu (
             if (mem_write_valid_i) begin
               dcache_state              <= UNCACHE_WRITE;
               dcache_wdata_ready         <= 0;
-              _ram_waddr_dcache_o       <= mem_addr_i;  // 写地址
+              _ram_waddr_dcache_o       <= mux_addr;  // 写地址
               _ram_waddr_valid_dcache_o <= 1;  // 地址有效
                 case (mem_size_i)
                     4'b0001: begin // 字节访问
-                        case (mem_addr_i[1:0])
+                        case (mux_addr[1:0])
                             2'b00: _ram_wmask_dcache_o <= 4'b0001; // 字节0
                             2'b01: _ram_wmask_dcache_o <= 4'b0010; // 字节1
                             2'b10: _ram_wmask_dcache_o <= 4'b0100; // 字节2
@@ -401,7 +402,7 @@ mmu dcache_mmu (
                         endcase
                     end
                     4'b0010: begin // 半字访问
-                        case (mem_addr_i[1])
+                        case (mux_addr[1])
                             1'b0: _ram_wmask_dcache_o <= 4'b0011; // 低半字
                             1'b1: _ram_wmask_dcache_o <= 4'b1100; // 高半字
                         endcase
@@ -419,11 +420,11 @@ mmu dcache_mmu (
             end else begin
               dcache_state              <= UNCACHE_READ;
               dcache_data_ready         <= 0;
-              _ram_raddr_dcache_o       <= mem_addr_i;  // 读地址
+              _ram_raddr_dcache_o       <= mux_addr;  // 读地址
               _ram_raddr_valid_dcache_o <= 1;  // 地址有效
                 case (mem_size_i)
                     4'b0001: begin // 字节访问
-                        case (mem_addr_i[1:0])
+                        case (mux_addr[1:0])
                             2'b00: _ram_rmask_dcache_o <= 4'b0001; // 字节0
                             2'b01: _ram_rmask_dcache_o <= 4'b0010; // 字节1
                             2'b10: _ram_rmask_dcache_o <= 4'b0100; // 字节2
@@ -431,7 +432,7 @@ mmu dcache_mmu (
                         endcase
                     end
                     4'b0010: begin // 半字访问
-                        case (mem_addr_i[1])
+                        case (mux_addr[1])
                             1'b0: _ram_rmask_dcache_o <= 4'b0011; // 低半字
                             1'b1: _ram_rmask_dcache_o <= 4'b1100; // 高半字
                         endcase
@@ -510,7 +511,7 @@ mmu dcache_mmu (
             
             case (mem_size_i)
             4'b0001: begin // 字节访问 (8位)
-              case (mem_addr_i[1:0])
+              case (mux_addr[1:0])
                 2'b00: uncache_rdata <= {24'b0, ram_rdata_dcache_i[7:0]};    // 字节0
                 2'b01: uncache_rdata <= {24'b0, ram_rdata_dcache_i[15:8]};   // 字节1  
                 2'b10: uncache_rdata <= {24'b0, ram_rdata_dcache_i[23:16]};  // 字节2
@@ -518,7 +519,7 @@ mmu dcache_mmu (
               endcase
             end
             4'b0010: begin // 半字访问 (16位)
-              case (mem_addr_i[1])
+              case (mux_addr[1])
                 1'b0: uncache_rdata <= {16'b0, ram_rdata_dcache_i[15:0]};    // 半字0
                 1'b1: uncache_rdata <= {16'b0, ram_rdata_dcache_i[31:16]};   // 半字1
               endcase
