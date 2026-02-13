@@ -99,11 +99,12 @@ module mmu (
     );
     
     // 输出选择
-    assign mmu_paddr_o = (mmu_enable_i && tlb_hit) ? tlb_paddr : 
-                        (mmu_enable_i && ptw_resp_valid) ? ptw_paddr : mmu_vaddr_i;
+    // assign mmu_paddr_o = (mmu_enable_i && tlb_hit) ? tlb_paddr : 
+    //                     (mmu_enable_i && ptw_resp_valid) ? ptw_paddr : mmu_vaddr_i;
+    assign mmu_paddr_o = (mmu_enable_i && ptw_resp_valid) ? ptw_paddr : mmu_vaddr_i;
     
-    assign mmu_resp_valid_o = (tlb_hit || ptw_resp_valid);
-    
+    // assign mmu_resp_valid_o = (tlb_hit || ptw_resp_valid);
+    assign mmu_resp_valid_o = (ptw_resp_valid);
     assign mmu_page_fault_o = ptw_page_fault;
     
     assign mmu_mem_req_o = ptw_mem_req;
