@@ -210,20 +210,21 @@ module ptw (
     end
     
     // TLB命中时的物理地址生成（区分4MB/4KB）
-    reg [31:0] tlb_phys_addr;
-    always @(*) begin
-        if (ptw_tlb_level_i == 2'b01) begin
-            tlb_phys_addr = {ptw_tlb_pte_i[31:22], ptw_vaddr_i[21:12], page_offset};
-        end else if (ptw_tlb_level_i == 2'b10) begin
-            tlb_phys_addr = {ptw_tlb_pte_i[29:10], page_offset};
-        end else begin
-            tlb_phys_addr = 32'b0;
-        end
-    end
+    // reg [31:0] tlb_phys_addr;
+    // always @(*) begin
+    //     if (ptw_tlb_level_i == 2'b01) begin
+    //         tlb_phys_addr = {ptw_tlb_pte_i[31:22], ptw_vaddr_i[21:12], page_offset};
+    //     end else if (ptw_tlb_level_i == 2'b10) begin
+    //         tlb_phys_addr = {ptw_tlb_pte_i[29:10], page_offset};
+    //     end else begin
+    //         tlb_phys_addr = 32'b0;
+    //     end
+    // end
     
     // 输出逻辑
     assign ptw_busy_o = (state != STATE_IDLE);
-    assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
+    // assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
+    assign ptw_paddr_o    = phys_addr;
     // assign ptw_resp_valid_o = (state == STATE_IDLE) && 
     //                          ((ptw_tlb_hit_i) || (ptw_req_valid_i && !ptw_busy_o && !ptw_page_fault_o));
     assign ptw_resp_valid_o = t_ptw_resp_valid_o;
@@ -234,10 +235,16 @@ module ptw (
     assign ptw_mem_addr_o = pte_ptr;
     
     // TLB 更新
-    assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE)  && !ptw_tlb_hit_i;
-    assign ptw_tlb_update_vpn_o = vpn; // 20位VPN（VPN1+VPN0）
-    assign ptw_tlb_update_pte_o = pte_reg;
-    assign ptw_tlb_update_is_4k_o = (pte_level == 2'b10);
-    assign ptw_tlb_update_is_4m_o = (pte_level == 2'b01);
+    // assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE)  && !ptw_tlb_hit_i;
+    // assign ptw_tlb_update_vpn_o = vpn; // 20位VPN（VPN1+VPN0）
+    // assign ptw_tlb_update_pte_o = pte_reg;
+    // assign ptw_tlb_update_is_4k_o = (pte_level == 2'b10);
+    // assign ptw_tlb_update_is_4m_o = (pte_level == 2'b01);
+
+    assign ptw_tlb_update_valid_o = 0;
+    assign ptw_tlb_update_vpn_o = 0; // 20位VPN（VPN1+VPN0）
+    assign ptw_tlb_update_pte_o = 0;
+    assign ptw_tlb_update_is_4k_o = 0;
+    assign ptw_tlb_update_is_4m_o = 0;
 
 endmodule
