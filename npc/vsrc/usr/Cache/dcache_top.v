@@ -280,7 +280,7 @@ mmu dcache_mmu (
           if(mmu_enable_i) begin
            vaddr_reg <= mem_addr_i;
            dcache_mmu_mem_rvalid <= 0;
-
+           $display("mmu_dcache_resp:%h",mmu_resp_valid);
           if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
              dcache_state <= CACHE_MMU_MEM;
             _ram_raddr_dcache_o       <= dcache_mmu_mem_addr;// 读地址
@@ -290,8 +290,8 @@ mmu dcache_mmu (
             _ram_rlen_dcache_o        <= 8'd0;  // 不突发
           end
           else if(mmu_resp_valid) begin
-              // mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
-              dcache_state <= CACHE_WAIT_ADDR_CLK;;
+              //mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
+              dcache_state <= CACHE_WAIT_ADDR_CLK;
             end
             else begin
              dcache_state <= CACHE_MMU_TRANS;

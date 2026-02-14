@@ -88,7 +88,7 @@ module ptw (
     wire [11:0] page_offset = ptw_vaddr_i[11:0]; // 页内偏移(12位)
     wire [19:0] vpn = ptw_vaddr_i[31:12];  // 完整VPN(20位)
     
-    // 状态机（核心修改：匹配文字的XWR判断逻辑）
+    reg t_ptw_resp_valid_o;
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -97,7 +97,7 @@ module ptw (
             pte_ptr <= 32'b0;
             is_global <= 1'b0;
             pte_reg <= 32'b0;
-            t_ptw_resp_valid_o = 1'b0;
+            t_ptw_resp_valid_o <= 1'b0;
         end else if (ptw_flush_i) begin 
             state <= STATE_IDLE;
             pte_level <= 2'b01;
@@ -107,7 +107,7 @@ module ptw (
                 STATE_IDLE: begin
                     pte_reg <= 32'b0;
                     pte_level <= 2'b01;
-                    t_ptw_resp_valid_o = 1'b0;
+                    t_ptw_resp_valid_o <= 1'b0;
 
                     // if (ptw_req_valid_i && ptw_enable_i) begin
                     //     if (ptw_tlb_hit_i) begin
@@ -156,7 +156,7 @@ module ptw (
                     end else begin
                         if (pte_xwr != 3'b000) begin
                             // 叶子项：检查权限和超级页对齐
-                            t_ptw_resp_valid_o = 1'b1;
+                            t_ptw_resp_valid_o <= 1'b1;
                             $display("phys_addr:%h",phys_addr);
                             state <= STATE_IDLE; // 遍历完成
 
@@ -194,7 +194,6 @@ module ptw (
     
     //  物理地址生成
     reg [31:0] phys_addr;
-    reg t_ptw_resp_valid_o;
     always @(*) begin
         case (pte_level)
             2'b01: begin
