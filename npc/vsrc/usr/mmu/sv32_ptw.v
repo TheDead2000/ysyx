@@ -121,15 +121,16 @@ module ptw (
                     //         state <= STATE_CLK;
                     //     end
                     // end
+                    if(ptw_req_valid_i & t_ptw_resp_valid_o) begin
+                        state <=STATE_IDLE;
+                    end
+                    else
                     if(ptw_enable_i & ptw_vaddr_i != 0 & ptw_req_valid_i) begin
                         $display("vaddr:%h is inst or mem ? %h",ptw_vaddr_i,ptw_is_store_i);
                         $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
                         state <= STATE_CLK;
                     end
-                    else if(ptw_req_valid_i & t_ptw_resp_valid_o) begin
-                        state <=STATE_IDLE;
-                    end
-
+                    
                 end
                 STATE_CLK:begin
                 //  根页表地址 = satp_ppn <<12 + VPN[1] <<2
