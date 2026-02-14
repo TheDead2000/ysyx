@@ -193,7 +193,7 @@ module CSRs(
     timehReg = 32'h0;
     instrethReg = 32'h0;
     
-    privilegeReg = 2'b11; // 初始为M模式
+    privilegeReg = 2'b10; // 初始为M模式
   end
   
   // 输出赋值
@@ -372,7 +372,7 @@ module CSRs(
       timehReg <= 32'h0;
       instrethReg <= 32'h0;
       
-      privilegeReg <= 2'b11;
+      privilegeReg <= 2'b10;
     end else begin
       // 优先处理CLINT的CSR写入请求
       if (clint_csr_write_en) begin
