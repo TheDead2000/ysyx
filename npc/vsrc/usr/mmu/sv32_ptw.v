@@ -126,6 +126,9 @@ module ptw (
                         $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
                         state <= STATE_CLK;
                     end
+                    else if(ptw_req_valid_i & t_ptw_resp_valid_o) begin
+                        state <=STATE_IDLE;
+                    end
 
                 end
                 STATE_CLK:begin

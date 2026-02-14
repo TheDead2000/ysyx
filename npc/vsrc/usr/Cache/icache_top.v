@@ -290,7 +290,7 @@ mmu icache_mmu (
 
         CACHE_WAIT_ADDR_CLK: begin
           pc_addr <= paddr_trans;
-          $display("icache_trans addr: %h",paddr_trans);
+          $display("trans addr: %h",paddr_trans);
           icache_state <= CACHE_WAIT_TRANS_LOOKUP;
         end
 
