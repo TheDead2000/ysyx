@@ -123,6 +123,7 @@ module ptw (
                     // end
                     if(ptw_enable_i & ptw_vaddr_i != 0) begin
                         $display("vaddr:%h is inst or mem ? %h",ptw_vaddr_i,ptw_is_store_i);
+                        $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
                         state <= STATE_CLK;
                     end
 
@@ -158,6 +159,7 @@ module ptw (
                             // 叶子项：检查权限和超级页对齐
                             t_ptw_resp_valid_o <= 1'b1;
                             $display("phys_addr:%h",phys_addr);
+                            $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
                             state <= STATE_IDLE; // 遍历完成
 
                         end else begin
