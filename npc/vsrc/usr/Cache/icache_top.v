@@ -290,12 +290,12 @@ mmu icache_mmu (
 
         CACHE_WAIT_ADDR_CLK: begin
           pc_addr <= paddr_trans;
-          $display("trans addr: %h",paddr_trans);
+          $display("icache_trans addr: %h",paddr_trans);
           icache_state <= CACHE_WAIT_TRANS_LOOKUP;
         end
 
         CACHE_WAIT_TRANS_LOOKUP:begin
-          $display("pc_addr: %h",pc_addr);
+          $display("icache_pc_addr: %h",pc_addr);
           mmu_translation_done <= 1'b1;  // 标记转换完成
           blk_addr_reg <= cache_blk_addr;
           line_idx_reg <= cache_line_idx;

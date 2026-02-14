@@ -284,6 +284,7 @@ mmu dcache_mmu (
           if(dcache_mmu_mem_req & dcache_mmu_mem_rvalid != 1) begin
              dcache_state <= CACHE_MMU_MEM;
             _ram_raddr_dcache_o       <= dcache_mmu_mem_addr;// 读地址
+            $display("dcache_mmu_mem_addr:%h",dcache_mmu_mem_addr);
             _ram_raddr_valid_dcache_o <= 1;  // 地址有效
             _ram_rmask_dcache_o       <= 4'b_1111;  // 读掩码
             _ram_rsize_dcache_o       <= 4'b0100;  //读大小 32bit,一条指令
@@ -291,6 +292,7 @@ mmu dcache_mmu (
           end
           else if(mmu_resp_valid) begin
               //mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
+              $display("success! mmu_resp_valid:%h",mmu_resp_valid);
               dcache_state <= CACHE_WAIT_ADDR_CLK;
             end
             else begin
