@@ -121,7 +121,7 @@ module ptw (
                     //         state <= STATE_CLK;
                     //     end
                     // end
-                    if(ptw_enable_i) begin
+                    if(ptw_enable_i & ptw_vaddr_i != 0) begin
                         $display("vaddr:%h is inst or mem ? %h",ptw_vaddr_i,ptw_is_store_i);
                         state <= STATE_CLK;
                     end
