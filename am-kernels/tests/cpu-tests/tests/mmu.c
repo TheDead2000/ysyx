@@ -122,13 +122,17 @@ void setup_4mb_page_table() {
 // ====================== 地址访问测试 ======================
 void test_mmu_access() {
     uint32_t *va_ptr = (uint32_t *)TEST_BASE_VA;
+    uint32_t *va_ptr2 = (uint32_t *)0xa0000004;
     uint32_t *out_of_range_ptr = (uint32_t *)TEST_OUT_OF_RANGE_VA;
     uint32_t read_data;
+    uint32_t read_data2;
 
     // 1. 关闭MMU，直接访问物理地址（裸机模式）
     printf("\n=== Step 1: Access physical address (MMU disabled) ===\n");
     mmu_disable();
     *va_ptr = TEST_DATA;  // 直接写物理地址
+    *va_ptr2 = 0x98765432;
+
     read_data = *va_ptr;  // 直接读物理地址
     printf("Write 0x%x to 0x%x, Read back: 0x%x\n", TEST_DATA, TEST_BASE_PA, read_data);
     if (read_data != TEST_DATA) {
@@ -144,6 +148,7 @@ void test_mmu_access() {
     printf("\n=== Step 2: Access virtual address (MMU enabled, 4MB huge page) ===\n");
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
+    read_data2 = *va_ptr2;
     printf("Read from VA 0x%x: 0x%x\n", TEST_BASE_VA, read_data);
     if (read_data != TEST_DATA) {
         printf("ERROR: MMU virtual address access failed!\n");
