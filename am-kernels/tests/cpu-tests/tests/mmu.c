@@ -149,7 +149,7 @@ void test_mmu_access() {
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
     read_data2 = *va_ptr2;
-    printf("Read from VA 0x%x: 0x%x\n", TEST_BASE_VA, read_data);
+    printf("Read from VA 0x%x: 0x%x 0x:%x\n", TEST_BASE_VA, read_data,read_data2);
     if (read_data != TEST_DATA) {
         printf("ERROR: MMU virtual address access failed!\n");
         mmu_disable();
