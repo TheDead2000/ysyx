@@ -271,9 +271,13 @@ mmu dcache_mmu (
 
         mmu_translation_done <= 1'b0;
         last_vaddr <= mem_addr_i; 
+        
+        $display("IDLE ready to CACHE_MMU_TRANS mem_addr_valid_i:%h",mem_addr_valid_i);
+        
         if (mem_addr_valid_i) begin
             dcache_state <= CACHE_MMU_TRANS;
         end
+
       end
 
         CACHE_MMU_TRANS:begin
@@ -299,9 +303,9 @@ mmu dcache_mmu (
              dcache_state <= CACHE_MMU_TRANS;
             end
           end
-      else begin
-        dcache_state <= CACHE_LOOKUP;
-        end
+         else begin
+          dcache_state <= CACHE_LOOKUP;
+         end
       end
       
       CACHE_MMU_MEM: begin
@@ -310,6 +314,7 @@ mmu dcache_mmu (
             dcache_mmu_mem_rdata <= ram_rdata_dcache_i[31:0]; // 直接取低32位
             dcache_mmu_mem_rvalid <= 1;
             dcache_state <= CACHE_MMU_TRANS;
+            $display("CACHE_MMU_MEM ready to CACHE_MMU_TRANS");
           end
       end
       
@@ -343,6 +348,7 @@ mmu dcache_mmu (
                 dcache_hit_count();
 `endif
                 dcache_state <= CACHE_IDLE;
+                $display("11 ready to CACHE_MMU_TRANS");
                 //写 cache
                 dcache_data_wen <= 1;
                 dcache_wdata_ready <= 1;  // 完成信号
@@ -367,6 +373,7 @@ mmu dcache_mmu (
 `endif
                 if (dirty_bit_read) begin  // 需要写回
                   dcache_state <= CACHE_WRITE_BACK;
+                  $display("dirty_bit_read ready to CACHE_WRITE_BACK");
                   dcache_wdata_ready <= 0;
                   _ram_waddr_dcache_o <= {dcache_tag_read, cache_line_idx, 6'b0};  // 写地址
                   _ram_waddr_valid_dcache_o <= 1;  // 地址有效
@@ -377,6 +384,7 @@ mmu dcache_mmu (
                   burst_count <= 0;  // 清空计数器
                 end else begin  // 不需要写回
                   dcache_state              <= CACHE_MISS_ALLOCATE;
+                  $display("else ready to CACHE_MISS_ALLOCATE");
                   dcache_data_ready         <= 0;
                   _ram_raddr_dcache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
                   _ram_raddr_valid_dcache_o <= 1;  // 地址有效
@@ -391,6 +399,7 @@ mmu dcache_mmu (
             // 判断是读还是写
             if (mem_write_valid_i) begin
               dcache_state              <= UNCACHE_WRITE;
+              $display("write ready to UNCACHE_WRITE");
               dcache_wdata_ready         <= 0;
               _ram_waddr_dcache_o       <= mux_addr;  // 写地址
               _ram_waddr_valid_dcache_o <= 1;  // 地址有效
@@ -421,6 +430,7 @@ mmu dcache_mmu (
               _ram_wlen_dcache_o        <= 8'd0;  // 不突发
             end else begin
               dcache_state              <= UNCACHE_READ;
+              $display("read ready to UNCACHE_READ");
               dcache_data_ready         <= 0;
               _ram_raddr_dcache_o       <= mux_addr;  // 读地址
               _ram_raddr_valid_dcache_o <= 1;  // 地址有效
@@ -460,6 +470,8 @@ mmu dcache_mmu (
             _dirty_bit_write <= 0;
             dcache_wdata_writehit <= 0;
             dcache_write_hit_valid <= 0;  //写信号
+            dcache_state <= CACHE_IDLE;
+            $display("error ready to CACHE_IDLE");
           end
         end
 
