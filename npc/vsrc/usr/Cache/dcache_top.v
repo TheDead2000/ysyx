@@ -479,6 +479,7 @@ mmu dcache_mmu (
           if (ram_r_handshake) begin  // 在 handshake 时，向 ram 写入数据
             if (burst_count == _ram_rlen_dcache_o[3:0]) begin  // 突发传输最后一个数据
               dcache_state              <= CACHE_IDLE;
+              $display("CACHE_MISS_ALLOCATE ready to CACHE_IDLE");
               dcache_tag_wen            <= 1;  // 写 tag 
               _dirty_bit_write          <= 0;
               _ram_raddr_valid_dcache_o <= 0;  // 传输结束
@@ -495,6 +496,7 @@ mmu dcache_mmu (
             _ram_waddr_valid_dcache_o <= 0;
             dcache_wdata_ready <= 1;  // 完成信号
             dcache_state <= CACHE_IDLE;
+            $display("CACHE_WRITE_MISS ready to CACHE_IDLE");
           end
         end
 
@@ -505,6 +507,7 @@ mmu dcache_mmu (
 
               // 写入 cache 中
               dcache_state              <= CACHE_MISS_ALLOCATE;
+              $display("CACHE_WRITE_BACK ready to CACHE_MISS_ALLOCATE");
               dcache_wdata_ready         <= 0;
               _ram_raddr_dcache_o       <= {cache_line_tag, cache_line_idx, 6'b0};  // 读地址
               _ram_raddr_valid_dcache_o <= 1;  // 地址有效
@@ -555,6 +558,7 @@ mmu dcache_mmu (
             _ram_waddr_valid_dcache_o <= 0;
             dcache_wdata_ready         <= 1;  // 完成信号
             dcache_state              <= CACHE_IDLE;
+            $display("UNCACHE_WRITE ready to CACHE_IDLE");
           end
         end
 
