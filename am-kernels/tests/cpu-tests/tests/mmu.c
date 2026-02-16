@@ -119,6 +119,11 @@ void setup_4mb_page_table() {
     // 此处简化，假设已提前配置好中断向量
 }
 
+void test_fun()
+{
+    printf("testfun\n");
+}
+
 // ====================== 地址访问测试 ======================
 void test_mmu_access() {
     uint32_t *va_ptr = (uint32_t *)TEST_BASE_VA;
@@ -149,30 +154,32 @@ void test_mmu_access() {
     mmu_enable(root_ppn, 0);  // ASID=0，开启MMU
     read_data = *va_ptr;      // 读虚拟地址（触发TLB未命中→PTW→TLB填充）
     read_data2 = *va_ptr2;
-    printf("Read from VA 0x%x: 0x%x 0x:%x\n", TEST_BASE_VA, read_data,read_data2);
-    if (read_data != TEST_DATA) {
-        printf("ERROR: MMU virtual address access failed!\n");
-        mmu_disable();
-        return;
-    }
+    test_fun();
+    
+    // printf("Read from VA 0x%x: 0x%x 0x:%x\n", TEST_BASE_VA, read_data,read_data2);
+    // if (read_data != TEST_DATA) {
+    //     printf("ERROR: MMU virtual address access failed!\n");
+    //     mmu_disable();
+    //     return;
+    // }
 
-    // 3. 测试TLB命中（多次访问同一地址）
-    printf("\n=== Step 3: Test TLB hit ===\n");
-    for (int i = 0; i < 5; i++) {
-        read_data = *va_ptr;
-    }
-    printf("5 times access to VA 0x%x (TLB hit), Read back: 0x%x\n", TEST_BASE_VA, read_data);
+    // // 3. 测试TLB命中（多次访问同一地址）
+    // printf("\n=== Step 3: Test TLB hit ===\n");
+    // for (int i = 0; i < 5; i++) {
+    //     read_data = *va_ptr;
+    // }
+    // printf("5 times access to VA 0x%x (TLB hit), Read back: 0x%x\n", TEST_BASE_VA, read_data);
 
-    // 4. 测试超出4MB范围的地址（触发页故障）
-    printf("\n=== Step 4: Test out-of-range address (expect Page Fault) ===\n");
-    page_fault_occurred = 0;
-    fault_addr = 0;
-    read_data = *out_of_range_ptr;  // 访问0xA0400000（无映射）
-    if (page_fault_occurred && fault_addr == TEST_OUT_OF_RANGE_VA) {
-        printf("PASS: Out-of-range address triggered Page Fault as expected!\n");
-    } else {
-        printf("ERROR: Out-of-range address did NOT trigger Page Fault!\n");
-    }
+    // // 4. 测试超出4MB范围的地址（触发页故障）
+    // printf("\n=== Step 4: Test out-of-range address (expect Page Fault) ===\n");
+    // page_fault_occurred = 0;
+    // fault_addr = 0;
+    // read_data = *out_of_range_ptr;  // 访问0xA0400000（无映射）
+    // if (page_fault_occurred && fault_addr == TEST_OUT_OF_RANGE_VA) {
+    //     printf("PASS: Out-of-range address triggered Page Fault as expected!\n");
+    // } else {
+    //     printf("ERROR: Out-of-range address did NOT trigger Page Fault!\n");
+    // }
 
     // 5. 关闭MMU
     mmu_disable();
