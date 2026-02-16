@@ -297,7 +297,9 @@ mmu dcache_mmu (
           end
           else if(mmu_resp_valid) begin
               //mmu 转换成功，更新地址，进入 CACHE_LOOKUP 状态
-              dcache_state <= CACHE_WAIT_ADDR_CLK;
+               mem_trans_addr <= paddr_trans;
+               $display("mem_paddr_trans: %h",paddr_trans);
+               dcache_state <= CACHE_WAIT_TRANS_LOOKUP;
             end
             else begin
              dcache_state <= CACHE_MMU_TRANS;
@@ -318,12 +320,6 @@ mmu dcache_mmu (
           end
       end
       
-      CACHE_WAIT_ADDR_CLK: begin
-          mem_trans_addr <= paddr_trans;
-          $display("mem_paddr_trans: %h",paddr_trans);
-          dcache_state <= CACHE_WAIT_TRANS_LOOKUP;
-      end
-
         CACHE_WAIT_TRANS_LOOKUP:begin
           $display("mem_trans_addr: %h",mem_trans_addr);
           mmu_translation_done <= 1'b1;  // 标记转换完成
