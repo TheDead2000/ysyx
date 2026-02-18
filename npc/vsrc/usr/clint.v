@@ -80,7 +80,7 @@ module clint (
   
   // 中断检测逻辑
   wire mstatus_mie = csr_mstatus_i[3];  // M模式全局中断使能
-  wire mstatus_sie = csr_sstatus_i[1];  // S模式全局中断使能
+  wire mstatus_sie = csr_mstatus_i[1];  // S模式全局中断使能
   wire mie_mti = csr_mie_i[7];          // M模式定时器中断使能
   wire mie_mei = csr_mie_i[11];         // M模式外部中断使能
   wire mie_msi = csr_mie_i[3];          // M模式软件中断使能
@@ -103,8 +103,8 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  assign trap_valid = trap_bus_i[`TRAP_ECALL_M] || trap_fencei || machine_timer_interrupt || supervisor_timer_interrupt 
-                     || trap_mmu_page_falut ||
+  assign trap_valid = trap_fencei  || trap_mmu_page_falut || 
+                     machine_timer_interrupt    || supervisor_timer_interrupt ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
   
@@ -224,8 +224,11 @@ end
       handler_pc = csr_sepc_i;
     end else if (trap_fencei) begin
       handler_pc = pc_from_mem_i;
-    end else if (trap_valid) begin
+    end else if (trap_bus_i[`TRAP_ECALL_M]) begin
       // 根据委托决定使用哪个tvec
+      handler_pc = csr_mtvec_i;
+    end
+    else if(trap_valid) begin
       if (csr_privilege_i == 2'b01) begin
           handler_pc = csr_stvec_i;
       end 
@@ -238,7 +241,33 @@ end
       handler_pc = 32'h0;
     end
   end
-  
+  always @(*) begin
+    if (trap_mret)               handler_pc = csr_mepc_i;
+    else if (trap_sret)          handler_pc = csr_sepc_i;
+    else if (trap_fencei)        handler_pc = pc_from_mem_i;
+    else if (trap_bus_i[`TRAP_ECALL_M]) handler_pc = csr_mtvec_i;
+    else if (machine_timer_interrupt && csr_privilege_i == 2'b11) begin
+        // M模式定时器中断
+        handler_pc = csr_mtvec_i;
+    end
+    else if (supervisor_timer_interrupt && csr_privilege_i == 2'b01) begin
+        // S模式定时器中断（已委托）
+        handler_pc = csr_stvec_i;
+    end
+    else if (mtime_ge_mtime && csr_privilege_i != 2'b11 && !csr_mideleg_i[5]) begin
+        // 未委托的定时器中断（S或U模式）→ 由M模式处理
+        handler_pc = csr_mtvec_i;
+    end
+    else if (trap_valid) begin
+        // 其他异常
+        handler_pc = (csr_privilege_i == 2'b01) ? csr_stvec_i : csr_mtvec_i;
+    end
+    else begin
+        handler_pc = 32'h0;
+    end
+end
+
+
   // CSR写入状态机
   localparam IDLE = 3'b000;
   localparam SAVE_PC = 3'b001;
@@ -391,13 +420,12 @@ end
   end
   
   // 输出赋值
-  assign clint_pc_o = handler_pc;
-  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei;
+  assign clint_pc_o =   handler_pc;
+  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei ;
   wire trap_flush_condition = trap_valid;
   // 特权级别更新
   always @(*) begin
     privilege_o = csr_privilege_i;
-    
     if (trap_valid) begin
       if (exception_delegated || interrupt_delegated) begin
         privilege_o = 2'b01; // S模式
