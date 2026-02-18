@@ -218,30 +218,6 @@ end
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
-    if (trap_mret) begin
-      handler_pc = csr_mepc_i;
-    end else if (trap_sret) begin
-      handler_pc = csr_sepc_i;
-    end else if (trap_fencei) begin
-      handler_pc = pc_from_mem_i;
-    end else if (trap_bus_i[`TRAP_ECALL_M]) begin
-      // 根据委托决定使用哪个tvec
-      handler_pc = csr_mtvec_i;
-    end
-    else if(trap_valid) begin
-      if (csr_privilege_i == 2'b01) begin
-          handler_pc = csr_stvec_i;
-      end 
-      else 
-      begin
-          handler_pc = csr_mtvec_i;
-      end
-    end 
-    else begin
-      handler_pc = 32'h0;
-    end
-  end
-  always @(*) begin
     if (trap_mret)               handler_pc = csr_mepc_i;
     else if (trap_sret)          handler_pc = csr_sepc_i;
     else if (trap_fencei)        handler_pc = pc_from_mem_i;
@@ -297,7 +273,7 @@ end
     
     case (csr_state)
       IDLE: begin
-        if (trap_valid) begin
+        if (trap_bus_i[`TRAP_ECALL_M] || trap_valid) begin
           next_csr_state = SAVE_PC;
           is_delegated = exception_delegated || interrupt_delegated;
         end else if (trap_mret || trap_sret) begin
