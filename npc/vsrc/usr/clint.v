@@ -398,7 +398,7 @@ end
   // 输出赋值
   assign clint_pc_o =   handler_pc;
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_flush_condition = trap_valid || trap_bus_i[`TRAP_ECALL_M];
+  wire trap_flush_condition = trap_bus_i[`TRAP_ECALL_M];
   // 特权级别更新
   always @(*) begin
     privilege_o = csr_privilege_i;
