@@ -33,7 +33,9 @@ module clint (
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
     output reg [31:0] csr_write_data_o,
-    
+    output reg [11:0] csr_write_mstatus_o,
+    output reg [31:0] csr_write_mstatus_data_o,
+
     // CSR寄存器读取接口
     input  [31:0] csr_mstatus_i,
     input  [31:0] csr_mtvec_i,
@@ -57,6 +59,8 @@ module clint (
     // 输出至取指阶段
     output [31:0] clint_pc_o,
     output        clint_pc_valid_o,
+    //time intererupt
+    output mtime_ge_mtime,
 
     // 流水线控制
     output reg [5:0] stall_o,
@@ -89,7 +93,6 @@ module clint (
   wire sie_ssi = csr_sie_i[1];          // S模式软件中断使能
   
   // 定时器中断检测
-  wire mtime_ge_mtime;
   assign machine_timer_interrupt = mtime_ge_mtime && mstatus_mie && mie_mti;
   assign supervisor_timer_interrupt = mtime_ge_mtime && mstatus_sie && sie_sti && csr_mideleg_i[5];
   
@@ -338,9 +341,19 @@ end
             csr_sstatus_i[4:2],
             1'b0,               // SIE
             csr_sstatus_i[0]
-            //todo
-            //add mstatus control
           };
+          csr_write_mstatus_o = 12'h300;
+          csr_write_mstatus_data_o = {
+            csr_mstatus_i[31:9],
+            csr_mstatus_i[8],   // SPP
+            csr_mstatus_i[7:6],
+            csr_sstatus_i[1],   // SPIE
+            csr_mstatus_i[4:2],
+            1'b0,               // SIE
+            csr_mstatus_i[0]
+          };        
+
+
         end else if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o = 12'h300; // mstatus
           csr_write_data_o = {
@@ -355,16 +368,16 @@ end
         end
       end
       
-      UPDATE_PENDING: begin
-        csr_write_en_o = 1'b1;
-        if (machine_timer_interrupt) begin
-          csr_write_addr_o = 12'h344; // mip
-          csr_write_data_o = {csr_mip_i[31:8], 1'b1, csr_mip_i[6:0]};
-        end else if (supervisor_timer_interrupt) begin
-          csr_write_addr_o = 12'h144; // sip
-          csr_write_data_o = {csr_sip_i[31:9], 1'b1, csr_sip_i[7:0]};
-        end
-      end
+      // UPDATE_PENDING: begin
+      //   csr_write_en_o = 1'b1;
+      //   if (machine_timer_interrupt) begin
+      //     csr_write_addr_o = 12'h344; // mip
+      //     csr_write_data_o = {csr_mip_i[31:8], mtime_ge_mtime_o, csr_mip_i[6:0]};
+      //   end else if (supervisor_timer_interrupt) begin
+      //     csr_write_addr_o = 12'h144; // sip
+      //     csr_write_data_o = {csr_sip_i[31:9], mtime_ge_mtime_o, csr_sip_i[7:0]};
+      //   end
+      // end
       
       RESTORE_STATUS: begin
         csr_write_en_o = 1'b1;
@@ -380,7 +393,7 @@ end
             csr_mstatus_i[2:0]
           };
         end else if (trap_sret) begin
-          csr_write_addr_o = 12'h100; // sstatus   this has problem!!!!!!!!!!!!!  todo
+          csr_write_addr_o = 12'h100; // sstatus 
           csr_write_data_o = {
             csr_sstatus_i[31:9],
             1'b0,                 // SPP
@@ -402,12 +415,8 @@ end
   // 特权级别更新
   always @(*) begin
     privilege_o = csr_privilege_i;
-    if (trap_valid) begin
-      if (exception_delegated || interrupt_delegated) begin
-        privilege_o = 2'b01; // S模式
-      end else begin
+    if (trap_bus_i[`TRAP_ECALL_M]) begin
         privilege_o = 2'b11; // M模式
-      end
     end else if (trap_mret) begin
       privilege_o = csr_mstatus_i[12:11]; // MPP
     end else if (trap_sret) begin
@@ -452,6 +461,8 @@ end
       .mtime_ge_mtime_o(mtime_ge_mtime)
   );
   
+
+
   assign clint_rdata_o = mtime_rdata;
 
 

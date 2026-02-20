@@ -49,8 +49,8 @@ module mtime (
   
   always @(posedge clk) begin
     if (rst) begin
-      mtimecmp_low_q <= 0;
-      mtimecmp_high_q <= 0;
+      mtimecmp_low_q <= 32'h0000_ffff;
+      mtimecmp_high_q <= 32'h0000_ffff;
     end else begin
       if (mtimecmp_low_write_en) begin
         mtimecmp_low_q <= mtime_wdata_i;

@@ -16,7 +16,9 @@ module CSRs(
   input         clint_csr_write_en,
   input  [11:0] clint_csr_write_addr,
   input  [31:0] clint_csr_write_data,
-  
+  input  [11:0] clint_csr_write_mstatus,
+  input  [31:0] clint_csr_write_mstatus_data,
+  input mtime_ge_mtime_i,
   // 固定CSR输出
   output [31:0] io_mstatus,
   output [31:0] io_mtvec,
@@ -400,7 +402,12 @@ module CSRs(
           
           default: ; // 忽略其他地址
         endcase
-        
+        case (clint_csr_write_mstatus) 
+          12'h300: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_mstatus_data);
+          default: $display("bug!!!!"); // 忽略其他地址
+        endcase
+
+
         // 特权级别更新
         if (clint_csr_write_addr == 12'h300) begin
           privilegeReg <= clint_csr_write_data[12:11]; // 更新MPP字段
@@ -491,6 +498,12 @@ module CSRs(
     end
   end
 
+  always@(posedge clk) begin
+    mipReg[7] <= mtime_ge_mtime_i;
+  end
+
+
+
   // 检测 satp 写入
   always @(posedge clk) begin
     if (rst) begin
@@ -543,7 +556,7 @@ assign mmu_enable_o = (satpReg[31] == 1'b1) && (io_privilege != 2'b11); // 非 M
       update_mstatus[6]     = new_val[6];     // UBE
       update_mstatus[5]     = new_val[5];     // SPIE
       update_mstatus[3]     = new_val[3];     // MIE
-      update_mstatus[1]     = new_val[1];     // SIE
+      update_mstatus[1]     = new_val[1];     // SIE  
     end
   endfunction
   
@@ -587,6 +600,7 @@ assign mmu_enable_o = (satpReg[31] == 1'b1) && (io_privilege != 2'b11); // 非 M
     begin
       update_mip = old_val;
       // 只有 SSIP 位是可写的
+      update_mip[7] = mtime_ge_mtime_i;
       update_mip[1] = new_val[1]; // SSI
       // 其他位由外部中断控制器或CLINT设置
     end

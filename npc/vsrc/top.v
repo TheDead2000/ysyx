@@ -915,6 +915,10 @@ wire [31:0] csr_satp;
 wire [1:0]  csr_privilege;
 wire [1:0]  next_privilege;
 
+wire [11:0] clint_csr_write_mstatus;
+wire [31:0] clint_csr_write_mstatus_data;
+wire mtime_ge_mtime;
+
 clint clint_u (
     .clk(clk),
     .rst(rst),
@@ -927,6 +931,7 @@ clint clint_u (
     .clint_write_valid_i(clint_write_valid),
     .clint_wdata_i(clint_wdata),
     .clint_rdata_o(clint_rdata),
+    .mtime_ge_mtime(mtime_ge_mtime),
 
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),
@@ -961,7 +966,8 @@ clint clint_u (
     .csr_write_en_o(clint_csr_write_en),
     .csr_write_addr_o(clint_csr_write_addr),
     .csr_write_data_o(clint_csr_write_data),
-
+    .csr_write_mstatus_o(clint_csr_write_mstatus),
+    .csr_write_mstatus_data_o(clint_csr_write_mstatus_data),
     .clint_pc_o(clint_pc),
     .clint_pc_valid_o(clint_pc_valid),
     // .clint_pc_plus4_valid_o(),
@@ -987,6 +993,11 @@ CSRs rv32_csr_regfile(
     .clint_csr_write_en(clint_csr_write_en),
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
+
+    .clint_csr_write_mstatus(clint_csr_write_mstatus),
+    .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),
+    .mtime_ge_mtime_i(mtime_ge_mtime),
+
     .io_mstatus(csr_mstatus),
     .io_mtvec(csr_mtvec),
     .io_mepc(csr_mepc),
