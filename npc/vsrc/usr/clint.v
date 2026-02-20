@@ -195,6 +195,7 @@ module clint (
 reg [31:0] cause_value_latched;
 reg is_delegated_latched;
 reg interrupt_pending_latched;
+reg [31:0] pc_from_exe_i_latch;
 
 // 在检测到陷阱时锁存关键信号
 always @(posedge clk or posedge rst) begin
@@ -202,22 +203,14 @@ always @(posedge clk or posedge rst) begin
     cause_value_latched <= 32'b0;
     is_delegated_latched <= 1'b0;
     interrupt_pending_latched <= 1'b0;
-  end else if (trap_valid && csr_state == IDLE) begin
+  end else if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && csr_state == IDLE) begin
     // 只在IDLE状态且检测到陷阱时锁存
+    pc_from_exe_i_latch <= pc_from_exe_i;
     cause_value_latched <= cause_value;
     is_delegated_latched <= exception_delegated || interrupt_delegated;
     interrupt_pending_latched <= interrupt_pending;
   end
 end
-
-reg [31:0] pc_from_exe_i_latch;
-
-always @(posedge clk) begin
-  if (trap_valid) begin
-   pc_from_exe_i_latch <= pc_from_exe_i;
-  end
-end
-
 
   // 处理程序地址计算
   reg [31:0] handler_pc;
@@ -298,7 +291,8 @@ end
     csr_write_en_o = 1'b0;
     csr_write_addr_o = 12'h0;
     csr_write_data_o = 32'h0;
-    
+    csr_write_mstatus_o = 12'h0;
+    csr_write_mstatus_data_o = 32'h0;
     case (csr_state)
       SAVE_PC: begin
         csr_write_en_o = 1'b1;

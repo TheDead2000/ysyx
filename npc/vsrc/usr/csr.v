@@ -199,7 +199,7 @@ module CSRs(
     timehReg = 32'h0;
     instrethReg = 32'h0;
     
-    privilegeReg = 2'b11; // 初始为M模式
+    privilegeReg = 2'b01; // 初始为M模式
   end
   
   // 输出赋值
@@ -378,7 +378,7 @@ module CSRs(
       timehReg <= 32'h0;
       instrethReg <= 32'h0;
       
-      privilegeReg <= 2'b11;
+      privilegeReg <= 2'b01;
     end else begin
       // 优先处理CLINT的CSR写入请求
       if (clint_csr_write_en) begin
@@ -406,6 +406,7 @@ module CSRs(
           
           default: ; // 忽略其他地址
         endcase
+
         case (clint_csr_write_mstatus) 
           12'h300: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_mstatus_data);
           default: $display("bug!!!!"); // 忽略其他地址
