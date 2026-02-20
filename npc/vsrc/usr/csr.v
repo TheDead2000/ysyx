@@ -18,6 +18,10 @@ module CSRs(
   input  [31:0] clint_csr_write_data,
   input  [11:0] clint_csr_write_mstatus,
   input  [31:0] clint_csr_write_mstatus_data,
+
+  input [1:0] clint_privilege_i,
+  input clint_privilege_wen_i,
+
   input mtime_ge_mtime_i,
   // 固定CSR输出
   output [31:0] io_mstatus,
@@ -409,9 +413,9 @@ module CSRs(
 
 
         // 特权级别更新
-        if (clint_csr_write_addr == 12'h300) begin
-          privilegeReg <= clint_csr_write_data[12:11]; // 更新MPP字段
-        end
+        // if (clint_csr_write_addr == 12'h300) begin
+        //   privilegeReg <= clint_csr_write_data[12:11]; // 更新MPP字段
+        // end
       end
       
       // 处理普通的CSR写入请求
@@ -475,9 +479,9 @@ module CSRs(
         endcase
         
         // 特权级别更新
-        if (csr_write_address == 12'h300) begin
-          privilegeReg <= csr_write_data[12:11]; // 更新MPP字段
-        end
+        // if (csr_write_address == 12'h300) begin
+        //   privilegeReg <= csr_write_data[12:11]; // 更新MPP字段
+        // end
         
       end
       
@@ -495,6 +499,12 @@ module CSRs(
       instretReg <= minstretReg;
       instrethReg <= minstrethReg;
       // timeReg 通常由外部计时器更新，这里保持不变
+    end
+  end
+
+  always@(posedge clk) begin
+    if(clint_privilege_wen_i) begin
+      privilegeReg <= clint_privilege_i;
     end
   end
 

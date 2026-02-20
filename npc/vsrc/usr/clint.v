@@ -67,7 +67,8 @@ module clint (
     output reg [5:0] flush_o,
     
     // 特权级别更新
-    output reg [1:0] privilege_o
+    output reg [1:0] privilege_o,
+    output           privilege_wen_o
 );
 
   // 内部信号定义
@@ -414,12 +415,16 @@ end
   wire trap_flush_condition = trap_bus_i[`TRAP_ECALL_M];
   // 特权级别更新
   always @(*) begin
+    privilege_wen_o = 1'b0; // 明确默认值：不写使能
     privilege_o = csr_privilege_i;
     if (trap_bus_i[`TRAP_ECALL_M]) begin
+        privilege_wen_o = 1;
         privilege_o = 2'b11; // M模式
     end else if (trap_mret) begin
+      privilege_wen_o = 1;
       privilege_o = csr_mstatus_i[12:11]; // MPP
     end else if (trap_sret) begin
+      privilege_wen_o = 1;
       privilege_o = csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
     end
   end

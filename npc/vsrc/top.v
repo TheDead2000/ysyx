@@ -914,7 +914,7 @@ wire [31:0] csr_sip;
 wire [31:0] csr_satp;
 wire [1:0]  csr_privilege;
 wire [1:0]  next_privilege;
-
+wire privilege_wen;
 wire [11:0] clint_csr_write_mstatus;
 wire [31:0] clint_csr_write_mstatus_data;
 wire mtime_ge_mtime;
@@ -974,7 +974,8 @@ clint clint_u (
 
     .stall_o(stall_clint),
     .flush_o(flush_clint),
-    .privilege_o(next_privilege)
+    .privilege_o(next_privilege),
+    .privilege_wen_o(privilege_wen)
 );
 
 
@@ -996,6 +997,9 @@ CSRs rv32_csr_regfile(
 
     .clint_csr_write_mstatus(clint_csr_write_mstatus),
     .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),
+    .clint_privilege_i(next_privilege),
+    .clint_privilege_wen_i(privilege_wen),
+    
     .mtime_ge_mtime_i(mtime_ge_mtime),
 
     .io_mstatus(csr_mstatus),
