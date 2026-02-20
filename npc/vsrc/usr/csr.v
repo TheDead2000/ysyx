@@ -409,7 +409,7 @@ module CSRs(
 
         case (clint_csr_write_mstatus) 
           12'h300: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_mstatus_data);
-          default: $display("bug!!!!"); // 忽略其他地址
+          default: ; // 忽略其他地址
         endcase
 
 
