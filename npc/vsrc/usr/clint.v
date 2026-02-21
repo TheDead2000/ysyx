@@ -212,7 +212,7 @@ always @(posedge clk or posedge rst) begin
     S_time_req_latch <= 0;
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
-  end else if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && csr_state == IDLE) begin
+  end else if ( (trap_bus_i[`TRAP_ECALL_M] ||trap_mret || trap_sret || trap_valid) && csr_state == IDLE) begin
     // 只在IDLE状态且检测到陷阱时锁存
     pc_from_exe_i_latch <= pc_from_exe_i;
     trap_bus_i_latch <= trap_bus_i;
@@ -239,7 +239,7 @@ end
         // M模式定时器中断
         handler_pc = csr_mtvec_i;
     end
-    // else if (supervisor_timer_interrupt && csr_privilege_i == 2'b01) begin
+    // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
     //     // S模式定时器中断（已委托）
     //     handler_pc = csr_stvec_i;
     // end
@@ -249,7 +249,7 @@ end
     end
     else if (trap_valid) begin
         // 其他异常
-        handler_pc = (csr_privilege_i == 2'b01) ? csr_stvec_i : csr_mtvec_i;
+        handler_pc = (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
     end
     else begin
         handler_pc = 32'h0;
@@ -312,7 +312,7 @@ end
     case (csr_state)
       SAVE_PC: begin
         csr_write_en_o = 1'b1;
-        if (csr_privilege_i == 2'b01) begin
+        if (csr_privilege_i != 2'b11) begin
           csr_write_addr_o = 12'h141; // sepc
         end else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o = 12'h341; // mepc
@@ -322,7 +322,7 @@ end
       
       SAVE_CAUSE: begin
         csr_write_en_o = 1'b1;
-        if (csr_privilege_i == 2'b01) begin
+        if (csr_privilege_i != 2'b11) begin
           csr_write_addr_o = 12'h142; // scause
         end else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o = 12'h342; // mcause
@@ -332,7 +332,7 @@ end
       
       SAVE_VALUE: begin
         csr_write_en_o = 1'b1;
-        if (csr_privilege_i == 2'b01) begin
+        if (csr_privilege_i != 2'b11) begin
           csr_write_addr_o = 12'h143; // stval
         end else begin
           csr_write_addr_o = 12'h343; // mtval
@@ -342,7 +342,7 @@ end
       
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
-        if (csr_privilege_i == 2'b01) begin
+        if (csr_privilege_i != 2'b11) begin
           if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
             csr_write_addr_o = 12'h300; // mstatus
             csr_write_data_o = {
@@ -393,7 +393,7 @@ end
       end
 
       UPDATE_PENDING: begin
-        if (csr_privilege_i == 2'b01) begin
+        if (csr_privilege_i != 2'b11) begin
           if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
             privilege_wen_o = 1'b1;
             privilege_o = 2'b11;
