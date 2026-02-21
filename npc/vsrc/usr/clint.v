@@ -280,7 +280,8 @@ end
       SAVE_PC: next_csr_state = SAVE_CAUSE;
       SAVE_CAUSE: next_csr_state = SAVE_VALUE;
       SAVE_VALUE: next_csr_state = UPDATE_STATUS;
-      UPDATE_STATUS: next_csr_state = IDLE;
+      UPDATE_STATUS: next_csr_state = UPDATE_PENDING;
+      UPDATE_PENDING: next_csr_state = IDLE;
       RESTORE_STATUS: next_csr_state = IDLE;
     endcase
   end
@@ -326,7 +327,7 @@ end
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
         if (csr_privilege_i == 2'b01) begin
-          if(trap_bus_i[`TRAP_ECALL_M] || trap_mmu_page_falut) begin
+          if(trap_bus_i[`TRAP_ECALL_M]) begin
             csr_write_addr_o = 12'h300; // mstatus
             csr_write_data_o = {
             csr_mstatus_i[31:13],
@@ -374,8 +375,17 @@ end
           };
         end
       end
-    
       
+      UPDATE_PENDING: begin
+        if (csr_privilege_i == 2'b01) begin
+          if(trap_bus_i[`TRAP_ECALL_M]) begin
+            privilege_wen_o = 1'b1;
+            privilege_o = 2'b11;
+          end
+        end
+      end
+
+
       RESTORE_STATUS: begin
         csr_write_en_o = 1'b1;
         if (trap_mret) begin
@@ -413,10 +423,7 @@ end
   always @(*) begin
     privilege_wen_o = 1'b0; // 明确默认值：不写使能
     privilege_o = csr_privilege_i;
-    if (trap_bus_i[`TRAP_ECALL_M]) begin
-        privilege_wen_o = 1;
-        privilege_o = 2'b11; // M模式
-    end else if (trap_mret) begin
+    if (trap_mret) begin
       privilege_wen_o = 1;
       privilege_o = csr_mstatus_i[12:11]; // MPP
     end else if (trap_sret) begin
