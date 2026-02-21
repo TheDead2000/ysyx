@@ -196,22 +196,38 @@ reg [31:0] cause_value_latched;
 reg is_delegated_latched;
 reg interrupt_pending_latched;
 reg [31:0] pc_from_exe_i_latch;
-
+reg [`TRAP_BUS] trap_bus_i_latch;
+reg M_time_req_latch;
+reg S_time_req_latch;
+reg trap_mret_latch;
+reg trap_sret_latch;
 // 在检测到陷阱时锁存关键信号
 always @(posedge clk or posedge rst) begin
   if (rst) begin
     cause_value_latched <= 32'b0;
     is_delegated_latched <= 1'b0;
     interrupt_pending_latched <= 1'b0;
+    trap_bus_i_latch <= `TRAP_LEN'b0;
+    M_time_req_latch <= 0;
+    S_time_req_latch <= 0;
+    trap_mret_latch <= 0;
+    trap_sret_latch <= 0;
   end else if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && csr_state == IDLE) begin
     // 只在IDLE状态且检测到陷阱时锁存
     pc_from_exe_i_latch <= pc_from_exe_i;
+    trap_bus_i_latch <= trap_bus_i;
     cause_value_latched <= cause_value;
     is_delegated_latched <= exception_delegated || interrupt_delegated;
     interrupt_pending_latched <= interrupt_pending;
+    M_time_req_latch <= M_time_req;
+    S_time_req_latch <= S_time_req;
+    trap_mret_latch <= trap_mret;
+    trap_sret_latch <= trap_sret;
   end
 end
 
+  wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
+  wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
@@ -219,15 +235,15 @@ end
     else if (trap_sret)          handler_pc = csr_sepc_i;
     else if (trap_fencei)        handler_pc = pc_from_mem_i;
     else if (trap_bus_i[`TRAP_ECALL_M]) handler_pc = csr_mtvec_i;
-    else if (machine_timer_interrupt && csr_privilege_i == 2'b11) begin
+    else if (M_time_req) begin
         // M模式定时器中断
         handler_pc = csr_mtvec_i;
     end
-    else if (supervisor_timer_interrupt && csr_privilege_i == 2'b01) begin
-        // S模式定时器中断（已委托）
-        handler_pc = csr_stvec_i;
-    end
-    else if (mtime_ge_mtime && csr_privilege_i != 2'b11 && !csr_mideleg_i[5]) begin
+    // else if (supervisor_timer_interrupt && csr_privilege_i == 2'b01) begin
+    //     // S模式定时器中断（已委托）
+    //     handler_pc = csr_stvec_i;
+    // end
+    else if (S_time_req) begin
         // 未委托的定时器中断（S或U模式）→ 由M模式处理
         handler_pc = csr_mtvec_i;
     end
@@ -327,7 +343,7 @@ end
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
         if (csr_privilege_i == 2'b01) begin
-          if(trap_bus_i[`TRAP_ECALL_M]) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
             csr_write_addr_o = 12'h300; // mstatus
             csr_write_data_o = {
             csr_mstatus_i[31:13],
@@ -375,10 +391,10 @@ end
           };
         end
       end
-      
+
       UPDATE_PENDING: begin
         if (csr_privilege_i == 2'b01) begin
-          if(trap_bus_i[`TRAP_ECALL_M]) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
             privilege_wen_o = 1'b1;
             privilege_o = 2'b11;
           end
@@ -388,18 +404,18 @@ end
 
       RESTORE_STATUS: begin
         csr_write_en_o = 1'b1;
-        if (trap_mret) begin
+        if (trap_mret_latch) begin
           csr_write_addr_o = 12'h300; // mstatus   
           csr_write_data_o = {
             csr_mstatus_i[31:13],
-            2'b01,                 // MPP
+            2'b00,                 // MPP
             csr_mstatus_i[10:8],
             1'b1,                  // MPIE
             csr_mstatus_i[6:4],
             csr_mstatus_i[7],      // MIE
             csr_mstatus_i[2:0]
           };
-        end else if (trap_sret) begin
+        end else if (trap_sret_latch) begin
           csr_write_addr_o = 12'h100; // sstatus 
           csr_write_data_o = {
             csr_sstatus_i[31:9],
