@@ -280,8 +280,7 @@ end
       SAVE_PC: next_csr_state = SAVE_CAUSE;
       SAVE_CAUSE: next_csr_state = SAVE_VALUE;
       SAVE_VALUE: next_csr_state = UPDATE_STATUS;
-      UPDATE_STATUS: next_csr_state = UPDATE_PENDING;
-      UPDATE_PENDING: next_csr_state = IDLE;
+      UPDATE_STATUS: next_csr_state = IDLE;
       RESTORE_STATUS: next_csr_state = IDLE;
     endcase
   end
@@ -327,6 +326,19 @@ end
       UPDATE_STATUS: begin
         csr_write_en_o = 1'b1;
         if (csr_privilege_i == 2'b01) begin
+          if(trap_bus_i[`TRAP_ECALL_M] || trap_mmu_page_falut) begin
+            csr_write_addr_o = 12'h300; // mstatus
+            csr_write_data_o = {
+            csr_mstatus_i[31:13],
+            csr_privilege_i,     // MPP
+            csr_mstatus_i[10:8],
+            csr_mstatus_i[3],    // MPIE
+            csr_mstatus_i[6:4],
+            1'b0,                // MIE
+            csr_mstatus_i[2:0]
+          };
+          end
+          else begin
           csr_write_addr_o = 12'h100; // sstatus
           csr_write_data_o = {
             csr_sstatus_i[31:9],
@@ -347,7 +359,7 @@ end
             1'b0,               // SIE
             csr_mstatus_i[0]
           };        
-
+        end
 
         end else if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o = 12'h300; // mstatus
@@ -362,17 +374,7 @@ end
           };
         end
       end
-      
-      // UPDATE_PENDING: begin
-      //   csr_write_en_o = 1'b1;
-      //   if (machine_timer_interrupt) begin
-      //     csr_write_addr_o = 12'h344; // mip
-      //     csr_write_data_o = {csr_mip_i[31:8], mtime_ge_mtime_o, csr_mip_i[6:0]};
-      //   end else if (supervisor_timer_interrupt) begin
-      //     csr_write_addr_o = 12'h144; // sip
-      //     csr_write_data_o = {csr_sip_i[31:9], mtime_ge_mtime_o, csr_sip_i[7:0]};
-      //   end
-      // end
+    
       
       RESTORE_STATUS: begin
         csr_write_en_o = 1'b1;
@@ -380,7 +382,7 @@ end
           csr_write_addr_o = 12'h300; // mstatus   
           csr_write_data_o = {
             csr_mstatus_i[31:13],
-            2'b00,                 // MPP
+            2'b01,                 // MPP
             csr_mstatus_i[10:8],
             1'b1,                  // MPIE
             csr_mstatus_i[6:4],
