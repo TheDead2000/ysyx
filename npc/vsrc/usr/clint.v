@@ -224,6 +224,23 @@ always @(posedge clk or posedge rst) begin
     trap_mret_latch <= trap_mret;
     trap_sret_latch <= trap_sret;
   end
+
+  if(pc_from_exe_i_latch != 0 && (csr_state == SAVE_CAUSE) ) begin
+    pc_from_exe_i_latch <= 32'b0;
+  end
+
+  if(trap_bus_i_latch != 0 && (csr_state == UPDATE_PENDING) ) begin
+    trap_bus_i_latch <= `TRAP_LEN'b0;
+  end
+
+  if(M_time_req_latch && (csr_state == UPDATE_PENDING) ) begin
+    M_time_req_latch <= 0;
+  end
+
+  if(S_time_req_latch && (csr_state == UPDATE_PENDING) ) begin
+    S_time_req_latch <= 0;
+  end
+
 end
 
   wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
@@ -265,7 +282,7 @@ end
   localparam UPDATE_STATUS = 3'b100;
   localparam UPDATE_PENDING = 3'b101;
   localparam RESTORE_STATUS = 3'b110;
-  
+
   reg [2:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
@@ -299,6 +316,7 @@ end
       UPDATE_STATUS: next_csr_state = UPDATE_PENDING;
       UPDATE_PENDING: next_csr_state = IDLE;
       RESTORE_STATUS: next_csr_state = IDLE;
+
     endcase
   end
   
