@@ -252,6 +252,7 @@ end
   // CSR写入逻辑
   always @(posedge clk or posedge rst) begin
     if (rst) begin
+    csr_state <= IDLE;
     cause_value_latched <= 32'b0;
     is_delegated_latched <= 1'b0;
     interrupt_pending_latched <= 1'b0;
