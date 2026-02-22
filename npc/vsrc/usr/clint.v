@@ -201,47 +201,7 @@ reg M_time_req_latch;
 reg S_time_req_latch;
 reg trap_mret_latch;
 reg trap_sret_latch;
-// 在检测到陷阱时锁存关键信号
-always @(posedge clk or posedge rst) begin
-  if (rst) begin
-    cause_value_latched <= 32'b0;
-    is_delegated_latched <= 1'b0;
-    interrupt_pending_latched <= 1'b0;
-    trap_bus_i_latch <= `TRAP_LEN'b0;
-    M_time_req_latch <= 0;
-    S_time_req_latch <= 0;
-    trap_mret_latch <= 0;
-    trap_sret_latch <= 0;
-  end else if ( (trap_bus_i[`TRAP_ECALL_M] ||trap_mret || trap_sret || trap_valid) && csr_state == IDLE) begin
-    // 只在IDLE状态且检测到陷阱时锁存
-    pc_from_exe_i_latch <= pc_from_exe_i;
-    trap_bus_i_latch <= trap_bus_i;
-    cause_value_latched <= cause_value;
-    is_delegated_latched <= exception_delegated || interrupt_delegated;
-    interrupt_pending_latched <= interrupt_pending;
-    M_time_req_latch <= M_time_req;
-    S_time_req_latch <= S_time_req;
-    trap_mret_latch <= trap_mret;
-    trap_sret_latch <= trap_sret;
-  end
 
-  if(pc_from_exe_i_latch != 0 && (csr_state == SAVE_CAUSE) ) begin
-    pc_from_exe_i_latch <= 32'b0;
-  end
-
-  if(trap_bus_i_latch != 0 && (csr_state == UPDATE_PENDING) ) begin
-    trap_bus_i_latch <= `TRAP_LEN'b0;
-  end
-
-  if(M_time_req_latch && (csr_state == UPDATE_PENDING) ) begin
-    M_time_req_latch <= 0;
-  end
-
-  if(S_time_req_latch && (csr_state == UPDATE_PENDING) ) begin
-    S_time_req_latch <= 0;
-  end
-
-end
 
   wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
   wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
@@ -275,95 +235,107 @@ end
 
 
   // CSR写入状态机
-  localparam IDLE = 3'b000;
-  localparam SAVE_PC = 3'b001;
-  localparam SAVE_CAUSE = 3'b010;
-  localparam SAVE_VALUE = 3'b011;
-  localparam UPDATE_STATUS = 3'b100;
-  localparam UPDATE_PENDING = 3'b101;
-  localparam RESTORE_STATUS = 3'b110;
-
+  localparam IDLE = 3'd0;
+  localparam SAVE_PC = 3'd1;
+  localparam SAVE_CAUSE = 3'd2;
+  localparam SAVE_VALUE = 3'd3;
+  localparam UPDATE_STATUS = 3'd4;
+  localparam UPDATE_PENDING = 3'd5;
+  localparam RESTORE_STATUS = 3'd6;
+  localparam FIR_PRIV = 3'd7;
   reg [2:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
   
-  // 状态转移
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      csr_state <= IDLE;
-    end else begin
-      csr_state <= next_csr_state;
-    end
-  end
-  
-  // 下一状态逻辑
-  /* verilator lint_off CASEINCOMPLETE */
-  always @(*) begin
-    next_csr_state = csr_state;
-    
-    case (csr_state)
-      IDLE: begin
-        if (trap_bus_i[`TRAP_ECALL_M] || trap_valid) begin
-          next_csr_state = SAVE_PC;
-          is_delegated = exception_delegated || interrupt_delegated;
-        end else if (trap_mret || trap_sret) begin
-          next_csr_state = RESTORE_STATUS;
-        end
-      end
-      SAVE_PC: next_csr_state = SAVE_CAUSE;
-      SAVE_CAUSE: next_csr_state = SAVE_VALUE;
-      SAVE_VALUE: next_csr_state = UPDATE_STATUS;
-      UPDATE_STATUS: next_csr_state = UPDATE_PENDING;
-      UPDATE_PENDING: next_csr_state = IDLE;
-      RESTORE_STATUS: next_csr_state = IDLE;
-
-    endcase
-  end
+ 
   
   // CSR写入逻辑
-  always @(*) begin
-    csr_write_en_o = 1'b0;
-    csr_write_addr_o = 12'h0;
-    csr_write_data_o = 32'h0;
-    csr_write_mstatus_o = 12'h0;
-    csr_write_mstatus_data_o = 32'h0;
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+    cause_value_latched <= 32'b0;
+    is_delegated_latched <= 1'b0;
+    interrupt_pending_latched <= 1'b0;
+    trap_bus_i_latch <= `TRAP_LEN'b0;
+    M_time_req_latch <= 0;
+    S_time_req_latch <= 0;
+    trap_mret_latch <= 0;
+    trap_sret_latch <= 0;
+    end
+    else begin
     case (csr_state)
+      IDLE:begin
+          csr_write_en_o <= 1'b0;
+          csr_write_addr_o <= 12'h0;
+          csr_write_data_o <= 32'h0;
+          csr_write_mstatus_o <= 12'h0;
+          csr_write_mstatus_data_o <= 32'h0;
+          privilege_wen_o  <= 0;
+          
+          if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
+           // 只在IDLE状态且检测到陷阱时锁存
+          pc_from_exe_i_latch <= pc_from_exe_i;
+          trap_bus_i_latch <= trap_bus_i;
+          cause_value_latched <= cause_value;
+          is_delegated_latched <= exception_delegated || interrupt_delegated;
+          interrupt_pending_latched <= interrupt_pending;
+          M_time_req_latch <= M_time_req;
+          S_time_req_latch <= S_time_req;
+
+          csr_state <= SAVE_PC;
+          is_delegated <= exception_delegated || interrupt_delegated;
+          end
+          else if(trap_mret || trap_sret ) begin
+            trap_mret_latch <= trap_mret;
+            trap_sret_latch <= trap_sret;
+           csr_state <= FIR_PRIV;
+          end
+          else begin
+            csr_state <= IDLE;
+          end
+       end
+
       SAVE_PC: begin
-        csr_write_en_o = 1'b1;
+        csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          csr_write_addr_o = 12'h141; // sepc
+          csr_write_addr_o <= 12'h141; // sepc
         end else  if (csr_privilege_i == 2'b11)begin
-          csr_write_addr_o = 12'h341; // mepc
+          csr_write_addr_o <= 12'h341; // mepc
         end
-        csr_write_data_o = pc_from_exe_i_latch-4;
+        csr_write_data_o <= pc_from_exe_i_latch-4;
+        csr_state <= SAVE_CAUSE;
       end
-      
+
+
       SAVE_CAUSE: begin
-        csr_write_en_o = 1'b1;
+        csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          csr_write_addr_o = 12'h142; // scause
+          csr_write_addr_o <= 12'h142; // scause
         end else  if (csr_privilege_i == 2'b11)begin
-          csr_write_addr_o = 12'h342; // mcause
+          csr_write_addr_o <= 12'h342; // mcause
         end
-        csr_write_data_o = cause_value_latched;
+        csr_write_data_o <= cause_value_latched;
+
+        csr_state <= SAVE_VALUE;
+
       end
       
       SAVE_VALUE: begin
-        csr_write_en_o = 1'b1;
+        csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          csr_write_addr_o = 12'h143; // stval
+          csr_write_addr_o <= 12'h143; // stval
         end else begin
-          csr_write_addr_o = 12'h343; // mtval
+          csr_write_addr_o <= 12'h343; // mtval
         end
-        csr_write_data_o = inst_data_i;
+        csr_write_data_o <= inst_data_i;
+        csr_state <= UPDATE_STATUS;
       end
       
       UPDATE_STATUS: begin
-        csr_write_en_o = 1'b1;
+        csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
           if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
-            csr_write_addr_o = 12'h300; // mstatus
-            csr_write_data_o = {
+            csr_write_addr_o <= 12'h300; // mstatus
+            csr_write_data_o <= {
             csr_mstatus_i[31:13],
             csr_privilege_i,     // MPP
             csr_mstatus_i[10:8],
@@ -372,10 +344,11 @@ end
             1'b0,                // MIE
             csr_mstatus_i[2:0]
           };
+          $display("trap_bus_i_latch[`TRAP_ECALL_M]:%h,csr_write_data_o:%h",trap_bus_i_latch[`TRAP_ECALL_M],csr_write_data_o);
           end
           else begin
-          csr_write_addr_o = 12'h100; // sstatus
-          csr_write_data_o = {
+          csr_write_addr_o <= 12'h100; // sstatus
+          csr_write_data_o <= {
             csr_sstatus_i[31:9],
             csr_privilege_i[0], // SPP
             csr_sstatus_i[7:6],
@@ -384,8 +357,8 @@ end
             1'b0,               // SIE
             csr_sstatus_i[0]
           };
-          csr_write_mstatus_o = 12'h300;
-          csr_write_mstatus_data_o = {
+          csr_write_mstatus_o <= 12'h300;
+          csr_write_mstatus_data_o <= {
             csr_mstatus_i[31:9],
             csr_mstatus_i[8],   // SPP
             csr_mstatus_i[7:6],
@@ -397,8 +370,8 @@ end
         end
 
         end else if (csr_privilege_i == 2'b11) begin
-          csr_write_addr_o = 12'h300; // mstatus
-          csr_write_data_o = {
+          csr_write_addr_o <= 12'h300; // mstatus
+          csr_write_data_o <= {
             csr_mstatus_i[31:13],
             csr_privilege_i,     // MPP
             csr_mstatus_i[10:8],
@@ -408,23 +381,39 @@ end
             csr_mstatus_i[2:0]
           };
         end
+
+        csr_state <= UPDATE_PENDING;
       end
 
       UPDATE_PENDING: begin
         if (csr_privilege_i != 2'b11) begin
           if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
-            privilege_wen_o = 1'b1;
-            privilege_o = 2'b11;
+            privilege_wen_o <= 1'b1;
+            privilege_o <= 2'b11;
           end
         end
+
+        csr_state <= IDLE;
       end
 
-
+      FIR_PRIV:begin
+      if (trap_mret_latch) begin
+        privilege_wen_o <= 1;
+        privilege_o <= csr_mstatus_i[12:11]; // MPP
+        $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
+      end else if (trap_sret_latch) begin
+       privilege_wen_o <= 1;
+       privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
+      end
+      
+      csr_state <= RESTORE_STATUS;
+      end
+      
       RESTORE_STATUS: begin
-        csr_write_en_o = 1'b1;
+        csr_write_en_o <= 1'b1;
         if (trap_mret_latch) begin
-          csr_write_addr_o = 12'h300; // mstatus   
-          csr_write_data_o = {
+          csr_write_addr_o <= 12'h300; // mstatus   
+          csr_write_data_o <= {
             csr_mstatus_i[31:13],
             2'b00,                 // MPP
             csr_mstatus_i[10:8],
@@ -434,8 +423,8 @@ end
             csr_mstatus_i[2:0]
           };
         end else if (trap_sret_latch) begin
-          csr_write_addr_o = 12'h100; // sstatus 
-          csr_write_data_o = {
+          csr_write_addr_o <= 12'h100; // sstatus 
+          csr_write_data_o <= {
             csr_sstatus_i[31:9],
             1'b0,                 // SPP
             csr_sstatus_i[7:6],
@@ -445,31 +434,20 @@ end
             csr_sstatus_i[0]
           };
         end
+        csr_state <= IDLE;
       end
     endcase
+  end
   end
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   wire trap_flush_condition = trap_bus_i[`TRAP_ECALL_M];
-  // 特权级别更新
-  always @(*) begin
-    privilege_wen_o = 1'b0; // 明确默认值：不写使能
-    privilege_o = csr_privilege_i;
-    if (trap_mret) begin
-      privilege_wen_o = 1;
-      privilege_o = csr_mstatus_i[12:11]; // MPP
-      $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
-    end else if (trap_sret) begin
-      privilege_wen_o = 1;
-      privilege_o = csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
-    end
-  end
-  
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   
+
   pipline_control u_pipline_control (
       .clk(clk),
       .rst(rst),
