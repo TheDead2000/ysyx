@@ -270,7 +270,7 @@ end
           csr_write_mstatus_o <= 12'h0;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o  <= 0;
-          
+
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -344,7 +344,8 @@ end
             1'b0,                // MIE
             csr_mstatus_i[2:0]
           };
-          $display("trap_bus_i_latch[`TRAP_ECALL_M]:%h,csr_write_data_o:%h",trap_bus_i_latch[`TRAP_ECALL_M],csr_write_data_o);
+          $display("trap_bus_i_latch[`TRAP_ECALL_M]:%h,csr_write_data_o:%h",trap_bus_i_latch[`TRAP_ECALL_M],
+          {csr_mstatus_i[31:13],csr_privilege_i,csr_mstatus_i[10:8],csr_mstatus_i[3],csr_mstatus_i[6:4],1'b0,csr_mstatus_i[2:0]} );
           end
           else begin
           csr_write_addr_o <= 12'h100; // sstatus
