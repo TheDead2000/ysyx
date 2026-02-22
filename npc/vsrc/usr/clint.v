@@ -460,6 +460,7 @@ end
     if (trap_mret) begin
       privilege_wen_o = 1;
       privilege_o = csr_mstatus_i[12:11]; // MPP
+      $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
     end else if (trap_sret) begin
       privilege_wen_o = 1;
       privilege_o = csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP

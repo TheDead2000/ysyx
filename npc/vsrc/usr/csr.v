@@ -506,6 +506,7 @@ module CSRs(
   always@(posedge clk) begin
     if(clint_privilege_wen_i) begin
       privilegeReg <= clint_privilege_i;
+      $display("clint_privilege_wen_i:%h,clint_privilege_i:%h,privilegeReg:%h",clint_privilege_wen_i,clint_privilege_i,privilegeReg);
     end
   end
 

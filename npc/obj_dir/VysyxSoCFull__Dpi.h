@@ -18,7 +18,7 @@ extern "C" {
     // DPI IMPORTS
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/exu.v:301:32
     extern void bpu_count(svBit bpu_ret);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/clint.v:511:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/clint.v:512:32
     extern void call_ebreak();
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/flash/flash.v:84:30
     extern void flash_read(int addr, int* data);
@@ -30,7 +30,7 @@ extern "C" {
     extern void psram_read(int addr, int* data);
     // DPI import at /home/zy/ysyx-workbench/ysyxSoC/perip/psram/psram.v:112:30
     extern void psram_write(int addr, int data, int mask);
-    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:716:32
+    // DPI import at /home/zy/ysyx-workbench/npc/vsrc/usr/csr.v:717:32
     extern void set_csr_ptr(const svOpenArrayHandle a);
     // DPI import at /home/zy/ysyx-workbench/npc/vsrc/top.v:880:32
     extern void set_diffpc(int nextpc, int inst, svBit commit_valid);
