@@ -392,6 +392,7 @@ end
       end
 
       UPDATE_PENDING: begin
+        csr_write_en_o <= 1'b0;
         if (csr_privilege_i != 2'b11) begin
           if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
             privilege_wen_o <= 1'b1;
