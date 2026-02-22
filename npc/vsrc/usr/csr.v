@@ -137,7 +137,7 @@ module CSRs(
     //       (1 << 18) |  // S模式
     //       (1 << 2)  |  // C扩展（压缩指令）
     //       (1 << 19);   // Zicntr扩展（计时器）
-// 结果 = 32'h4006F101
+    // 结果 = 32'h4006F101
     misaReg = 32'h40001101 |  (1 << 18) ; // S模式   // RV32IMA
     mtvecReg = 32'h0;
     mieReg = 32'h0;
@@ -384,7 +384,7 @@ module CSRs(
       if (clint_csr_write_en) begin
         case (clint_csr_write_addr)
           // Machine Trap Setup
-          12'h300: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_data);
+          12'h300: begin mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_data); $display("clint_csr_write_enmstatusReg:%h,clint_csr_write_data:%h",mstatusReg,clint_csr_write_data);end
           12'h305: mtvecReg <= clint_csr_write_data;
           
           // Machine Trap Handling
@@ -408,7 +408,7 @@ module CSRs(
         endcase
 
         case (clint_csr_write_mstatus) 
-          12'h300: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_mstatus_data);
+          12'h300:begin mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_mstatus_data); $display("mstatusReg:%h,clint_csr_write_mstatus_data:%h",mstatusReg,clint_csr_write_data);end
           default: ; // 忽略其他地址
         endcase
 
@@ -423,7 +423,7 @@ module CSRs(
       else if (csr_write_wen) begin
         case (csr_write_address)
           // Machine Trap Setup
-          12'h300: mstatusReg <= update_mstatus(mstatusReg, csr_write_data);
+          12'h300: begin mstatusReg <= update_mstatus(mstatusReg, csr_write_data); $display("csr_write_wenmstatusReg:%h,clint_csr_write_data:%h",mstatusReg,clint_csr_write_data);end
           12'h302: medelegReg <= csr_write_data;
           12'h303: midelegReg <= csr_write_data;
           12'h304: mieReg <= update_mie(mieReg, csr_write_data);

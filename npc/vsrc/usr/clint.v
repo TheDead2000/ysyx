@@ -369,8 +369,8 @@ end
             csr_mstatus_i[0]
           };        
         end
-
-        end else if (csr_privilege_i == 2'b11) begin
+      end   
+      else if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o <= 12'h300; // mstatus
           csr_write_data_o <= {
             csr_mstatus_i[31:13],
