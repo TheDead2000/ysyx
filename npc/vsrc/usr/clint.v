@@ -304,6 +304,7 @@ end
         end
         csr_write_data_o <= pc_from_exe_i_latch-4;
         csr_state <= SAVE_CAUSE;
+        $display("SAVE_PC to SAVE_CAUSE");
       end
 
 
@@ -317,7 +318,7 @@ end
         csr_write_data_o <= cause_value_latched;
 
         csr_state <= SAVE_VALUE;
-
+        $display("SAVE_CAUSE to SAVE_VALUE");
       end
       
       SAVE_VALUE: begin
@@ -329,6 +330,7 @@ end
         end
         csr_write_data_o <= inst_data_i;
         csr_state <= UPDATE_STATUS;
+        $display("SAVE_VALUE to UPDATE_STATUS");
       end
       
       UPDATE_STATUS: begin
@@ -382,9 +384,11 @@ end
             1'b0,                // MIE
             csr_mstatus_i[2:0]
           };
+          $display("this is call! csr_write_data_o:%h",csr_write_data_o);
         end
 
         csr_state <= UPDATE_PENDING;
+        $display("UPDATE_STATUS to UPDATE_PENDING");
       end
 
       UPDATE_PENDING: begin
@@ -396,6 +400,7 @@ end
         end
 
         csr_state <= IDLE;
+        $display("UPDATE_PENDING to UPDATE_PENDING");
       end
 
       FIR_PRIV:begin
@@ -409,6 +414,7 @@ end
       end
       
       csr_state <= RESTORE_STATUS;
+
       end
       
       RESTORE_STATUS: begin
