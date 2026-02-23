@@ -2277,7 +2277,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6924,"load_use_valid_id_i", false,-1);
     tracep->declBit(c+6931,"jump_valid_ex_i", false,-1);
     tracep->declBit(c+6488,"alu_mul_div_valid_ex_i", false,-1);
-    tracep->declBit(c+7147,"ifu_ecall_stall_i", false,-1);
+    tracep->declBit(c+7147,"if_ecall_stall_i", false,-1);
     tracep->declBit(c+6938,"trap_ecall_unstall_condition_o", false,-1);
     tracep->declBit(c+6841,"csr_write_en_o", false,-1);
     tracep->declBus(c+6842,"csr_write_addr_o", false,-1, 11,0);
@@ -2385,7 +2385,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->pushNamePrefix("u_pipline_control ");
     tracep->declBit(c+7113,"clk", false,-1);
     tracep->declBit(c+7145,"rst", false,-1);
-    tracep->declBit(c+7147,"ifu_ecall_stall_i", false,-1);
+    tracep->declBit(c+7147,"if_ecall_stall_i", false,-1);
     tracep->declBit(c+6422,"trap_mmu_page_falut", false,-1);
     tracep->declBit(c+53,"csr_satp_flush_i", false,-1);
     tracep->declBit(c+619,"compress_stall", false,-1);
@@ -11438,7 +11438,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+7157,"cross_inst_valid_i", false,-1);
     tracep->declBit(c+645,"csr_ifu_unstall_i", false,-1);
     tracep->declBit(c+53,"csr_satp_flush_o", false,-1);
-    tracep->declBit(c+7147,"ifu_ecall_stall_o", false,-1);
+    tracep->declBit(c+7147,"if_ecall_stall_o", false,-1);
     tracep->declBit(c+6938,"trap_ecall_unstall_condition_i", false,-1);
     tracep->declBus(c+6901,"inst_addr_o", false,-1, 31,0);
     tracep->declBus(c+52,"inst_data_o", false,-1, 31,0);

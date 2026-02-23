@@ -174,7 +174,7 @@ ifu ifu (
   .csr_satp_flush_o(csr_satp_flush),
 
   .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition),
-  .ifu_ecall_stall_o(ifu_ecall_stall),
+  .if_ecall_stall_o(ifu_ecall_stall),
 
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
@@ -941,7 +941,7 @@ clint clint_u (
     .clint_rdata_o(clint_rdata),
     .mtime_ge_mtime(mtime_ge_mtime),
 
-    .ifu_ecall_stall_i(ifu_ecall_stall),
+    .if_ecall_stall_i(ifu_ecall_stall),
     .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),

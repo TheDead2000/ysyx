@@ -29,7 +29,7 @@ module clint (
     input load_use_valid_id_i,
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
-    input ifu_ecall_stall_i,
+    input if_ecall_stall_i,
     output trap_ecall_unstall_condition_o,
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
@@ -463,7 +463,7 @@ end
       .clk(clk),
       .rst(rst),
 
-      .ifu_ecall_stall_i(ifu_ecall_stall_i),
+      .if_ecall_stall_i(if_ecall_stall_i),
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
