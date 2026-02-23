@@ -5,6 +5,7 @@ module pipline_control (
     input clk,
     input rst,
     /* ----- stall request from other modules  --------*/
+    input ifu_ecall_stall_i,
     input trap_mmu_page_falut,
     input csr_satp_flush_i,
     input compress_stall,
@@ -15,7 +16,7 @@ module pipline_control (
     input jump_valid_ex_i,  // branch hazard from ex
     input alu_mul_div_valid_ex_i,  // mul div stall from ex
     input trap_stall_valid_wb_i,
-    input trap_flush_valid_wb_i,
+    // input trap_flush_valid_wb_i,
     /* ---signals to other stages of the pipeline  ----*/
     output [5:0] stall_o,   // stall request to PC,IF_ID, ID_EX, EX_MEM, MEM_WB， one bit for one stage respectively
     output [5:0] flush_o  // flush the whole pipleline if exception or interrupt happened
@@ -31,11 +32,11 @@ module pipline_control (
   localparam mul_div_flush = 6'b001000;
   localparam mul_div_stall = 6'b000111;
   
-  localparam trap_csr_flush = 6'b001110;
-  localparam trap_csr_stall = 6'b111111;
+  localparam trap_csr_flush = 6'b000000;
+  localparam trap_csr_stall = 6'b001111;
 
-  localparam trap_ecall_stall = 6'b000010;
-  localparam trap_ecall_flush = 6'b001110;
+  localparam trap_ecall_stall = 6'b000_001;
+  localparam trap_ecall_flush = 6'b000_000;
 
   localparam ram_mem_flush = 6'b010000;
   localparam ram_mem_stall = 6'b001111;
@@ -100,18 +101,7 @@ module pipline_control (
     else if(trap_mmu_page_falut) begin
       _stall = 6'b000_000;
       _flush = 6'b000_000;
-    end
-          // 中断|异常,(发生在 mem 阶段)
-     else if(trap_flush_valid_wb_i) begin
-      _stall = trap_ecall_stall;
-      _flush = trap_ecall_flush;
-    end
-     else if (trap_stall_req) begin
-      _stall = trap_csr_stall;
-      _flush = trap_csr_flush;
-      // 跳转指令,(发生在 ex 阶段)
-     end 
-     
+    end    
     else if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
       _flush = ram_mem_flush;
@@ -120,10 +110,20 @@ module pipline_control (
         _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
         _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
       end
-      else if(ram_stall_req_if) begin
+    else if(ram_stall_req_if) begin
         _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
         _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
-        end
+      end
+    // 中断|异常
+    else if(ifu_ecall_stall_i) begin
+      _stall = 6'b000_001;
+      _flush = 6'b000_000;
+    end
+    else if (trap_stall_req) begin
+      _stall = trap_csr_stall;
+      _flush = trap_csr_flush;
+      // 跳转指令,(发生在 ex 阶段)
+    end 
       else if (jump_valid_ex_i) begin
       _stall = jump_stall;
       _flush = jump_flush;

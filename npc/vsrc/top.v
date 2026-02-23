@@ -156,6 +156,8 @@ wire[31:0]inst_data_if;
 wire compress_stall;
 wire is_compressed_inst_if2id;
 
+wire ifu_ecall_stall;
+
 ifu ifu (
   .clk(clk),
   .rst(rst),
@@ -170,6 +172,9 @@ ifu ifu (
   .cross_inst_valid_i(cross_inst_valid),
   .csr_ifu_unstall_i(csr_ifu_unstall),
   .csr_satp_flush_o(csr_satp_flush),
+
+  .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition),
+  .ifu_ecall_stall_o(ifu_ecall_stall),
 
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
@@ -262,7 +267,7 @@ wire [         `INST_LEN-1:0 ] inst_data_id;
   wire [`CSR_REG_ADDRWIDTH-1:0] csr_idx_id;
   wire [`XLEN_BUS] csr_readdata_id;
   wire [`XLEN-1:0] csr_data_csr;
-   wire [`CSROP_LEN-1:0] csr_op_id;  // csr 操作码
+  wire [`CSROP_LEN-1:0] csr_op_id;  // csr 操作码
 // 请求暂停流水线
 wire                           load_use_valid;
 /* TARP 总线 */
@@ -335,8 +340,10 @@ idu idu (
     .load_use_valid_o(load_use_valid),
     /* TARP 总线 */
     .trap_bus_o(trap_bus_id),
+
     .id_ras_push_valid_o(id_ras_push_valid), // ID阶段检测到CALL指令
     .id_ras_push_data_o(id_ras_push_data),  // ID阶段计算的返回地址
+    
     .flush_i(flush_clint[`CTRLBUS_IF_ID]) // 清空 ID 阶段指令
 
 );
@@ -918,6 +925,7 @@ wire privilege_wen;
 wire [11:0] clint_csr_write_mstatus;
 wire [31:0] clint_csr_write_mstatus_data;
 wire mtime_ge_mtime;
+wire trap_ecall_unstall_condition;
 
 clint clint_u (
     .clk(clk),
@@ -933,6 +941,8 @@ clint clint_u (
     .clint_rdata_o(clint_rdata),
     .mtime_ge_mtime(mtime_ge_mtime),
 
+    .ifu_ecall_stall_i(ifu_ecall_stall),
+    .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),
 

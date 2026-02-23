@@ -62,7 +62,7 @@ module idu (
     // 请求暂停流水线
     output load_use_valid_o,
     output [`TRAP_BUS] trap_bus_o,
-    
+
     // ================== 新增BPU前递信号 ==================
     output wire id_ras_push_valid_o,        // ID阶段检测到CALL指令
     output wire [`XLEN-1:0] id_ras_push_data_o,  // ID阶段计算的返回地址
@@ -576,7 +576,7 @@ wire _alu_amo_sc = _inst_sc_w;
       if (i == `TRAP_MRET) begin
         _decode_trap_bus[i] = _inst_mret;
       end else if (i ==`TRAP_SRET) begin
-         _decode_trap_bus[i] = _inst_sret;
+        _decode_trap_bus[i] = _inst_sret;
       end
       else if (i == `TRAP_EBREAK) begin
         _decode_trap_bus[i] = _inst_ebreak;

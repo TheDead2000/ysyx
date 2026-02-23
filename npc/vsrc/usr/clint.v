@@ -29,6 +29,8 @@ module clint (
     input load_use_valid_id_i,
     input jump_valid_ex_i,
     input alu_mul_div_valid_ex_i,
+    input ifu_ecall_stall_i,
+    output trap_ecall_unstall_condition_o,
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
@@ -452,7 +454,7 @@ end
   // 输出赋值
   assign clint_pc_o =   handler_pc;
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_flush_condition = trap_bus_i[`TRAP_ECALL_M];
+  assign trap_ecall_unstall_condition_o = trap_bus_i[`TRAP_ECALL_M];
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   
@@ -460,6 +462,8 @@ end
   pipline_control u_pipline_control (
       .clk(clk),
       .rst(rst),
+
+      .ifu_ecall_stall_i(ifu_ecall_stall_i),
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
@@ -469,7 +473,7 @@ end
       .load_use_valid_id_i(load_use_valid_id_i),
       .jump_valid_ex_i(jump_valid_ex_i),
       .alu_mul_div_valid_ex_i(alu_mul_div_valid_ex_i),
-      .trap_flush_valid_wb_i(trap_flush_condition),
+      // .trap_flush_valid_wb_i(trap_flush_condition),
       .trap_stall_valid_wb_i(trap_stall_valid),
       .stall_o(stall_o),
       .flush_o(flush_o)
