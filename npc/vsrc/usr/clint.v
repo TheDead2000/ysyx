@@ -211,29 +211,7 @@ reg trap_sret_latch;
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
-    if (trap_mret)               handler_pc = csr_mepc_i;
-    else if (trap_sret)          handler_pc = csr_sepc_i;
-    else if (trap_fencei)        handler_pc = pc_from_mem_i;
-    else if (trap_bus_i[`TRAP_ECALL_M]) handler_pc = csr_mtvec_i;
-    else if (M_time_req) begin
-        // M模式定时器中断
-        handler_pc = csr_mtvec_i;
-    end
-    // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
-    //     // S模式定时器中断（已委托）
-    //     handler_pc = csr_stvec_i;
-    // end
-    else if (S_time_req) begin
-        // 未委托的定时器中断（S或U模式）→ 由M模式处理
-        handler_pc = csr_mtvec_i;
-    end
-    else if (trap_valid) begin
-        // 其他异常
-        handler_pc = (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
-    end
-    else begin
-        handler_pc = 32'h0;
-    end
+
 end
 
 
@@ -247,12 +225,15 @@ end
   localparam RESTORE_STATUS = 4'd6;
   localparam FIR_PRIV = 4'd7;
   localparam WAIT_CLK = 4'd8;
+  localparam CLEAR = 4'd9;
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
   reg trap_condition_latch;
   reg ecall_pc_wen;
-  
+  reg trap_valid_latch;
+  reg clint_pc_in_valid;
+
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -280,11 +261,13 @@ end
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
           ecall_pc_wen <= 0;
+          clint_pc_in_valid <= 0;
           trap_condition_latch <= trap_condition;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
           trap_bus_i_latch <= trap_bus_i;
+          trap_valid_latch <= trap_valid;
           cause_value_latched <= cause_value;
           is_delegated_latched <= exception_delegated || interrupt_delegated;
           interrupt_pending_latched <= interrupt_pending;
@@ -416,6 +399,45 @@ end
       end
       
       WAIT_CLK:begin
+      clint_pc_in_valid <= 1;
+      
+      if (trap_mret_latch)               handler_pc <= csr_mepc_i;
+      else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
+      else if (trap_fencei)              handler_pc <= pc_from_mem_i;
+      else if (trap_bus_i_latch[`TRAP_ECALL_M]) handler_pc <= csr_mtvec_i;
+      else if (M_time_req_latch) begin
+        // M模式定时器中断
+        handler_pc <= csr_mtvec_i;
+      end
+        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
+        //     // S模式定时器中断（已委托）
+        //     handler_pc = csr_stvec_i;
+        // end
+        else if (S_time_req_latch) begin
+            // 未委托的定时器中断（S或U模式）→ 由M模式处理
+            handler_pc <= csr_mtvec_i;
+        end
+        else if (trap_valid_latch) begin
+            // 其他异常
+            handler_pc <= (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
+        end
+        else begin
+            handler_pc <= 32'h0;
+        end
+            csr_state <= CLEAR;
+      end
+      
+      CLEAR: begin
+        cause_value_latched <= 32'b0;
+        is_delegated_latched <= 1'b0;
+        interrupt_pending_latched <= 1'b0;
+        trap_bus_i_latch <= `TRAP_LEN'b0;
+        M_time_req_latch <= 0;
+        S_time_req_latch <= 0;
+        trap_mret_latch <= 0;
+        trap_sret_latch <= 0;
+        trap_condition_latch <= 0;
+        ecall_pc_wen <= 0;
         csr_state <= IDLE;
       end
 
@@ -466,7 +488,7 @@ end
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
+  assign clint_pc_valid_o = clint_pc_in_valid;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
