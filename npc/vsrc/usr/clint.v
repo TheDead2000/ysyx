@@ -292,7 +292,7 @@ end
           else if(trap_mret || trap_sret ) begin
             trap_mret_latch <= trap_mret;
             trap_sret_latch <= trap_sret;
-            csr_state <= RESTORE_STATUS;
+            csr_state <= FIR_PRIV;
           end
           else begin
             csr_state <= IDLE;
