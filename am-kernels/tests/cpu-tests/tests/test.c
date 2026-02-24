@@ -288,10 +288,10 @@ void setup_page_table() {
     }
 
     // 2. 计算VPN1（4MB大页的虚拟页号，VA[31:22]）
-    uint32_t vpn1 = (0xc0000000 >> 22) & 0x3FF;  // 10位VPN1
+    uint32_t vpn1 = (TEST_BASE_VA >> 22) & 0x3FF;  // 10位VPN1
 
     // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
-    uint32_t ppn1 = (0xa00003fc >> 22) & 0x3FF;  // 10位PPN1
+    uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
     uint32_t pte = 0;
     pte |= PTE_V;                // 有效位
     pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
@@ -311,7 +311,7 @@ void s_mode_entry(void) {
     printf("run in s mode !!!\n");
     
     // 1. 设置S模式陷阱处理程序
-    csr_write(STVEC, 0xc0000000);  // 直接模式
+    // csr_write(STVEC, (uint32_t)s_mode_entry);  // 直接模式
     
     setup_page_table(page_table);
     
