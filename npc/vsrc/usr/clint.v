@@ -489,7 +489,7 @@ reg trap_sret_latch;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei ;
+  wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;

@@ -138,14 +138,14 @@ module pipline_control (
     end 
 
         // 中断|异常
-    else if(id_ecall_stall_i) begin
-      _stall = 6'b000_011;
-      _flush = 6'b000_000;
-    end
-    else if(trap_ecall_unstall_condition_i) begin
-      _stall = 6'b000_110;
-      _flush = 6'b001_110;
-    end
+    // else if(id_ecall_stall_i) begin
+    //   _stall = 6'b000_011;
+    //   _flush = 6'b000_000;
+    // end
+    // else if(trap_ecall_unstall_condition_i) begin
+    //   _stall = 6'b000_110;
+    //   _flush = 6'b001_110;
+    // end
     else if(trap_intererupt_condition_i) begin
       _stall = 6'b000_110;
       _flush = 6'b001_110;
