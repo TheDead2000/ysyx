@@ -327,6 +327,33 @@ void setup_page_table() {
     page_table[vpn1] = pte;
     printf("Page table entry [VPN1=0x%x] = 0x%x\n", vpn1, pte);
 }
+
+void setup_page_table_no_V() {
+    printf("Setting up 4MB huge page table...\n");
+
+    // 1. 清空页表
+    for (int i = 0; i < 1024; i++) {
+        page_table[i] = 0;
+    }
+
+    // 2. 计算VPN1（4MB大页的虚拟页号，VA[31:22]）
+    uint32_t vpn1 = (TEST_BASE_VA >> 22) & 0x3FF;  // 10位VPN1
+
+    // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
+    uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
+    uint32_t pte = 0;
+    // pte |= PTE_V;                // 有效位
+    pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
+    pte |= PTE_G;          // 全局页
+    pte |= PTE_A | PTE_D;  // 访问位+脏位（避免首次访问触发页故障）
+    pte |= (ppn1 << 20); ;  // PPN字段（4MB大页仅用PPN1）
+
+    // 4. 写入页表项
+    page_table[vpn1] = pte;
+    printf("Page table entry [VPN1=0x%x] = 0x%x\n", vpn1, pte);
+}
+
+
 // ============ S模式入口函数 ============
 
 
@@ -335,15 +362,15 @@ void s_mode_entry(void) {
     printf("run in s mode !!!\n");
     
     // 1. 设置S模式陷阱处理程序
-    // csr_write(STVEC, (uint32_t)s_mode_entry);  // 直接模式
+    csr_write(STVEC, (uint32_t)s_mode_entry);  // 直接模式
     
-    setup_page_table(page_table);
+    setup_page_table_no_V(page_table);
     
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
     
-    csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
+    // csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
 
     // printf("S mode ecall...\n");
     ecall();
