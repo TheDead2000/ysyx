@@ -275,7 +275,7 @@ end
           M_time_req_latch <= M_time_req;
           S_time_req_latch <= S_time_req;
 
-          csr_state <= SAVE_PC;
+          csr_state <= UPDATE_ENTRY;
           is_delegated <= exception_delegated || interrupt_delegated;
           end
           else if(trap_mret || trap_sret ) begin
@@ -288,6 +288,36 @@ end
           end
        end
 
+      UPDATE_ENTRY:begin
+      
+      clint_update_pc <= 1;
+      clint_pc_in_valid <= 1;
+      if (trap_mret_latch)               handler_pc <= csr_mepc_i;
+      else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
+      else if (trap_fencei)              handler_pc <= pc_from_mem_i;
+      else if (trap_bus_i_latch[`TRAP_ECALL_M]) handler_pc <= csr_mtvec_i;
+      else if (M_time_req_latch) begin
+        // M模式定时器中断
+        handler_pc <= csr_mtvec_i;
+      end
+        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
+        //     // S模式定时器中断（已委托）
+        //     handler_pc = csr_stvec_i;
+        // end
+        else if (S_time_req_latch) begin
+            // 未委托的定时器中断（S或U模式）→ 由M模式处理
+            handler_pc <= csr_mtvec_i;
+        end
+        else if (trap_valid_latch) begin
+            // 其他异常
+            handler_pc <= (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
+        end
+        else begin
+            handler_pc <= 32'h0;
+        end
+            csr_state <= CLEAR;
+      end
+      
       SAVE_PC: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
@@ -395,38 +425,8 @@ end
 
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
-        csr_state <= UPDATE_ENTRY;
+        csr_state <= CLEAR;
         $display("UPDATE_PENDING to UPDATE_ENTRY");
-      end
-      
-      UPDATE_ENTRY:begin
-      
-      clint_update_pc <= 1;
-      clint_pc_in_valid <= 1;
-      if (trap_mret_latch)               handler_pc <= csr_mepc_i;
-      else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
-      else if (trap_fencei)              handler_pc <= pc_from_mem_i;
-      else if (trap_bus_i_latch[`TRAP_ECALL_M]) handler_pc <= csr_mtvec_i;
-      else if (M_time_req_latch) begin
-        // M模式定时器中断
-        handler_pc <= csr_mtvec_i;
-      end
-        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
-        //     // S模式定时器中断（已委托）
-        //     handler_pc = csr_stvec_i;
-        // end
-        else if (S_time_req_latch) begin
-            // 未委托的定时器中断（S或U模式）→ 由M模式处理
-            handler_pc <= csr_mtvec_i;
-        end
-        else if (trap_valid_latch) begin
-            // 其他异常
-            handler_pc <= (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
-        end
-        else begin
-            handler_pc <= 32'h0;
-        end
-            csr_state <= CLEAR;
       end
       
       CLEAR: begin
