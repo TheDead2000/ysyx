@@ -414,7 +414,6 @@ reg trap_sret_latch;
           end
         end
 
-        trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
         csr_state <= CLEAR;
         $display("UPDATE_PENDING to UPDATE_ENTRY");
@@ -422,6 +421,7 @@ reg trap_sret_latch;
       
 
       CLEAR: begin
+        trap_ecall_unstall_condition_o <= 1;
         cause_value_latched <= 32'b0;
         is_delegated_latched <= 1'b0;
         interrupt_pending_latched <= 1'b0;
