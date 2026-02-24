@@ -473,7 +473,7 @@ reg trap_sret_latch;
           };
         end
         trap_condition_latch <= 0;
-        csr_state <= UPDATE_ENTRY;
+        csr_state <= CLEAR;
       end
     endcase
   end
@@ -514,7 +514,7 @@ reg trap_sret_latch;
       .id_ecall_stall_i(if_ecall_stall_i),
       // .trap_intererupt_condition_i(trap_condition_latch || trap_condition),
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
-      
+
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
