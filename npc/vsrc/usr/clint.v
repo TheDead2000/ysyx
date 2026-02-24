@@ -466,11 +466,11 @@ end
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || ecall_pc_wen;
+  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei ;
+  wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
