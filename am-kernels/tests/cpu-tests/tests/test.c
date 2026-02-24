@@ -318,11 +318,6 @@ void s_mode_entry(void) {
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
-    
-    asm __volatile__("mv a0,a0\n");
-        asm __volatile__("mv a0,a0\n");
-            asm __volatile__("mv a0,a0\n");
-                asm __volatile__("mv a0,a0\n");
 
     printf("S mode ecall...\n");
     ecall();
@@ -356,6 +351,7 @@ void main(void) {
     // 设置中断委托（将S模式中断委托给S模式）
     csr_write(MIDELEG, 0x222);  // 委托SSI, STI, SEI
     
+    csr_write(MCAUSE,0xB);
     // // 4. 启用中断
     // csr_set(MSTATUS, 1 << 3);   // 启用M模式中断
     // csr_set(MSTATUS, 1 << 1);   // 启用S模式中断
