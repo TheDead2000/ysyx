@@ -315,6 +315,11 @@ void s_mode_entry(void) {
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
+    
+    asm __volatile__("mv a0,a0\n");
+        asm __volatile__("mv a0,a0\n");
+            asm __volatile__("mv a0,a0\n");
+                asm __volatile__("mv a0,a0\n");
 
     printf("S mode ecall...\n");
     ecall();
