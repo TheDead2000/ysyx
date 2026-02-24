@@ -122,7 +122,23 @@ module pipline_control (
         _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
         _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
       end
-    // 中断|异常
+
+      else if (jump_valid_ex_i) begin
+      _stall = jump_stall;
+      _flush = jump_flush;
+      // 乘法和除法
+    end else if (alu_mul_div_valid_ex_i) begin
+      _stall = mul_div_stall;
+      _flush = mul_div_flush;
+      // load use data 冲突,(发生在 id 阶段)
+    end else if (load_use_valid_id_i) begin
+      _stall = load_use_stall;
+      _flush = load_use_flush;
+      // 没有异常情况,正常执行
+    end 
+
+    
+        // 中断|异常
     else if(id_ecall_stall_i) begin
       _stall = 6'b000_011;
       _flush = 6'b000_000;
@@ -138,19 +154,7 @@ module pipline_control (
       // 跳转指令,(发生在 ex 阶段)
     end 
 
-      else if (jump_valid_ex_i) begin
-      _stall = jump_stall;
-      _flush = jump_flush;
-      // 乘法和除法
-    end else if (alu_mul_div_valid_ex_i) begin
-      _stall = mul_div_stall;
-      _flush = mul_div_flush;
-      // load use data 冲突,(发生在 id 阶段)
-    end else if (load_use_valid_id_i) begin
-      _stall = load_use_stall;
-      _flush = load_use_flush;
-      // 没有异常情况,正常执行
-    end 
+
     else if (csr_satp_flush_i) begin
       _stall = 6'b000001;
       _flush = 6'b000000; 
