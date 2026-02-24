@@ -125,6 +125,8 @@ void __attribute__((naked)) m_trap_entry(void) {
         // 调用C陷阱处理程序
         "csrr a0, mcause\n"
         "csrr a1, mepc\n"
+        "nop\n"
+        "nop\n"
         "call handle_m_trap\n"
         
         // 恢复上下文
