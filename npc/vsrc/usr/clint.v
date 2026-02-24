@@ -251,7 +251,7 @@ end
   reg [2:0] next_csr_state;
   reg is_delegated;
   reg trap_condition_latch;
- 
+  reg ecall_pc_wen;
   
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
@@ -267,6 +267,7 @@ end
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
     trap_condition_latch <= 0;
+    ecall_pc_wen <= 0;
     end
     else begin
     case (csr_state)
@@ -278,6 +279,7 @@ end
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
+          ecall_pc_wen <= 0;
           trap_condition_latch <= trap_condition;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
@@ -406,11 +408,13 @@ end
             privilege_o <= 2'b11;
           end
         end
+        ecall_pc_wen <= 1;
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
         csr_state <= WAIT_CLK;
         $display("UPDATE_PENDING to WAIT_CLK");
       end
+      
       WAIT_CLK:begin
         csr_state <= IDLE;
       end
@@ -462,7 +466,7 @@ end
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
+  assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || ecall_pc_wen;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
