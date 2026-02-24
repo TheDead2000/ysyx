@@ -390,7 +390,7 @@ end
           $display("this is call! csr_write_data_o:%h",csr_write_data_o);
         end
 
-        csr_state <= IDLE;
+        csr_state <= UPDATE_PENDING;
         $display("UPDATE_STATUS to IDLE");
       end
 
