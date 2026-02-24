@@ -431,7 +431,13 @@ reg trap_sret_latch;
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         trap_condition_latch <= 0;
+        csr_state <= WAIT_CLK;
+      end
+
+      WAIT_CLK:begin
         csr_state <= IDLE;
+      
+
       end
 
       FIR_PRIV:begin
