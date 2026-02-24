@@ -488,7 +488,7 @@ end
       .clk(clk),
       .rst(rst),
 
-      .if_ecall_stall_i(if_ecall_stall_i),
+      .id_ecall_stall_i(if_ecall_stall_i),
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),

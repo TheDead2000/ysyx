@@ -5,7 +5,7 @@ module pipline_control (
     input clk,
     input rst,
     /* ----- stall request from other modules  --------*/
-    input if_ecall_stall_i,
+    input id_ecall_stall_i,
     input trap_ecall_unstall_condition_i,
 
     input trap_mmu_page_falut,
@@ -117,8 +117,8 @@ module pipline_control (
         _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
       end
     // 中断|异常
-    else if(if_ecall_stall_i) begin
-      _stall = 6'b000_001;
+    else if(id_ecall_stall_i) begin
+      _stall = 6'b000_011;
       _flush = 6'b000_000;
     end
     else if(trap_ecall_unstall_condition_i) begin
