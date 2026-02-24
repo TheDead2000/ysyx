@@ -17,6 +17,7 @@ module ifu (
     input cross_inst_valid_i,
     input csr_ifu_unstall_i,
     output csr_satp_flush_o,
+    
     output if_ecall_stall_o,
     input  trap_ecall_unstall_condition_i,
     /* to if/id */
