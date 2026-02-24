@@ -353,7 +353,6 @@ end
           };
           $display("trap_bus_i_latch[`TRAP_ECALL_M]:%h,csr_write_data_o:%h",trap_bus_i_latch[`TRAP_ECALL_M],
           {csr_mstatus_i[31:13],csr_privilege_i,csr_mstatus_i[10:8],csr_mstatus_i[3],csr_mstatus_i[6:4],1'b0,csr_mstatus_i[2:0]} );
-          trap_ecall_unstall_condition_o <= 1;
           end
           else begin
           csr_write_addr_o <= 12'h100; // sstatus
@@ -402,6 +401,7 @@ end
           if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
             privilege_wen_o <= 1'b1;
             privilege_o <= 2'b11;
+            trap_ecall_unstall_condition_o <= 1;
           end
         end
 
