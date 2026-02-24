@@ -213,7 +213,8 @@ void handle_m_trap(uint32_t mcause, uint32_t mepc) {
     if (interrupt) {
         // 中断处理
         printf("M interput: cause=0x%x\n", cause);
-    } else {
+    } else 
+    {
         // 异常处理
         printf("M mode : cause=0x%x at PC=0x%x\n", cause, mepc);
         
