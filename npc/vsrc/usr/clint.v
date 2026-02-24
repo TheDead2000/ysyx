@@ -285,7 +285,6 @@ reg trap_sret_latch;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          trap_condition_latch <= 0;
 
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
@@ -448,7 +447,7 @@ reg trap_sret_latch;
        privilege_wen_o <= 1;
        privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
       end
-      
+      trap_condition_latch <=0;
       csr_state <= RESTORE_STATUS;
       end
       
