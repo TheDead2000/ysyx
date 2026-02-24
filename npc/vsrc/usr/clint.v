@@ -285,7 +285,7 @@ reg trap_sret_latch;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          trap_condition_latch <= trap_condition;
+          trap_condition_latch <= 0;
 
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
@@ -301,9 +301,10 @@ reg trap_sret_latch;
           csr_state <= SAVE_PC;
           is_delegated <= exception_delegated || interrupt_delegated;
           end
-          else if( (trap_mret || trap_sret)  ) begin
+          else if( (trap_mret || trap_sret) && trap_condition_latch != 1  ) begin
             trap_mret_latch <= trap_mret;
             trap_sret_latch <= trap_sret;
+            trap_condition_latch <= trap_condition;
             csr_state <= FIR_PRIV;
           end
           else begin
@@ -430,7 +431,6 @@ reg trap_sret_latch;
         S_time_req_latch <= 0;
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
-        trap_condition_latch <= 0;
         csr_state <= WAIT_CLK;
       end
 
