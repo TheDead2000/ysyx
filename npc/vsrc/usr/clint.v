@@ -32,12 +32,14 @@ module clint (
     input if_ecall_stall_i,
     output reg trap_ecall_unstall_condition_o,
 
+
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
     output reg [11:0] csr_write_addr_o,
     output reg [31:0] csr_write_data_o,
     output reg [11:0] csr_write_mstatus_o,
     output reg [31:0] csr_write_mstatus_data_o,
+
 
     // CSR寄存器读取接口
     input  [31:0] csr_mstatus_i,
@@ -75,7 +77,7 @@ module clint (
 );
 
   // 内部信号定义
-  wire trap_valid;
+
   wire trap_mret;
   wire trap_sret;
   wire trap_fencei;
@@ -110,7 +112,7 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  assign trap_valid = trap_fencei  || trap_mmu_page_falut || 
+  wire trap_valid = trap_fencei  || trap_mmu_page_falut || 
                      machine_timer_interrupt    || supervisor_timer_interrupt ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
@@ -299,7 +301,7 @@ reg trap_sret_latch;
           csr_state <= SAVE_PC;
           is_delegated <= exception_delegated || interrupt_delegated;
           end
-          else if( (trap_mret || trap_sret) && trap_ecall_unstall_condition_o != 1  ) begin
+          else if( (trap_mret || trap_sret)  ) begin
             trap_mret_latch <= trap_mret;
             trap_sret_latch <= trap_sret;
             csr_state <= FIR_PRIV;
@@ -414,7 +416,6 @@ reg trap_sret_latch;
           end
         end
 
-        trap_condition_latch <= 0;
         csr_state <= CLEAR;
         $display("UPDATE_PENDING to UPDATE_ENTRY");
       end
@@ -476,7 +477,6 @@ reg trap_sret_latch;
             csr_sstatus_i[0]
           };
         end
-        trap_condition_latch <= 0;
         csr_state <= CLEAR;
       end
     endcase
@@ -488,9 +488,8 @@ reg trap_sret_latch;
   assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
- 
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
+  wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
@@ -516,9 +515,9 @@ reg trap_sret_latch;
       .rst(rst),
 
       .id_ecall_stall_i(if_ecall_stall_i),
-      // .trap_intererupt_condition_i(trap_condition_latch || trap_condition),
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
 
+      .trap_intererupt_condition_i(trap_condition_latch),
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),

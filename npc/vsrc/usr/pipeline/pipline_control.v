@@ -7,7 +7,7 @@ module pipline_control (
     /* ----- stall request from other modules  --------*/
     input id_ecall_stall_i,
     input trap_ecall_unstall_condition_i,
-    //input trap_intererupt_condition_i,
+    input trap_intererupt_condition_i,
 
     // input clint_update_pc_i,
 
@@ -146,6 +146,11 @@ module pipline_control (
       _stall = 6'b000_110;
       _flush = 6'b001_110;
     end
+    else if(trap_intererupt_condition_i) begin
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
+    end
+
 
     else if (trap_stall_req) begin
       _stall = trap_csr_stall;
@@ -158,6 +163,7 @@ module pipline_control (
       _stall = 6'b000001;
       _flush = 6'b000000; 
     end
+
     else if (compress_stall) begin
       _stall = 6'b000010;
       _flush = 6'b000010;
