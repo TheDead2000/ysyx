@@ -19,7 +19,7 @@ module ifu (
     output csr_satp_flush_o,
 
     output if_ecall_stall_o,
-    
+    input trap_ecall_unstall_condition_i,
     /* to if/id */
     output [31:0] inst_addr_o,
     output [31:0] inst_data_o,
@@ -97,7 +97,7 @@ module ifu (
 
     assign csr_satp_flush_o = csr_ifu_unstall_i ? 0 : (_csr == 12'h180 && _opcode == 7'b111_0011 && _func3 == 001);
 
-    assign if_ecall_stall_o =   (inst_data_o == 32'b0000000_00000_00000_000_00000_1110011);
+    assign if_ecall_stall_o =  trap_ecall_unstall_condition_i ? 0 : (inst_data_o == 32'b0000000_00000_00000_000_00000_1110011);
     wire _ram_stall = (!if_rdata_valid_i);
     assign ram_stall_valid_if_o = _ram_stall;
     assign next_refill_stall_valid_if_o = next_rdata_unvalid_i;
