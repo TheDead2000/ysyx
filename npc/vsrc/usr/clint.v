@@ -426,7 +426,7 @@ end
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
         csr_state <= CLEAR;
-        $display("UPDATE_PENDING to UPDATE_ENTRY");
+        $display("UPDATE_PENDING to CLEAR");
       end
       
       CLEAR: begin
