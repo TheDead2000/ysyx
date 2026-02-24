@@ -243,9 +243,9 @@ end
   localparam SAVE_CAUSE = 3'd2;
   localparam SAVE_VALUE = 3'd3;
   localparam UPDATE_STATUS = 3'd4;
-  // localparam UPDATE_PENDING = 3'd5;
+  localparam UPDATE_PENDING = 3'd5;
   localparam RESTORE_STATUS = 3'd6;
-  // localparam FIR_PRIV = 3'd7;
+  localparam FIR_PRIV = 3'd7;
   reg [2:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
@@ -253,7 +253,7 @@ end
  
   
   // CSR写入逻辑
-  /* verilator lint_off CASEINCOMPLETE */
+
   always @(posedge clk or posedge rst) begin
     if (rst) begin
     csr_state <= IDLE;
@@ -274,7 +274,7 @@ end
           csr_write_data_o <= 32'h0;
           csr_write_mstatus_o <= 12'h0;
           csr_write_mstatus_data_o <= 32'h0;
-
+          trap_ecall_unstall_condition_o <= 0;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -394,32 +394,33 @@ end
         $display("UPDATE_STATUS to IDLE");
       end
 
-      // UPDATE_PENDING: begin
-      //   csr_write_en_o <= 1'b0;
-      //   if (csr_privilege_i != 2'b11) begin
-      //     if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
-      //       privilege_wen_o <= 1'b1;
-      //       privilege_o <= 2'b11;
-      //     end
-      //   end
+      UPDATE_PENDING: begin
+        csr_write_en_o <= 1'b0;
+        if (csr_privilege_i != 2'b11) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
+            privilege_wen_o <= 1'b1;
+            privilege_o <= 2'b11;
+            trap_ecall_unstall_condition_o <= 1;
+          end
+        end
 
-      //   csr_state <= IDLE;
-      //   $display("UPDATE_PENDING to UPDATE_PENDING");
-      // end
+        csr_state <= IDLE;
+        $display("UPDATE_PENDING to UPDATE_PENDING");
+      end
 
-      // FIR_PRIV:begin
-      // if (trap_mret_latch) begin
-      //   privilege_wen_o <= 1;
-      //   privilege_o <= csr_mstatus_i[12:11]; // MPP
-      //   $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
-      // end else if (trap_sret_latch) begin
-      //  privilege_wen_o <= 1;
-      //  privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
-      // end
+      FIR_PRIV:begin
+      if (trap_mret_latch) begin
+        privilege_wen_o <= 1;
+        privilege_o <= csr_mstatus_i[12:11]; // MPP
+        $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
+      end else if (trap_sret_latch) begin
+       privilege_wen_o <= 1;
+       privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
+      end
       
-      // csr_state <= RESTORE_STATUS;
+      csr_state <= RESTORE_STATUS;
 
-      // end
+      end
       
       RESTORE_STATUS: begin
         csr_write_en_o <= 1'b1;
@@ -458,25 +459,25 @@ end
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   
-  always @(posedge clk)begin
-     privilege_wen_o <= 0;
-    trap_ecall_unstall_condition_o <= 0;
-    if(trap_bus_i[`TRAP_ECALL_M]) begin
-            privilege_wen_o <= 1'b1;
-            privilege_o <= 2'b11;
-            trap_ecall_unstall_condition_o <= 1;
-    end
-    else 
-    if (trap_mret) begin
-        privilege_wen_o <= 1;
-        privilege_o <= csr_mstatus_i[12:11]; // MPP
-        $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
-    end
-    else if (trap_sret) begin
-       privilege_wen_o <= 1;
-       privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
-    end
-  end
+  // always @(posedge clk)begin
+  //    privilege_wen_o <= 0;
+  //   trap_ecall_unstall_condition_o <= 0;
+  //   if(trap_bus_i[`TRAP_ECALL_M]) begin
+  //           privilege_wen_o <= 1'b1;
+  //           privilege_o <= 2'b11;
+  //           trap_ecall_unstall_condition_o <= 1;
+  //   end
+  //   else 
+  //   if (trap_mret) begin
+  //       privilege_wen_o <= 1;
+  //       privilege_o <= csr_mstatus_i[12:11]; // MPP
+  //       $display("privilege_wen_o %h,csr_mstatus_i[12:11]:%h",privilege_wen_o,csr_mstatus_i[12:11]);
+  //   end
+  //   else if (trap_sret) begin
+  //      privilege_wen_o <= 1;
+  //      privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
+  //   end
+  // end
 
   pipline_control u_pipline_control (
       .clk(clk),
