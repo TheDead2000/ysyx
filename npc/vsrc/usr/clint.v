@@ -274,6 +274,7 @@ end
           csr_write_data_o <= 32'h0;
           csr_write_mstatus_o <= 12'h0;
           csr_write_mstatus_data_o <= 32'h0;
+          privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
