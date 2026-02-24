@@ -315,7 +315,7 @@ end
         else begin
             handler_pc <= 32'h0;
         end
-            csr_state <= CLEAR;
+            csr_state <= SAVE_PC;
       end
       
       SAVE_PC: begin
