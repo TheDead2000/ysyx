@@ -234,7 +234,7 @@ end
   reg trap_condition_latch;
   reg trap_valid_latch;
   reg clint_pc_in_valid;
-
+  reg clint_update_pc;
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -263,6 +263,7 @@ end
           trap_ecall_unstall_condition_o <= 0;
           clint_pc_in_valid <= 0;
           trap_condition_latch <= trap_condition;
+          clint_update_pc <= 0;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -399,8 +400,9 @@ end
       end
       
       UPDATE_ENTRY:begin
-      clint_pc_in_valid <= 1;
       
+      clint_update_pc <= 1;
+      clint_pc_in_valid <= 1;
       if (trap_mret_latch)               handler_pc <= csr_mepc_i;
       else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
       else if (trap_fencei)              handler_pc <= pc_from_mem_i;
@@ -489,7 +491,8 @@ end
   assign clint_pc_o =   handler_pc;
   assign clint_pc_valid_o = clint_pc_in_valid;
   // 流水线控制
-  wire trap_stall_valid = (csr_state != IDLE) & (csr_state != CLEAR);
+  wire trap_stall_valid = (csr_state != IDLE);
+  wire clint_update_pc_i = clint_update_pc;
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
@@ -518,6 +521,7 @@ end
 
       .id_ecall_stall_i(if_ecall_stall_i),
       .trap_intererupt_condition_i(trap_condition_latch || trap_condition),
+      .clint_update_pc_i(clint_update_pc_i),
 
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
       .trap_mmu_page_falut(trap_mmu_page_falut),
