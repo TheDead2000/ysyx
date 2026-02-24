@@ -109,15 +109,16 @@ module pipline_control (
       _stall = 6'b000_000;
       _flush = 6'b000_000;
     end    
-    
-    else if(trap_intererupt_condition_i) begin
-       _stall = 6'b000_111;
-       _flush = 6'b001_110;
-    end
     else if(clint_update_pc_i) begin
       _stall = 6'b001_110;
       _flush = 6'b000_000;
     end
+
+    else if(trap_intererupt_condition_i) begin
+       _stall = 6'b000_111;
+       _flush = 6'b001_110;
+    end
+    
     else if (trap_stall_req) begin
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
