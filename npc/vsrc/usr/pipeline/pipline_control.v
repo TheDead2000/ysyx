@@ -106,8 +106,8 @@ module pipline_control (
       // 访存时阻塞所有流水线
     end  
     else if(trap_mmu_page_falut) begin
-      _stall = 6'b000_000;
-      _flush = 6'b000_000;
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
     end    
 
     else if (ram_stall_req_mem) begin 
