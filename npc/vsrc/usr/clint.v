@@ -224,7 +224,7 @@ end
   localparam UPDATE_PENDING = 4'd5;
   localparam RESTORE_STATUS = 4'd6;
   localparam FIR_PRIV = 4'd7;
-  localparam WAIT_CLK = 4'd8;
+  localparam UPDATE_ENTRY = 4'd8;
   localparam CLEAR = 4'd9;
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
@@ -249,6 +249,7 @@ end
     trap_sret_latch <= 0;
     trap_condition_latch <= 0;
     ecall_pc_wen <= 0;
+    clint_pc_in_valid <= 0;
     end
     else begin
     case (csr_state)
@@ -394,8 +395,12 @@ end
         ecall_pc_wen <= 1;
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
-
-        clint_pc_in_valid <= 1;
+        csr_state <= UPDATE_ENTRY;
+        $display("UPDATE_PENDING to UPDATE_ENTRY");
+      end
+      
+      UPDATE_ENTRY:begin
+      clint_pc_in_valid <= 1;
       
       if (trap_mret_latch)               handler_pc <= csr_mepc_i;
       else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
@@ -420,12 +425,6 @@ end
         else begin
             handler_pc <= 32'h0;
         end
-
-        csr_state <= WAIT_CLK;
-        $display("UPDATE_PENDING to WAIT_CLK");
-      end
-      
-      WAIT_CLK:begin
             csr_state <= CLEAR;
       end
       
@@ -440,6 +439,7 @@ end
         trap_sret_latch <= 0;
         trap_condition_latch <= 0;
         ecall_pc_wen <= 0;
+        clint_pc_in_valid <= 0;
         csr_state <= IDLE;
       end
 
@@ -482,7 +482,7 @@ end
           };
         end
         trap_condition_latch <= 0;
-        csr_state <= WAIT_CLK;
+        csr_state <= UPDATE_ENTRY;
       end
     endcase
   end

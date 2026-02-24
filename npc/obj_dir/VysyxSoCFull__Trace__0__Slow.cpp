@@ -2352,7 +2352,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7300,"UPDATE_PENDING", false,-1, 3,0);
     tracep->declBus(c+7301,"RESTORE_STATUS", false,-1, 3,0);
     tracep->declBus(c+7302,"FIR_PRIV", false,-1, 3,0);
-    tracep->declBus(c+7303,"WAIT_CLK", false,-1, 3,0);
+    tracep->declBus(c+7303,"UPDATE_ENTRY", false,-1, 3,0);
     tracep->declBus(c+7304,"CLEAR", false,-1, 3,0);
     tracep->declBus(c+6854,"csr_state", false,-1, 3,0);
     tracep->declBus(c+7305,"next_csr_state", false,-1, 2,0);
