@@ -100,6 +100,30 @@ static inline void ebreak(void) {
     asm volatile("ebreak");
 }
 
+void __attribute__((naked)) m_test(void) {
+    asm volatile(
+        // 保存上下文
+        "addi sp, sp, -128\n"
+        "sw ra, 0(sp)\n"
+        "sw t0, 4(sp)\n"
+        "sw t1, 8(sp)\n"
+
+        
+        // 调用C陷阱处理程序
+        "csrr a0, mcause\n"
+        "csrr a1, mepc\n"
+        
+        // 恢复上下文
+        "lw ra, 0(sp)\n"
+        "lw t0, 4(sp)\n"
+        "lw t1, 8(sp)\n"
+        "addi sp, sp, 128\n"
+        
+        // 返回
+        "mret\n"
+    );
+}
+
 // 裸函数：M模式陷阱入口
 void __attribute__((naked)) m_trap_entry(void) {
     asm volatile(
@@ -318,6 +342,8 @@ void s_mode_entry(void) {
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
+    
+    csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
 
     printf("S mode ecall...\n");
     ecall();
