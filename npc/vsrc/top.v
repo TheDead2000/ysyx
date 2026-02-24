@@ -156,7 +156,7 @@ wire[31:0]inst_data_if;
 wire compress_stall;
 wire is_compressed_inst_if2id;
 
-wire ifu_ecall_stall;
+wire idu_ecall_stall;
 
 ifu ifu (
   .clk(clk),
@@ -173,8 +173,7 @@ ifu ifu (
   .csr_ifu_unstall_i(csr_ifu_unstall),
   .csr_satp_flush_o(csr_satp_flush),
 
-  .if_ecall_stall_o(ifu_ecall_stall),
-  .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition),
+
   .ex_branch_valid_i(bpu_valid),
   .ex_branch_taken_i(exu_branch_taken_o),
   .ex_pdt_true_i(pdt_correct), // 连接EXU输出的预测正确性
@@ -288,6 +287,9 @@ idu idu (
 
     .id_compress_pc_valid_o(id_compress_pc_valid_o),
     .id_compress_pc_o(id_compress_pc),
+
+    .id_ecall_stall_o(idu_ecall_stall),
+    .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition),
 
     /* from csr regs */
     .csr_data_i(csr_data_csr),
@@ -940,7 +942,7 @@ clint clint_u (
     .clint_rdata_o(clint_rdata),
     .mtime_ge_mtime(mtime_ge_mtime),
 
-    .if_ecall_stall_i(ifu_ecall_stall),
+    .if_ecall_stall_i(idu_ecall_stall),
     .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),

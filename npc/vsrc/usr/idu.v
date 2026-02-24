@@ -50,7 +50,9 @@ module idu (
     
     output[31:0] id_compress_pc_o,
     output       id_compress_pc_valid_o,
-
+    
+    output id_ecall_stall_o,
+    input trap_ecall_unstall_condition_i,
 
 
      /* CSR 译码结果：to id/ex*/
@@ -599,5 +601,6 @@ wire _alu_amo_sc = _inst_sc_w;
   // 计算返回地址（当前PC+4）
   assign id_ras_push_valid_o = _is_call && !flush_i;
   assign id_ras_push_data_o = inst_addr_i + 4;
+  assign id_ecall_stall_o =  trap_ecall_unstall_condition_i ? 0 : _inst_ecall;
 
 endmodule

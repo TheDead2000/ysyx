@@ -238,22 +238,23 @@ end
 
 
   // CSR写入状态机
-  localparam IDLE = 3'd0;
-  localparam SAVE_PC = 3'd1;
-  localparam SAVE_CAUSE = 3'd2;
-  localparam SAVE_VALUE = 3'd3;
-  localparam UPDATE_STATUS = 3'd4;
-  localparam UPDATE_PENDING = 3'd5;
-  localparam RESTORE_STATUS = 3'd6;
-  localparam FIR_PRIV = 3'd7;
-  reg [2:0] csr_state;
+  localparam IDLE = 4'd0;
+  localparam SAVE_PC = 4'd1;
+  localparam SAVE_CAUSE = 4'd2;
+  localparam SAVE_VALUE = 4'd3;
+  localparam UPDATE_STATUS = 4'd4;
+  localparam UPDATE_PENDING = 4'd5;
+  localparam RESTORE_STATUS = 4'd6;
+  localparam FIR_PRIV = 4'd7;
+  localparam WAIT_CLK = 4'd8;
+  reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
   
  
   
   // CSR写入逻辑
-
+/* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
     if (rst) begin
     csr_state <= IDLE;
@@ -405,8 +406,11 @@ end
           end
         end
 
-        csr_state <= IDLE;
+        csr_state <= WAIT_CLK;
         $display("UPDATE_PENDING to UPDATE_PENDING");
+      end
+      WAIT_CLK:begin
+        csr_state <= IDLE;
       end
 
       FIR_PRIV:begin
