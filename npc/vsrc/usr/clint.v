@@ -436,8 +436,6 @@ reg trap_sret_latch;
 
       WAIT_CLK:begin
         csr_state <= IDLE;
-      
-
       end
 
       FIR_PRIV:begin
