@@ -173,7 +173,6 @@ ifu ifu (
   .csr_ifu_unstall_i(csr_ifu_unstall),
   .csr_satp_flush_o(csr_satp_flush),
 
-  .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition),
   .if_ecall_stall_o(ifu_ecall_stall),
 
   .ex_branch_valid_i(bpu_valid),
@@ -925,7 +924,6 @@ wire privilege_wen;
 wire [11:0] clint_csr_write_mstatus;
 wire [31:0] clint_csr_write_mstatus_data;
 wire mtime_ge_mtime;
-wire trap_ecall_unstall_condition;
 
 clint clint_u (
     .clk(clk),
@@ -942,7 +940,6 @@ clint clint_u (
     .mtime_ge_mtime(mtime_ge_mtime),
 
     .if_ecall_stall_i(ifu_ecall_stall),
-    .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),
 

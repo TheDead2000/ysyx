@@ -6,6 +6,8 @@ module pipline_control (
     input rst,
     /* ----- stall request from other modules  --------*/
     input if_ecall_stall_i,
+    input trap_ecall_unstall_condition_i,
+
     input trap_mmu_page_falut,
     input csr_satp_flush_i,
     input compress_stall,
@@ -118,6 +120,10 @@ module pipline_control (
     else if(if_ecall_stall_i) begin
       _stall = 6'b000_001;
       _flush = 6'b000_000;
+    end
+    else if(trap_ecall_unstall_condition_i) begin
+      _stall = 6'b000_000;
+      _flush = 6'b001_000;
     end
     else if (trap_stall_req) begin
       _stall = trap_csr_stall;
