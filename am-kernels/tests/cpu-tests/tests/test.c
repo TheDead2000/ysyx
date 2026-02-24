@@ -345,7 +345,7 @@ void s_mode_entry(void) {
     
     csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
 
-    printf("S mode ecall...\n");
+    // printf("S mode ecall...\n");
     ecall();
     
     printf("sucess !\n");

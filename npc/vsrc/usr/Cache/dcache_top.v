@@ -204,7 +204,7 @@ mmu dcache_mmu (
     .mmu_page_fault_o(mmu_page_fault),
     
     // CSR配置
-    .mmu_enable_i(0),
+    .mmu_enable_i(mmu_enable_i),
     .mmu_satp_ppn_i(mmu_satp_ppn_i),
     .mmu_mxr_i(mmu_mxr_i),
     .mmu_sum_i(mmu_sum_i),
