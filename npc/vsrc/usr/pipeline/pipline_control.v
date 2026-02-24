@@ -8,8 +8,12 @@ module pipline_control (
     input id_ecall_stall_i,
     input trap_ecall_unstall_condition_i,
 
+    input trap_intererupt_condition_i,
+
     input trap_mmu_page_falut,
     input csr_satp_flush_i,
+
+
     input compress_stall,
     input next_stall_preif_i,
     input ram_stall_valid_if_i,  // if ram
@@ -116,6 +120,10 @@ module pipline_control (
         _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
         _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
       end
+    else if(trap_intererupt_condition_i) begin
+       _stall = 6'b000_001;
+       _flush = 6'b001_110;
+    end
     // 中断|异常
     else if(id_ecall_stall_i) begin
       _stall = 6'b000_011;

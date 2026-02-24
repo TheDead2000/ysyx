@@ -250,7 +250,7 @@ end
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
-  
+  reg trap_condition_latch;
  
   
   // CSR写入逻辑
@@ -266,6 +266,7 @@ end
     S_time_req_latch <= 0;
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
+    trap_condition_latch <= 0;
     end
     else begin
     case (csr_state)
@@ -277,6 +278,7 @@ end
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
+          trap_condition_latch <= trap_condition;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -402,10 +404,10 @@ end
           if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
             privilege_wen_o <= 1'b1;
             privilege_o <= 2'b11;
-            trap_ecall_unstall_condition_o <= 1;
           end
         end
-
+        
+        trap_condition_latch <= 0;
         csr_state <= WAIT_CLK;
         $display("UPDATE_PENDING to UPDATE_PENDING");
       end
@@ -424,7 +426,6 @@ end
       end
       
       csr_state <= RESTORE_STATUS;
-
       end
       
       RESTORE_STATUS: begin
@@ -452,7 +453,8 @@ end
             csr_sstatus_i[0]
           };
         end
-        csr_state <= IDLE;
+        trap_condition_latch <= 0;
+        csr_state <= WAIT_CLK;
       end
     endcase
   end
@@ -463,7 +465,8 @@ end
   assign clint_pc_valid_o = trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
-  
+  // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
+  wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
@@ -489,6 +492,8 @@ end
       .rst(rst),
 
       .id_ecall_stall_i(if_ecall_stall_i),
+      .trap_intererupt_condition_i(trap_condition_latch),
+
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
       .trap_mmu_page_falut(trap_mmu_page_falut),
       .csr_satp_flush_i(csr_satp_flush_i),
