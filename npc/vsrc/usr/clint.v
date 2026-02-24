@@ -406,10 +406,10 @@ end
             privilege_o <= 2'b11;
           end
         end
-        
+        trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
         csr_state <= WAIT_CLK;
-        $display("UPDATE_PENDING to UPDATE_PENDING");
+        $display("UPDATE_PENDING to WAIT_CLK");
       end
       WAIT_CLK:begin
         csr_state <= IDLE;
