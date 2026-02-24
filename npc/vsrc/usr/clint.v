@@ -394,12 +394,8 @@ end
         ecall_pc_wen <= 1;
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
-        csr_state <= WAIT_CLK;
-        $display("UPDATE_PENDING to WAIT_CLK");
-      end
-      
-      WAIT_CLK:begin
-      clint_pc_in_valid <= 1;
+
+        clint_pc_in_valid <= 1;
       
       if (trap_mret_latch)               handler_pc <= csr_mepc_i;
       else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
@@ -424,6 +420,12 @@ end
         else begin
             handler_pc <= 32'h0;
         end
+
+        csr_state <= WAIT_CLK;
+        $display("UPDATE_PENDING to WAIT_CLK");
+      end
+      
+      WAIT_CLK:begin
             csr_state <= CLEAR;
       end
       
