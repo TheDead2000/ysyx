@@ -226,11 +226,12 @@ end
   localparam FIR_PRIV = 4'd7;
   localparam UPDATE_ENTRY = 4'd8;
   localparam CLEAR = 4'd9;
+  localparam WAIT_CLK =4'd10;
+  
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
   reg trap_condition_latch;
-  reg ecall_pc_wen;
   reg trap_valid_latch;
   reg clint_pc_in_valid;
 
@@ -248,7 +249,6 @@ end
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
     trap_condition_latch <= 0;
-    ecall_pc_wen <= 0;
     clint_pc_in_valid <= 0;
     end
     else begin
@@ -261,7 +261,6 @@ end
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          ecall_pc_wen <= 0;
           clint_pc_in_valid <= 0;
           trap_condition_latch <= trap_condition;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
@@ -392,7 +391,7 @@ end
             privilege_o <= 2'b11;
           end
         end
-        ecall_pc_wen <= 1;
+
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
         csr_state <= UPDATE_ENTRY;
@@ -438,8 +437,6 @@ end
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         trap_condition_latch <= 0;
-        ecall_pc_wen <= 0;
-        clint_pc_in_valid <= 0;
         csr_state <= IDLE;
       end
 
@@ -492,7 +489,7 @@ end
   assign clint_pc_o =   handler_pc;
   assign clint_pc_valid_o = clint_pc_in_valid;
   // 流水线控制
-  wire trap_stall_valid = (csr_state != IDLE);
+  wire trap_stall_valid = (csr_state != IDLE) & (csr_state != CLEAR);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
