@@ -145,7 +145,7 @@ module pipline_control (
     end
     else if(trap_ecall_unstall_condition_i) begin
       _stall = 6'b000_110;
-      _flush = 6'b001_110;
+      _flush = 6'b001_100;
     end
 
     else if (trap_stall_req) begin
