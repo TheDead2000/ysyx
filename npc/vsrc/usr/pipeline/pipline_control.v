@@ -137,7 +137,6 @@ module pipline_control (
       // 没有异常情况,正常执行
     end 
 
-
         // 中断|异常
     else if(id_ecall_stall_i) begin
       _stall = 6'b000_011;
