@@ -212,7 +212,31 @@ reg trap_sret_latch;
   reg [31:0] handler_pc;
   always @(*) begin
 
-end
+      if (trap_mret)               handler_pc = csr_mepc_i;
+      else if (trap_sret)          handler_pc = csr_sepc_i;
+      else if (trap_fencei)              handler_pc = pc_from_mem_i;
+      else if (trap_bus_i[`TRAP_ECALL_M]) handler_pc = csr_mtvec_i;
+      else if (M_time_req) begin
+        // M模式定时器中断
+        handler_pc = csr_mtvec_i;
+      end
+        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
+        //     // S模式定时器中断（已委托）
+        //     handler_pc = csr_stvec_i;
+        // end
+        else if (S_time_req) begin
+            // 未委托的定时器中断（S或U模式）→ 由M模式处理
+            handler_pc = csr_mtvec_i;
+        end
+        else if (trap_valid) begin
+            // 其他异常
+            handler_pc = (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
+        end
+        else begin
+            handler_pc = 32'h0;
+        end
+  end
+
 
 
   // CSR写入状态机
@@ -233,8 +257,7 @@ end
   reg is_delegated;
   reg trap_condition_latch;
   reg trap_valid_latch;
-  reg clint_pc_in_valid;
-  reg clint_update_pc;
+
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -249,7 +272,6 @@ end
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
     trap_condition_latch <= 0;
-    clint_pc_in_valid <= 0;
     end
     else begin
     case (csr_state)
@@ -261,9 +283,8 @@ end
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          clint_pc_in_valid <= 0;
           trap_condition_latch <= trap_condition;
-          clint_update_pc <= 0;
+
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -275,7 +296,7 @@ end
           M_time_req_latch <= M_time_req;
           S_time_req_latch <= S_time_req;
 
-          csr_state <= UPDATE_ENTRY;
+          csr_state <= SAVE_PC;
           is_delegated <= exception_delegated || interrupt_delegated;
           end
           else if(trap_mret || trap_sret ) begin
@@ -288,36 +309,6 @@ end
           end
        end
 
-      UPDATE_ENTRY:begin
-      
-      clint_update_pc <= 1;
-      clint_pc_in_valid <= 1;
-      if (trap_mret_latch)               handler_pc <= csr_mepc_i;
-      else if (trap_sret_latch)          handler_pc <= csr_sepc_i;
-      else if (trap_fencei)              handler_pc <= pc_from_mem_i;
-      else if (trap_bus_i_latch[`TRAP_ECALL_M]) handler_pc <= csr_mtvec_i;
-      else if (M_time_req_latch) begin
-        // M模式定时器中断
-        handler_pc <= csr_mtvec_i;
-      end
-        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
-        //     // S模式定时器中断（已委托）
-        //     handler_pc = csr_stvec_i;
-        // end
-        else if (S_time_req_latch) begin
-            // 未委托的定时器中断（S或U模式）→ 由M模式处理
-            handler_pc <= csr_mtvec_i;
-        end
-        else if (trap_valid_latch) begin
-            // 其他异常
-            handler_pc <= (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
-        end
-        else begin
-            handler_pc <= 32'h0;
-        end
-            csr_state <= SAVE_PC;
-      end
-      
       SAVE_PC: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
@@ -425,10 +416,11 @@ end
 
         trap_ecall_unstall_condition_o <= 1;
         trap_condition_latch <= 0;
-        csr_state <= CLEAR;
-        $display("UPDATE_PENDING to CLEAR");
+        csr_state <= UPDATE_ENTRY;
+        $display("UPDATE_PENDING to UPDATE_ENTRY");
       end
       
+
       CLEAR: begin
         cause_value_latched <= 32'b0;
         is_delegated_latched <= 1'b0;
@@ -489,10 +481,10 @@ end
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = clint_pc_in_valid;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
-  wire clint_update_pc_i = clint_update_pc;
+ 
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
   wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
@@ -520,8 +512,8 @@ end
       .rst(rst),
 
       .id_ecall_stall_i(if_ecall_stall_i),
-      .trap_intererupt_condition_i(trap_condition_latch || trap_condition),
-      .clint_update_pc_i(clint_update_pc_i),
+      // .trap_intererupt_condition_i(trap_condition_latch || trap_condition),
+
 
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
       .trap_mmu_page_falut(trap_mmu_page_falut),
