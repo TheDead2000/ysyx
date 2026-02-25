@@ -206,7 +206,7 @@ reg M_time_req_latch;
 reg S_time_req_latch;
 reg trap_mret_latch;
 reg trap_sret_latch;
-
+reg[31:0] handler_pc_reg;
 
   wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
   wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
@@ -258,9 +258,10 @@ reg trap_sret_latch;
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
-  reg trap_condition_latch;
   reg trap_valid_latch;
-
+  reg trap_condition_latch;
+  reg trap_intererupt_pc_valid;
+  
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -286,7 +287,8 @@ reg trap_sret_latch;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-
+          trap_intererupt_pc_valid <= 0;
+          handler_pc_reg <= handler_pc;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -500,15 +502,31 @@ reg trap_sret_latch;
         csr_state <= RET_CLK;
       end
       RET_CLK: begin
+        trap_intererupt_pc_valid <= 1;
         csr_state <= IDLE;
       end
     endcase
   end
   end
   
+  always @(*) begin
+     clint_pc_valid_o = 0;
+     clint_pc_o = 0;
+    if(trap_bus_i[`TRAP_ECALL_M] || trap_mmu_page_falut)begin
+      clint_pc_o = handler_pc;
+      clint_pc_valid_o = 1;
+    end
+    else if(trap_valid || trap_intererupt_pc_valid || trap_fencei) begin
+      clint_pc_o = handler_pc_reg;
+      clint_pc_valid_o = 1;
+    end
+
+  
+  end
+
   // 输出赋值
-  assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  assign clint_pc_o =  trap_intererupt_pc_valid ? handler_pc_reg : handler_pc;
+  assign clint_pc_valid_o = trap_intererupt_pc_valid ? 1 : trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
