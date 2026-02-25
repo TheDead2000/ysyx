@@ -8,12 +8,14 @@ module pipline_control (
     input id_ecall_stall_i,
     input trap_ecall_unstall_condition_i,
     input trap_intererupt_condition_i,
+    
+    input trap_intererupt_pc_valid_i,
 
     // input clint_update_pc_i,
 
     input trap_mmu_page_falut,
     input csr_satp_flush_i,
-
+  
 
     input compress_stall,
     input next_stall_preif_i,
@@ -154,7 +156,10 @@ module pipline_control (
       _flush = 6'b001_110;
       $display("trap_intererupt_condition_i call");
     end
-
+    else if (trap_intererupt_pc_valid_i) begin
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
+    end
     else if (trap_stall_req) begin
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;

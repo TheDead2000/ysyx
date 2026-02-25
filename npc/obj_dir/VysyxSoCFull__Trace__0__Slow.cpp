@@ -2397,6 +2397,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+7153,"id_ecall_stall_i", false,-1);
     tracep->declBit(c+6846,"trap_ecall_unstall_condition_i", false,-1);
     tracep->declBit(c+6960,"trap_intererupt_condition_i", false,-1);
+    tracep->declBit(c+6861,"trap_intererupt_pc_valid_i", false,-1);
     tracep->declBit(c+6419,"trap_mmu_page_falut", false,-1);
     tracep->declBit(c+7158,"csr_satp_flush_i", false,-1);
     tracep->declBit(c+618,"compress_stall", false,-1);
@@ -11299,7 +11300,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7396,"SC_W_VAL", false,-1, 31,0);
     tracep->declBus(c+7397,"AMOSWAP_W_VAL", false,-1, 31,0);
     tracep->declBus(c+7398,"AMOADD_W_VAL", false,-1, 31,0);
-    tracep->declBus(c+7399,"AMOXOR_W_VAL", false,-1, 31,0);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11309,6 +11309,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBus(c+7399,"AMOXOR_W_VAL", false,-1, 31,0);
     tracep->declBus(c+7400,"AMOAND_W_VAL", false,-1, 31,0);
     tracep->declBus(c+7401,"AMOOR_W_VAL", false,-1, 31,0);
     tracep->declBus(c+7402,"AMOMIN_W_VAL", false,-1, 31,0);

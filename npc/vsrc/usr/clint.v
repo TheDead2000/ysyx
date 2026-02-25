@@ -517,7 +517,7 @@ reg[31:0] handler_pc_reg;
       clint_pc_o = handler_pc;
       clint_pc_valid_o = 1;
     end
-    else if(trap_valid || trap_intererupt_pc_valid || trap_fencei) begin
+    else if(trap_intererupt_pc_valid) begin
       clint_pc_o = handler_pc_reg;
       clint_pc_valid_o = 1;
     end
@@ -529,7 +529,7 @@ reg[31:0] handler_pc_reg;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =   trap_valid || trap_mret || trap_sret || trap_fencei ;
+  wire trap_condition =   trap_valid || trap_mret || trap_sret;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
@@ -559,6 +559,8 @@ reg[31:0] handler_pc_reg;
 
       .trap_intererupt_condition_i(trap_condition),
       .trap_mmu_page_falut(trap_mmu_page_falut),
+      .trap_intererupt_pc_valid_i(trap_intererupt_pc_valid),
+
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),
       .next_stall_preif_i(next_stall_preif_i),
