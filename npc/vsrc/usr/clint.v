@@ -500,7 +500,6 @@ reg[31:0] handler_pc_reg;
             csr_sstatus_i[0]
           };
         end
-        trap_intererupt_pc_valid <= 0;
         csr_state <= RET_CLK;
       end
       RET_CLK: begin
