@@ -517,19 +517,21 @@ module CSRs(
 
 
   // 检测 satp 写入
-  always @(posedge clk) begin
-    if (rst) begin
-      csr_ifu_unstall<= 1'b0;
-    end else begin
-      // 当有 satp 写入时，产生一个周期的高电平
-      csr_ifu_unstall <= ((clint_csr_write_en && clint_csr_write_addr == 12'h180) || 
-                           (csr_write_wen && csr_write_address == 12'h180));
-      
-      // 注：由于这是时序逻辑，csr_ifu_unstall_o 会在下一个周期自动清零
-      // 因为只有在写入发生时才会为1，下一个周期没有写入就变回0
-    end
-  end
+  // always @(posedge clk) begin
+  //   if (rst) begin
+  //     csr_ifu_unstall<= 1'b0;
+  //   end else begin
 
+  //     // 当有 satp 写入时，产生一个周期的高电平
+  //     csr_ifu_unstall <= ((clint_csr_write_en && clint_csr_write_addr == 12'h180) || 
+  //                          (csr_write_wen && csr_write_address == 12'h180));
+      
+  //     // 注：由于这是时序逻辑，csr_ifu_unstall_o 会在下一个周期自动清零
+  //     // 因为只有在写入发生时才会为1，下一个周期没有写入就变回0
+  //   end
+  // end
+assign   csr_ifu_unstall = ((clint_csr_write_en && clint_csr_write_addr == 12'h180) ||
+                            (csr_write_wen && csr_write_address == 12'h180));
 // ============ CSR 到 MMU 配置转换 (SV32) ============
 // 从 CSR 寄存器提取 MMU 配置信号 (SV32)
 
