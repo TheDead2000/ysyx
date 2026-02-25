@@ -452,6 +452,7 @@ reg trap_sret_latch;
       end
 
       WAIT_CLK:begin
+        trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
 
