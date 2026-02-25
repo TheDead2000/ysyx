@@ -520,13 +520,11 @@ reg[31:0] handler_pc_reg;
       clint_pc_o = handler_pc_reg;
       clint_pc_valid_o = 1;
     end
-
-  
   end
 
   // 输出赋值
-  assign clint_pc_o =  trap_intererupt_pc_valid ? handler_pc_reg : handler_pc;
-  assign clint_pc_valid_o = trap_intererupt_pc_valid ? 1 : trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  // assign clint_pc_o =  andler_pc;
+  // assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
