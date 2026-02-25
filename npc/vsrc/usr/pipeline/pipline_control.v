@@ -109,7 +109,12 @@ module pipline_control (
       _stall = 6'b000_110;
       _flush = 6'b001_110;
     end 
-
+    
+    else if(trap_ecall_unstall_condition_i) begin
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
+       $display("trap_ecall_unstall_condition_i call");
+    end
 
     else if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
@@ -143,11 +148,7 @@ module pipline_control (
       _flush = 6'b000_000;
       $display("id_ecall_stall_i call");
     end
-    else if(trap_ecall_unstall_condition_i) begin
-      _stall = 6'b000_110;
-      _flush = 6'b001_110;
-       $display("trap_ecall_unstall_condition_i call");
-    end
+
     else if(trap_intererupt_condition_i) begin
       _stall = 6'b000_110;
       _flush = 6'b001_110;
