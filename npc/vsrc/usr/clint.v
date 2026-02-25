@@ -423,6 +423,7 @@ reg trap_sret_latch;
       
 
       CLEAR: begin
+        privilege_wen_o <= 1'b0;
         cause_value_latched <= 32'b0;
         is_delegated_latched <= 1'b0;
         interrupt_pending_latched <= 1'b0;
