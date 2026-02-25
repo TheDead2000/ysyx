@@ -110,6 +110,19 @@ module pipline_control (
       _flush = 6'b001_110;
     end 
 
+    else if (ram_stall_req_mem) begin 
+      _stall = ram_mem_stall;
+      _flush = ram_mem_flush;
+    end 
+    else if(next_stall_req_preif) begin
+        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
+        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
+      end
+    else if(ram_stall_req_if) begin
+        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
+        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
+      end
+
     // 中断|异常
     else if(id_ecall_stall_i) begin
       _stall = 6'b000_011;
@@ -126,20 +139,7 @@ module pipline_control (
       _flush = 6'b001_110;
       $display("trap_intererupt_condition_i call");
     end
-
-    else if (ram_stall_req_mem) begin 
-      _stall = ram_mem_stall;
-      _flush = ram_mem_flush;
-    end 
-    else if(next_stall_req_preif) begin
-        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
-        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
-      end
-    else if(ram_stall_req_if) begin
-        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
-        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
-      end
-
+    
     else if (trap_stall_req) begin
       _stall = trap_csr_stall;
       _flush = trap_csr_flush;
