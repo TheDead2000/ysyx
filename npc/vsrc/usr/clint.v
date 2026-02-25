@@ -112,7 +112,7 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  wire trap_valid = trap_fencei  || trap_mmu_page_falut || 
+  wire trap_valid = trap_fencei   || 
                      machine_timer_interrupt    || supervisor_timer_interrupt ||
                      machine_external_interrupt || supervisor_external_interrupt ||
                      machine_software_interrupt || supervisor_software_interrupt;
@@ -313,26 +313,37 @@ reg trap_sret_latch;
 
       SAVE_PC: begin
         csr_write_en_o <= 1'b1;
-        if (csr_privilege_i != 2'b11) begin
+         if (csr_privilege_i != 2'b11) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+             csr_write_addr_o <= 12'h341; // mepc
+          end
+          else begin
           csr_write_addr_o <= 12'h141; // sepc
-        end else  if (csr_privilege_i == 2'b11)begin
+          end
+        end   
+        else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o <= 12'h341; // mepc
         end
         csr_write_data_o <= pc_from_exe_i_latch-4;
         csr_state <= SAVE_CAUSE;
-        $display("SAVE_PC to SAVE_CAUSE");
+        $display("SAVE_PC to SAVE_CAUSE csr_write_addr_o:%h csr_write_data_o:%h pc_from_exe_i_latch:%h _pc_for_mem:%h",csr_write_addr_o,csr_write_data_o,pc_from_exe_i_latch,pc_from_mem_i);
       end
 
 
       SAVE_CAUSE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          csr_write_addr_o <= 12'h142; // scause
-        end else  if (csr_privilege_i == 2'b11)begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+            csr_write_addr_o <= 12'h342; // mcause
+          end
+          else begin
+            csr_write_addr_o <= 12'h142; // scause
+          end
+        end   
+        else  if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o <= 12'h342; // mcause
         end
         csr_write_data_o <= cause_value_latched;
-
         csr_state <= SAVE_VALUE;
         $display("SAVE_CAUSE to SAVE_VALUE");
       end
@@ -340,8 +351,14 @@ reg trap_sret_latch;
       SAVE_VALUE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          csr_write_addr_o <= 12'h143; // stval
-        end else begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+            csr_write_addr_o <= 12'h343; // mtval
+          end
+          else begin
+            csr_write_addr_o <= 12'h143; // stval
+          end
+        end   
+        else if (csr_privilege_i == 2'b11) begin
           csr_write_addr_o <= 12'h343; // mtval
         end
         csr_write_data_o <= inst_data_i;
@@ -487,7 +504,7 @@ reg trap_sret_latch;
   
   // 输出赋值
   assign clint_pc_o =   handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
