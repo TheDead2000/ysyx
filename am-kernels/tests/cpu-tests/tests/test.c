@@ -392,7 +392,7 @@ void s_mode_entry(void) {
     __asm__ __volatile__("mv a0,a0");
     __asm__ __volatile__("mv a0,a0");
    
-    __asm__ __volatile__("mv a0,a0");
+    // __asm__ __volatile__("mv a0,a0");
     // __asm__ __volatile__("mv a0,a0");
     // __asm__ __volatile__("mv a0,a0");
     // __asm__ __volatile__("mv a0,a0");
