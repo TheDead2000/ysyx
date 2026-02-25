@@ -456,6 +456,7 @@ reg[31:0] handler_pc_reg;
       end
 
       WAIT_CLK:begin
+        trap_intererupt_pc_valid <= 1;
         trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
