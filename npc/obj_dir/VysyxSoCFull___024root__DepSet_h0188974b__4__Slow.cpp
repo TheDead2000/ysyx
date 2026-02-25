@@ -8,6 +8,48 @@
 #include "VysyxSoCFull___024root.h"
 
 #ifdef VL_DEBUG
+VL_ATTR_COLD void VysyxSoCFull___024root___dump_triggers__act(VysyxSoCFull___024root* vlSelf) {
+    if (false && vlSelf) {}  // Prevent unused
+    VysyxSoCFull__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    VysyxSoCFull___024root___dump_triggers__act\n"); );
+    // Body
+    if ((1U & (~ (IData)(vlSelf->__VactTriggered.any())))) {
+        VL_DBG_MSGF("         No triggers active\n");
+    }
+    if (vlSelf->__VactTriggered.at(0U)) {
+        VL_DBG_MSGF("         'act' region trigger index 0 is active: @(posedge clock)\n");
+    }
+    if (vlSelf->__VactTriggered.at(1U)) {
+        VL_DBG_MSGF("         'act' region trigger index 1 is active: @([hybrid] ysyxSoCFull.asic.cpu.cpu.top_core.if_rdata_valid)\n");
+    }
+    if (vlSelf->__VactTriggered.at(2U)) {
+        VL_DBG_MSGF("         'act' region trigger index 2 is active: @(posedge clock or posedge ysyxSoCFull.asic.__Vcellinp__cpu__reset)\n");
+    }
+    if (vlSelf->__VactTriggered.at(3U)) {
+        VL_DBG_MSGF("         'act' region trigger index 3 is active: @(posedge clock or posedge reset)\n");
+    }
+    if (vlSelf->__VactTriggered.at(4U)) {
+        VL_DBG_MSGF("         'act' region trigger index 4 is active: @(posedge ysyxSoCFull.__Vcellinp__flash__ss or posedge ysyxSoCFull._asic_spi_sck)\n");
+    }
+    if (vlSelf->__VactTriggered.at(5U)) {
+        VL_DBG_MSGF("         'act' region trigger index 5 is active: @(posedge ysyxSoCFull._asic_spi_sck)\n");
+    }
+    if (vlSelf->__VactTriggered.at(6U)) {
+        VL_DBG_MSGF("         'act' region trigger index 6 is active: @(posedge ysyxSoCFull._asic_psram_ce_n)\n");
+    }
+    if (vlSelf->__VactTriggered.at(7U)) {
+        VL_DBG_MSGF("         'act' region trigger index 7 is active: @(posedge ysyxSoCFull._asic_psram_ce_n or posedge ysyxSoCFull._asic_psram_sck)\n");
+    }
+    if (vlSelf->__VactTriggered.at(8U)) {
+        VL_DBG_MSGF("         'act' region trigger index 8 is active: @(posedge ysyxSoCFull._asic_psram_sck)\n");
+    }
+    if (vlSelf->__VactTriggered.at(9U)) {
+        VL_DBG_MSGF("         'act' region trigger index 9 is active: @(negedge clock)\n");
+    }
+}
+#endif  // VL_DEBUG
+
+#ifdef VL_DEBUG
 VL_ATTR_COLD void VysyxSoCFull___024root___dump_triggers__nba(VysyxSoCFull___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     VysyxSoCFull__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -746,14 +788,15 @@ VL_ATTR_COLD void VysyxSoCFull___024root___ctor_var_reset(VysyxSoCFull___024root
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__S_time_req_latch = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_mret_latch = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_sret_latch = 0;
+    vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__handler_pc_reg = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__M_time_req = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__S_time_req = 0;
+    vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__handler_pc = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__csr_state = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__next_csr_state = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__is_delegated = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_valid_latch = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_intererupt_pc_valid = 0;
-    vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__trap_flush_pc = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__mtime_write_valid_i = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT__ram_stall_req_mem = 0;
     vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__u_pipline_control__DOT__ram_stall_mem_prev = 0;

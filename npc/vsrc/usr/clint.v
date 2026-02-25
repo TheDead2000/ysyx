@@ -31,7 +31,7 @@ module clint (
     input alu_mul_div_valid_ex_i,
     input if_ecall_stall_i,
     output reg trap_ecall_unstall_condition_o,
-    output reg trap_icache_pass_o,
+    
 
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
@@ -206,6 +206,7 @@ reg M_time_req_latch;
 reg S_time_req_latch;
 reg trap_mret_latch;
 reg trap_sret_latch;
+reg[31:0] handler_pc_reg;
 
   wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
   wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
@@ -259,7 +260,7 @@ reg trap_sret_latch;
   reg is_delegated;
   reg trap_valid_latch;
   reg trap_intererupt_pc_valid;
-  reg trap_flush_pc;
+  
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -284,9 +285,8 @@ reg trap_sret_latch;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          trap_icache_pass_o <= 0;
-          trap_flush_pc <= 0;
-
+          trap_intererupt_pc_valid <= 0;
+          handler_pc_reg <= handler_pc;
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -453,6 +453,7 @@ reg trap_sret_latch;
       end
 
       WAIT_CLK:begin
+        trap_intererupt_pc_valid <= 1;
         trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
@@ -466,6 +467,8 @@ reg trap_sret_latch;
        privilege_wen_o <= 1;
        privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
       end
+      
+      trap_intererupt_pc_valid <= 1;
       csr_state <= RESTORE_STATUS;
       end
       
@@ -495,11 +498,11 @@ reg trap_sret_latch;
             csr_sstatus_i[0]
           };
         end
-        csr_state <= RET_CLK;
+        trap_intererupt_pc_valid <= 0;
+        // trap_icache_pass <= 1;
+        csr_state <= IDLE;
       end
       RET_CLK: begin
-        trap_flush_pc <= 1;
-        trap_icache_pass_o <= 1;
         csr_state <= IDLE;
       end
     endcase
@@ -540,10 +543,10 @@ reg trap_sret_latch;
 
       .id_ecall_stall_i(if_ecall_stall_i),
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
-      .trap_intererupt_pc_valid_i(trap_flush_pc),
 
       .trap_intererupt_condition_i(trap_condition),
       .trap_mmu_page_falut(trap_mmu_page_falut),
+      .trap_intererupt_pc_valid_i(trap_intererupt_pc_valid),
 
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),

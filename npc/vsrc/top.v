@@ -944,7 +944,7 @@ clint clint_u (
 
     .if_ecall_stall_i(idu_ecall_stall),
     .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
-    .trap_icache_pass_o(trap_icache_pass),
+    // .trap_icache_pass_o(trap_icache_pass),
 
     .trap_bus_i(trap_bus_mem),
     .trap_mmu_page_falut(icache_mmu_page_fault),
@@ -1128,7 +1128,7 @@ wire [7:0] icache_arb_rlen;
       .mmu_enable_i(csr_enable_sv32),
       .mmu_satp_ppn_i(csr_satp_ppn),
       .icache_mmu_page_fault_o(icache_mmu_page_fault),
-      .trap_icache_pass_i(trap_icache_pass),
+      // .trap_icache_pass_i(trap_icache_pass),
 
       .mmu_mxr_i(csr_mxr),
       .mmu_sum_i(csr_sum),
