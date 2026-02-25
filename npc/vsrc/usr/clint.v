@@ -253,6 +253,7 @@ reg trap_sret_latch;
   localparam UPDATE_ENTRY = 4'd8;
   localparam CLEAR = 4'd9;
   localparam WAIT_CLK =4'd10;
+  localparam RET_CLK = 4'd11;
   
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
@@ -466,7 +467,6 @@ reg trap_sret_latch;
        privilege_wen_o <= 1;
        privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
       end
-      trap_condition_latch <=0;
       csr_state <= RESTORE_STATUS;
       end
       
@@ -496,6 +496,10 @@ reg trap_sret_latch;
             csr_sstatus_i[0]
           };
         end
+        trap_condition_latch <= 0;
+        csr_state <= RET_CLK;
+      end
+      RET_CLK: begin
         csr_state <= IDLE;
       end
     endcase
@@ -508,7 +512,7 @@ reg trap_sret_latch;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =  trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei ;
+  wire trap_condition =   trap_valid || trap_mret || trap_sret || trap_fencei ;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
