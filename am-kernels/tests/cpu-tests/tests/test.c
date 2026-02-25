@@ -102,25 +102,14 @@ static inline void ebreak(void) {
 
 void __attribute__((naked)) m_test(void) {
     asm volatile(
-        // 保存上下文
-        "addi sp, sp, -128\n"
-        "sw ra, 0(sp)\n"
-        "sw t0, 4(sp)\n"
-        "sw t1, 8(sp)\n"
 
-        
         // 调用C陷阱处理程序
         "csrr a0, mcause\n"
-        "csrr a1, mepc\n"
-        
-        // 恢复上下文
-        "lw ra, 0(sp)\n"
-        "lw t0, 4(sp)\n"
-        "lw t1, 8(sp)\n"
-        "addi sp, sp, 128\n"
-        
-        // 返回
-        "mret\n"
+        "csrr a4, mepc\n"
+        "addi	a4,a4,4\n"
+        "csrw	mepc,a4\n"
+        "mret"
+
     );
 }
 
