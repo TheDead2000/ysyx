@@ -416,7 +416,6 @@ reg trap_sret_latch;
           end
         end
 
-        trap_ecall_unstall_condition_o <= 1;
         csr_state <= CLEAR;
         $display("UPDATE_PENDING to CLEAR");
       end
@@ -437,6 +436,7 @@ reg trap_sret_latch;
       end
 
       WAIT_CLK:begin
+        trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
 
@@ -479,7 +479,7 @@ reg trap_sret_latch;
             csr_sstatus_i[0]
           };
         end
-        csr_state <= CLEAR;
+        csr_state <= IDLE;
       end
     endcase
   end
