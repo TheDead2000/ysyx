@@ -500,10 +500,10 @@ reg[31:0] handler_pc_reg;
           };
         end
         trap_condition_latch <= 0;
+        trap_intererupt_pc_valid <= 1;
         csr_state <= RET_CLK;
       end
       RET_CLK: begin
-        trap_intererupt_pc_valid <= 1;
         csr_state <= IDLE;
       end
     endcase
