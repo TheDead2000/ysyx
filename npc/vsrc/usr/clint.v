@@ -31,7 +31,7 @@ module clint (
     input alu_mul_div_valid_ex_i,
     input if_ecall_stall_i,
     output reg trap_ecall_unstall_condition_o,
-
+    output reg trap_icache_pass_o,
 
     // CSR寄存器写入接口
     output reg        csr_write_en_o,
@@ -206,7 +206,6 @@ reg M_time_req_latch;
 reg S_time_req_latch;
 reg trap_mret_latch;
 reg trap_sret_latch;
-reg[31:0] handler_pc_reg;
 
   wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
   wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
@@ -260,7 +259,7 @@ reg[31:0] handler_pc_reg;
   reg is_delegated;
   reg trap_valid_latch;
   reg trap_intererupt_pc_valid;
-  
+ 
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -285,8 +284,8 @@ reg[31:0] handler_pc_reg;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
-          trap_intererupt_pc_valid <= 0;
-          handler_pc_reg <= handler_pc;
+          trap_icache_pass_o <= 0;
+
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -453,8 +452,6 @@ reg[31:0] handler_pc_reg;
       end
 
       WAIT_CLK:begin
-        trap_intererupt_pc_valid <= 1;
-        trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
 
@@ -467,8 +464,6 @@ reg[31:0] handler_pc_reg;
        privilege_wen_o <= 1;
        privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
       end
-      
-      trap_intererupt_pc_valid <= 1;
       csr_state <= RESTORE_STATUS;
       end
       
@@ -498,32 +493,20 @@ reg[31:0] handler_pc_reg;
             csr_sstatus_i[0]
           };
         end
-        trap_intererupt_pc_valid <= 0;
+        csr_state <= RET_CLK;
+      end
+      RET_CLK: begin
+        trap_icache_pass_o <= 1;
         csr_state <= IDLE;
       end
-      // RET_CLK: begin
-      //   csr_state <= IDLE;
-      // end
     endcase
   end
   end
   
-  always @(*) begin
-     clint_pc_valid_o = 0;
-     clint_pc_o = 0;
-    if(trap_bus_i[`TRAP_ECALL_M] || trap_mmu_page_falut)begin
-      clint_pc_o = handler_pc;
-      clint_pc_valid_o = 1;
-    end
-    else if(trap_intererupt_pc_valid) begin
-      clint_pc_o = handler_pc_reg;
-      clint_pc_valid_o = 1;
-    end
-  end
 
   // 输出赋值
-  // assign clint_pc_o =  andler_pc;
-  // assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  assign clint_pc_o =  handler_pc;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
@@ -557,7 +540,6 @@ reg[31:0] handler_pc_reg;
 
       .trap_intererupt_condition_i(trap_condition),
       .trap_mmu_page_falut(trap_mmu_page_falut),
-      .trap_intererupt_pc_valid_i(trap_intererupt_pc_valid),
 
       .csr_satp_flush_i(csr_satp_flush_i),
       .compress_stall(compress_stall),

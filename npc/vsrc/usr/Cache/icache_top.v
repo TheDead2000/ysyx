@@ -31,6 +31,7 @@ module icache_top (
     input wire mmu_enable_i,            // 分页使能
     input wire [21:0] mmu_satp_ppn_i,   // 根页表PPN (22位)
     output icache_mmu_page_fault_o,
+    input trap_icache_pass_i,
 
     input wire mmu_mxr_i,               // Make eXecutable Readable
     input wire mmu_sum_i,               // Supervisor User Memory access
@@ -334,7 +335,7 @@ mmu icache_mmu (
 
             // 有新请求，且地址不同，需要重新转换
           if (mmu_enable_i) begin
-              if (preif_raddr_valid_i && preif_raddr_i != last_vaddr) begin
+              if ( (preif_raddr_valid_i && preif_raddr_i != last_vaddr) || trap_icache_pass_i) begin
               vaddr_reg <= preif_raddr_i;
               last_vaddr <= preif_raddr_i;
               mmu_translation_done <= 1'b0;
