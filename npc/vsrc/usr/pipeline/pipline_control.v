@@ -110,6 +110,25 @@ module pipline_control (
       _flush = 6'b001_110;
     end 
 
+    // 中断|异常
+    else if(id_ecall_stall_i) begin
+      _stall = 6'b000_011;
+      _flush = 6'b000_000;
+    end
+    else if(trap_ecall_unstall_condition_i) begin
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
+    end
+    else if(trap_intererupt_condition_i) begin
+      _stall = 6'b000_110;
+      _flush = 6'b001_110;
+    end
+
+    else if (trap_stall_req) begin
+      _stall = trap_csr_stall;
+      _flush = trap_csr_flush;
+      // 跳转指令,(发生在 ex 阶段)
+    end   
 
     else if (ram_stall_req_mem) begin 
       _stall = ram_mem_stall;
@@ -136,27 +155,7 @@ module pipline_control (
       _stall = load_use_stall;
       _flush = load_use_flush;
       // 没有异常情况,正常执行
-    end 
-
-    // 中断|异常
-    else if(id_ecall_stall_i) begin
-      _stall = 6'b000_011;
-      _flush = 6'b000_000;
-    end
-    else if(trap_ecall_unstall_condition_i) begin
-      _stall = 6'b000_110;
-      _flush = 6'b001_110;
-    end
-    else if(trap_intererupt_condition_i) begin
-      _stall = 6'b000_110;
-      _flush = 6'b001_110;
-    end
-
-    else if (trap_stall_req) begin
-      _stall = trap_csr_stall;
-      _flush = trap_csr_flush;
-      // 跳转指令,(发生在 ex 阶段)
-    end    
+    end  
 
     else if (csr_satp_flush_i) begin
       _stall = 6'b000001;
