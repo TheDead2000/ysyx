@@ -259,7 +259,7 @@ reg trap_sret_latch;
   reg is_delegated;
   reg trap_valid_latch;
   reg trap_intererupt_pc_valid;
- 
+  reg trap_flush_pc;
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -285,6 +285,7 @@ reg trap_sret_latch;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
           trap_icache_pass_o <= 0;
+          trap_flush_pc <= 1;
 
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
@@ -497,6 +498,7 @@ reg trap_sret_latch;
         csr_state <= RET_CLK;
       end
       RET_CLK: begin
+        trap_flush_pc <= 1;
         trap_icache_pass_o <= 1;
         csr_state <= IDLE;
       end
@@ -538,6 +540,7 @@ reg trap_sret_latch;
 
       .id_ecall_stall_i(if_ecall_stall_i),
       .trap_ecall_unstall_condition_i(trap_ecall_unstall_condition_o),
+      .trap_intererupt_pc_valid_i(trap_flush_pc),
 
       .trap_intererupt_condition_i(trap_condition),
       .trap_mmu_page_falut(trap_mmu_page_falut),
