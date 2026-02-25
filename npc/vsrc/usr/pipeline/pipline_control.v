@@ -8,7 +8,7 @@ module pipline_control (
     input id_ecall_stall_i,
     input trap_ecall_unstall_condition_i,
     input trap_intererupt_condition_i,
-    
+
     input trap_intererupt_pc_valid_i,
 
     // input clint_update_pc_i,
@@ -166,8 +166,7 @@ module pipline_control (
       $display("trap_stall_req call");
       // 跳转指令,(发生在 ex 阶段)
     end    
-
-
+    
     else if (csr_satp_flush_i) begin
       _stall = 6'b000001;
       _flush = 6'b000000; 

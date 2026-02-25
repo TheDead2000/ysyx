@@ -259,7 +259,6 @@ reg[31:0] handler_pc_reg;
   reg [2:0] next_csr_state;
   reg is_delegated;
   reg trap_valid_latch;
-  reg trap_condition_latch;
   reg trap_intererupt_pc_valid;
   
   // CSR写入逻辑
@@ -275,7 +274,6 @@ reg[31:0] handler_pc_reg;
     S_time_req_latch <= 0;
     trap_mret_latch <= 0;
     trap_sret_latch <= 0;
-    trap_condition_latch <= 0;
     end
     else begin
     case (csr_state)
@@ -303,10 +301,9 @@ reg[31:0] handler_pc_reg;
           csr_state <= SAVE_PC;
           is_delegated <= exception_delegated || interrupt_delegated;
           end
-          else if( (trap_mret || trap_sret) && trap_condition_latch != 1  ) begin
+          else if( (trap_mret || trap_sret)  ) begin
             trap_mret_latch <= trap_mret;
             trap_sret_latch <= trap_sret;
-            trap_condition_latch <= trap_condition;
             csr_state <= FIR_PRIV;
           end
           else begin
