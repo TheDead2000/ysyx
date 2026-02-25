@@ -499,7 +499,7 @@ reg[31:0] handler_pc_reg;
             csr_sstatus_i[0]
           };
         end
-        csr_state <= IDLE;
+        csr_state <= RET_CLK;
       end
       RET_CLK: begin
         trap_icache_pass_o <= 1;
