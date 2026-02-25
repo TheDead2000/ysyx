@@ -108,7 +108,7 @@ void __attribute__((naked)) m_test(void) {
         "csrr a4, mepc\n"
         "addi	a4,a4,4\n"
         "csrw	mepc,a4\n"
-        "mret"
+        "mret\n"
 
     );
 }
