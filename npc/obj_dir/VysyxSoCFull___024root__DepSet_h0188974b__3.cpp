@@ -7425,7 +7425,7 @@ VL_INLINE_OPT void VysyxSoCFull___024root___nba_sequent__TOP__16(VysyxSoCFull___
             vlSelf->__Vdly__ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_data 
                 = (vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__pc_from_exe_i_latch 
                    - (IData)(4U));
-            VL_WRITEF("SAVE_PC to SAVE_CAUSE csr_write_addr_o:%x csr_write_data_o:%x pc_from_exe_i_latch:%x _pc_for_mem:%x\n",
+            VL_WRITEF("SAVE_PC to SAVE_CAUSE pc_from_exe_i_latch:%x _pc_for_mem:%x%10#%10#\n",
                       12,vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_addr,
                       32,vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_csr_write_data,
                       32,vlSelf->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__top_core__DOT__clint_u__DOT__pc_from_exe_i_latch,

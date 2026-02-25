@@ -326,7 +326,7 @@ reg trap_sret_latch;
         end
         csr_write_data_o <= pc_from_exe_i_latch-4;
         csr_state <= SAVE_CAUSE;
-        $display("SAVE_PC to SAVE_CAUSE csr_write_addr_o:%h csr_write_data_o:%h pc_from_exe_i_latch:%h _pc_for_mem:%h",csr_write_addr_o,csr_write_data_o,pc_from_exe_i_latch,pc_from_mem_i);
+        $display("SAVE_PC to SAVE_CAUSE pc_from_exe_i_latch:%h _pc_for_mem:%h",csr_write_addr_o,csr_write_data_o,pc_from_exe_i_latch,pc_from_mem_i);
       end
 
 
