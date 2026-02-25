@@ -152,7 +152,7 @@ module pipline_control (
     end
 
     else if(trap_intererupt_condition_i) begin
-      _stall = 6'b000_111;
+      _stall = 6'b000_110;
       _flush = 6'b001_110;
       $display("trap_intererupt_condition_i call");
     end

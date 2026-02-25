@@ -19,6 +19,7 @@ module clint (
     // 陷阱总线
     input [`TRAP_BUS] trap_bus_i,
     input trap_mmu_page_falut,
+    output reg trap_icache_pass_o,
 
     // 流水线暂停请求
     input csr_satp_flush_i,
@@ -260,7 +261,7 @@ reg[31:0] handler_pc_reg;
   reg is_delegated;
   reg trap_valid_latch;
   reg trap_intererupt_pc_valid;
-  
+
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -286,7 +287,8 @@ reg[31:0] handler_pc_reg;
           privilege_wen_o <= 1'b0;
           trap_ecall_unstall_condition_o <= 0;
           trap_intererupt_pc_valid <= 0;
-          handler_pc_reg <= handler_pc;
+          trap_icache_pass_o <= 0;
+
           if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -499,10 +501,10 @@ reg[31:0] handler_pc_reg;
           };
         end
         trap_intererupt_pc_valid <= 0;
-        // trap_icache_pass <= 1;
         csr_state <= IDLE;
       end
       RET_CLK: begin
+        trap_icache_pass_o <= 1;
         csr_state <= IDLE;
       end
     endcase
