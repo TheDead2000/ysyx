@@ -470,6 +470,7 @@ reg[31:0] handler_pc_reg;
        privilege_wen_o <= 1;
        privilege_o <= csr_sstatus_i[8] ? 2'b01 : 2'b00; // SPP
       end
+      trap_intererupt_pc_valid <= 1;
       csr_state <= RESTORE_STATUS;
       end
       
@@ -499,8 +500,7 @@ reg[31:0] handler_pc_reg;
             csr_sstatus_i[0]
           };
         end
-        trap_condition_latch <= 0;
-        trap_intererupt_pc_valid <= 1;
+        trap_intererupt_pc_valid <= 0;
         csr_state <= RET_CLK;
       end
       RET_CLK: begin
