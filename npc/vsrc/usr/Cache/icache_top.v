@@ -341,6 +341,10 @@ mmu icache_mmu (
               icache_state <= CACHE_MMU_TRANS;
             end 
           end
+          else if (!mmu_enable_i) begin
+            mmu_translation_done <= 1'b0;
+          end
+          
           
           if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
