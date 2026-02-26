@@ -361,44 +361,44 @@ void s_mode_entry(void) {
     
     // csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
 
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
    
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
    
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
     
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
    
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
    
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
     
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
 
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
-    // __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
+    __asm__ __volatile__("mv a0,a0");
    
     // __asm__ __volatile__("mv a0,a0");
     // __asm__ __volatile__("mv a0,a0");
