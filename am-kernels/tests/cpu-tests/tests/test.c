@@ -353,52 +353,13 @@ void s_mode_entry(void) {
     // 1. 设置S模式陷阱处理程序
     csr_write(STVEC, (uint32_t)s_mode_entry);  // 直接模式
     
-    setup_page_table_no_V(page_table);
+    setup_page_table(page_table);
     
     // 4. 开启MMU（SV32模式）
     uint32_t satp_value = (1 << 31) | ((uint32_t)page_table >> 12);
     csr_write(SATP, satp_value);
     
     // csr_write(MTVEC, (uint32_t)m_test);  // 直接模式
-
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-   
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-   
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-   
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-   
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
-    __asm__ __volatile__("mv a0,a0");
    
     // __asm__ __volatile__("mv a0,a0");
     // __asm__ __volatile__("mv a0,a0");
