@@ -78,7 +78,6 @@ typedef union {
   GenCSR(MCAUSE, 0x342) \
   GenCSR(MTVAL, 0x343) \
   GenCSR(MIP, 0x344) \
-  \
   GenCSR(SATP, 0x180) \
   GenCSR(SCAUSE, 0x142) \
   GenCSR(SEPC, 0x141) \
@@ -88,18 +87,10 @@ typedef union {
   GenCSR(SSTATUS, 0x100) \
   GenCSR(STVAL, 0x143) \
   GenCSR(STVEC, 0x105) \
-  \
   GenCSR(PMPCFG0,  0x3A0) \
   GenCSR(PMPCFG1,  0x3A1) \
   GenCSR(PMPCFG2,  0x3A2) \
   GenCSR(PMPCFG3,  0x3A3) \
-  GenCSR(PMPCFG4,  0x3A4) \
-  GenCSR(PMPCFG5,  0x3A5) \
-  GenCSR(PMPCFG6,  0x3A6) \
-  GenCSR(PMPCFG7,  0x3A7) \
-  GenCSR(PMPCFG8,  0x3A8) \
-  GenCSR(PMPCFG9,  0x3A9) \
-  GenCSR(PMPCFG10, 0x3AA) \
   GenCSR(PMPCFG11, 0x3AB) \
   GenCSR(PMPCFG12, 0x3AC) \
   GenCSR(PMPCFG13, 0x3AD) \
@@ -111,16 +102,7 @@ typedef union {
   GenCSR(PMPADDR3,  0x3B3) \
   GenCSR(PMPADDR4,  0x3B4) \
   GenCSR(PMPADDR5,  0x3B5) \
-  GenCSR(PMPADDR6,  0x3B6) \
-  GenCSR(PMPADDR7,  0x3B7) \
-  GenCSR(PMPADDR8,  0x3B8) \
-  GenCSR(PMPADDR9,  0x3B9) \
-  GenCSR(PMPADDR10, 0x3BA) \
-  GenCSR(PMPADDR11, 0x3BB) \
-  GenCSR(PMPADDR12, 0x3BC) \
   GenCSR(PMPADDR13, 0x3BD) \
-  GenCSR(PMPADDR14, 0x3BE) \
-  GenCSR(PMPADDR15, 0x3BF) \
   GenCSR(MIPID, 0xF13) \
 
 // 全部csr寄存器
