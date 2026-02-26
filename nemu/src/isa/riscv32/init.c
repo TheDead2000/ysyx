@@ -60,6 +60,6 @@ void init_isa() {
   cpu.csr[NEMU_CSR_V_MARCHID] = 0x15fdf65;    // 学号
   cpu.csr[NEMU_CSR_V_MISA] = 0x40141101;      // satp
   //work-arounds
-  cpu.csr[NEMU_CSR_V_PMPCFG0] = 0x0000001f;
-  cpu.csr[NEMU_CSR_V_PMPADDR0] = 0xffffffff;
+  // cpu.csr[NEMU_CSR_V_PMPCFG0] = 0x0000001f;
+  // cpu.csr[NEMU_CSR_V_PMPADDR0] = 0xffffffff;
 }

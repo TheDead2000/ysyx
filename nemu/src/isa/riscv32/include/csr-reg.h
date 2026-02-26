@@ -86,24 +86,7 @@ typedef union {
   GenCSR(SSCRATCH, 0x140) \
   GenCSR(SSTATUS, 0x100) \
   GenCSR(STVAL, 0x143) \
-  GenCSR(STVEC, 0x105) \
-  GenCSR(PMPCFG0,  0x3A0) \
-  GenCSR(PMPCFG1,  0x3A1) \
-  GenCSR(PMPCFG2,  0x3A2) \
-  GenCSR(PMPCFG3,  0x3A3) \
-  GenCSR(PMPCFG11, 0x3AB) \
-  GenCSR(PMPCFG12, 0x3AC) \
-  GenCSR(PMPCFG13, 0x3AD) \
-  GenCSR(PMPCFG14, 0x3AE) \
-  GenCSR(PMPCFG15, 0x3AF) \
-  GenCSR(PMPADDR0,  0x3B0) \
-  GenCSR(PMPADDR1,  0x3B1) \
-  GenCSR(PMPADDR2,  0x3B2) \
-  GenCSR(PMPADDR3,  0x3B3) \
-  GenCSR(PMPADDR4,  0x3B4) \
-  GenCSR(PMPADDR5,  0x3B5) \
-  GenCSR(PMPADDR13, 0x3BD) \
-  GenCSR(MIPID, 0xF13) \
+  GenCSR(STVEC, 0x105) 
 
 // 全部csr寄存器
 #define CSR_LIST \
