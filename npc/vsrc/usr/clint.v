@@ -113,10 +113,8 @@ module clint (
   assign trap_mret = trap_bus_i[`TRAP_MRET];
   assign trap_sret = trap_bus_i[`TRAP_SRET];
   assign trap_fencei = trap_bus_i[`TRAP_FENCEI];
-  wire trap_valid = trap_fencei   || 
-                     machine_timer_interrupt    || supervisor_timer_interrupt ||
-                     machine_external_interrupt || supervisor_external_interrupt ||
-                     machine_software_interrupt || supervisor_software_interrupt;
+  // wire trap_valid = trap_fencei   || 
+  //                   machine_external_interrupt || supervisor_external_interrupt  ;
   
   // 中断优先级仲裁
   reg interrupt_pending;
@@ -231,7 +229,7 @@ reg[31:0] handler_pc_reg;
             // 未委托的定时器中断（S或U模式）→ 由M模式处理
             handler_pc = csr_mtvec_i;
         end
-        else if (trap_valid) begin
+        else if (trap_mmu_page_falut) begin
             // 其他异常
             handler_pc = (csr_privilege_i != 2'b11) ? csr_stvec_i : csr_mtvec_i;
         end
@@ -259,7 +257,6 @@ reg[31:0] handler_pc_reg;
   reg [3:0] csr_state;
   reg [2:0] next_csr_state;
   reg is_delegated;
-  reg trap_valid_latch;
   reg trap_intererupt_pc_valid;
 
   // CSR写入逻辑
@@ -289,11 +286,10 @@ reg[31:0] handler_pc_reg;
           trap_intererupt_pc_valid <= 0;
           trap_icache_pass_o <= 0;
 
-          if ( (trap_bus_i[`TRAP_ECALL_M] || trap_valid) && trap_ecall_unstall_condition_o != 1   ) begin
+          if ( (trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
           trap_bus_i_latch <= trap_bus_i;
-          trap_valid_latch <= trap_valid;
           cause_value_latched <= cause_value;
           is_delegated_latched <= exception_delegated || interrupt_delegated;
           interrupt_pending_latched <= interrupt_pending;
@@ -455,7 +451,7 @@ reg[31:0] handler_pc_reg;
       end
 
       WAIT_CLK:begin
-        trap_intererupt_pc_valid <= 1;
+        trap_icache_pass_o <= 1;
         trap_ecall_unstall_condition_o <= 1;
         csr_state <= IDLE;
       end
@@ -512,11 +508,11 @@ reg[31:0] handler_pc_reg;
 
   // 输出赋值
   assign clint_pc_o =  handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || trap_valid || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =   trap_valid || trap_mret || trap_sret;
+  wire trap_condition =   M_time_req || S_time_req || trap_mret || trap_sret;
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
