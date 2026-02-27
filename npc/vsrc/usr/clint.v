@@ -185,7 +185,12 @@ module clint (
     end else if (trap_bus_i[`TRAP_ECALL_S]) begin
       cause_value = {1'b0, 26'b0, 5'd9};
     end else if (trap_bus_i[`TRAP_ECALL_M]) begin
-      cause_value = {1'b0, 26'b0, 5'd11};
+      if(csr_privilege_i != 2'b11) begin
+        cause_value = {1'b0, 26'b0, 5'd9};
+      end
+      else if(csr_privilege_i == 2'b11) begin
+        cause_value = {1'b0, 26'b0, 5'd11};
+      end
     end else if (trap_bus_i[`TRAP_INST_PAGE_FAULT] || trap_mmu_page_falut) begin
       cause_value = {1'b0, 26'b0, 5'd12};
     end else if (trap_bus_i[`TRAP_LOAD_PAGE_FAULT]) begin

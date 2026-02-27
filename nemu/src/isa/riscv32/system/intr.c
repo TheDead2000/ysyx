@@ -22,6 +22,7 @@ uint32_t stval_nextvalue = 0;
 
 paddr_t riscv_intr_gotos (word_t NO,vaddr_t epc){
   IFDEF(CONFIG_ETRACE,Log("Handle this exception on S_Mod"););
+  printf("Handle this exception on S_Mod\n");
   cpu.csr[NEMU_CSR_SCAUSE]=NO;
   cpu.csr[NEMU_CSR_SEPC] = epc;
   // 关中断状态
@@ -84,6 +85,7 @@ paddr_t isa_call_mret() {
 }
 
 paddr_t isa_call_sret() {
+  printf("sret call!\n");
   cpu.PRIV = NEMU_sstatus->bits.SPP;
   NEMU_sstatus->bits.SIE = NEMU_sstatus->bits.SPIE;
   NEMU_mstatus->bits.SIE = NEMU_mstatus->bits.SPIE;
