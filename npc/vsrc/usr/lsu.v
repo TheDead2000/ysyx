@@ -16,6 +16,7 @@ module lsu (
     input [`CSR_REG_ADDRWIDTH-1:0] csr_addr_i,
     input [31:0] exc_csr_data_i,
     input exc_csr_valid_i,
+    input [31:0] csr_rd_data_i,
     output [`CSR_REG_ADDRWIDTH-1:0] csr_addr_o,
     output [31:0] exc_csr_data_o,
     output exc_csr_valid_o,
@@ -409,7 +410,7 @@ assign signed_greater_than =
     always @(*) begin
          if (csr_need_write_rd) begin
             // CSR读取指令：将CSR的值写入rd（当rd != 0时）
-            mem_data_out = exc_csr_data_i;
+            mem_data_out = csr_rd_data_i;
         end 
         else if (_is_amo | _is_amo_store | _is_amo_load) begin
             //$display("Output AMO result: %h", amo_result);

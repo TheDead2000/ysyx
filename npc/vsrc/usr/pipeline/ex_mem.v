@@ -17,6 +17,9 @@ module ex_mem (
     input [         `PCOP_LEN-1:0] pc_op_ex_mem_i,
     input [        `MEMOP_LEN-1:0] mem_op_ex_mem_i,
 
+    input  [31:0] csr_data_ex_mem_i,
+    output [31:0] csr_data_ex_mem_o,
+
 
     input      [        `AMOOP_LEN-1:0] amo_op_ex_mem_i,         // 原子操作码
     input                              amo_valid_ex_mem_i,       // 原子操作有效
@@ -263,6 +266,22 @@ module ex_mem (
       .wen (reg_wen)
   );
   assign csr_addr_ex_mem_o = _csr_addr_ex_mem_q;
+
+
+
+  wire [`INST_LEN-1:0] _csr_data_ex_mem_i =  csr_data_ex_mem_i;
+  reg [`INST_LEN-1:0]  _csr_data_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (`XLEN),
+      .RESET_VAL(`XLEN'b0)
+  ) u_csr_data_ex (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_csr_data_ex_mem_i),
+      .dout(_csr_data_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign csr_data_ex_mem_o = _csr_data_ex_mem_q;
 
 
 

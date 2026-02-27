@@ -18,7 +18,10 @@ module exu (
     input       [          `IMM_LEN-1:0] imm_data_i,
     // CSR 译码结果 
     input  [`CSR_REG_ADDRWIDTH-1:0] csr_readaddr_i,
+    
     input  [             `XLEN_BUS] csr_data_i,
+    output [             `XLEN_BUS] csr_data_o,
+
     input  [          `IMM_LEN-1:0] csr_imm_i,
     input                           csr_imm_valid_i,
     input  [        `CSROP_LEN-1:0] csr_op_i,         // exc_csr 操作码
@@ -110,6 +113,7 @@ input                               amo_done_i,        // 原子操作完成
   assign rd_idx_o = rd_idx_i;
   assign imm_data_o = imm_data_i;
   assign exc_csr_addr_o = csr_readaddr_i;
+  assign csr_data_o = csr_data_i;
 
   // 传递预测信息（用于BPU更新）
   assign which_pdt_o = which_pdt_i;

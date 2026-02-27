@@ -492,7 +492,7 @@ wire exc_go_ready = (~flush_clint[`CTRLBUS_EX_MEM])
   wire exc_csr_valid_ex;
   wire [`CSR_REG_ADDRWIDTH-1:0] exc_csr_addr_ex;
   wire alu_mul_div_valid;
-
+  wire[31:0] csr_readdata_ex;
 exu exu (
     .clk(clk),
     .rst(rst),
@@ -512,6 +512,8 @@ exu exu (
      // CSR 译码结果 
       .csr_readaddr_i (csr_idx_id_ex),
       .csr_data_i     (csr_readdata_id_ex),
+      .csr_data_o     (csr_readdata_ex),
+
       .csr_imm_i      (csr_imm_id_ex),
       .csr_imm_valid_i(csr_imm_valid_id_ex),
       .csr_op_i       (csr_op_id_ex),
@@ -622,21 +624,27 @@ exu exu (
   wire [`AMOOP_LEN-1:0] amo_op_ex_mem;
   wire amo_valid_ex_mem;
   wire [`XLEN-1:0] amo_rs2_data_ex_mem;
+  wire [31:0] csr_readdata_ex_mem;
 
   ex_mem ex2mem(
       .clk                    (clk),
       .rst                    (rst),
       .flush_valid_i          (flush_clint[`CTRLBUS_EX_MEM]),
       .stall_valid_i          (stall_clint[`CTRLBUS_EX_MEM]),
-      .inst_addr_ex_mem_i            (pc_ex),
+      .inst_addr_ex_mem_i     (pc_ex),
       .inst_data_ex_mem_i     (inst_data_ex),
       .imm_data_ex_mem_i      (imm_data_ex),
       .rd_idx_ex_mem_i        (rd_idx_ex),
       .rs1_data_ex_mem_i      (rs1_data_ex),
       .rs2_data_ex_mem_i      (rs2_data_ex),
       .alu_data_ex_mem_i      (exc_alu_data_ex),
+      .csr_data_ex_mem_i      (csr_readdata_ex),
+      .csr_data_ex_mem_o      (csr_readdata_ex_mem),
+
       .pc_op_ex_mem_i         (pc_op_ex),
       .mem_op_ex_mem_i        (mem_op_ex),
+
+
 
       .amo_op_ex_mem_i(amo_op_ex),
       .amo_valid_ex_mem_i(amo_valid_ex),
@@ -722,6 +730,7 @@ lsu lsu (
       .csr_addr_i(csr_addr_ex_mem),
       .exc_csr_data_i(csr_writedata_ex_mem),
       .exc_csr_valid_i(csr_writevalid_ex_mem),
+      .csr_rd_data_i(csr_readdata_ex_mem),
 
       .csr_addr_o(csr_addr_mem),  // csr 写回地址
       .exc_csr_data_o(exc_csr_data_mem),  // csr 写回数据
