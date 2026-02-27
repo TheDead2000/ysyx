@@ -60,6 +60,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged Exception!, No=%x Epc=%x",NO,epc););
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
+    printf("isa_raise_intr use!\n");
     return riscv_intr_gotos(NO,epc);
   }else{
     return riscv_intr_gotom(NO,epc);
@@ -71,6 +72,7 @@ word_t riscv_do_ecall(word_t NO, vaddr_t epc) {
   if(cpu.PRIV==NEMU_PRIV_M||cpu.PRIV==NEMU_PRIV_HS) {
     return riscv_intr_gotom(NO, epc);
   }else{
+    printf("riscv_do_ecall use!\n");
     return riscv_intr_gotos(NO,epc);
   }
 }
