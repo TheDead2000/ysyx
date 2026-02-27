@@ -278,7 +278,7 @@ wire amo_stall_req = is_amo_inst & ~amo_done_i;
       .csr_exe_data_valid_o(_csr_exe_data_valid)
   );
 
-  assign exc_csr_data_o  = _csr_exe_data;
+  assign exc_csr_data_o  = csr_data_i;
   assign exc_csr_valid_o = _csr_exe_data_valid;
 
 

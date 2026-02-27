@@ -305,6 +305,10 @@ idu idu (
     .ex_csr_writeaddr_i(exc_csr_addr_ex),
     .ex_csr_writedata_i(exc_csr_data_ex),
     .exc_csr_valid_i(exc_csr_valid_ex),
+
+    .lsu_csr_valid_i(lsu_csr_idu_valid),       
+    .lsu_csr_data_i (lsu_csr_idu_data),
+
     /* from mem bypass */
     .mem_rd_data_i(mem_data_mem),
     .mem_rd_addr_i(rd_idx_mem),
@@ -716,6 +720,10 @@ wire [31:0] csr_data_csr;             // CSR读数据输出
  wire exc_csr_valid_mem;
 wire csr_satp_flush;
 wire[31:0] csr_stap_pc;
+
+wire       lsu_csr_idu_valid;
+wire[31:0] lsu_csr_idu_data;
+
 lsu lsu (
       .clk            (clk),
       .rst            (rst),
@@ -753,6 +761,9 @@ lsu lsu (
       .mem_data_o(mem_data_mem),  // gpr写回数据，同时送回 id 阶段（bypass）
       .rd_idx_o(rd_idx_mem),  // gpr 写回地址
       .trap_bus_o(trap_bus_mem),  /* TARP 总线 */
+
+      .lsu_csr_valid_o(lsu_csr_idu_valid),
+      .lsu_csr_data_o(lsu_csr_idu_data),
 
       // dcache 接口
       .mem_addr_o(mem_addr),

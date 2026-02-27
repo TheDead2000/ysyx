@@ -37,6 +37,10 @@ module lsu (
     output [31:0] mem_data_o,
     output [`REG_ADDRWIDTH-1:0] rd_idx_o,
     
+    output        lsu_csr_valid_o,
+    output [31:0] lsu_csr_data_o,
+
+
     /* TARP 总线 */
     output [`TRAP_BUS] trap_bus_o,
 
@@ -77,6 +81,10 @@ module lsu (
     assign csr_addr_o = csr_addr_i;
     assign exc_csr_data_o = exc_csr_data_i;
     assign exc_csr_valid_o = exc_csr_valid_i;
+
+    assign lsu_csr_data_o = csr_rd_data_i;
+    assign lsu_csr_valid_o = exc_csr_valid_i;
+
 
     wire _memop_none = (mem_op_i == `MEMOP_NONE);
     wire _memop_lb = (mem_op_i == `MEMOP_LB);
