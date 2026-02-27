@@ -375,8 +375,8 @@ wire _inst_amomaxu_w = match(_inst, MASK_AMO, AMOMAXU_W_VAL);
   // wb stage bypass was enabled in gpr
 // CSR数据前递：如果当前指令需要读取的寄存器正是EX阶段CSR指令要写入的寄存器
 
-wire _csr_rs1_forward = (_rs1_idx == ex_rd_addr_i) && _rs1_idx_not_zero && exc_csr_valid_i;
-wire _csr_rs2_forward = (_rs2_idx == ex_rd_addr_i) && _rs2_idx_not_zero && exc_csr_valid_i;
+wire csr_rs1_forward = (_rs1_idx == ex_rd_addr_i) && _rs1_idx_not_zero && exc_csr_valid_i;
+wire csr_rs2_forward = (_rs2_idx == ex_rd_addr_i) && _rs2_idx_not_zero && exc_csr_valid_i;
 
 // exc stage bypass  
 wire rs1_exc_bypass_valid = (_rs1_idx == ex_rd_addr_i) && (_rs1_idx_not_zero);
@@ -387,13 +387,13 @@ wire rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
 
 // 优先级选择权：CSR前递 > ex > mem > wb > gpr
 wire [`INST_LEN-1:0] _rs1_data = 
-    (_csr_rs1_forward) ? ex_csr_writedata_i :           // CSR数据前递（最高优先级）
+    (csr_rs1_forward) ? csr_data_i :           // CSR数据前递（最高优先级）
     (rs1_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递
     (rs1_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs1_data_i;                                    // 寄存器堆读取
 
 wire [`INST_LEN-1:0] _rs2_data = 
-    (_csr_rs2_forward) ? ex_csr_writedata_i :           // CSR数据前递（最高优先级）
+    (csr_rs2_forward) ? csr_data_i :           // CSR数据前递（最高优先级）
     (rs2_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递  
     (rs2_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs2_data_i;      
