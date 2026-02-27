@@ -302,9 +302,10 @@ idu idu (
     .ex_rd_addr_i(rd_idx_ex),
 
 
-    .ex_csr_writeaddr_i(exc_csr_addr_ex), // delete
+    .ex_csr_writeaddr_i(exc_csr_addr_ex),
+    .ex_csr_writedata_i(exc_csr_data_ex),
 
-    .ex_csr_writedata_i(csr_readdata_ex),
+    .ex_csr_rd_data_i(csr_readdata_ex),
     .exc_csr_valid_i(exc_csr_valid_ex),
 
     .lsu_csr_valid_i(lsu_csr_idu_valid),       
