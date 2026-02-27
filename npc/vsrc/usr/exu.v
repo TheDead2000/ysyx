@@ -18,10 +18,9 @@ module exu (
     input       [          `IMM_LEN-1:0] imm_data_i,
     // CSR 译码结果 
     input  [`CSR_REG_ADDRWIDTH-1:0] csr_readaddr_i,
-    
     input  [             `XLEN_BUS] csr_data_i,
     output [             `XLEN_BUS] csr_data_o,
-
+    
     input  [          `IMM_LEN-1:0] csr_imm_i,
     input                           csr_imm_valid_i,
     input  [        `CSROP_LEN-1:0] csr_op_i,         // exc_csr 操作码
@@ -278,7 +277,7 @@ wire amo_stall_req = is_amo_inst & ~amo_done_i;
       .csr_exe_data_valid_o(_csr_exe_data_valid)
   );
 
-  assign exc_csr_data_o  = csr_data_i;
+  assign exc_csr_data_o  = _csr_exe_data;
   assign exc_csr_valid_o = _csr_exe_data_valid;
 
 
