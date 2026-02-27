@@ -301,10 +301,10 @@ void setup_page_table() {
     }
 
     // 2. 计算VPN1（4MB大页的虚拟页号，VA[31:22]）
-    uint32_t vpn1 = (TEST_BASE_VA >> 22) & 0x3FF;  // 10位VPN1
+    uint32_t vpn1 = (0xa0000000 >> 22) & 0x3FF;  // 10位VPN1
 
     // 3. 构造4MB大页PTE（线性映射：PPN1 = PA[31:22]）
-    uint32_t ppn1 = (TEST_BASE_PA >> 22) & 0x3FF;  // 10位PPN1
+    uint32_t ppn1 = (0xa0000000 >> 22) & 0x3FF;  // 10位PPN1
     uint32_t pte = 0;
     pte |= PTE_V;                // 有效位
     pte |= PTE_R | PTE_W | PTE_X;  // 读写执行权限
