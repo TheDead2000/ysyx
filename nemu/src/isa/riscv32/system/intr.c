@@ -103,6 +103,7 @@ word_t isa_query_intr() {
   if ((cpu.PRIV==NEMU_PRIV_M?NEMU_mstatus->bits.MIE:NEMU_mstatus->bits.SIE) && cpu.INTR) {
     //Log("INTR_TAKE");
   IFDEF(CONFIG_DIFFTEST,difftest_raise(IRQ_TIMER););
+  printf("isa_query_intr!!!\n");
     cpu.INTR = false;
     return IRQ_TIMER;
   }
