@@ -427,7 +427,7 @@ module CSRs(
           // Machine Trap Setup
           12'h300: begin mstatusReg <= update_mstatus(mstatusReg, csr_write_data); $display("csr_write_wenmstatusReg:%h,clint_csr_write_data:%h",mstatusReg,clint_csr_write_data);end
           12'h302: medelegReg <= csr_write_data;
-          12'h303: midelegReg <= csr_write_data;
+          12'h303: midelegReg <= csr_write_data; 
           12'h304: mieReg <= update_mie(mieReg, csr_write_data);
           12'h305: mtvecReg <= csr_write_data;
           

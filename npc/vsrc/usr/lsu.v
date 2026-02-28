@@ -414,7 +414,7 @@ assign signed_greater_than =
     // CSR 指令需要写入 rd 的条件：rd != 0 且是 CSR 读取类指令
     // csrrw, csrrs, csrrc, csrrwi, csrrsi, csrrci 当 rd != 0 时需要写回
     wire csr_need_write_rd = exc_csr_valid_i && (csr_rd != 5'b0);
-
+    
     // 输出数据选择
     reg [31:0] mem_data_out;
     always @(*) begin
