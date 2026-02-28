@@ -19,6 +19,8 @@ module ex_mem (
 
     input  [31:0] csr_data_ex_mem_i,
     output [31:0] csr_data_ex_mem_o,
+    input exc_csr_write_valid_ex_mem_i,
+    output exc_csr_write_valid_ex_mem_o,
 
 
     input      [        `AMOOP_LEN-1:0] amo_op_ex_mem_i,         // 原子操作码
@@ -283,6 +285,20 @@ module ex_mem (
   );
   assign csr_data_ex_mem_o = _csr_data_ex_mem_q;
 
+
+  wire  _exc_csr_write_valid_ex_mem_i =  exc_csr_write_valid_ex_mem_i;
+  reg   _exc_csr_write_valid_ex_mem_q;
+  regTemplate #(
+      .WIDTH    (1),
+      .RESET_VAL(1'b0)
+  ) u_exc_csr_write_valid_ex_mem (
+      .clk (clk),
+      .rst (reg_rst),
+      .din (_exc_csr_write_valid_ex_mem_i),
+      .dout(_exc_csr_write_valid_ex_mem_q),
+      .wen (reg_wen)
+  );
+  assign exc_csr_write_valid_ex_mem_o = _exc_csr_write_valid_ex_mem_q;
 
 
   /* pc_op 寄存器 */

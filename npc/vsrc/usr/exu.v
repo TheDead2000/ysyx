@@ -28,7 +28,7 @@ module exu (
     output exc_csr_valid_o,
     output [`CSR_REG_ADDRWIDTH-1:0] exc_csr_addr_o,
     output [`XLEN_BUS] exc_csr_data_o,  // csr 计算得到的数据
-
+    output exc_csr_write_valid_o,
 
     // 指令微码
     input       [        `ALUOP_LEN-1:0] alu_op_i,         // alu 操作码
@@ -267,6 +267,7 @@ wire amo_stall_req = is_amo_inst & ~amo_done_i;
 
   wire [`XLEN_BUS] _csr_exe_data;
   wire _csr_exe_data_valid;
+  wire csr_write_valid_o;
   execute_csr u_execute_csr (
       .csr_imm_i           (csr_imm_i),
       .csr_imm_valid_i     (csr_imm_valid_i),     // 是否是立即数指令
@@ -274,12 +275,13 @@ wire amo_stall_req = is_amo_inst & ~amo_done_i;
       .csr_data_i          (csr_data_i),          // 读取的 CSR 数据
       .csr_op_i            (csr_op_i),            // csr 操作码
       .csr_exe_data_o      (_csr_exe_data),
-      .csr_exe_data_valid_o(_csr_exe_data_valid)
+      .csr_exe_data_valid_o(_csr_exe_data_valid),
+      .csr_write_valid_o(csr_write_valid_o)
   );
 
   assign exc_csr_data_o  = _csr_exe_data;
   assign exc_csr_valid_o = _csr_exe_data_valid;
-
+  assign exc_csr_write_valid_o = csr_write_valid_o;
 
 
 

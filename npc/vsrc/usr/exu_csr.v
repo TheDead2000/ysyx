@@ -9,7 +9,8 @@ module execute_csr (
     input  [     `XLEN-1:0] csr_data_i,           // 读取的 CSR 数据
     input  [`CSROP_LEN-1:0] csr_op_i,             // csr 操作码
     output [     `XLEN-1:0] csr_exe_data_o,
-    output                              csr_exe_data_valid_o
+    output                  csr_exe_data_valid_o,
+    output                  csr_write_valid_o
 );
 
 
@@ -37,6 +38,6 @@ module execute_csr (
 
   assign csr_exe_data_o = _csr_exe_data_o;
   assign csr_exe_data_valid_o = ~(_csr_none);  // 读取不写回
-
+  assign csr_write_valid_o = _csr_write | _csr_set | _csr_clear;
 
 endmodule

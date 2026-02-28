@@ -275,6 +275,7 @@ wire [31:0] id_ras_push_data; // ID阶段计算的返回地址
 wire csr_imm_valid_o;
 wire [31:0] id_compress_pc;
 wire id_compress_pc_valid_o;
+wire lsu_csr_write_valid;
 idu idu (
     /* from if/id */
     .inst_addr_i(inst_addr_if_id),
@@ -304,12 +305,17 @@ idu idu (
 
     .ex_csr_writeaddr_i(exc_csr_addr_ex),
     .ex_csr_writedata_i(exc_csr_data_ex),
+    
+    .lsu_csr_addr_i(csr_addr_mem),  // csr 写回地址
+    .lsu_csr_data_i(exc_csr_data_mem),  // csr 写回数据
 
     .ex_csr_rd_data_i(csr_readdata_ex),
     .exc_csr_valid_i(exc_csr_valid_ex),
+    .exc_csr_write_valid_i(exc_csr_write_valid),
+    .lsu_csr_write_valid_i(lsu_csr_write_valid),
 
     .lsu_csr_valid_i(lsu_csr_idu_valid),       
-    .lsu_csr_data_i (lsu_csr_idu_data),
+    .lsu_csr_rd_data_i (lsu_csr_idu_data),
 
     /* from mem bypass */
     .mem_rd_data_i(mem_data_mem),
@@ -499,6 +505,7 @@ wire exc_go_ready = (~flush_clint[`CTRLBUS_EX_MEM])
   wire [`CSR_REG_ADDRWIDTH-1:0] exc_csr_addr_ex;
   wire alu_mul_div_valid;
   wire[31:0] csr_readdata_ex;
+  wire exc_csr_write_valid;
 exu exu (
     .clk(clk),
     .rst(rst),
@@ -526,6 +533,7 @@ exu exu (
 
       .exc_csr_data_o (exc_csr_data_ex),
       .exc_csr_valid_o(exc_csr_valid_ex),
+      .exc_csr_write_valid_o(exc_csr_write_valid),
       .exc_csr_addr_o (exc_csr_addr_ex),
 
     // 指令微码
@@ -631,6 +639,7 @@ exu exu (
   wire amo_valid_ex_mem;
   wire [`XLEN-1:0] amo_rs2_data_ex_mem;
   wire [31:0] csr_readdata_ex_mem;
+  wire exc_csr_write_valid_ex_mem;
 
   ex_mem ex2mem(
       .clk                    (clk),
@@ -646,6 +655,9 @@ exu exu (
       .alu_data_ex_mem_i      (exc_alu_data_ex),
       .csr_data_ex_mem_i      (csr_readdata_ex),
       .csr_data_ex_mem_o      (csr_readdata_ex_mem),
+      
+      .exc_csr_write_valid_ex_mem_i(exc_csr_write_valid),
+      .exc_csr_write_valid_ex_mem_o(exc_csr_write_valid_ex_mem),
 
       .pc_op_ex_mem_i         (pc_op_ex),
       .mem_op_ex_mem_i        (mem_op_ex),
@@ -741,6 +753,9 @@ lsu lsu (
       .exc_csr_data_i(csr_writedata_ex_mem),
       .exc_csr_valid_i(csr_writevalid_ex_mem),
       .csr_rd_data_i(csr_readdata_ex_mem),
+      
+      .exc_csr_write_valid(exc_csr_write_valid_ex_mem),
+      .exc_csr_write_valid_o(lsu_csr_write_valid),
 
       .csr_addr_o(csr_addr_mem),  // csr 写回地址
       .exc_csr_data_o(exc_csr_data_mem),  // csr 写回数据

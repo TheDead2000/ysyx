@@ -21,6 +21,8 @@ module lsu (
     output [31:0] exc_csr_data_o,
     output exc_csr_valid_o,
 
+    input exc_csr_write_valid,
+    output exc_csr_write_valid_o,
     /* clint 接口 */
     output [31:0] clint_addr_o,
     output clint_valid_o,
@@ -84,7 +86,7 @@ module lsu (
 
     assign lsu_csr_data_o = csr_rd_data_i;
     assign lsu_csr_valid_o = exc_csr_valid_i;
-
+    assign exc_csr_write_valid_o = exc_csr_write_valid;
 
     wire _memop_none = (mem_op_i == `MEMOP_NONE);
     wire _memop_lb = (mem_op_i == `MEMOP_LB);
