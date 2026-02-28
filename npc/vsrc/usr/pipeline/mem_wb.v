@@ -26,70 +26,70 @@ module mem_wb (
   wire reg_wen = !stall_valid_i;
   wire _flush_valid = flush_valid_i;
 
-  //   /* pc 寄存器 */
-  //   wire [`XLEN_BUS] _pc_mem_wb_d = (_flush_valid) ? `XLEN'b0 : pc_mem_wb_i;
-  //   reg [`XLEN_BUS] _pc_mem_wb_q;
-  //   regTemplate #(
-  //       .WIDTH    (`XLEN),
-  //       .RESET_VAL(`XLEN'b0)
-  //   ) u_pc_mem_wb_id (
-  //       .clk (clk),
-  //       .rst (rst),
-  //       .din (_pc_mem_wb_d),
-  //       .dout(_pc_mem_wb_q),
-  //       .wen (reg_wen)
-  //   );
-  //   assign pc_mem_wb_o = _pc_mem_wb_q;
+    /* pc 寄存器 */
+    wire [`XLEN_BUS] _pc_mem_wb_d = (_flush_valid) ? `XLEN'b0 : pc_mem_wb_i;
+    reg [`XLEN_BUS] _pc_mem_wb_q;
+    regTemplate #(
+        .WIDTH    (`XLEN),
+        .RESET_VAL(`XLEN'b0)
+    ) u_pc_mem_wb_id (
+        .clk (clk),
+        .rst (rst),
+        .din (_pc_mem_wb_d),
+        .dout(_pc_mem_wb_q),
+        .wen (reg_wen)
+    );
+    assign pc_mem_wb_o = _pc_mem_wb_q;
 
 
-  //   /* inst_data 寄存器 */
-  //   wire [`INST_LEN-1:0] _inst_data_mem_wb_d = (_flush_valid) ? `INST_NOP : inst_data_mem_wb_i;
-  //   reg [`INST_LEN-1:0] _inst_data_mem_wb_q;
-  //   regTemplate #(
-  //       .WIDTH    (`INST_LEN),
-  //       .RESET_VAL(`INST_NOP)
-  //   ) u_inst_data_mem_wb_id (
-  //       .clk (clk),
-  //       .rst (rst),
-  //       .din (_inst_data_mem_wb_d),
-  //       .dout(_inst_data_mem_wb_q),
-  //       .wen (reg_wen)
-  //   );
-  //   assign inst_data_mem_wb_o = _inst_data_mem_wb_q;
+    /* inst_data 寄存器 */
+    wire [`INST_LEN-1:0] _inst_data_mem_wb_d = (_flush_valid) ? `INST_NOP : inst_data_mem_wb_i;
+    reg [`INST_LEN-1:0] _inst_data_mem_wb_q;
+    regTemplate #(
+        .WIDTH    (`INST_LEN),
+        .RESET_VAL(`INST_NOP)
+    ) u_inst_data_mem_wb_id (
+        .clk (clk),
+        .rst (rst),
+        .din (_inst_data_mem_wb_d),
+        .dout(_inst_data_mem_wb_q),
+        .wen (reg_wen)
+    );
+    assign inst_data_mem_wb_o = _inst_data_mem_wb_q;
 
 
 
 
 
-  /* pc寄存器 */
-  wire [`XLEN-1:0] _pc_mem_wb_d =  pc_mem_wb_i;
-  reg [`XLEN-1:0] _pc_mem_wb_q;
-  regTemplate #(
-      .WIDTH    (`XLEN),
-      .RESET_VAL(`XLEN'b0)  //TODO:默认值未设置
-  ) u_pc_mem_wb (
-      .clk (clk),
-      .rst (rst),
-      .din (_pc_mem_wb_d),
-      .dout(_pc_mem_wb_q),
-      .wen (reg_wen)
-  );
-  assign pc_mem_wb_o = _pc_mem_wb_q;
+//   /* pc寄存器 */
+//   wire [`XLEN-1:0] _pc_mem_wb_d =  pc_mem_wb_i;
+//   reg [`XLEN-1:0] _pc_mem_wb_q;
+//   regTemplate #(
+//       .WIDTH    (`XLEN),
+//       .RESET_VAL(`XLEN'b0)  //TODO:默认值未设置
+//   ) u_pc_mem_wb (
+//       .clk (clk),
+//       .rst (rst),
+//       .din (_pc_mem_wb_d),
+//       .dout(_pc_mem_wb_q),
+//       .wen (reg_wen)
+//   );
+//   assign pc_mem_wb_o = _pc_mem_wb_q;
 
-  /* inst_data寄存器 */
-  wire [`INST_LEN-1:0] _inst_data_mem_wb_d = inst_data_mem_wb_i;
-  reg [`INST_LEN-1:0] _inst_data_mem_wb_q;
-  regTemplate #(
-      .WIDTH    (`INST_LEN),
-      .RESET_VAL(`INST_NOP)
-  ) u_inst_data_mem_wb (
-      .clk (clk),
-      .rst (rst),
-      .din (_inst_data_mem_wb_d),
-      .dout(_inst_data_mem_wb_q),
-      .wen (reg_wen)
-  );
-  assign inst_data_mem_wb_o = _inst_data_mem_wb_q;
+//   /* inst_data寄存器 */
+//   wire [`INST_LEN-1:0] _inst_data_mem_wb_d = inst_data_mem_wb_i;
+//   reg [`INST_LEN-1:0] _inst_data_mem_wb_q;
+//   regTemplate #(
+//       .WIDTH    (`INST_LEN),
+//       .RESET_VAL(`INST_NOP)
+//   ) u_inst_data_mem_wb (
+//       .clk (clk),
+//       .rst (rst),
+//       .din (_inst_data_mem_wb_d),
+//       .dout(_inst_data_mem_wb_q),
+//       .wen (reg_wen)
+//   );
+//   assign inst_data_mem_wb_o = _inst_data_mem_wb_q;
 
 
   //   /* exc_alu_data寄存器 */
