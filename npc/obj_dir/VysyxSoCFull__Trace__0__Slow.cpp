@@ -2280,6 +2280,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6855,"trap_icache_pass_o", false,-1);
     tracep->declBit(c+7161,"csr_satp_flush_i", false,-1);
     tracep->declBit(c+618,"compress_stall", false,-1);
+    tracep->declBit(c+6947,"csr_ifu_unstall_i", false,-1);
     tracep->declBit(c+6473,"next_stall_preif_i", false,-1);
     tracep->declBit(c+15,"ram_stall_valid_if_i", false,-1);
     tracep->declBit(c+6883,"ram_stall_valid_mem_i", false,-1);
@@ -2406,6 +2407,7 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBit(c+6867,"trap_intererupt_pc_valid_i", false,-1);
     tracep->declBit(c+6422,"trap_mmu_page_falut", false,-1);
     tracep->declBit(c+7161,"csr_satp_flush_i", false,-1);
+    tracep->declBit(c+6947,"csr_ifu_unstall_i", false,-1);
     tracep->declBit(c+618,"compress_stall", false,-1);
     tracep->declBit(c+6473,"next_stall_preif_i", false,-1);
     tracep->declBit(c+15,"ram_stall_valid_if_i", false,-1);
@@ -11298,8 +11300,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__0(VysyxSoCFull___
     tracep->declBus(c+7362,"SB_VAL", false,-1, 31,0);
     tracep->declBus(c+7363,"SH_VAL", false,-1, 31,0);
     tracep->declBus(c+7364,"SW_VAL", false,-1, 31,0);
-    tracep->declBus(c+7329,"ADDI_VAL", false,-1, 31,0);
-    tracep->declBus(c+7365,"SLTI_VAL", false,-1, 31,0);
 }
 
 VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___024root* vlSelf, VerilatedVcd* tracep) {
@@ -11309,6 +11309,8 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     // Init
     const int c = vlSymsp->__Vm_baseCode;
     // Body
+    tracep->declBus(c+7329,"ADDI_VAL", false,-1, 31,0);
+    tracep->declBus(c+7365,"SLTI_VAL", false,-1, 31,0);
     tracep->declBus(c+7366,"SLTIU_VAL", false,-1, 31,0);
     tracep->declBus(c+7367,"XORI_VAL", false,-1, 31,0);
     tracep->declBus(c+7368,"ORI_VAL", false,-1, 31,0);
@@ -11804,7 +11806,6 @@ VL_ATTR_COLD void VysyxSoCFull___024root__trace_init_sub__TOP__1(VysyxSoCFull___
     tracep->declBit(c+6636,"mcountinhibit_ir", false,-1);
     tracep->declBus(c+6931,"read_data", false,-1, 31,0);
     tracep->declBit(c+6997,"read_error", false,-1);
-    tracep->declBit(c+6947,"csr_ifu_unstall", false,-1);
     tracep->declBus(c+6634,"csr_asid", false,-1, 8,0);
     tracep->declBit(c+7414,"csr_enable_sv32", false,-1);
     for (int i = 0; i < 25; ++i) {

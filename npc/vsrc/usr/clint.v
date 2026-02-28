@@ -24,6 +24,8 @@ module clint (
     // 流水线暂停请求
     input csr_satp_flush_i,
     input compress_stall,
+    input csr_ifu_unstall_i,
+
     input next_stall_preif_i,
     input ram_stall_valid_if_i,
     input ram_stall_valid_mem_i,
@@ -550,6 +552,7 @@ reg[31:0] handler_pc_reg;
       .trap_intererupt_pc_valid_i(trap_intererupt_pc_valid),
 
       .csr_satp_flush_i(csr_satp_flush_i),
+      .csr_ifu_unstall_i(csr_ifu_unstall_i),
       .compress_stall(compress_stall),
       .next_stall_preif_i(next_stall_preif_i),
       .ram_stall_valid_if_i(ram_stall_valid_if_i),

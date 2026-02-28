@@ -987,6 +987,7 @@ clint clint_u (
     .trap_mmu_page_falut(icache_mmu_page_fault),
 
     .csr_satp_flush_i(csr_satp_flush),
+    .csr_ifu_unstall_i(csr_ifu_unstall),
     .compress_stall(id_compress_pc_valid_o),
     .next_stall_preif_i(next_ram_stall_preif),
     .ram_stall_valid_if_i(ram_stall_valid_if),

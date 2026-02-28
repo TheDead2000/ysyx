@@ -15,7 +15,7 @@ module pipline_control (
 
     input trap_mmu_page_falut,
     input csr_satp_flush_i,
-  
+    input csr_ifu_unstall_i,
 
     input compress_stall,
     input next_stall_preif_i,
@@ -166,7 +166,10 @@ module pipline_control (
       $display("trap_stall_req call");
       // 跳转指令,(发生在 ex 阶段)
     end    
-    
+    else if(csr_ifu_unstall_i) begin
+      _stall = 6'b000000;
+      _flush = 6'b010000; 
+    end
     else if (csr_satp_flush_i) begin
       _stall = 6'b000001;
       _flush = 6'b000000; 
