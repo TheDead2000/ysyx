@@ -970,7 +970,7 @@ clint clint_u (
     .rst(rst),
     .pc_from_exe_i(pc_ex),
     .pc_from_mem_i(pc_ex_mem),
-    .inst_data_i(inst_data_mem),
+    .inst_data_i(inst_data_mem_wb),
 
     .clint_addr_i(clint_addr),
     .clint_valid_i(clint_valid),
