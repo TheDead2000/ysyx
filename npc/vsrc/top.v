@@ -1037,7 +1037,7 @@ wire csr_ifu_unstall;
 CSRs rv32_csr_regfile(
     .clk(clk),
     .rst(rst),
-    .csr_write_wen(1'b1),
+    .csr_write_wen(exc_csr_valid_mem),
     .csr_write_address(csr_addr_mem),
     .csr_write_data( exc_csr_data_mem),
     .csr_read_address(csr_idx_id),
