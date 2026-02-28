@@ -168,7 +168,7 @@ module pipline_control (
     end    
     else if(csr_ifu_unstall_i) begin
       _stall = 6'b000000;
-      _flush = 6'b011000; 
+      _flush = 6'b011110; 
     end
     else if (csr_satp_flush_i) begin
       _stall = 6'b000001;
