@@ -970,7 +970,7 @@ clint clint_u (
     .rst(rst),
     .pc_from_exe_i(pc_ex),
     .pc_from_mem_i(pc_ex_mem),
-    .inst_data_i(inst_data_ex_mem),
+    .inst_data_i(inst_data_mem),
 
     .clint_addr_i(clint_addr),
     .clint_valid_i(clint_valid),
@@ -1045,7 +1045,7 @@ CSRs rv32_csr_regfile(
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
     .inst_data_i(inst_data_ex_mem),
-    
+
     .clint_csr_write_mstatus(clint_csr_write_mstatus),
     .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),
     .clint_privilege_i(next_privilege),
