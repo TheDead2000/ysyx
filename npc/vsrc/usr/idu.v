@@ -402,15 +402,15 @@ wire rs2_mem_bypass_valid = (_rs2_idx == mem_rd_addr_i) && (_rs2_idx_not_zero);
 
 // 优先级选择权：CSR前递 > ex > mem > wb > gpr
 wire [`INST_LEN-1:0] _rs1_data = 
-    (csr_exc_rs1_forward) ? ex_csr_rd_data_i :           // CSR数据前递（最高优先级）
-    (csr_lsu_rs1_forward) ? lsu_csr_rd_data_i :
+    // (csr_exc_rs1_forward) ? ex_csr_rd_data_i :           // CSR数据前递（最高优先级）
+    // (csr_lsu_rs1_forward) ? lsu_csr_rd_data_i :
     (rs1_exc_bypass_valid) ? ex_rd_data_i  :       // EX阶段前递
     (rs1_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs1_data_i;                                    // 寄存器堆读取
 
 wire [`INST_LEN-1:0] _rs2_data = 
-    (csr_exc_rs2_forward) ? ex_csr_rd_data_i :           // CSR数据前递（最高优先级）
-    (csr_lsu_rs2_forward) ? lsu_csr_rd_data_i :
+    // (csr_exc_rs2_forward) ? ex_csr_rd_data_i :           // CSR数据前递（最高优先级）
+    // (csr_lsu_rs2_forward) ? lsu_csr_rd_data_i :
     (rs2_exc_bypass_valid) ? ex_rd_data_i :       // EX阶段前递  
     (rs2_mem_bypass_valid) ? mem_rd_data_i :      // MEM阶段前递
     rs2_data_i;      
@@ -427,8 +427,8 @@ wire [`INST_LEN-1:0] _rs2_data =
 
   /***************CSR 寄存器冲突处理*****************/
   // TODO 添加 csr 数据旁路
-  assign csr_readdata_o = csr_exc_csr_forward ? ex_csr_writedata_i : csr_lsu_csr_forward ? lsu_csr_data_i : csr_data_i;
-
+  // assign csr_readdata_o = csr_exc_csr_forward ? ex_csr_writedata_i : csr_lsu_csr_forward ? lsu_csr_data_i : csr_data_i;
+  assign csr_readdata_o = csr_data_i;
   /******************************************×××××××***************************************************/
 
   /* CSR_OP */

@@ -9,6 +9,9 @@ module CSRs(
   input  [11:0] csr_write_address,
   input  [31:0] csr_write_data,
   input  [11:0] csr_read_address,
+ 
+  input  [31:0] inst_data_i,
+  
   output        csr_read_error,
   output [31:0] csr_read_data,
   
@@ -530,8 +533,22 @@ module CSRs(
   //     // 因为只有在写入发生时才会为1，下一个周期没有写入就变回0
   //   end
   // end
-assign   csr_ifu_unstall = ((clint_csr_write_en && clint_csr_write_addr == 12'h180) ||
-                            (csr_write_wen && csr_write_address == 12'h180));
+    wire [6:0] _opcode = inst_data_i[6:0];
+  wire [4:0] _rd = inst_data_i[11:7];
+  wire [2:0] _func3 = inst_data_i[14:12];
+  wire [4:0] _rs1 = inst_data_i[19:15];
+  wire [4:0] _rs2 = inst_data_i[24:20];
+  wire [6:0] _func7 = inst_data_i[31:25];
+  wire [4:0] _func5 = inst_data_i[31:27];
+  wire [`CSR_REG_ADDRWIDTH-1:0] _csr = inst_data_i[31:20]; 
+
+assign   csr_ifu_unstall =                            ( _opcode == 7'b111_0011 && _func3 == 3'b001 ) ||
+                                                      ( _opcode == 7'b111_0011 && _func3 == 3'b010 ) ||                                   
+                                                      ( _opcode == 7'b111_0011 && _func3 == 3'b011 ) ||    
+                                                      ( _opcode == 7'b111_0011 && _func3 == 3'b101 ) || 
+                                                      ( _opcode == 7'b111_0011 && _func3 == 3'b110 ) ||    
+                                                      ( _opcode == 7'b111_0011 && _func3 == 3'b111 )   ;
+
 // ============ CSR 到 MMU 配置转换 (SV32) ============
 // 从 CSR 寄存器提取 MMU 配置信号 (SV32)
 

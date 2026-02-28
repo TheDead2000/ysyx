@@ -753,7 +753,7 @@ lsu lsu (
       .exc_csr_data_i(csr_writedata_ex_mem),
       .exc_csr_valid_i(csr_writevalid_ex_mem),
       .csr_rd_data_i(csr_readdata_ex_mem),
-      
+
       .exc_csr_write_valid(exc_csr_write_valid_ex_mem),
       .exc_csr_write_valid_o(lsu_csr_write_valid),
 
@@ -1044,7 +1044,8 @@ CSRs rv32_csr_regfile(
     .clint_csr_write_en(clint_csr_write_en),
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
-
+    .inst_data_i(inst_data_ex_mem),
+    
     .clint_csr_write_mstatus(clint_csr_write_mstatus),
     .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),
     .clint_privilege_i(next_privilege),
