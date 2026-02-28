@@ -738,6 +738,7 @@ wire[31:0] csr_stap_pc;
 wire       lsu_csr_idu_valid;
 wire[31:0] lsu_csr_idu_data;
 
+
 lsu lsu (
       .clk            (clk),
       .rst            (rst),
@@ -1045,7 +1046,7 @@ CSRs rv32_csr_regfile(
     .clint_csr_write_en(clint_csr_write_en),
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
-    .inst_data_i(inst_data_mem_wb),
+    .inst_data_i(inst_data_mem),
 
     .clint_csr_write_mstatus(clint_csr_write_mstatus),
     .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),

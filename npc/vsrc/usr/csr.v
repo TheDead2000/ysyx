@@ -541,7 +541,7 @@ module CSRs(
   wire [4:0] _func5 = inst_data_i[31:27];
   wire [`CSR_REG_ADDRWIDTH-1:0] _csr = inst_data_i[31:20]; 
 
-assign   csr_ifu_unstall_o =                            ( _opcode == 7'b111_0011 && _func3 == 3'b001 ) ||
+assign   csr_ifu_unstall_o =                          ( _opcode == 7'b111_0011 && _func3 == 3'b001 ) ||
                                                       ( _opcode == 7'b111_0011 && _func3 == 3'b010 ) ||                                   
                                                       ( _opcode == 7'b111_0011 && _func3 == 3'b011 ) ||    
                                                       ( _opcode == 7'b111_0011 && _func3 == 3'b101 ) || 
