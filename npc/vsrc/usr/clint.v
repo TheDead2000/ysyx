@@ -289,7 +289,6 @@ reg[31:0] handler_pc_reg;
           csr_write_mstatus_o <= 12'h0;
           csr_write_mstatus_data_o <= 32'h0;
           privilege_wen_o <= 1'b0;
-          trap_ecall_unstall_condition_o <= 0;
           trap_intererupt_pc_valid <= 0;
           trap_icache_pass_o <= 0;
 
@@ -454,12 +453,14 @@ reg[31:0] handler_pc_reg;
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         csr_state <= WAIT_CLK;
+        
+        trap_icache_pass_o <= 1;
+        trap_ecall_unstall_condition_o <= 1;
         $display("CLEAR to WAIT_CLK");
       end
 
       WAIT_CLK:begin
-        trap_icache_pass_o <= 1;
-        trap_ecall_unstall_condition_o <= 1;
+        trap_ecall_unstall_condition_o <= 0;
         csr_state <= IDLE;
       end
 
