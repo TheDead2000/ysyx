@@ -342,12 +342,7 @@ mmu icache_mmu (
               icache_state <= CACHE_MMU_TRANS;
             end 
           end
-          else if (!mmu_enable_i) begin
-            mmu_translation_done <= 1'b0;
-          end
-          
-          
-          if (~icache_hit && ~uncache) begin
+          else if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
             _ram_raddr_icache_o <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
             _ram_raddr_valid_icache_o <= 1;  // 地址有效
@@ -364,17 +359,17 @@ mmu icache_mmu (
             _ram_rsize_icache_o       <= 4'b0100;  //读大小 32bit,一条指令
             _ram_rlen_icache_o        <= 8'd0;  // 不突发
           end
-          else if(need_cross_sram128 & !next_icache_hit) begin
-            icache_state <= CACHE_REFILL;
-            _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,next_cache_blk_addr};
-            _ram_raddr_valid_icache_o <= 1;  // 地址有效
-            _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
-            _ram_rsize_icache_o <= 4'b0100;  // 32bit 
-            _ram_rlen_icache_o <= 15;    // 突发15+1次 
-            burst_count <= 0;  // 清空计数器
-            refill_stall <= 1;
-            need_cross_sram128_reg <= 1;
-          end
+          // else if(need_cross_sram128 & !next_icache_hit) begin
+          //   icache_state <= CACHE_REFILL;
+          //   _ram_raddr_icache_o <= {next_cache_line_tag,next_cache_line_idx,next_cache_blk_addr};
+          //   _ram_raddr_valid_icache_o <= 1;  // 地址有效
+          //   _ram_rmask_icache_o <= 4'b_1111;  // 读掩码
+          //   _ram_rsize_icache_o <= 4'b0100;  // 32bit 
+          //   _ram_rlen_icache_o <= 15;    // 突发15+1次 
+          //   burst_count <= 0;  // 清空计数器
+          //   refill_stall <= 1;
+          //   need_cross_sram128_reg <= 1;
+          // end
         end
 
 
