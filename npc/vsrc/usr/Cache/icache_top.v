@@ -334,13 +334,11 @@ mmu icache_mmu (
 
 
             // 有新请求，且地址不同，需要重新转换
-          if (mmu_enable_i) begin
-              if ( (preif_raddr_valid_i && preif_raddr_i != last_vaddr) || trap_icache_pass_i) begin
-              vaddr_reg <= preif_raddr_i;
-              last_vaddr <= preif_raddr_i;
-              mmu_translation_done <= 1'b0;
-              icache_state <= CACHE_MMU_TRANS;
-            end 
+          if (mmu_enable_i && ((preif_raddr_valid_i && preif_raddr_i != last_vaddr) || trap_icache_pass_i)) begin
+            vaddr_reg <= preif_raddr_i;
+            last_vaddr <= preif_raddr_i;
+            mmu_translation_done <= 1'b0;
+            icache_state <= CACHE_MMU_TRANS;
           end
           else if (~icache_hit && ~uncache) begin
             icache_state <= CACHE_MISS;
@@ -350,7 +348,6 @@ mmu icache_mmu (
             _ram_rsize_icache_o <= 4'b0100;  // 32bit 
             _ram_rlen_icache_o <= 15;    // 突发15+1次 
              burst_count <= 0;  // 清空计数器
-
           end else if (~icache_hit && uncache) begin
             icache_state              <= UNCACHE_READ;
             _ram_raddr_icache_o       <= {line_tag_reg, line_idx_reg, 6'b0};  // 读地址
