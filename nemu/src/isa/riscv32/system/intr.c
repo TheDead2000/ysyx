@@ -22,7 +22,7 @@ uint32_t stval_nextvalue = 0;
 
 paddr_t riscv_intr_gotos (word_t NO,vaddr_t epc){
   IFDEF(CONFIG_ETRACE,Log("Handle this exception on S_Mod"););
-  printf("Handle this exception on S_Mod\n");
+  // printf("Handle this exception on S_Mod\n");
   cpu.csr[NEMU_CSR_SCAUSE]=NO;
   cpu.csr[NEMU_CSR_SEPC] = epc;
   // 关中断状态
@@ -60,7 +60,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged Exception!, No=%x Epc=%x",NO,epc););
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
-    printf("isa_raise_intr use!\n");
+    // printf("isa_raise_intr use!\n");
     return riscv_intr_gotos(NO,epc);
   }else{
     return riscv_intr_gotom(NO,epc);
