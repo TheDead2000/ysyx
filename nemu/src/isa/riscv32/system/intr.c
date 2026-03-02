@@ -58,7 +58,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //mstatus寄存器 - 存放处理器的状态
   //mcause寄存器 - 存放触发异常的原因
   IFDEF(CONFIG_ETRACE,Log("Trigged Exception!, No=%x Epc=%x",NO,epc););
-  printf("Trigged Exception!, No=%x Epc=%x",NO,epc);
+  printf("Trigged Exception!, No=%x Epc=%x\n",NO,epc);
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
     // printf("isa_raise_intr use!\n");
