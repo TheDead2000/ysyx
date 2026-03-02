@@ -62,7 +62,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
     // printf("isa_raise_intr use!\n");
-    return riscv_intr_gotos(NO,epc);
+    return riscv_intr_gotom(NO,epc);
   }else{
     return riscv_intr_gotom(NO,epc);
   }
