@@ -96,15 +96,14 @@ module clint (
   wire mstatus_mie = csr_mstatus_i[3];  // M模式全局中断使能
   wire mstatus_sie = csr_mstatus_i[1];  // S模式全局中断使能
   wire mie_mti = csr_mie_i[7];          // M模式定时器中断使能
+  wire mie_sti = csr_mie_i[5];
   wire mie_mei = csr_mie_i[11];         // M模式外部中断使能
   wire mie_msi = csr_mie_i[3];          // M模式软件中断使能
-  wire sie_sti = csr_sie_i[5];          // S模式定时器中断使能
-  wire sie_sei = csr_sie_i[9];          // S模式外部中断使能
-  wire sie_ssi = csr_sie_i[1];          // S模式软件中断使能
+
   
   // 定时器中断检测
-  assign machine_timer_interrupt = mtime_ge_mtime && mstatus_mie && mie_mti;
-  assign supervisor_timer_interrupt = mtime_ge_mtime && mstatus_sie && sie_sti && csr_mideleg_i[5];
+  assign machine_timer_interrupt    = mtime_ge_mtime && mstatus_mie && mie_mti && !csr_mideleg_i[5];
+  assign supervisor_timer_interrupt = mtime_ge_mtime && mstatus_sie && mie_sti && csr_mideleg_i[5];
   
   // 其他中断检测（简化实现）
   assign machine_external_interrupt = 1'b0;
@@ -138,11 +137,11 @@ module clint (
       interrupt_pending = 1'b1;
       interrupt_code = 5'd9;
       interrupt_delegated = 1'b1;
-    end else if (machine_timer_interrupt && (!csr_mideleg_i[7] || csr_privilege_i == 2'b11)) begin
+    end else if (machine_timer_interrupt && csr_privilege_i == 2'b11 ) begin
       interrupt_pending = 1'b1;
       interrupt_code = 5'd7;
-      interrupt_delegated = csr_mideleg_i[7] && csr_privilege_i != 2'b11;
-    end else if (supervisor_timer_interrupt && csr_mideleg_i[5]) begin
+      interrupt_delegated = 1;
+    end else if (supervisor_timer_interrupt ) begin
       interrupt_pending = 1'b1;
       interrupt_code = 5'd5;
       interrupt_delegated = 1'b1;
@@ -229,11 +228,8 @@ reg[31:0] handler_pc_reg;
         // M模式定时器中断
         handler_pc = csr_mtvec_i;
       end
-        // else if (supervisor_timer_interrupt && csr_privilege_i != 2'b11) begin
-        //     // S模式定时器中断（已委托）
-        //     handler_pc = csr_stvec_i;
-        // end
-        else if (S_time_req) begin
+      
+      else if (S_time_req) begin
             // 未委托的定时器中断（S或U模式）→ 由M模式处理
             handler_pc = csr_mtvec_i;
         end
@@ -266,7 +262,7 @@ reg[31:0] handler_pc_reg;
   reg [2:0] next_csr_state;
   reg is_delegated;
   reg trap_intererupt_pc_valid;
-
+  reg[31:0] pc_from_mem_i_latch;
   // CSR写入逻辑
 /* verilator lint_off CASEINCOMPLETE */
   always @(posedge clk or posedge rst) begin
@@ -296,6 +292,7 @@ reg[31:0] handler_pc_reg;
           if ( (trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
+          pc_from_mem_i_latch <= pc_from_mem_i;
           trap_bus_i_latch <= trap_bus_i;
           cause_value_latched <= cause_value;
           is_delegated_latched <= exception_delegated || interrupt_delegated;
@@ -329,9 +326,9 @@ reg[31:0] handler_pc_reg;
         else  if (csr_privilege_i == 2'b11)begin
           csr_write_addr_o <= 12'h341; // mepc
         end
-        csr_write_data_o <= pc_from_mem_i;
+        csr_write_data_o <= pc_from_mem_i_latch;
         csr_state <= SAVE_CAUSE;
-        $display("SAVE_PC to SAVE_CAUSE pc_from_exe_i_latch:%h _pc_for_mem:%h",pc_from_exe_i_latch,pc_from_mem_i);
+        $display("SAVE_PC to SAVE_CAUSE pc_from_exe_i_latch:%h _pc_for_mem:%h",pc_from_exe_i_latch,pc_from_mem_i_latch);
       end
 
 

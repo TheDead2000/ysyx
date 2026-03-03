@@ -293,14 +293,41 @@ module CSRs(
       12'h320: begin read_data = mcountinhibitReg; read_error = 1'b0; end
 
       // S-Level CSRs
-      12'h100: begin read_data = sstatusReg; read_error = 1'b0; end
-      12'h104: begin read_data = sieReg; read_error = 1'b0; end
+      12'h100: begin     
+          read_data = 32'h0;
+          // sstatus 是 mstatus 的子集，只复制允许 S-mode 看到的位
+          read_data[31]    = mstatusReg[31];    // SD
+          read_data[19]    = mstatusReg[19];    // MXR
+          read_data[18]    = mstatusReg[18];    // SUM
+          read_data[16:15] = mstatusReg[16:15]; // XS
+          read_data[14:13] = mstatusReg[14:13]; // FS
+          read_data[8]     = mstatusReg[8];     // SPP
+          read_data[5]     = mstatusReg[5];     // SPIE
+          read_data[1]     = mstatusReg[1];     // SIE
+          read_error = 1'b0; 
+          end
+
+      12'h104: begin          
+                    read_data = 32'h0;
+                    // sie 只能看到 SSIE(1), STIE(5), SEIE(9)
+                    // 直接把 mie 的对应位复制过来
+                    read_data[9] = mieReg[9]; // SEIE
+                    read_data[5] = mieReg[5]; // STIE
+                    read_data[1] = mieReg[1]; // SSIE
+                    read_error = 1'b0; 
+                    end
       12'h105: begin read_data = stvecReg; read_error = 1'b0; end
       12'h140: begin read_data = sscratchReg; read_error = 1'b0; end
       12'h141: begin read_data = sepcReg; read_error = 1'b0; end
       12'h142: begin read_data = scauseReg; read_error = 1'b0; end
       12'h143: begin read_data = stvalReg; read_error = 1'b0; end
-      12'h144: begin read_data = sipReg; read_error = 1'b0; end
+      12'h144: begin    
+                     read_data = 32'h0;
+                     read_data[9] = mipReg[9]; // SEIP
+                     read_data[5] = mipReg[5]; // STIP (通常由 mtime 驱动 mip[7]，委托后反映在 sip[5])
+                     read_data[1] = mipReg[1]; // SSIP
+                     read_error = 1'b0; 
+                     end
       12'h180: begin read_data = satpReg; read_error = 1'b0; end
       
       // U-Level Counter/Timer CSRs (只读镜像)
@@ -469,14 +496,20 @@ module CSRs(
           12'h320: mcountinhibitReg <= update_mcountinhibit(mcountinhibitReg, csr_write_data);
           
           // Supervisor CSRs
-          12'h100: sstatusReg <= update_sstatus(sstatusReg, csr_write_data);
-          12'h104: sieReg <= update_sie(sieReg, csr_write_data);
+          12'h100: mstatusReg <= update_mstatus(mstatusReg, csr_write_data);
+          12'h104: mieReg <= update_mie(mieReg, csr_write_data);
           12'h105: stvecReg <= csr_write_data;
           12'h140: sscratchReg <= csr_write_data;
           12'h141: sepcReg <= csr_write_data;
           12'h142: scauseReg <= csr_write_data;
           12'h143: stvalReg <= csr_write_data;
-          12'h144: sipReg <= update_sip(sipReg, csr_write_data);
+          12'h144: begin
+                        if (csr_write_data[1]) begin
+                        mipReg[1] <= 1'b1;
+                        end else begin
+                        mipReg[1] <= 1'b0;
+                        end
+                  end
           12'h180: begin satpReg <= update_satp(satpReg, csr_write_data); end 
           
           default: ; // 忽略其他地址
