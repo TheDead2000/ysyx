@@ -324,7 +324,7 @@ module CSRs(
       12'h144: begin    
                      read_data = 32'h0;
                      read_data[9] = mipReg[9]; // SEIP
-                     read_data[5] = mipReg[5]; // STIP (通常由 mtime 驱动 mip[7]，委托后反映在 sip[5])
+                     read_data[5] = midelegReg[5] ? mtime_ge_mtime_i : 1'b0; // STIP (通常由 mtime 驱动 mip[7]，委托后反映在 sip[5])
                      read_data[1] = mipReg[1]; // SSIP
                      read_error = 1'b0; 
                      end
@@ -425,13 +425,13 @@ module CSRs(
           12'h344: mipReg <= update_mip(mipReg, clint_csr_write_data);
           
           // Supervisor CSRs
-          12'h100: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_data);
+          12'h100: mstatusReg <= update_sstatus(mstatusReg, clint_csr_write_data);
           12'h105: stvecReg <= clint_csr_write_data;
           12'h140: sscratchReg <= clint_csr_write_data;
           12'h141: sepcReg <= clint_csr_write_data;
           12'h142: scauseReg <= clint_csr_write_data;
           12'h143: stvalReg <= clint_csr_write_data;
-          12'h144:  mipReg <= update_mip(mipReg, clint_csr_write_data);  //sip
+          12'h144:  mipReg <= update_sip(mipReg, clint_csr_write_data);  //sip
           12'h180: begin satpReg <= update_satp(satpReg, clint_csr_write_data); end
           
           default: ; // 忽略其他地址
@@ -496,8 +496,8 @@ module CSRs(
           12'h320: mcountinhibitReg <= update_mcountinhibit(mcountinhibitReg, csr_write_data);
           
           // Supervisor CSRs
-          12'h100: mstatusReg <= update_mstatus(mstatusReg, csr_write_data);
-          12'h104: mieReg <= update_mie(mieReg, csr_write_data);
+          12'h100: mstatusReg <= update_sstatus(mstatusReg, csr_write_data);
+          12'h104: mieReg <= update_sie(mieReg, csr_write_data);
           12'h105: stvecReg <= csr_write_data;
           12'h140: sscratchReg <= csr_write_data;
           12'h141: sepcReg <= csr_write_data;
@@ -567,7 +567,7 @@ module CSRs(
   //     // 因为只有在写入发生时才会为1，下一个周期没有写入就变回0
   //   end
   // end
-    wire [6:0] _opcode = inst_data_i[6:0];
+  wire [6:0] _opcode = inst_data_i[6:0];
   wire [4:0] _rd = inst_data_i[11:7];
   wire [2:0] _func3 = inst_data_i[14:12];
   wire [4:0] _rs1 = inst_data_i[19:15];

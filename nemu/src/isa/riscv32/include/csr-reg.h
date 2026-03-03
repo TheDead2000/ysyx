@@ -18,20 +18,20 @@ typedef union {
     unsigned int UBE  : 1; //6
     unsigned int MPIE : 1; //7
     unsigned int SPP  : 1; //8
-    unsigned int VS   : 2;
-    unsigned int MPP  : 2;
-    unsigned int FS   : 2;
-    unsigned int XS   : 2;
-    unsigned int MPRV : 1;
-    unsigned int SUM  : 1;
-    unsigned int MXR  : 1;
-    unsigned int TVM  : 1;
-    unsigned int TW   : 1;
-    unsigned int TSR  : 1;
-    unsigned int SPELP: 1;
-    unsigned int SDT  : 1;
-    unsigned int      : 6;
-    unsigned int SD   : 1;
+    unsigned int VS   : 2;//10
+    unsigned int MPP  : 2;//12
+    unsigned int FS   : 2;//14
+    unsigned int XS   : 2;//16
+    unsigned int MPRV : 1;//17
+    unsigned int SUM  : 1;//18
+    unsigned int MXR  : 1;//19
+    unsigned int TVM  : 1;//20
+    unsigned int TW   : 1;//21
+    unsigned int TSR  : 1;//22
+    unsigned int SPELP: 1;//23
+    unsigned int SDT  : 1;//24
+    unsigned int      : 6;//30
+    unsigned int SD   : 1;//31
   } bits;
   uint32_t value;
 } mstatus_t;
