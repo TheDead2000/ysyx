@@ -9,15 +9,15 @@
 
 typedef union {
   struct {
-    unsigned int      : 1;
-    unsigned int SIE  : 1;
-    unsigned int      : 1;
-    unsigned int MIE  : 1;
-    unsigned int      : 1;
-    unsigned int SPIE : 1;
-    unsigned int UBE  : 1;
-    unsigned int MPIE : 1;
-    unsigned int SPP  : 1;
+    unsigned int      : 1; //0
+    unsigned int SIE  : 1; //1 
+    unsigned int      : 1; //2
+    unsigned int MIE  : 1; //3
+    unsigned int      : 1; //4
+    unsigned int SPIE : 1; //5
+    unsigned int UBE  : 1; //6
+    unsigned int MPIE : 1; //7
+    unsigned int SPP  : 1; //8
     unsigned int VS   : 2;
     unsigned int MPP  : 2;
     unsigned int FS   : 2;
@@ -38,13 +38,13 @@ typedef union {
 
 typedef union {
   struct {
-    unsigned int      : 1;
-    unsigned int SIE  : 1;
-    unsigned int      : 3;
-    unsigned int SPIE : 1;
-    unsigned int UBE  : 1;
-    unsigned int      : 1;
-    unsigned int SPP  : 1;
+    unsigned int      : 1;//0
+    unsigned int SIE  : 1;//1
+    unsigned int      : 3;//2-4
+    unsigned int SPIE : 1;//5
+    unsigned int UBE  : 1;//6
+    unsigned int      : 1;//7
+    unsigned int SPP  : 1;//8
     unsigned int VS   : 2;
     unsigned int      : 2;
     unsigned int FS   : 2;

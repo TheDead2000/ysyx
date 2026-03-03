@@ -137,7 +137,7 @@ module clint (
       interrupt_pending = 1'b1;
       interrupt_code = 5'd9;
       interrupt_delegated = 1'b1;
-    end else if (machine_timer_interrupt && csr_privilege_i == 2'b11 ) begin
+    end else if (machine_timer_interrupt && csr_privilege_i == 2'b11) begin
       interrupt_pending = 1'b1;
       interrupt_code = 5'd7;
       interrupt_delegated = 1;
@@ -215,7 +215,7 @@ reg trap_sret_latch;
 reg[31:0] handler_pc_reg;
 
   wire M_time_req = (clint_addr_i == 32'h0)  ?  0 : machine_timer_interrupt && csr_privilege_i == 2'b11;
-  wire S_time_req = supervisor_timer_interrupt && csr_privilege_i != 2'b11;
+  wire S_time_req = (clint_addr_i == 32'h0)  ?  0 : supervisor_timer_interrupt && csr_privilege_i != 2'b11;
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
@@ -229,9 +229,9 @@ reg[31:0] handler_pc_reg;
         handler_pc = csr_mtvec_i;
       end
       
-      else if (S_time_req) begin
+      else if (S_time_req_latch) begin
             // 未委托的定时器中断（S或U模式）→ 由M模式处理
-            handler_pc = csr_mtvec_i;
+            handler_pc = csr_stvec_i;
         end
         else if (trap_mmu_page_falut) begin
             // 其他异常
@@ -289,6 +289,8 @@ reg[31:0] handler_pc_reg;
           trap_intererupt_pc_valid <= 0;
           trap_icache_pass_o <= 0;
           M_time_req_latch <= 0;
+          S_time_req_latch <= 0;
+
           if ( (trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
@@ -316,7 +318,7 @@ reg[31:0] handler_pc_reg;
       SAVE_PC: begin
         csr_write_en_o <= 1'b1;
          if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch) begin
              csr_write_addr_o <= 12'h341; // mepc
           end
           else begin
@@ -335,7 +337,7 @@ reg[31:0] handler_pc_reg;
       SAVE_CAUSE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
             csr_write_addr_o <= 12'h342; // mcause
           end
           else begin
@@ -353,7 +355,7 @@ reg[31:0] handler_pc_reg;
       SAVE_VALUE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
             csr_write_addr_o <= 12'h343; // mtval
           end
           else begin
@@ -371,7 +373,7 @@ reg[31:0] handler_pc_reg;
       UPDATE_STATUS: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || S_time_req_latch) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
             csr_write_addr_o <= 12'h300; // mstatus
             csr_write_data_o <= {
             csr_mstatus_i[31:13],
@@ -396,16 +398,16 @@ reg[31:0] handler_pc_reg;
             1'b0,               // SIE
             csr_sstatus_i[0]
           };
-          csr_write_mstatus_o <= 12'h300;
-          csr_write_mstatus_data_o <= {
-            csr_mstatus_i[31:9],
-            csr_mstatus_i[8],   // SPP
-            csr_mstatus_i[7:6],
-            csr_sstatus_i[1],   // SPIE
-            csr_mstatus_i[4:2],
-            1'b0,               // SIE
-            csr_mstatus_i[0]
-          };        
+          // csr_write_mstatus_o <= 12'h300;
+          // csr_write_mstatus_data_o <= {
+          //   csr_mstatus_i[31:9],
+          //   csr_mstatus_i[8],   // SPP
+          //   csr_mstatus_i[7:6],
+          //   csr_sstatus_i[1],   // SPIE
+          //   csr_mstatus_i[4:2],
+          //   1'b0,               // SIE
+          //   csr_mstatus_i[0]
+          // };        
         end
       end   
       else if (csr_privilege_i == 2'b11) begin
@@ -446,7 +448,6 @@ reg[31:0] handler_pc_reg;
         is_delegated_latched <= 1'b0;
         interrupt_pending_latched <= 1'b0;
         trap_bus_i_latch <= `TRAP_LEN'b0;
-        S_time_req_latch <= 0;
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         csr_state <= WAIT_CLK;

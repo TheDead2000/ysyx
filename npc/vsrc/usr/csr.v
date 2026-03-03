@@ -425,13 +425,13 @@ module CSRs(
           12'h344: mipReg <= update_mip(mipReg, clint_csr_write_data);
           
           // Supervisor CSRs
-          12'h100: sstatusReg <= update_sstatus(sstatusReg, clint_csr_write_data);
+          12'h100: mstatusReg <= update_mstatus(mstatusReg, clint_csr_write_data);
           12'h105: stvecReg <= clint_csr_write_data;
           12'h140: sscratchReg <= clint_csr_write_data;
           12'h141: sepcReg <= clint_csr_write_data;
           12'h142: scauseReg <= clint_csr_write_data;
           12'h143: stvalReg <= clint_csr_write_data;
-          12'h144: sipReg <= update_sip(sipReg, clint_csr_write_data);
+          12'h144:  mipReg <= update_mip(mipReg, clint_csr_write_data);  //sip
           12'h180: begin satpReg <= update_satp(satpReg, clint_csr_write_data); end
           
           default: ; // 忽略其他地址
