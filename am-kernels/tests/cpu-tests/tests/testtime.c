@@ -92,7 +92,7 @@ void handle_m_trap(uint32_t mcause, uint32_t mepc) {
         // 关键步骤：为了产生周期性中断，我们需要把 mtimecmp 再次往后推
         // 假设 timebase-frequency 是 10MHz，我们设置下一次中断在 0.1秒后 (10MHz * 0.1 = 1,000,000)
         // 如果你想快点看到下一次，改成 100000
-        *MTIMECMP_ADDR = current_time + 1000000; 
+        *MTIMECMP_ADDR = current_time + 10000; 
         
         // 清除 mip.MTIP (有些硬件需要，有些不需要，写了更保险)
         // 注意：mip.MTIP 通常是只读的，由 mtimecmp 比较结果决定，这里主要是打印状态
