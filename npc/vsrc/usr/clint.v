@@ -214,8 +214,8 @@ reg trap_mret_latch;
 reg trap_sret_latch;
 reg[31:0] handler_pc_reg;
 
-  wire M_time_req = machine_timer_interrupt && csr_privilege_i == 2'b11;
-  wire S_time_req = mtime_ge_mtime && csr_privilege_i != 2'b11;
+  wire M_time_req = (clint_addr_i == 32'h0)  ?  0 : machine_timer_interrupt && csr_privilege_i == 2'b11;
+  wire S_time_req = supervisor_timer_interrupt && csr_privilege_i != 2'b11;
   // 处理程序地址计算
   reg [31:0] handler_pc;
   always @(*) begin
@@ -450,7 +450,6 @@ reg[31:0] handler_pc_reg;
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         csr_state <= WAIT_CLK;
-        
         trap_icache_pass_o <= 1;
         trap_ecall_unstall_condition_o <= 1;
         $display("CLEAR to WAIT_CLK");
