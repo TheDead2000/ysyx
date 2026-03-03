@@ -7,7 +7,7 @@ module mtime (
     input  [    `XLEN_BUS] mtime_wdata_i,
     output [    `XLEN_BUS] mtime_rdata_o,
     output                             mtime_ge_mtime_o,
-    output [63:0] mtime_value_o,
+    output [63:0] mtime_value_o
 );
 
   // 修改使能信号，识别四个地址

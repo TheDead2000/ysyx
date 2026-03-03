@@ -966,7 +966,7 @@ wire [31:0] clint_csr_write_mstatus_data;
 wire mtime_ge_mtime;
 wire trap_ecall_unstall_condition;
 wire trap_icache_pass;
-wire [63:0] mtime_value_o,
+wire [63:0] mtime_value_o;
 clint clint_u (
     .clk(clk),
     .rst(rst),

@@ -573,7 +573,7 @@ reg[31:0] handler_pc_reg;
   wire mtime_write_valid_i = clint_write_valid_i;
   wire [31:0] mtime_wdata_i = clint_wdata_i;
   wire [31:0] mtime_rdata;
-  wire [63:0] mtime_value_o;
+
   mtime u_mtime (
       .clk(clk),
       .rst(rst),
@@ -582,7 +582,7 @@ reg[31:0] handler_pc_reg;
       .mtime_wdata_i(mtime_wdata_i),
       .mtime_rdata_o(mtime_rdata),
       .mtime_ge_mtime_o(mtime_ge_mtime),
-      .mtime_value_o(mtime_value_o),
+      .mtime_value_o(mtime_value_o)
   );
   
 
