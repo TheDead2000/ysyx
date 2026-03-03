@@ -87,7 +87,7 @@ void handle_m_trap(uint32_t mcause, uint32_t mepc) {
         uint64_t current_time = *MTIME_ADDR;
         
         printf("!!! SUCCESS: Timer IRQ #%d Received !!!\n", timer_irq_count);
-        printf("    Current mtime: 0x%08x%08x\n", (uint32_t)(current_time >> 32), (uint32_t)current_time);
+        printf("    Current mtime: 0x%x%x\n", (uint32_t)(current_time >> 32), (uint32_t)current_time);
 
         // 关键步骤：为了产生周期性中断，我们需要把 mtimecmp 再次往后推
         // 假设 timebase-frequency 是 10MHz，我们设置下一次中断在 0.1秒后 (10MHz * 0.1 = 1,000,000)
@@ -96,7 +96,7 @@ void handle_m_trap(uint32_t mcause, uint32_t mepc) {
         
         // 清除 mip.MTIP (有些硬件需要，有些不需要，写了更保险)
         // 注意：mip.MTIP 通常是只读的，由 mtimecmp 比较结果决定，这里主要是打印状态
-        printf("    Next mtimecmp set to: 0x%08x%08x\n", (uint32_t)(*MTIMECMP_ADDR >> 32), (uint32_t)*MTIMECMP_ADDR);
+        printf("    Next mtimecmp set to: 0x%x %x\n", (uint32_t)(*MTIMECMP_ADDR >> 32), (uint32_t)*MTIMECMP_ADDR);
         
     } else {
         // 其他异常
@@ -122,13 +122,13 @@ void main(void) {
 
     // 2. 读取当前 mtime
     uint64_t time_now = get_mtime();
-    printf(">> Step 2: Current mtime = 0x%08x%08x\n", (uint32_t)(time_now >> 32), (uint32_t)time_now);
+    printf(">> Step 2: Current mtime = 0x%x    %x\n", (uint32_t)(time_now >> 32), (uint32_t)time_now);
 
     // 3. 设置 mtimecmp (关键！)
     // 我们让 mtimecmp = mtime + 50000
     // 如果你的时钟是 10MHz，这大约是 5ms 后触发
     uint64_t time_future = time_now + 50000;
-    printf(">> Step 3: Setting mtimecmp to 0x%08x%08x...\n", (uint32_t)(time_future >> 32), (uint32_t)time_future);
+    printf(">> Step 3: Setting mtimecmp to 0x%x   %x...\n", (uint32_t)(time_future >> 32), (uint32_t)time_future);
     
     // 写 mtimecmp (64位写操作，确保你的硬件支持)
     *MTIMECMP_ADDR = time_future;
