@@ -513,7 +513,7 @@ reg[31:0] handler_pc_reg;
 
   // 输出赋值
   assign clint_pc_o =  handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req_latch  || S_time_req || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req_latch  || S_time_req_latch || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
