@@ -966,6 +966,7 @@ wire [31:0] clint_csr_write_mstatus_data;
 wire mtime_ge_mtime;
 wire trap_ecall_unstall_condition;
 wire trap_icache_pass;
+wire [63:0] mtime_value_o,
 clint clint_u (
     .clk(clk),
     .rst(rst),
@@ -979,6 +980,7 @@ clint clint_u (
     .clint_wdata_i(clint_wdata),
     .clint_rdata_o(clint_rdata),
     .mtime_ge_mtime(mtime_ge_mtime),
+    .mtime_value_o(mtime_value_o),
 
     .if_ecall_stall_i(idu_ecall_stall),
     .trap_ecall_unstall_condition_o(trap_ecall_unstall_condition),
@@ -1047,6 +1049,7 @@ CSRs rv32_csr_regfile(
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
     .inst_data_i(inst_data_mem),
+    .mtime_value_i(mtime_value_o),
 
     .clint_csr_write_mstatus(clint_csr_write_mstatus),
     .clint_csr_write_mstatus_data(clint_csr_write_mstatus_data),

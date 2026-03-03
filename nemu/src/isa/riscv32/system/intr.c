@@ -60,9 +60,10 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   IFDEF(CONFIG_ETRACE,Log("Trigged Exception!, No=%x Epc=%x",NO,epc););
   //medeleg bit of this interrupt was set!
   if(cpu.PRIV!=NEMU_PRIV_M&&(cpu.csr[NEMU_CSR_MEDELEG]>>(NO)&0x1)){
-    // printf("isa_raise_intr use!\n");
-    return riscv_intr_gotom(NO,epc);
+    printf("NO %x epc:%x riscv_intr_gotos use!\n",NO,epc);
+    return riscv_intr_gotos(NO,epc);
   }else{
+    printf("NO %x epc:%x riscv_intr_gotom use!\n",NO,epc);
     return riscv_intr_gotom(NO,epc);
   }
 }

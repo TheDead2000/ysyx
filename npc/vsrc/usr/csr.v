@@ -11,7 +11,8 @@ module CSRs(
   input  [11:0] csr_read_address,
  
   input  [31:0] inst_data_i,
-  
+  input [63:0] mtime_value_i,
+
   output        csr_read_error,
   output [31:0] csr_read_data,
   
@@ -501,7 +502,8 @@ module CSRs(
       cyclehReg <= mcyclehReg;
       instretReg <= minstretReg;
       instrethReg <= minstrethReg;
-      // timeReg 通常由外部计时器更新，这里保持不变
+      timeReg  <= mtime_value_i[31:0];  // 低32位
+      timehReg <= mtime_value_i[63:32]; // 高32位
     end
   end
 

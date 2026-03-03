@@ -6,7 +6,8 @@ module mtime (
     input                              mtime_write_valid_i,
     input  [    `XLEN_BUS] mtime_wdata_i,
     output [    `XLEN_BUS] mtime_rdata_o,
-    output                             mtime_ge_mtime_o
+    output                             mtime_ge_mtime_o,
+    output [63:0] mtime_value_o,
 );
 
   // 修改使能信号，识别四个地址
@@ -72,5 +73,7 @@ module mtime (
                        ((mtime_high_q == mtimecmp_high_q) && (mtime_low_q >= mtimecmp_low_q));
   
   assign mtime_ge_mtime_o = mtime_ge_mtime;
+  assign mtime_value_o = {mtime_high_q, mtime_low_q};
+
 
 endmodule
