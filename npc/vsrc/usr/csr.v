@@ -239,7 +239,7 @@ module CSRs(
   
   always @(*) begin
     read_data = 32'h0;
-    read_error = 1'b1;
+    // read_error = 1'b1;
     
     case (csr_read_address)
       // M-Level Information CSRs
