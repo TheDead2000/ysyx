@@ -195,7 +195,7 @@ module CSRs(
     sieReg = 32'h0;
     sipReg = 32'h0;
     satpReg = 32'h0;
-    
+    mstatushReg = 32'h0;
     // User CSRs
     cycleReg = 32'h0;
     timeReg = 32'h0;
