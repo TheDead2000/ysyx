@@ -170,7 +170,7 @@ module clint (
       cause_value = {1'b0, 26'b0, 5'd0};
     end else if (trap_bus_i[`TRAP_INST_ACCESS_FAULT]) begin
       cause_value = {1'b0, 26'b0, 5'd1};
-    end else if (trap_bus_i[`TRAP_ILLEGAL_INST] ) begin
+    end else if (trap_bus_i[`TRAP_ILLEGAL_INST]) begin
       cause_value = {1'b0, 26'b0, 5'd2};
     end else if (trap_bus_i[`TRAP_BREAKPOINT]) begin
       cause_value = {1'b0, 26'b0, 5'd3};
@@ -223,7 +223,7 @@ reg[31:0] handler_pc_reg;
       if (trap_mret)               handler_pc = csr_mepc_i;
       else if (trap_sret)          handler_pc = csr_sepc_i;
       else if (trap_fencei)              handler_pc = pc_from_mem_i;
-      else if (trap_bus_i[`TRAP_ECALL_M] || trap_bus_i[`TRAP_ILLEGAL_INST] ) handler_pc = csr_mtvec_i;
+      else if (trap_bus_i[`TRAP_ECALL_M]) handler_pc = csr_mtvec_i;
       else if (M_time_req_latch ) begin
         // M模式定时器中断
         handler_pc = csr_mtvec_i;

@@ -590,7 +590,7 @@ wire _alu_amo_sc = _inst_sc_w;
   assign pc_op_o  = `PCOP_LEN'b0;
 
 
-  wire _Illegal_instruction = csr_read_error_i;
+  wire _Illegal_instruction = _NONE_type;
 
   reg [`TRAP_BUS] _decode_trap_bus;
   integer i;
