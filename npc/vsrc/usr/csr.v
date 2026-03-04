@@ -340,7 +340,7 @@ module CSRs(
       12'hC81: begin read_data = timehReg; read_error = 1'b0; end
       12'hC82: begin read_data = instrethReg; read_error = 1'b0; end
       
-      default: begin read_data = 32'h0; read_error = 1'b1; end
+      default: begin read_data = 32'h0; read_error = 1'b0; end
     endcase
     end
   end
