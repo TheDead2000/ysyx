@@ -223,7 +223,7 @@ reg[31:0] handler_pc_reg;
       if (trap_mret)               handler_pc = csr_mepc_i;
       else if (trap_sret)          handler_pc = csr_sepc_i;
       else if (trap_fencei)              handler_pc = pc_from_mem_i;
-      else if (trap_bus_i[`TRAP_ECALL_M] || trap_bus_i[`TRAP_ILLEGAL_INST] ) handler_pc = csr_mtvec_i;
+      else if (trap_bus_i[`TRAP_ECALL_M] || trap_bus_i_latch[`TRAP_ILLEGAL_INST] ) handler_pc = csr_mtvec_i;
       else if (M_time_req_latch ) begin
         // M模式定时器中断
         handler_pc = csr_mtvec_i;
