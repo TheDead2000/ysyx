@@ -91,7 +91,7 @@ void do_csr_op(uint32_t op, uint32_t csr_idx, uint32_t src, uint32_t rs, uint32_
         cpu.PRIV = NEMU_PRIV_M; \
         IFDEF(CONFIG_DIFFTEST, difftest_csr_notexist()); \
         Log("WARRNING: Unsupported CSR NO:(0x%x) on pc: 0x%x", csr_idx, cpu.pc);
-        printf("s-pc %x s-dnpc %x\n",s->pc,s->dnpc);
+        // printf("s-pc %x s-dnpc %x\n",s->pc,s->dnpc);
 
     // 读取前的特殊处理
     switch(csr_idx) {
