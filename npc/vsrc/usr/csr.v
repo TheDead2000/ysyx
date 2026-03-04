@@ -63,7 +63,7 @@ module CSRs(
   // CSR寄存器声明
   reg [31:0] mvendoridReg, marchidReg, mimpidReg, mhartidReg;
   // Machine Trap Setup
-  reg [31:0] mstatusReg, misaReg, mieReg, mtvecReg;
+  reg [31:0] mstatusReg, mstatushReg, misaReg, mieReg, mtvecReg;
   // Machine Trap Handling
   reg [31:0] mscratchReg, mepcReg, mcauseReg, mtvalReg, mipReg, medelegReg, midelegReg;
   // Machine Memory Protection
@@ -252,11 +252,12 @@ module CSRs(
 
       // M-Level Trap Setup CSRs
       12'h300: begin read_data = mstatusReg; read_error = 1'b0; end
-      12'h301: begin read_data = misaReg; read_error = 1'b0; end
+      12'h301: begin read_data = misaReg; read_error = 1'b0;    end
       12'h302: begin read_data = medelegReg; read_error = 1'b0; end
       12'h303: begin read_data = midelegReg; read_error = 1'b0; end
       12'h304: begin read_data = mieReg; read_error = 1'b0; end
       12'h305: begin read_data = mtvecReg; read_error = 1'b0; end
+      12'h310: begin read_data = mstatushReg; read_error = 1'b0; end 
 
       // M-Level Trap Handling CSRs
       12'h340: begin read_data = mscratchReg; read_error = 1'b0; end
