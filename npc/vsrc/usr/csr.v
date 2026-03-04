@@ -13,6 +13,7 @@ module CSRs(
   input  [31:0] inst_data_i,
   input [63:0] mtime_value_i,
 
+  input csr_read_req_i,
   output        csr_read_error,
   output [31:0] csr_read_data,
   
@@ -239,8 +240,9 @@ module CSRs(
   
   always @(*) begin
     read_data = 32'h0;
-    // read_error = 1'b1;
+    read_error = 1'b0;
     
+    if(csr_read_req_i) begin
     case (csr_read_address)
       // M-Level Information CSRs
       12'hF11: begin read_data = mvendoridReg; read_error = 1'b0; end
@@ -340,6 +342,7 @@ module CSRs(
       
       default: begin read_data = 32'h0; read_error = 1'b1; end
     endcase
+    end
   end
   
   assign csr_read_data = read_data;

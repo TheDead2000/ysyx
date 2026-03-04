@@ -15,6 +15,7 @@ module idu (
     input [`INST_LEN-1:0] rs2_data_i,
       /* from csr regs */
     input [`XLEN_BUS] csr_data_i,
+    output csr_read_req_o,
     input csr_read_error_i,
     /*通用寄存器译码结果：to id/ex */
     output [    `REG_ADDRWIDTH-1:0] rs1_idx_o,
@@ -67,7 +68,7 @@ module idu (
 
      /* CSR 译码结果：to id/ex*/
     output [          `IMM_LEN-1:0] csr_imm_o,
-    output                                      csr_imm_valid_o,
+    output                          csr_imm_valid_o,
     output [`CSR_REG_ADDRWIDTH-1:0] csr_idx_o,
     output [             `XLEN_BUS] csr_readdata_o,
 
@@ -430,6 +431,8 @@ wire [`INST_LEN-1:0] _rs2_data =
   // TODO 添加 csr 数据旁路
   // assign csr_readdata_o = csr_exc_csr_forward ? ex_csr_writedata_i : csr_lsu_csr_forward ? lsu_csr_data_i : csr_data_i;
   assign csr_readdata_o = csr_data_i;
+  assign csr_read_req_o = _inst_csrrw || _inst_csrrs || _inst_csrrc || _inst_csrrwi || _inst_csrrsi || _inst_csrrci;
+
   /******************************************×××××××***************************************************/
 
   /* CSR_OP */

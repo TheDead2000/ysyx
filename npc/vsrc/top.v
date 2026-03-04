@@ -276,6 +276,8 @@ wire csr_imm_valid_o;
 wire [31:0] id_compress_pc;
 wire id_compress_pc_valid_o;
 wire lsu_csr_write_valid;
+wire csr_read_req;
+
 idu idu (
     /* from if/id */
     .inst_addr_i(inst_addr_if_id),
@@ -295,6 +297,7 @@ idu idu (
     /* from csr regs */
     .csr_data_i(csr_data_csr),
     .csr_read_error_i(csr_read_error),
+    .csr_read_req_o(csr_read_req),
 
     /* from id/ex stage */
     .id_ex_exc_op_i (exc_op_id_ex), // 上一条指令的类型，用于判断上一条指令是否是访存指令
@@ -1045,9 +1048,12 @@ CSRs rv32_csr_regfile(
     .csr_write_wen(exc_csr_valid_mem),
     .csr_write_address(csr_addr_mem),
     .csr_write_data( exc_csr_data_mem),
+
+    .csr_read_req_i(csr_read_req),
     .csr_read_address(csr_idx_id),
     .csr_read_error(csr_read_error),
     .csr_read_data(csr_data_csr),
+
     .clint_csr_write_en(clint_csr_write_en),
     .clint_csr_write_addr(clint_csr_write_addr),
     .clint_csr_write_data(clint_csr_write_data),
