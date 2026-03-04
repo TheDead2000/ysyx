@@ -294,7 +294,7 @@ idu idu (
 
     /* from csr regs */
     .csr_data_i(csr_data_csr),
-    
+    .csr_read_error_i(csr_read_error),
 
     /* from id/ex stage */
     .id_ex_exc_op_i (exc_op_id_ex), // 上一条指令的类型，用于判断上一条指令是否是访存指令
@@ -409,7 +409,7 @@ id_ex id2ex (
     .csr_idx_id_ex_i      (csr_idx_id),
     .csr_op_id_ex_i       (csr_op_id),
     .csr_data_id_ex_i     (csr_readdata_id),
-
+    
 
     .is_compressed_inst_id_ex_i(id_compress_pc_valid_o),
     .is_compressed_inst_id_ex_o(is_compressed_inst_id_ex),
@@ -991,6 +991,7 @@ clint clint_u (
 
     .csr_satp_flush_i(csr_satp_flush),
     .csr_ifu_unstall_i(csr_ifu_unstall),
+
     .compress_stall(id_compress_pc_valid_o),
     .next_stall_preif_i(next_ram_stall_preif),
     .ram_stall_valid_if_i(ram_stall_valid_if),
@@ -1036,6 +1037,8 @@ clint clint_u (
 
 /*****************************csr******************************/
 wire csr_ifu_unstall;
+wire csr_read_error;
+
 CSRs rv32_csr_regfile(
     .clk(clk),
     .rst(rst),
@@ -1043,7 +1046,7 @@ CSRs rv32_csr_regfile(
     .csr_write_address(csr_addr_mem),
     .csr_write_data( exc_csr_data_mem),
     .csr_read_address(csr_idx_id),
-    .csr_read_error(),
+    .csr_read_error(csr_read_error),
     .csr_read_data(csr_data_csr),
     .clint_csr_write_en(clint_csr_write_en),
     .clint_csr_write_addr(clint_csr_write_addr),

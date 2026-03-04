@@ -15,6 +15,7 @@ module idu (
     input [`INST_LEN-1:0] rs2_data_i,
       /* from csr regs */
     input [`XLEN_BUS] csr_data_i,
+    input csr_read_error_i,
     /*通用寄存器译码结果：to id/ex */
     output [    `REG_ADDRWIDTH-1:0] rs1_idx_o,
     output [    `REG_ADDRWIDTH-1:0] rs2_idx_o,
@@ -586,7 +587,7 @@ wire _alu_amo_sc = _inst_sc_w;
   assign pc_op_o  = `PCOP_LEN'b0;
 
 
-  wire _Illegal_instruction = _NONE_type;
+  wire _Illegal_instruction = csr_read_error_i;
 
   reg [`TRAP_BUS] _decode_trap_bus;
   integer i;

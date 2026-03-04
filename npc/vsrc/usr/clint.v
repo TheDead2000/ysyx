@@ -170,7 +170,7 @@ module clint (
       cause_value = {1'b0, 26'b0, 5'd0};
     end else if (trap_bus_i[`TRAP_INST_ACCESS_FAULT]) begin
       cause_value = {1'b0, 26'b0, 5'd1};
-    end else if (trap_bus_i[`TRAP_ILLEGAL_INST]) begin
+    end else if (trap_bus_i[`TRAP_ILLEGAL_INST] ) begin
       cause_value = {1'b0, 26'b0, 5'd2};
     end else if (trap_bus_i[`TRAP_BREAKPOINT]) begin
       cause_value = {1'b0, 26'b0, 5'd3};
@@ -291,7 +291,7 @@ reg[31:0] handler_pc_reg;
           M_time_req_latch <= 0;
           S_time_req_latch <= 0;
 
-          if ( (trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req) && trap_ecall_unstall_condition_o != 1   ) begin
+          if ( (trap_bus_i[`TRAP_ECALL_M] || M_time_req || S_time_req || trap_bus_i[`TRAP_ILLEGAL_INST]) && trap_ecall_unstall_condition_o != 1   ) begin
            // 只在IDLE状态且检测到陷阱时锁存
           pc_from_exe_i_latch <= pc_from_exe_i;
           pc_from_mem_i_latch <= pc_from_mem_i;
@@ -318,7 +318,7 @@ reg[31:0] handler_pc_reg;
       SAVE_PC: begin
         csr_write_en_o <= 1'b1;
          if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || trap_bus_i_latch[`TRAP_ILLEGAL_INST]) begin
              csr_write_addr_o <= 12'h341; // mepc
           end
           else begin
@@ -337,7 +337,7 @@ reg[31:0] handler_pc_reg;
       SAVE_CAUSE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || trap_bus_i_latch[`TRAP_ILLEGAL_INST]) begin
             csr_write_addr_o <= 12'h342; // mcause
           end
           else begin
@@ -355,7 +355,7 @@ reg[31:0] handler_pc_reg;
       SAVE_VALUE: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || trap_bus_i_latch[`TRAP_ILLEGAL_INST]) begin
             csr_write_addr_o <= 12'h343; // mtval
           end
           else begin
@@ -373,7 +373,7 @@ reg[31:0] handler_pc_reg;
       UPDATE_STATUS: begin
         csr_write_en_o <= 1'b1;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch ) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || trap_bus_i_latch[`TRAP_ILLEGAL_INST]) begin
             csr_write_addr_o <= 12'h300; // mstatus
             csr_write_data_o <= {
             csr_mstatus_i[31:13],
@@ -431,7 +431,7 @@ reg[31:0] handler_pc_reg;
       UPDATE_PENDING: begin
         csr_write_en_o <= 1'b0;
         if (csr_privilege_i != 2'b11) begin
-          if(trap_bus_i_latch[`TRAP_ECALL_M]) begin
+          if(trap_bus_i_latch[`TRAP_ECALL_M] || M_time_req_latch || trap_bus_i_latch[`TRAP_ILLEGAL_INST]) begin
             privilege_wen_o <= 1'b1;
             privilege_o <= 2'b11;
           end
@@ -513,11 +513,12 @@ reg[31:0] handler_pc_reg;
 
   // 输出赋值
   assign clint_pc_o =  handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req_latch  || S_time_req_latch || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut;
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req_latch  || S_time_req_latch || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut 
+                         || trap_bus_i[`TRAP_ILLEGAL_INST];
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
   // wire trap_condition =  trap_valid || trap_mret || trap_sret || trap_fencei || trap_bus_i[`TRAP_ECALL_M];
-  wire trap_condition =   M_time_req || S_time_req || trap_mret || trap_sret;
+  wire trap_condition =   M_time_req || S_time_req || trap_mret || trap_sret || trap_bus_i[`TRAP_ILLEGAL_INST];
   // always @(posedge clk)begin
   //    privilege_wen_o <= 0;
   //   trap_ecall_unstall_condition_o <= 0;
