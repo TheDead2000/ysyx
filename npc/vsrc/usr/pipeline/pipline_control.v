@@ -117,33 +117,6 @@ module pipline_control (
       _flush = 6'b001_110;
        $display("trap_ecall_unstall_condition_i call");
     end
-
-    else if (ram_stall_req_mem) begin 
-      _stall = ram_mem_stall;
-      _flush = ram_mem_flush;
-    end 
-    else if(next_stall_req_preif) begin
-        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
-        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
-      end
-    else if(ram_stall_req_if) begin
-        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
-        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
-      end
-
-      else if (jump_valid_ex_i) begin
-      _stall = jump_stall;
-      _flush = jump_flush;
-      // 乘法和除法
-    end else if (alu_mul_div_valid_ex_i) begin
-      _stall = mul_div_stall;
-      _flush = mul_div_flush;
-      // load use data 冲突,(发生在 id 阶段)
-    end else if (load_use_valid_id_i) begin
-      _stall = load_use_stall;
-      _flush = load_use_flush;
-      // 没有异常情况,正常执行
-    end 
               // 中断|异常
     else if(id_ecall_stall_i) begin
       _stall = 6'b000_011;
@@ -174,6 +147,34 @@ module pipline_control (
       _stall = 6'b000001;
       _flush = 6'b000000; 
     end
+    
+    else if (ram_stall_req_mem) begin 
+      _stall = ram_mem_stall;
+      _flush = ram_mem_flush;
+    end 
+    else if(next_stall_req_preif) begin
+        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
+        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
+      end
+    else if(ram_stall_req_if) begin
+        _stall = pipe_force_advance ? 6'b000111 : ram_mem_stall;
+        _flush = pipe_force_advance ? 6'b001000 : ram_if_flush;
+      end
+
+      else if (jump_valid_ex_i) begin
+      _stall = jump_stall;
+      _flush = jump_flush;
+      // 乘法和除法
+    end else if (alu_mul_div_valid_ex_i) begin
+      _stall = mul_div_stall;
+      _flush = mul_div_flush;
+      // load use data 冲突,(发生在 id 阶段)
+    end else if (load_use_valid_id_i) begin
+      _stall = load_use_stall;
+      _flush = load_use_flush;
+      // 没有异常情况,正常执行
+    end 
+
 
     else if (compress_stall) begin
       _stall = 6'b000010;

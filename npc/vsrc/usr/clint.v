@@ -224,12 +224,12 @@ reg[31:0] handler_pc_reg;
       else if (trap_sret)          handler_pc = csr_sepc_i;
       else if (trap_fencei)              handler_pc = pc_from_mem_i;
       else if (trap_bus_i[`TRAP_ECALL_M] || trap_bus_i[`TRAP_ILLEGAL_INST] ) handler_pc = csr_mtvec_i;
-      else if (M_time_req_latch ) begin
+      else if (M_time_req ) begin
         // M模式定时器中断
         handler_pc = csr_mtvec_i;
       end
       
-      else if (S_time_req_latch) begin
+      else if (S_time_req) begin
             // 未委托的定时器中断（S或U模式）→ 由M模式处理
             handler_pc = csr_stvec_i;
         end
@@ -516,7 +516,7 @@ reg[31:0] handler_pc_reg;
 
   // 输出赋值
   assign clint_pc_o =  handler_pc;
-  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req_latch  || S_time_req_latch || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut 
+  assign clint_pc_valid_o = trap_bus_i[`TRAP_ECALL_M] || M_time_req  || S_time_req || trap_mret || trap_sret || trap_fencei || trap_mmu_page_falut 
                          || trap_bus_i[`TRAP_ILLEGAL_INST];
   // 流水线控制
   wire trap_stall_valid = (csr_state != IDLE);
