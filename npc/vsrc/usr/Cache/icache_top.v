@@ -170,7 +170,7 @@ reg [`XLEN-1:0] last_vaddr;
 
 assign icache_mmu_page_fault_o = mmu_page_fault;
 
-mmu icache_mmu (
+immu icache_mmu (
     .clk(clk),
     .rst(rst),
     

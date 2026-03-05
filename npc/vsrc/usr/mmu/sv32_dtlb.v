@@ -1,6 +1,6 @@
 `include "sysconfig.v"
 
-module itlb (
+module dtlb (
     input wire clk,
     input wire rst,
     

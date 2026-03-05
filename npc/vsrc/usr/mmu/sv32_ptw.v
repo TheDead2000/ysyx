@@ -90,6 +90,13 @@ module ptw (
     
     reg t_ptw_resp_valid_o;
 
+    reg ptw_tlb_update_valid;
+    reg [19:0] ptw_tlb_update_vpn;
+    reg [31:0] ptw_tlb_update_pte;
+    reg ptw_tlb_update_is_4k;
+    reg ptw_tlb_update_is_4m;
+
+
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= STATE_IDLE;
@@ -109,26 +116,20 @@ module ptw (
                     pte_level <= 2'b01;
                     t_ptw_resp_valid_o <= 1'b0;
 
-                    // if (ptw_req_valid_i && ptw_enable_i) begin
-                    //     if (ptw_tlb_hit_i) begin
-                    //         // TLB命中，直接处理缓存的PTE
-                    //         state <= STATE_HANDLE_PTE;
-                    //         pte_reg <= ptw_tlb_pte_i;
-                    //         pte_level <= ptw_tlb_level_i;
-                    //     end else begin
-                    //         // TLB缺失，启动页表遍历：计算一级页表项物理地址
-
-                    //         state <= STATE_CLK;
-                    //     end
-                    // end
                     if(ptw_req_valid_i & t_ptw_resp_valid_o) begin
                         state <=STATE_IDLE;
                     end
                     else
-                    if(ptw_enable_i & ptw_vaddr_i != 0 & ptw_req_valid_i) begin
+                    if(ptw_enable_i & ptw_vaddr_i != 0 & ptw_req_valid_i) begin  
                         $display("vaddr:%h is inst or mem ? %h",ptw_vaddr_i,ptw_is_store_i);
-                        $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
-                        state <= STATE_CLK;
+                        $display("state:%h ptw_tlb_hit_i :%h",state,ptw_tlb_hit_i);
+                        if (ptw_tlb_hit_i) begin
+                            state <= STATE_HANDLE_PTE;
+                            pte_reg <= ptw_tlb_pte_i;
+                            pte_level <= ptw_tlb_level_i;
+                        end else begin
+                            state <= STATE_CLK;
+                        end
                     end
                     
                 end
@@ -164,8 +165,16 @@ module ptw (
                             t_ptw_resp_valid_o <= 1'b1;
                             $display("phys_addr:%h",phys_addr);
                             $display("state:%h t_ptw_resp_valid_o :%h",state,t_ptw_resp_valid_o);
-                            state <= STATE_IDLE; // 遍历完成
+                            
+                            if (!ptw_tlb_hit_i) begin
+                            ptw_tlb_update_valid <= 1'b1;
+                            ptw_tlb_update_vpn <= vpn;
+                            ptw_tlb_update_pte <= pte_reg;
+                            ptw_tlb_update_is_4k <= (pte_level == 2'b10);
+                            ptw_tlb_update_is_4m <= (pte_level == 2'b01);
+                            end
 
+                            state <= STATE_IDLE; // 遍历完成
                         end else begin
                             // 非叶子项：进入二级页表遍历
                             if (pte_level == 2'b01) begin
@@ -214,42 +223,18 @@ module ptw (
         endcase
     end
     
-    // TLB命中时的物理地址生成（区分4MB/4KB）
-    // reg [31:0] tlb_phys_addr;
-    // always @(*) begin
-    //     if (ptw_tlb_level_i == 2'b01) begin
-    //         tlb_phys_addr = {ptw_tlb_pte_i[31:22], ptw_vaddr_i[21:12], page_offset};
-    //     end else if (ptw_tlb_level_i == 2'b10) begin
-    //         tlb_phys_addr = {ptw_tlb_pte_i[29:10], page_offset};
-    //     end else begin
-    //         tlb_phys_addr = 32'b0;
-    //     end
-    // end
-    
     // 输出逻辑
     assign ptw_busy_o = (state != STATE_IDLE);
-    // assign ptw_paddr_o = ptw_tlb_hit_i ? tlb_phys_addr : phys_addr;
-    assign ptw_paddr_o    = phys_addr;
-    // assign ptw_resp_valid_o = (state == STATE_IDLE) && 
-    //                          ((ptw_tlb_hit_i) || (ptw_req_valid_i && !ptw_busy_o && !ptw_page_fault_o));
-    assign ptw_resp_valid_o = t_ptw_resp_valid_o;
-    // assign ptw_page_fault_o = (state == STATE_ERROR);
+    assign ptw_paddr_o = phys_addr;
+
+    assign ptw_resp_valid_o =  t_ptw_resp_valid_o;
+
     assign ptw_page_fault_o = _ptw_page_fault;
-    
+
     assign ptw_mem_req_o = (state == STATE_WAIT_PTE);
     assign ptw_mem_addr_o = pte_ptr;
     
-    // TLB 更新
-    // assign ptw_tlb_update_valid_o = (state == STATE_HANDLE_PTE)  && !ptw_tlb_hit_i;
-    // assign ptw_tlb_update_vpn_o = vpn; // 20位VPN（VPN1+VPN0）
-    // assign ptw_tlb_update_pte_o = pte_reg;
-    // assign ptw_tlb_update_is_4k_o = (pte_level == 2'b10);
-    // assign ptw_tlb_update_is_4m_o = (pte_level == 2'b01);
 
-    assign ptw_tlb_update_valid_o = 0;
-    assign ptw_tlb_update_vpn_o = 0; // 20位VPN（VPN1+VPN0）
-    assign ptw_tlb_update_pte_o = 0;
-    assign ptw_tlb_update_is_4k_o = 0;
-    assign ptw_tlb_update_is_4m_o = 0;
+
 
 endmodule

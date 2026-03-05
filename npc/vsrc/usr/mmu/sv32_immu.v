@@ -1,6 +1,6 @@
 `include "sysconfig.v"
 
-module mmu (
+module immu (
     input wire clk,
     input wire rst,
     
@@ -44,21 +44,21 @@ module mmu (
     wire tlb_update_is_4k;
     wire tlb_update_is_4m;
     
-    // tlb u_tlb (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .tlb_update_valid_i(tlb_update_valid),
-    //     .tlb_update_vpn_i(tlb_update_vpn),
-    //     .tlb_update_pte_i(tlb_update_pte),
-    //     .tlb_update_is_4k_i(tlb_update_is_4k),
-    //     .tlb_update_is_4m_i(tlb_update_is_4m),
-    //     .tlb_query_vaddr_i(mmu_vaddr_i),
-    //     .tlb_query_hit_o(tlb_hit),
-    //     .tlb_query_paddr_o(tlb_paddr),
-    //     .tlb_query_pte_o(tlb_pte),
-    //     .tlb_query_level_o(tlb_level),
-    //     .tlb_flush_i(mmu_flush_i)
-    // );
+    itlb u_itlb (
+        .clk(clk),
+        .rst(rst),
+        .tlb_update_valid_i(tlb_update_valid),
+        .tlb_update_vpn_i(tlb_update_vpn),
+        .tlb_update_pte_i(tlb_update_pte),
+        .tlb_update_is_4k_i(tlb_update_is_4k),
+        .tlb_update_is_4m_i(tlb_update_is_4m),
+        .tlb_query_vaddr_i(mmu_vaddr_i),
+        .tlb_query_hit_o(tlb_hit),
+        .tlb_query_paddr_o(tlb_paddr),
+        .tlb_query_pte_o(tlb_pte),
+        .tlb_query_level_o(tlb_level),
+        .tlb_flush_i(mmu_flush_i)
+    );
     
     // PTW 实例
     wire ptw_busy;

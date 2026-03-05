@@ -188,7 +188,7 @@ reg dcache_mmu_mem_rvalid;
 reg mmu_translation_done;
 reg [`XLEN-1:0] last_vaddr;
 
-mmu dcache_mmu (
+dmmu dcache_mmu (
     .clk(clk),
     .rst(rst),
     
