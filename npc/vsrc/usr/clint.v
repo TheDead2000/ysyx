@@ -447,16 +447,19 @@ reg[31:0] handler_pc_reg;
         cause_value_latched <= 32'b0;
         is_delegated_latched <= 1'b0;
         interrupt_pending_latched <= 1'b0;
-        trap_bus_i_latch <= `TRAP_LEN'b0;
+
         trap_mret_latch <= 0;
         trap_sret_latch <= 0;
         csr_state <= WAIT_CLK;
         trap_icache_pass_o <= 1;
-        trap_ecall_unstall_condition_o <= 1;
+        if(trap_bus_i_latch[`TRAP_ECALL_M])begin
+          trap_ecall_unstall_condition_o <= 1;
+        end
         $display("CLEAR to WAIT_CLK");
       end
 
       WAIT_CLK:begin
+        trap_bus_i_latch <= `TRAP_LEN'b0;
         trap_ecall_unstall_condition_o <= 0;
         csr_state <= IDLE;
       end
