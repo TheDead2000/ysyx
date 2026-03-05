@@ -134,16 +134,16 @@ void test_mmu_access() {
 
     // 1. 关闭MMU，直接访问物理地址（裸机模式）
     printf("\n=== Step 1: Access physical address (MMU disabled) ===\n");
-    // mmu_disable();
-    // *va_ptr = TEST_DATA;  // 直接写物理地址
-    // *va_ptr2 = 0x98765432;
+    mmu_disable();
+    *va_ptr = TEST_DATA;  // 直接写物理地址
+    *va_ptr2 = 0x98765432;
 
-    // read_data = *va_ptr;  // 直接读物理地址
-    // printf("Write 0x%x to 0x%x, Read back: 0x%x\n", TEST_DATA, TEST_BASE_PA, read_data);
-    // if (read_data != TEST_DATA) {
-    //     printf("ERROR: Physical address access failed!\n");
-    //     return;
-    // }
+    read_data = *va_ptr;  // 直接读物理地址
+    printf("Write 0x%x to 0x%x, Read back: 0x%x\n", TEST_DATA, TEST_BASE_PA, read_data);
+    if (read_data != TEST_DATA) {
+        printf("ERROR: Physical address access failed!\n");
+        return;
+    }
 
     // 2. 开启MMU，访问虚拟地址（4MB大页映射）
 
